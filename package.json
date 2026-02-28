@@ -8,8 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.98.0",
+    "axios": "^1.13.6",
+    "cookie": "^1.1.1",
+    "ioredis": "^5.10.0",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "swr": "^2.4.1"
   }
 }

@@ -1,0 +1,79 @@
+/* =========================================
+   PERFORMANCE TIER SECTION – GROWTH LEVELS
+   Clean | Structured | Professional
+========================================= */
+
+.performance-tier-section {
+    padding: 4.5rem 1.5rem;
+    background: var(--color-white);
+    text-align: center;
+}
+
+/* Container */
+.performance-tier-section .container {
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+}
+
+/* Heading */
+.performance-tier-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+
+.performance-tier-section p {
+    color: var(--color-text-secondary);
+    margin-bottom: 2.5rem;
+}
+
+/* Tier Grid */
+.tier-grid {
+    display: grid;
+    gap: 1.8rem;
+    margin-top: 2.5rem;
+    grid-template-columns: 1fr;
+}
+
+/* Tier Card */
+.tier-card {
+    background: var(--color-bg-light);
+    padding: 2rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+}
+
+/* Subtle Hover */
+@media (hover: hover) {
+    .tier-card:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-3px);
+    }
+}
+
+/* Tier Title */
+.tier-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--color-text-main);
+}
+
+/* Tier Content */
+.tier-card p {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+}
+
+/* Desktop Layout */
+@media (min-width: 768px) {
+    .tier-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .performance-tier-section h2 {
+        font-size: 2.4rem;
+    }
+}

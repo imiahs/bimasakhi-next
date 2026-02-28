@@ -1,0 +1,114 @@
+/* =========================================
+   TESTIMONIAL SECTION – REAL TRUST BLOCK
+   Clean | Warm | Professional
+========================================= */
+
+.testimonial-section {
+    padding: 4.5rem 1.5rem;
+    background: var(--color-bg-light);
+    text-align: center;
+}
+
+/* Container */
+.testimonial-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Heading */
+.testimonial-section h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+
+/* Testimonial Card */
+.testimonial-card {
+    background: var(--color-white);
+    padding: 2.2rem;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+}
+
+/* Subtle hover */
+@media (hover: hover) {
+    .testimonial-card:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
+    }
+}
+
+/* Image Wrapper */
+.testimonial-image-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+/* Profile Image */
+.testimonial-image {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-primary);
+}
+
+/* Verified Badge */
+.verified-badge {
+    position: absolute;
+    bottom: 0;
+    right: -5px;
+    background: var(--color-primary);
+    color: var(--color-white);
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
+/* Message */
+.testimonial-message {
+    font-size: 1.05rem;
+    font-style: italic;
+    margin-bottom: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+/* Rating */
+.testimonial-rating {
+    color: #f4b400;
+    /* Gold star remains neutral */
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Meta */
+.testimonial-meta {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: 1rem;
+}
+
+/* Slider Dots */
+.testimonial-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.testimonial-dots .dot {
+    width: 9px;
+    height: 9px;
+    background: var(--border-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.testimonial-dots .dot.active {
+    background: var(--color-primary);
+}

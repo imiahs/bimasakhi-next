@@ -1,0 +1,46 @@
+/* =========================================
+   QUICK INFO STRIP – TRUST MICRO BLOCK
+   Clean | Feminine | Delhi NCR Focus
+========================================= */
+
+.quick-info-strip {
+    background: var(--color-secondary);
+    padding: 2.5rem 1rem;
+}
+
+/* Container Grid */
+.quick-info-container {
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+    display: grid;
+    gap: 1.2rem;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Individual Info Item */
+.quick-info-item {
+    background: var(--color-white);
+    padding: 1.2rem 1rem;
+    border-radius: var(--border-radius-md);
+    text-align: center;
+    font-weight: 600;
+    color: var(--color-text-main);
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+}
+
+/* Subtle Hover */
+@media (hover: hover) {
+    .quick-info-item:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
+    }
+}
+
+/* Desktop Layout */
+@media (min-width: 768px) {
+    .quick-info-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

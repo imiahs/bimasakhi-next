@@ -1,0 +1,83 @@
+/* =========================================
+   MODERN CSS RESET – SAFE & CLEAN BASE
+========================================= */
+
+/* Box sizing reset */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Remove default margins */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* Improve body defaults */
+html,
+body {
+    height: 100%;
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* Media elements */
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+/* Form elements inherit font */
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+/* Remove list styles (we control them manually) */
+ul,
+ol {
+    list-style: none;
+}
+
+/* Prevent text overflow issues */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
+/* Root layout isolation */
+#root {
+    isolation: isolate;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Remove button default styles safely */
+button {
+    background: none;
+    border: none;
+}
+
+/* Anchor reset */
+a {
+    text-decoration: none;
+    color: inherit;
+}

@@ -1,0 +1,151 @@
+/* =========================================
+   INCOME JOURNEY SECTION – REALISTIC GROWTH
+   Trust Focus | Clean | Professional
+========================================= */
+
+.income-section {
+    padding: 4.5rem 1.5rem;
+    background: var(--color-bg-light);
+    text-align: center;
+}
+
+/* Container */
+.income-container {
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+}
+
+/* Subtitle */
+.income-subtitle {
+    margin-bottom: 2rem;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+}
+
+/* Counter */
+.income-counter strong {
+    font-size: 2.3rem;
+    color: var(--color-primary);
+    display: block;
+}
+
+.income-counter span {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Graph */
+.income-graph {
+    width: 100%;
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.income-curve {
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-width: 3;
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    animation: drawCurve 1.8s ease forwards;
+}
+
+@keyframes drawCurve {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Renewal Visual Block */
+.renewal-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 3rem 0;
+}
+
+/* Renewal Box */
+.renewal-box {
+    background: var(--color-white);
+    padding: 1.4rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    min-width: 150px;
+    font-weight: 600;
+}
+
+/* Highlight Box */
+.renewal-box.highlight {
+    background: var(--color-secondary);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-primary);
+}
+
+/* Arrow */
+.arrow {
+    font-size: 1.4rem;
+    color: var(--color-primary);
+}
+
+/* Commission Button */
+.commission-btn {
+    padding: 0.8rem 2rem;
+    border-radius: 40px;
+    border: none;
+    background: var(--color-primary);
+    color: var(--color-white);
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+@media (hover: hover) {
+    .commission-btn:hover {
+        background: var(--color-primary-hover);
+        transform: translateY(-2px);
+    }
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Box */
+.modal-box {
+    background: var(--color-white);
+    padding: 2rem;
+    border-radius: var(--border-radius-md);
+    max-width: 420px;
+    width: 90%;
+    text-align: left;
+}
+
+/* Modal Button */
+.modal-box button {
+    margin-top: 1rem;
+    padding: 0.6rem 1.5rem;
+    border: none;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+/* Disclaimer */
+.income-disclaimer {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--color-text-light);
+}

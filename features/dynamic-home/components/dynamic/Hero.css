@@ -1,0 +1,121 @@
+/* =========================================
+   MODERN HERO – ENGAGING & PREMIUM
+   Compatible with ads-hero structure
+========================================= */
+
+.ads-hero {
+    position: relative;
+    background: linear-gradient(135deg,
+            #4a1230,
+            #7b1fa2);
+    color: #ffffff;
+    padding: 5rem 0;
+    overflow: hidden;
+}
+
+/* Premium light glow */
+.ads-hero::before {
+    content: "";
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle,
+            rgba(255, 255, 255, 0.12),
+            transparent 70%);
+    top: -150px;
+    right: -150px;
+}
+
+
+
+/* Layout */
+.ads-hero-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Text block */
+.ads-hero-text {
+    max-width: 620px;
+    text-align: center;
+}
+
+/* Title */
+.ads-hero-text h1 {
+    font-size: 2.2rem;
+    line-height: 1.3;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+/* Subtitle */
+.ads-sub {
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    opacity: 0.95;
+    color: rgba(255, 255, 255, 0.95);
+
+}
+
+/* Trust line */
+.ads-trust {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* CTA */
+.ads-btn-primary {
+    background: #ffffff;
+    color: #7b1fa2;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s ease;
+    min-height: 48px;
+}
+
+@media (hover: hover) {
+    .ads-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Image */
+.ads-hero-img {
+    max-width: 450px;
+}
+
+.ads-hero-img img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+
+    .ads-hero-flex {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .ads-hero-text {
+        text-align: left;
+    }
+
+    .ads-hero-text h1 {
+        font-size: 3rem;
+    }
+}

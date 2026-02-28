@@ -1,0 +1,632 @@
+/* =========================================
+   BIMA SAKHI – UNIFIED GLOBAL SYSTEM
+   Delhi NCR | Female Focus | Premium Trust
+========================================= */
+
+/* =========================
+   BODY BASE
+========================= */
+
+html,
+body {
+    height: 100%;
+}
+
+img {
+    height: auto;
+}
+
+body {
+    font-family: var(--font-family-base);
+    background-color: var(--color-bg-body);
+    color: var(--color-text-main);
+    font-size: var(--font-size-base);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+    color: var(--color-primary);
+    transition: 0.2s ease;
+}
+
+a:hover {
+    color: var(--color-primary-hover);
+}
+
+/* Reset list style safely */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* =========================
+   RESPONSIVE CONTAINER SYSTEM
+========================= */
+
+.container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+@media (min-width: 480px) {
+    .container {
+        max-width: var(--container-mobile);
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: var(--container-tablet);
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: var(--container-desktop);
+    }
+}
+
+@media (min-width: 1440px) {
+    .container {
+        max-width: var(--container-wide);
+    }
+}
+
+
+.text-center {
+    text-align: center;
+}
+
+.py-4 {
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+}
+
+.py-8 {
+    padding-top: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+}
+
+.my-4 {
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.bg-light {
+    background-color: var(--color-bg-light);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+}
+
+/* =========================
+   TYPOGRAPHY SYSTEM
+========================= */
+
+h1 {
+    font-size: var(--font-size-xxl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+    line-height: 1.25;
+}
+
+h2 {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+}
+
+h3 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+p {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text-secondary);
+}
+
+@media (min-width: 1024px) {
+    h1 {
+        font-size: 40px;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+}
+
+
+/* =========================
+   BUTTON SYSTEM
+========================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    border: none;
+    font-size: var(--font-size-lg);
+    width: 100%;
+    min-height: 48px;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+}
+
+@media (min-width: 768px) {
+    .btn {
+        width: auto;
+    }
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+@media (hover: hover) {
+    .btn-primary:hover {
+        background-color: var(--color-primary-hover);
+        transform: translateY(-1px);
+    }
+}
+
+
+.btn-secondary {
+    background-color: var(--color-bg-light);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+/* =========================
+   FLOATING CTA SAFE (iOS)
+========================= */
+
+.floating-cta-safe {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    z-index: 999;
+    background: linear-gradient(to top,
+            var(--color-white) 80%,
+            rgba(255, 255, 255, 0) 100%);
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================
+   CARD SYSTEM
+========================= */
+
+.card {
+    background: var(--color-white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-lg);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================
+   FORM SYSTEM
+========================= */
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    background-color: var(--color-bg-light);
+    font-size: 16px;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: 2px solid var(--color-primary);
+    border-color: transparent;
+}
+
+.form-error {
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-xs);
+}
+
+/* =========================
+   CHECKBOX GROUP
+========================= */
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.checkbox-group label {
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+/* ---------------- HEADER ---------------- */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.nav-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ---------------- BRAND ---------------- */
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.brand-logo img {
+    height: 40px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #111;
+}
+
+.brand-tagline {
+    font-size: 0.7rem;
+    color: #666;
+}
+
+/* ---------------- DESKTOP NAV ---------------- */
+
+.desktop-menu {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.nav-links a.active {
+    color: #4CAF50;
+}
+
+.apply-btn {
+    background: #4CAF50;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ---------------- HAMBURGER ---------------- */
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background: #333;
+    transition: 0.3s;
+}
+
+/* ---------------- MOBILE MENU ---------------- */
+
+.mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+}
+
+.mobile-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100%;
+    background: #fff;
+    padding: 80px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    transition: 0.3s;
+    z-index: 1001;
+}
+
+.mobile-menu.open {
+    right: 0;
+}
+
+.mobile-menu a {
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.mobile-apply {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* ---------------- RESPONSIVE ---------------- */
+
+@media (max-width: 992px) {
+
+    .desktop-menu {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.site-footer {
+    background: #111;
+    color: #ddd;
+    padding: 40px 0 20px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+}
+
+.site-footer h4 {
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.site-footer a {
+    color: #ccc;
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    color: #4CAF50;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.85rem;
+    border-top: 1px solid #333;
+    padding-top: 15px;
+}
+
+/*===========================
+This ensures footer stays at bottom.
+===========================*/
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* Page Specifics */
+
+/* Hero */
+.hero-section {
+    padding: var(--spacing-xxl) 0;
+    text-align: center;
+    background-color: var(--color-secondary);
+    /* Soft pink bg */
+}
+
+.hero-subtitle {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Benefits Grid */
+.benefits-grid {
+    display: grid;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+}
+
+@media (min-width: 768px) {
+    .benefits-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.benefit-card h3 {
+    color: var(--color-primary);
+}
+
+/* Income Reality */
+.income-block {
+    padding: var(--spacing-md);
+}
+
+
+
+.income-points li {
+    margin-bottom: var(--spacing-sm);
+    padding-left: var(--spacing-md);
+    position: relative;
+}
+
+.income-points li::before {
+    content: "•";
+    color: var(--color-primary);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* =========================
+   WARNING & REALITY BLOCK
+========================= */
+
+.warning-banner {
+    background-color: #fee;
+    border: 1px solid var(--color-error);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    color: var(--color-error);
+    margin-bottom: var(--spacing-lg);
+}
+
+.reality-check {
+    background-color: #fff3e0;
+    padding: var(--spacing-md);
+    border-left: 4px solid var(--color-warning);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Admin */
+.page-admin .grid-2-col {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+    .page-admin .grid-2-col {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.toggle-group {
+    padding: var(--spacing-sm);
+    background: var(--color-bg-light);
+    margin-bottom: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+}
+
+
+/* =========================
+   PAGE LAYOUT
+========================= */
+
+.page-why,
+.page-income,
+.page-eligibility,
+.page-apply {
+    padding: var(--spacing-xl) 0;
+    min-height: calc(100vh - var(--header-height) - 100px);
+}
+
+.content-block {
+    margin-bottom: var(--spacing-lg);
+}
+
+.action-area {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    text-align: center;
+}
+
+.content-block h3 {
+    margin-top: 0;
+}
+
+.who-should-not-join {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-light);
+    border-radius: var(--border-radius-md);
+}
+
+.who-should-not-join ul {
+    list-style: disc;
+    padding-left: var(--spacing-xl);
+    margin-top: var(--spacing-sm);
+}
+
+.who-should-not-join li {
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-text-secondary);
+}

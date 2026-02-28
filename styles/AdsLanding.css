@@ -1,0 +1,185 @@
+/* =========================================
+   ADS LANDING – UNIFIED FEMININE SYSTEM
+   Delhi NCR | Bima Sakhi | Conversion Focus
+========================================= */
+
+/* =========================
+   WRAPPER
+========================= */
+
+.ads-landing {
+    background: var(--color-bg-body);
+    color: var(--color-text-main);
+    overflow-x: hidden;
+}
+
+/* =========================
+   SECTION SPACING
+========================= */
+
+.ads-section {
+    padding: 4rem 1.5rem;
+}
+
+@media (min-width: 992px) {
+    .ads-section {
+        padding: 5rem 1.5rem;
+    }
+}
+
+/* Light background section */
+.ads-section.light {
+    background: var(--color-bg-light);
+}
+
+/* Soft highlight section */
+.ads-section.highlight {
+    background: var(--color-secondary);
+    text-align: center;
+}
+
+/* =========================
+   SECTION HEADINGS
+========================= */
+
+.ads-section h2 {
+    font-size: 1.9rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+
+.section-desc {
+    max-width: 750px;
+    margin: 0 auto 1.5rem auto;
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+}
+
+/* Desktop scaling */
+@media (min-width: 1024px) {
+    .ads-section h2 {
+        font-size: 2.3rem;
+    }
+}
+
+/* =========================
+   BENEFIT LIST BLOCK
+========================= */
+
+.ads-list {
+    max-width: 750px;
+    margin: 1.5rem auto 0 auto;
+    display: grid;
+    gap: 1rem;
+}
+
+.ads-list li {
+    padding: 1rem 1.2rem;
+    background: var(--color-white);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    font-size: 1.05rem;
+    transition: 0.2s ease;
+}
+
+@media (hover: hover) {
+    .ads-list li:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
+    }
+}
+
+/* =========================
+   TESTIMONIAL MINI BLOCK
+========================= */
+
+.ads-testimonial {
+    background: var(--color-secondary);
+    padding: 3rem 1.5rem;
+    text-align: center;
+}
+
+.ads-testimonial p {
+    max-width: 700px;
+    margin: 0 auto;
+    font-style: italic;
+    color: var(--color-text-main);
+    font-size: 1.1rem;
+}
+
+/* =========================
+   URGENCY TICKER
+========================= */
+
+.ads-urgency-wrapper {
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 0.9rem 1rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.ads-urgency-slide {
+    animation: slideFade 0.4s ease;
+    letter-spacing: 0.3px;
+}
+
+@keyframes slideFade {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
+   FINAL CTA BLOCK (Fallback)
+========================= */
+
+.ads-final {
+    background: var(--color-secondary);
+    text-align: center;
+    padding: 4rem 1.5rem;
+}
+
+.ads-final h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.ads-final p {
+    color: var(--color-text-secondary);
+}
+
+/* =========================
+   HERO IMAGE RESPONSIVE FIX
+========================= */
+
+.ads-hero-img img {
+    max-width: 100%;
+    border-radius: var(--border-radius-lg);
+}
+
+/* =========================
+   RESPONSIVE FLEX FIX
+========================= */
+
+@media (min-width: 992px) {
+
+    .ads-hero-flex {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .ads-hero-text {
+        text-align: left;
+    }
+}

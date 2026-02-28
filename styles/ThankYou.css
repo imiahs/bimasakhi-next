@@ -1,0 +1,33 @@
+.thankyou-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.thankyou-hero {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.btn-primary {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: #0a7f3f;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.thankyou-timeline,
+.thankyou-knowledge,
+.thankyou-faq {
+    margin-top: 40px;
+}
+
+.knowledge-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

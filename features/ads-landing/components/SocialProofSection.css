@@ -1,0 +1,79 @@
+/* =========================================
+   SOCIAL PROOF SECTION – TRUST AUTHORITY
+   Clean | Premium | Female Focus
+========================================= */
+
+.ads-social-proof {
+    padding: 4.5rem 1.5rem;
+    background: var(--color-bg-light);
+}
+
+/* Container */
+.ads-social-container {
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Heading */
+.ads-social-container h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text-main);
+}
+
+.ads-social-subtitle {
+    font-size: 1.05rem;
+    margin-bottom: 3rem;
+    color: var(--color-text-secondary);
+}
+
+/* Stats Grid */
+.ads-social-stats {
+    display: grid;
+    gap: 1.8rem;
+    grid-template-columns: 1fr;
+}
+
+/* Individual Card */
+.ads-stat-card {
+    background: var(--color-white);
+    padding: 2rem 1.5rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+}
+
+/* Subtle Hover */
+@media (hover: hover) {
+    .ads-stat-card:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-3px);
+    }
+}
+
+/* Number */
+.ads-stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* Label */
+.ads-stat-label {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+    .ads-social-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ads-social-container h2 {
+        font-size: 2.4rem;
+    }
+}

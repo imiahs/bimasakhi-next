@@ -1,0 +1,94 @@
+/* =========================================
+   ELIGIBILITY SECTION – CLEAR & OFFICIAL
+   Structured | Trust Focus | Clean Layout
+========================================= */
+
+.eligibility-section {
+    padding: 4.5rem 1.5rem;
+    background: var(--color-white);
+    text-align: center;
+}
+
+/* Container */
+.eligibility-container {
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+}
+
+/* Heading */
+.eligibility-section h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text-main);
+}
+
+/* Subtitle */
+.eligibility-subtitle {
+    margin-bottom: 3rem;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+}
+
+/* Grid */
+.eligibility-grid {
+    display: grid;
+    gap: 1.8rem;
+    grid-template-columns: 1fr;
+}
+
+/* Card */
+.eligibility-card {
+    background: var(--color-bg-light);
+    padding: 2rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+}
+
+/* Subtle Hover */
+@media (hover: hover) {
+    .eligibility-card:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-3px);
+    }
+}
+
+/* Icon */
+.eligibility-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+/* Card Title */
+.eligibility-card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+/* Card Text */
+.eligibility-card p {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Note */
+.eligibility-note {
+    margin-top: 3rem;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+    .eligibility-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .eligibility-section h2 {
+        font-size: 2.4rem;
+    }
+}

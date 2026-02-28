@@ -1,0 +1,120 @@
+/* =========================================
+   PRESTIGE CLUBS SECTION – ASPIRATION BLOCK
+   Elegant | Professional | Feminine Premium
+========================================= */
+
+.prestige-section {
+    padding: 4.5rem 1.5rem;
+    background: var(--color-secondary);
+    text-align: center;
+}
+
+/* Container */
+.prestige-container {
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+}
+
+/* Heading */
+.prestige-section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+
+.prestige-subtitle {
+    margin-bottom: 3rem;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+}
+
+/* Club Grid */
+.club-grid {
+    display: grid;
+    gap: 1.8rem;
+    grid-template-columns: 1fr;
+}
+
+/* Club Card */
+.club-card {
+    background: var(--color-white);
+    padding: 1.8rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+/* Subtle Hover */
+@media (hover: hover) {
+    .club-card:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-3px);
+    }
+}
+
+/* Icon */
+.club-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+    color: var(--color-primary);
+}
+
+/* Premium Highlight Card */
+.club-card.premium {
+    background: var(--color-white);
+    border: 2px solid var(--color-primary);
+}
+
+/* Premium Badge */
+.premium-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: 0.4rem 0.6rem;
+    border-radius: 50%;
+    font-size: 0.7rem;
+}
+
+/* Premium Name */
+.global-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* Premium Description */
+.global-desc {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    color: var(--color-text-secondary);
+}
+
+/* Dream Message */
+.dream-message {
+    margin-top: 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Note */
+.prestige-note {
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+    .club-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .prestige-section h2 {
+        font-size: 2.4rem;
+    }
+}

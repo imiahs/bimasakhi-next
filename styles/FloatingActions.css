@@ -1,0 +1,78 @@
+/* =========================================
+   FLOATING PILL BUTTON SYSTEM
+========================================= */
+
+.floating-actions-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 1500;
+    pointer-events: none;
+}
+
+/* Pill Base */
+.floating-pill {
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    transition: 0.3s ease;
+    min-height: 44px;
+    pointer-events: auto;
+}
+
+/* Hover */
+@media (hover: hover) {
+    .floating-pill:hover {
+        transform: translateY(-3px);
+    }
+}
+
+/* Apply */
+.apply-pill {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+/* WhatsApp */
+.whatsapp-pill {
+    background: #25D366;
+    color: #fff;
+}
+
+/* Subtle Pulse Animation */
+.attention-pulse {
+    animation: softPulse 2.5s infinite;
+}
+
+@keyframes softPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(232, 93, 117, 0.6);
+    }
+
+    70% {
+        box-shadow: 0 0 0 12px rgba(232, 93, 117, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(232, 93, 117, 0);
+    }
+}
+
+/* Mobile safe spacing */
+@media (max-width: 768px) {
+    .floating-actions-wrapper {
+        bottom: 90px;
+        /* avoid conflict with browser UI */
+    }
+}

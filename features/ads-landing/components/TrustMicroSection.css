@@ -1,0 +1,87 @@
+/* =========================================
+   TRUST MICRO SECTION – CREDIBILITY BLOCK
+   Clean | Authoritative | Feminine Premium
+========================================= */
+
+.trust-section {
+    padding: 4.5rem 1.5rem;
+    background: var(--color-secondary);
+    text-align: center;
+}
+
+/* Container */
+.trust-container {
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+}
+
+/* Heading */
+.trust-section h2 {
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+
+/* Grid */
+.trust-grid {
+    display: grid;
+    gap: 1.8rem;
+    grid-template-columns: 1fr;
+}
+
+/* Card */
+.trust-card {
+    background: var(--color-white);
+    padding: 2rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    transition: 0.2s ease;
+}
+
+/* Hover (Subtle) */
+@media (hover: hover) {
+    .trust-card:hover {
+        border-color: var(--color-primary);
+        transform: translateY(-3px);
+    }
+}
+
+/* Icon */
+.trust-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+/* Card Title */
+.trust-card h3 {
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+/* Card Text */
+.trust-card p {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+}
+
+/* Footer Note */
+.trust-footer {
+    margin-top: 3rem;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+    .trust-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .trust-section h2 {
+        font-size: 2.4rem;
+    }
+}

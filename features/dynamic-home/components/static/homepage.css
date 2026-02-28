@@ -1,0 +1,1122 @@
+/* 
+  Bima Sakhi Homepage Styles
+  Theme: Trust, Professionalism, Mentorship
+  Approach: Mobile-First, Semantic Classes
+  Original Author: Imiah Services
+  Original Author URL: https://imiahservices.com
+
+*/
+
+:root {
+    /* Color Palette */
+    --bs-color-primary: #0056b3;
+    /* Blue / Trust Blue */
+    --bs-color-primary-dark: #004494;
+    --bs-color-secondary: #6c757d;
+    --bs-color-text-main: #212529;
+    --bs-color-text-light: #495057;
+    --bs-color-bg-light: #f8f9fa;
+    --bs-color-bg-white: #ffffff;
+    --bs-color-border: #dee2e6;
+    --bs-color-accent: #ffc107;
+    /* Minimal usage for highlights */
+
+    /* Typography */
+    --bs-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --bs-line-height-base: 1.6;
+
+    /* Spacing */
+    --bs-spacing-section: 4rem;
+    --bs-spacing-element: 1.5rem;
+    --bs-container-width: 1140px;
+}
+
+/* Global Reset & Base */
+.homepage-wrapper {
+    font-family: var(--bs-font-family-base);
+    color: var(--bs-color-text-main);
+    line-height: var(--bs-line-height-base);
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.homepage-wrapper h1,
+.homepage-wrapper h2,
+.homepage-wrapper h3 {
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+}
+
+.homepage-wrapper p {
+    margin-bottom: 1rem;
+    color: var(--bs-color-text-light);
+}
+
+.homepage-wrapper ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Utility: Container */
+.section-inner,
+[class$="-inner"] {
+    max-width: var(--bs-container-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    width: 100%;
+}
+
+/* -----------------------------------------------------------
+   SECTION 1: HERO
+   ----------------------------------------------------------- */
+
+/* -----------------------------------------------------------
+   HERO SECTION
+----------------------------------------------------------- */
+
+
+/* ------------------------------
+   HERO BASE
+------------------------------ */
+.hero {
+    position: relative;
+    background: linear-gradient(135deg, #004E92, #000428);
+    /* Blue gradient */
+    color: #fff;
+    padding: 4rem 0;
+    /* Reduced top padding for mobile safety */
+    text-align: center;
+
+    /* Small viewport adjustment */
+    @media (max-height: 700px) {
+        padding: 3rem 0;
+    }
+
+    /* UX Fix 4: Content Growth */
+    overflow: visible;
+    min-height: 100svh;
+    height: auto;
+}
+
+.hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(0, 78, 146, 0.9), rgba(0, 4, 40, 0.9));
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+}
+
+.hero-overlay {
+    position: relative;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.2);
+    width: 100%;
+    min-height: 100svh;
+    /* Overlay covers full growth */
+    display: flex;
+    align-items: center;
+
+}
+
+/* ------------------------------ in hero-inner */
+.hero-inner {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    /* STABILIZATION FIX: CSS Grid Layout */
+    display: grid;
+    grid-template-areas: "stack";
+    /* Grid container expands to tallest content -> No clipping */
+    height: auto;
+
+    /* Center alignment for grid items */
+    place-items: center;
+    padding-bottom: 4rem;
+}
+
+/* ------------------------------
+   SLIDE CONTENT (Slider Fix)
+------------------------------ */
+.hero-content {
+    /* Grid Item Strategy: Stack all slides in same cell */
+    grid-area: stack;
+    position: relative;
+    /* All slides relative, no position switching */
+    width: 100%;
+
+    /* Center content within the slide */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* Animation: Initial State */
+    opacity: 0;
+    z-index: 0;
+    transform: translateY(20px);
+
+    /* Smooth, synchronized transition */
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    pointer-events: none;
+    will-change: opacity, transform;
+}
+
+.hero-content.active {
+    /* Animation: Active State */
+    opacity: 1;
+    z-index: 3;
+    /* Matches previous fix */
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+    .hero-content {
+        transition: opacity 0s;
+        transform: none;
+    }
+}
+
+/* ------------------------------
+   TEXT STYLES
+------------------------------ */
+.hero-intro {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #fff;
+    /* UX Fix 1: Natural Wrap */
+    white-space: normal;
+}
+
+.hero-title {
+    font-size: clamp(1.8rem, 4vw, 2.75rem);
+    /* UX Fix 1: Max 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    /* Standard property */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+
+    font-weight: 700;
+
+    /* Fix: Gradient Rendering Regression */
+    position: relative;
+    z-index: 4;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, #FFD700, #FF69B4, #00CFFF);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: shine 3s linear infinite, fadeInTitle 1.2s ease-out forwards;
+}
+
+.hero-subtitle {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: 1.5rem;
+    color: #fff;
+    /* UX Fix 1: Natural Wrap */
+    white-space: normal;
+}
+
+.hero-description {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    color: #fff !important;
+}
+
+/* ------------------------------
+   IMAGE
+------------------------------ */
+.hero-image {
+    display: block;
+    margin: 1.5rem auto;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ------------------------------
+   PILLS
+------------------------------ */
+/* ------------------------------
+   PILLS
+------------------------------ */
+.hero-options {
+    list-style: none;
+    display: grid;
+    /* UX Fix 2: Grid for even sizing */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-options li {
+    background: #fff;
+    color: #004E92;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    /* UX Fix 2: Equal Height & Centering */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    width: 100%;
+}
+
+@media (hover: hover) {
+    .hero-options li:hover {
+        background: #FFD700;
+        color: #212529;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    }
+}
+
+/* ------------------------------
+   CTA BUTTON
+------------------------------ */
+.hero-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.hero-cta button {
+    background: #FF69B4;
+    color: #fff;
+    font-weight: 700;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+    /* Safe Area for tap targets */
+    min-height: 44px;
+}
+
+@media (hover: hover) {
+    .hero-cta button:hover {
+        background: #fff;
+        color: #FF69B4;
+        transform: scale(1.05);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    }
+}
+
+/* ------------------------------
+   NAVIGATION BUTTONS
+------------------------------ */
+.hero-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+@media (hover: hover) {
+    .nav-btn:hover {
+        background: #FFD700;
+    }
+}
+
+/* ------------------------------
+   DOTS + PROGRESS BAR
+------------------------------ */
+.hero-dots {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.dot {
+    position: relative;
+    height: 12px;
+    width: 12px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.dot.active {
+    background-color: #FFD700;
+}
+
+.progress-bar {
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    height: 3px;
+    background: #FFD700;
+    transition: width 0.1s linear;
+    width: 0;
+}
+
+/* ------------------------------
+   ANIMATIONS
+------------------------------ */
+@keyframes shine {
+    to {
+        background-position: 200% center;
+    }
+}
+
+@keyframes fadeInTitle {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ------------------------------
+   RESPONSIVE
+------------------------------ */
+@media (max-width: 768px) {
+    .hero {
+        padding: 2rem 1rem;
+    }
+
+    .hero-inner {
+        min-height: auto;
+        padding-bottom: 4rem;
+    }
+
+    .hero-title {
+        font-size: clamp(1.5rem, 6vw, 2rem);
+    }
+
+    .hero-description {
+        font-size: clamp(0.85rem, 3vw, 1rem);
+    }
+
+    .hero-cta button {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .hero-nav {
+        top: auto;
+        bottom: 60px;
+    }
+
+    .hero-dots {
+        bottom: 10px;
+    }
+}
+
+
+
+/* -----------------------------------------------------------
+   SECTION 2: WHAT IS BIMA SAKHI
+   ----------------------------------------------------------- */
+.what-is {
+    padding: 3rem 0;
+    /* Increased calm spacing */
+    background-color: var(--bs-color-bg-white);
+}
+
+.what-is-inner {
+    display: flex;
+    flex-direction: column-reverse;
+    /* Mobile: Content Top, Visual Bottom */
+    gap: 4rem;
+    align-items: center;
+}
+
+.what-is-visual {
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    /* Taller, more substantial */
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    /* Soft lift */
+    background-color: #f0f2f5;
+
+    /* Image Strategy: */
+    background-image: url('/public/images/home/about-intro.jpg');
+    background-size: cover;
+    background-position: center;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bs-color-secondary);
+    font-weight: 500;
+    border: 1px solid var(--bs-color-border);
+}
+
+/* Optional: Subtle deco line or shape behind visual can go here if needed later */
+
+.what-is-content {
+    flex: 1;
+    text-align: left;
+}
+
+.what-is-content h2 {
+    font-size: 2.25rem;
+    color: var(--bs-color-primary-dark);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    position: relative;
+}
+
+.what-is-content h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: var(--bs-color-primary);
+    margin-top: 0.75rem;
+    border-radius: 2px;
+}
+
+.what-is-content p {
+    font-size: 1.125rem;
+    color: var(--bs-color-text-light);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+}
+
+/* Desktop Split */
+@media (min-width: 992px) {
+    .what-is-inner {
+        flex-direction: row;
+        /* Desktop: Visual Left, Content Right */
+        align-items: center;
+        gap: 5rem;
+    }
+
+    .what-is-visual {
+        height: 450px;
+        /* Full standing presence */
+    }
+}
+
+/* -----------------------------------------------------------
+   SECTION 3: WHO IT IS FOR
+   ----------------------------------------------------------- */
+.who-for {
+    padding: 3rem 0;
+    background-color: var(--bs-color-bg-light);
+}
+
+.who-for-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.who-for-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.who-for-block {
+    padding: 2.5rem;
+    /* Increased padding */
+    border-radius: 12px;
+    /* Soft rounding */
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    /* Subtle lift */
+    border-left: 6px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (hover: hover) {
+    .who-for-block:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        /* Interactive feedback */
+    }
+}
+
+/* Yes Block - Affirmative green theme */
+.who-for-yes {
+    border-left-color: #28a745;
+    background: linear-gradient(to right, rgba(40, 167, 69, 0.02), #fff 20%);
+}
+
+/* No Block - Cautionary red theme */
+.who-for-no {
+    border-left-color: #dc3545;
+    background: linear-gradient(to right, rgba(220, 53, 69, 0.02), #fff 20%);
+}
+
+.who-for-block h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.35rem;
+    color: var(--bs-color-primary-dark);
+}
+
+.who-for-list li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+    color: var(--bs-color-text-light);
+    background: #f8f9fa;
+    padding: 0.75rem 1rem 0.75rem 2rem;
+    border-radius: 6px;
+}
+
+/* Icon replacement with CSS checkmark/cross */
+.who-for-yes .who-for-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #28a745;
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+.who-for-no .who-for-list li::before {
+    content: "✕";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #dc3545;
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+@media (min-width: 768px) {
+    .who-for-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* -----------------------------------------------------------
+   SECTION 4: PROCESS OVERVIEW
+   ----------------------------------------------------------- */
+.process {
+    padding: 3rem 0;
+    background-color: var(--bs-color-bg-white);
+}
+
+.process-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 4rem auto;
+}
+
+.process-steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.process-step {
+    padding: 2.5rem 2rem;
+    /* Adjusted padding for stability */
+    border: 1px solid var(--bs-color-border);
+    border-radius: 12px;
+    background-color: #fff;
+    position: relative;
+    transition: all 0.3s ease;
+    height: 100%;
+    /* Ensure equal height grid behavior */
+}
+
+@media (hover: hover) {
+    .process-step:hover {
+        border-color: var(--bs-color-primary);
+        box-shadow: 0 4px 15px rgba(0, 86, 179, 0.1);
+    }
+}
+
+.process-step-header {
+    font-weight: 700;
+    color: var(--bs-color-primary);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.process-step-header::before {
+    content: attr(data-step);
+    background: var(--bs-color-primary);
+    color: #fff;
+    font-weight: 700;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+}
+
+
+/* Visual enhancement for step numbering (implicit in text in JSX, but we can style the text) */
+.process-step-body {
+    color: var(--bs-color-text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+@media (min-width: 992px) {
+    .process-steps {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* -----------------------------------------------------------
+   SECTION 5: TRANSPARENCY
+   ----------------------------------------------------------- */
+.transparency {
+    padding: 3rem 0;
+    background-color: #f8f9fa;
+    /* Slight contrast */
+    border-top: 1px solid var(--bs-color-border);
+    border-bottom: 1px solid var(--bs-color-border);
+}
+
+.transparency-content {
+    max-width: 750px;
+    /* Narrow reading width */
+    margin: 0 auto;
+    text-align: center;
+    /* Center initially */
+}
+
+.transparency-content h2 {
+    color: var(--bs-color-text-main);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.transparency-text {
+    text-align: left;
+    /* Text remains comfortable */
+    background: #fff;
+    padding: 3rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.transparency-text p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: #495057;
+    position: relative;
+    padding-left: 2rem;
+}
+
+.transparency-text p::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--bs-color-primary);
+    font-weight: bold;
+}
+
+.transparency-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* -----------------------------------------------------------
+   SECTION 6: SOCIAL PROOF
+   ----------------------------------------------------------- */
+.social-proof {
+    padding: 3rem 0;
+    background-color: var(--bs-color-bg-white);
+    text-align: center;
+}
+
+.social-proof-header {
+    max-width: 800px;
+    margin: 0 auto 3rem auto;
+}
+
+.social-proof-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+}
+
+.proof-item {
+    background: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    text-align: left;
+    transition: transform 0.2s;
+}
+
+.proof-item::before {
+    content: "👩";
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+@media (hover: hover) {
+    .proof-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+    }
+}
+
+.proof-item p {
+    font-style: normal;
+    /* Removed italic per modern clean look */
+    color: var(--bs-color-text-light);
+    line-height: 1.7;
+}
+
+.proof-item strong {
+    color: var(--bs-color-primary-dark);
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+@media (min-width: 768px) {
+    .social-proof-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+/* -----------------------------------------------------------
+   SECTION 7: AUTHORITY / MENTOR
+   ----------------------------------------------------------- */
+.authority {
+    padding: 3rem 0;
+    background-color: #f1f5f9;
+    /* Slate tint for trust */
+    overflow: hidden;
+}
+
+.authority-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: center;
+}
+
+.authority-visual {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    /* Circle profile */
+    background-color: #cbd5e1;
+    flex-shrink: 0;
+    position: relative;
+    border: 5px solid #fff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+    /* Placeholder for Mentor Image */
+    background-image: url('/public/images/home/mentor-profile.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.authority-content {
+    text-align: center;
+    max-width: 700px;
+}
+
+.authority-content h2 {
+    color: var(--bs-color-primary-dark);
+    margin-bottom: 1.5rem;
+}
+
+.authority-content p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+    .authority-inner {
+        flex-direction: row;
+        text-align: left;
+        gap: 5rem;
+    }
+
+    .authority-content {
+        text-align: left;
+    }
+}
+
+/* -----------------------------------------------------------
+   SECTION 8: BENEFITS
+   ----------------------------------------------------------- */
+.benefits {
+    padding: 3rem 0;
+    background-color: var(--bs-color-bg-white);
+}
+
+.benefits-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 4rem auto;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+}
+
+.benefit-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 8px;
+    background: #fff;
+    /* Clean, no border for cleaner grid look */
+}
+
+.benefit-item h3 {
+    font-size: 1.25rem;
+    color: var(--bs-color-primary);
+    font-weight: 600;
+}
+
+.benefit-item::before {
+    content: "⭐";
+    margin-right: 0.5rem;
+    color: var(--bs-color-accent);
+}
+
+.benefit-item p {
+    color: var(--bs-color-text-light);
+    line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+    .benefits-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
+
+/* -----------------------------------------------------------
+   SECTION 9: LOCAL TRUST
+   ----------------------------------------------------------- */
+.local-trust {
+    padding: 3rem 0;
+    background-color: #fff;
+    position: relative;
+    text-align: center;
+    border-top: 1px solid #f0f0f0;
+}
+
+.local-trust::before {
+    /* Abstract Map Placeholder Background */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #f8f9fa 0%, #fff 70%);
+    opacity: 0.5;
+    z-index: 0;
+    background-image: url('/public/images/home/delhi-map-abstract.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.local-trust-inner {
+    position: relative;
+    z-index: 1;
+    /* Above background */
+    max-width: 750px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.8);
+    /* Readability over map */
+    padding: 2rem;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+.local-trust-content h2 {
+    color: var(--bs-color-text-main);
+    margin-bottom: 1.5rem;
+}
+
+/* -----------------------------------------------------------
+   SECTION 10: FAQ
+   ----------------------------------------------------------- */
+.faq {
+    padding: 3rem 0;
+    background-color: #f8f9fa;
+}
+
+.faq-inner {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.faq-item {
+    border: 1px solid var(--bs-color-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+/* Active State Styling */
+.faq-item.active {
+    border-color: var(--bs-color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+@media (hover: hover) {
+    .faq-item:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        /* Gentle hover state */
+    }
+}
+
+.faq-item h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+    color: var(--bs-color-primary-dark);
+    font-weight: 600;
+}
+
+.faq-item p {
+    margin: 0;
+    color: var(--bs-color-text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* -----------------------------------------------------------
+   SECTION 11: FINAL CTA
+   ----------------------------------------------------------- */
+.final-cta {
+    padding: 5rem 0;
+    /* Distinct block height */
+    background-color: var(--bs-color-primary);
+    background: linear-gradient(135deg, var(--bs-color-primary) 0%, var(--bs-color-primary-dark) 100%);
+    color: #fff;
+    text-align: center;
+}
+
+.final-cta-content h2 {
+    color: #fff;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+}
+
+.final-cta-content p {
+    color: rgba(255, 255, 255, 0.95);
+    max-width: 600px;
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto 3rem auto;
+    line-height: 1.6;
+}
+
+.final-cta-action {
+    /* UX Fix 4: Button Alignment */
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.final-cta-action button {
+    /* Enhanced Button for CTA */
+    background-color: #fff !important;
+    color: var(--bs-color-primary) !important;
+    font-weight: 700;
+    padding: 1rem 3rem;
+    gap: 12px;
+    border: none;
+    border-radius: 50px;
+    /* Pill shape for "friendly" feel */
+    font-size: 1.125rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    /* Ensure pointer on desktop */
+}
+
+@media (hover: hover) {
+    .final-cta-action button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.final-cta-action a {
+    text-decoration: none;
+    display: inline-block;
+}
