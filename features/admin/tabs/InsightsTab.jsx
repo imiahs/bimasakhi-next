@@ -19,7 +19,7 @@ const InsightsTab = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.get(`/api/stats?range=${range}`);
+            const res = await axios.get(`/api/admin-data/stats?range=${range}`);
             setStats(res.data);
         } catch (err) {
             console.error("Stats Error", err);

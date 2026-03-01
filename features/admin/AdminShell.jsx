@@ -31,7 +31,7 @@ const AdminShell = () => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get('/api/admin-check');
+                const res = await axios.get('/api/admin/check');
                 if (res.data.authenticated) {
                     setIsAuthenticated(true);
                 }
@@ -47,7 +47,7 @@ const AdminShell = () => {
         if (!password) return;
         setStatus({ loading: true, msg: 'Logging in...' });
         try {
-            await axios.post('/api/admin-login', { password });
+            await axios.post('/api/admin/login', { password });
             setIsAuthenticated(true);
             setStatus({ loading: false, msg: '' });
         } catch (error) {
@@ -59,7 +59,7 @@ const AdminShell = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post('/api/admin-logout');
+            await axios.post('/api/admin/logout');
             setIsAuthenticated(false);
             setPassword('');
         } catch (error) {
@@ -86,7 +86,7 @@ const AdminShell = () => {
             // BUT for axios we might need withCredentials: true if cross-origin, 
             // but here it is same-origin so it should be fine.
             // However, just to be safe with axios defaults:
-            await axios.post('/api/config-save', formData);
+            await axios.post('/api/admin-data/config-save', formData);
 
             setStatus({ loading: false, msg: 'Saved Successfully!' });
             refreshConfig();

@@ -19,7 +19,7 @@ const DEFAULT_CONFIG = {
 const fetcher = url => axios.get(url).then(res => res.data);
 
 export const ConfigProvider = ({ children }) => {
-    const { data: config, error, mutate } = useSWR('/api/config-get', fetcher, {
+    const { data: config, error, mutate } = useSWR('/api/admin-data/config-get', fetcher, {
         fallbackData: DEFAULT_CONFIG,
         refreshInterval: 0,
         revalidateOnFocus: false

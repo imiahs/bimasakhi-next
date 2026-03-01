@@ -12,7 +12,7 @@ const LeadsTab = () => {
         const fetchLeads = async () => {
             setLoading(true);
             try {
-                const res = await axios.get('/api/leads-list');
+                const res = await axios.get('/api/admin-data/leads-list');
                 setLeads(res.data.leads || []);
             } catch (err) {
                 console.error(err);

@@ -1,10 +1,12 @@
+// api/crm/[action].js
+// Consolidated CRM handler: create-lead + create-contact
 import axios from 'axios';
 import { createClient } from '@supabase/supabase-js';
-import { redis } from './_middleware/auth.js';
-import { withLogger } from './_middleware/logger.js';
-import { getZohoAccessToken, getZohoApiDomain } from './_middleware/zoho.js';
+import { redis } from '../_middleware/auth.js';
+import { withLogger } from '../_middleware/logger.js';
+import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
 
-// --- FAIL-FAST ENV GUARD (per-request) ---
+// --- Shared Utilities ---
 function assertEnv(vars) {
     const missing = vars.filter(v => !process.env[v]);
     if (missing.length) {
@@ -12,15 +14,12 @@ function assertEnv(vars) {
     }
 }
 
-// --- PRODUCTION HARDENING (PHASE 2) ---
-
-// 1. Mobile Normalization (Standardized Logic)
 const normalizeMobile = (mobile = '') => {
     const cleaned = mobile.toString().replace(/\D/g, '');
     return cleaned.length >= 10 ? cleaned.slice(-10) : cleaned;
 };
 
-// 2. Safe Supabase Initialization
+// --- Safe Supabase Initialization ---
 let supabase = null;
 try {
     if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -34,7 +33,10 @@ try {
     console.error("Supabase Init Error:", e);
 }
 
-export default withLogger(async function handler(req, res) {
+// ============================================================
+// ACTION: create-lead
+// ============================================================
+async function handleCreateLead(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
@@ -49,10 +51,8 @@ export default withLogger(async function handler(req, res) {
         source, medium, campaign, visitedPages
     } = req.body;
 
-    // FIX 1: Normalize Mobile BEFORE Validation
+    // Normalize Mobile BEFORE Validation
     const normalizedMobile = normalizeMobile(mobile);
-
-    // FIX 5: Ensure No Double Normalization (We use normalizedMobile henceforth)
 
     if (!name || !normalizedMobile || !city || !occupation || !email || !pincode) {
         return res.status(400).json({ error: 'Missing required fields' });
@@ -130,7 +130,7 @@ export default withLogger(async function handler(req, res) {
                             source,
                             medium,
                             campaign,
-                            status: 'new' // FIX 4: Ensure valid enum default
+                            status: 'new'
                         })
                         .select()
                         .single();
@@ -156,7 +156,7 @@ export default withLogger(async function handler(req, res) {
                     }).catch(err => console.error("Event Log Error:", err));
 
                 } catch (insertError) {
-                    // FIX 3: HANDLE UNIQUE CONSTRAINT RACE CONDITION
+                    // HANDLE UNIQUE CONSTRAINT RACE CONDITION
                     if (insertError.code === '23505') { // Unique Violation
                         console.warn("Race Condition Detected: Duplicate Insert Attempt");
 
@@ -184,7 +184,7 @@ export default withLogger(async function handler(req, res) {
             }
 
         } catch (sbError) {
-            // FIX 6: ENSURE SAFE FALLBACK
+            // ENSURE SAFE FALLBACK
             console.error("Supabase Critical Failure (Falling back to Zoho-only):", sbError);
             // Verify state is clean for Zoho fallback
             isDuplicate = false;
@@ -204,12 +204,11 @@ export default withLogger(async function handler(req, res) {
         });
     }
 
-    // --- ZOHO CRM LOGIC (EXISTING) ---
+    // --- ZOHO CRM LOGIC ---
 
-    // FIX 2: Unleash strict payload (Remove Unknown Custom Fields)
     const leadData = {
         Last_Name: name,
-        Mobile: normalizedMobile, // Use normalized
+        Mobile: normalizedMobile,
         Email: email,
         City: city,
         State: state,
@@ -220,7 +219,6 @@ export default withLogger(async function handler(req, res) {
         Lead_Source: source || 'Website',
         Lead_Medium: medium || 'Direct',
         Campaign_Source: campaign || 'Bima Sakhi'
-        // REMOVED: Bima_Sakhi_Ref_ID (Unsafe custom field)
     };
 
     try {
@@ -241,32 +239,32 @@ export default withLogger(async function handler(req, res) {
             }
         });
 
-        // C. Handle CRM Response
+        // Handle CRM Response
         const result = crmResponse.data.data ? crmResponse.data.data[0] : null;
 
         if (result && (result.status === 'success' || result.status === 'duplicate')) {
             const zohoId = result.details.id;
             const action = result.action;
 
-            // --- UPDATE SUPABASE BACK-REF ---
+            // --- UPDATE SUPABASE BACK-REF (awaited before response) ---
             if (isSupabaseEnabled && supabaseLeadId && zohoId) {
-                // Fire and forget update
-                supabase.from('leads').update({
-                    zoho_lead_id: zohoId,
-                    status: 'contacted', // FIX 4: Use SAFE enum value (was 'synced')
-                    updated_at: new Date()
-                })
-                    .eq('id', supabaseLeadId)
-                    .then(() => {
-                        return supabase.from('lead_events').insert({
-                            lead_id: supabaseLeadId,
-                            event_type: 'zoho_synced',
-                            metadata: { zoho_id: zohoId, action: action }
-                        });
-                    })
-                    .catch(err => console.error("Back-ref Update Error:", err));
+                try {
+                    await supabase.from('leads').update({
+                        zoho_lead_id: zohoId,
+                        status: 'contacted',
+                        updated_at: new Date()
+                    }).eq('id', supabaseLeadId);
+
+                    await supabase.from('lead_events').insert({
+                        lead_id: supabaseLeadId,
+                        event_type: 'zoho_synced',
+                        metadata: { zoho_id: zohoId, action: action }
+                    });
+                } catch (err) {
+                    console.error("Back-ref Update Error:", err);
+                    // Non-fatal: lead was already synced to Zoho, just log the failure
+                }
             }
-            // ----------------------------------------
 
             return res.status(200).json({
                 success: true,
@@ -294,5 +292,215 @@ export default withLogger(async function handler(req, res) {
             success: false,
             error: "Internal Server Error"
         });
+    }
+}
+
+// ============================================================
+// ACTION: create-contact
+// ============================================================
+async function handleCreateContact(req, res) {
+    if (req.method !== "POST") {
+        return res.status(405).json({ success: false, error: "Method not allowed" });
+    }
+
+    // --- FAIL-FAST ENV GUARD ---
+    if (!process.env.REDIS_URL) {
+        console.error('create-contact: Missing REDIS_URL');
+        return res.status(500).json({ success: false, error: 'Server Configuration Error' });
+    }
+
+    try {
+
+        const {
+            name,
+            mobile,
+            email,
+            reason,
+            message,
+            source,
+            pipeline,
+            tag
+        } = req.body;
+
+        // 1. Basic Validation
+        if (!name || !mobile || !email || !reason || !message) {
+            return res.status(400).json({
+                success: false,
+                error: "All fields are required"
+            });
+        }
+
+        // 1.5. Normalize Mobile (match create-lead pattern)
+        const normalizedMobile = normalizeMobile(mobile);
+
+        // 2. Redis Idempotency Lock (5 min)
+        const idempotencyKey = `contact_submit:${normalizedMobile}`;
+        const locked = await redis.set(idempotencyKey, '1', 'NX', 'EX', 300);
+
+        if (!locked) {
+            return res.status(200).json({
+                success: true,
+                duplicate: true,
+                message: "Duplicate contact submission blocked"
+            });
+        }
+
+        // 3. Duplicate Check (Supabase)
+        if (!supabase) {
+            console.error('create-contact: Supabase not initialized — skipping DB operations');
+        }
+
+        if (supabase) {
+            const { data: existing } = await supabase
+                .from("contact_inquiries")
+                .select("*")
+                .or(`email.eq.${email},mobile.eq.${normalizedMobile}`)
+                .limit(1);
+
+            if (existing && existing.length > 0) {
+                return res.status(200).json({
+                    success: true,
+                    duplicate: true,
+                    contact_id: existing[0].contact_id
+                });
+            }
+        }
+
+        // 4. Generate Contact ID
+        const contactId = `CNT-${Date.now()}`;
+
+        // 5. Insert into Supabase
+        if (supabase) {
+            const { error: insertError } = await supabase
+                .from("contact_inquiries")
+                .insert([
+                    {
+                        contact_id: contactId,
+                        name,
+                        mobile: normalizedMobile,
+                        email,
+                        reason,
+                        message,
+                        source,
+                        pipeline,
+                        tag,
+                        created_at: new Date()
+                    }
+                ]);
+
+            if (insertError) {
+                console.error('create-contact: Supabase Insert Error', insertError);
+            }
+        }
+
+        // 6. Push to Zoho CRM (Refresh Token Flow)
+        const accessToken = await getZohoAccessToken();
+        const apiDomain = getZohoApiDomain();
+
+        const zohoResponse = await fetch(`${apiDomain}/crm/v2/Leads`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Zoho-oauthtoken ${accessToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                data: [
+                    {
+                        Last_Name: name,
+                        Email: email,
+                        Phone: normalizedMobile,
+                        Lead_Source: source || "Website",
+                        Description: message,
+                        Tag: tag || "Contact Inquiry",
+                        Lead_Status: "Contacted"
+                    }
+                ]
+            })
+        });
+
+        // Zoho Response Validation
+        if (!zohoResponse.ok) {
+            const zohoError = await zohoResponse.text().catch(() => 'Unknown');
+            console.error('create-contact: Zoho CRM Sync Failed', {
+                status: zohoResponse.status,
+                error: zohoError,
+                contact_id: contactId
+            });
+        } else {
+            const zohoData = await zohoResponse.json().catch(() => null);
+            console.info('create-contact: Zoho CRM Sync Success', {
+                contact_id: contactId,
+                zoho: zohoData
+            });
+        }
+
+        // 7. Email Auto-Responder (fire-and-forget — don't block user response)
+        fetch("https://api.zeptomail.in/v1.1/email", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Zoho-enczapikey ${process.env.ZEPTO_API_KEY}`
+            },
+            body: JSON.stringify({
+                from: {
+                    address: "info@bimasakhi.com",
+                    name: "Bima Sakhi Team"
+                },
+                to: [
+                    {
+                        email_address: {
+                            address: email,
+                            name: name
+                        }
+                    }
+                ],
+                subject: "We Have Received Your Inquiry",
+                htmlbody: `
+          <h3>Hello ${name},</h3>
+          <p>Thank you for contacting Bima Sakhi.</p>
+          <p>Your inquiry regarding <strong>${reason}</strong> has been received.</p>
+          <p>Our team will review and respond shortly.</p>
+          <br/>
+          <p>Regards,<br/>Team Bima Sakhi<br/>Empower Your True YOU</p>
+        `
+            })
+        }).catch(err => console.error('ZeptoMail Send Error:', err));
+
+        // 8. Return Response
+        return res.status(200).json({
+            success: true,
+            contact_id: contactId
+        });
+
+    } catch (error) {
+
+        // Release lock on failure to allow retry
+        const rawMobile = req.body?.mobile;
+        if (rawMobile) {
+            await redis.del(`contact_submit:${normalizeMobile(rawMobile)}`).catch(() => { });
+        }
+
+        console.error("Contact API Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            error: "Internal Server Error"
+        });
+    }
+}
+
+// ============================================================
+// ROUTER
+// ============================================================
+export default withLogger(async function handler(req, res) {
+    const { action } = req.query;
+
+    switch (action) {
+        case 'create-lead':
+            return handleCreateLead(req, res);
+        case 'create-contact':
+            return handleCreateContact(req, res);
+        default:
+            return res.status(404).json({ error: `Unknown CRM action: ${action}` });
     }
 });

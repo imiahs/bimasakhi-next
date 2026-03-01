@@ -1,17 +1,17 @@
-import Redis from 'ioredis';
+// api/lookup/[action].js
+// Consolidated Lookup handler: pincode-lookup + callback
 import axios from 'axios';
-import { withLogger } from './_middleware/logger.js';
-
-// Initialize Redis Client
-// We assume REDIS_URL is already present in Vercel env
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+import { redis } from '../_middleware/auth.js';
+import { withLogger } from '../_middleware/logger.js';
 
 // Logic for Delhi NCR Eligibility
-// We define "Delhi NCR" loosely as Delhi state + key NCR districts
 const DELHI_NCR_STATES = ['Delhi'];
 const DELHI_NCR_DISTRICTS = ['Gurugram', 'Gurgaon', 'Faridabad', 'Noida', 'Gautam Buddha Nagar', 'Ghaziabad'];
 
-export default withLogger(async function handler(req, res) {
+// ============================================================
+// ACTION: pincode
+// ============================================================
+async function handlePincodeLookup(req, res) {
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
@@ -35,7 +35,6 @@ export default withLogger(async function handler(req, res) {
         console.log(`Pincode Cache MISS: ${pincode}`);
 
         // 2. Fetch from India Post API
-        // Endpoint: https://api.postalpincode.in/pincode/{PINCODE}
         const apiResponse = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
         const data = apiResponse.data;
 
@@ -50,7 +49,6 @@ export default withLogger(async function handler(req, res) {
         }
 
         // 3. Extract Meaningful Data
-        // We usually take the first entry for City/State/District
         const firstEntry = postOffices[0];
 
         // Extract localities (all unique Names)
@@ -58,7 +56,7 @@ export default withLogger(async function handler(req, res) {
 
         const result = {
             pincode: pincode,
-            city: firstEntry.District, // Usually District maps better to City logic (e.g. New Delhi)
+            city: firstEntry.District,
             state: firstEntry.State,
             district: firstEntry.District,
             localities: localities,
@@ -81,5 +79,38 @@ export default withLogger(async function handler(req, res) {
     } catch (error) {
         console.error('Pincode Lookup Error:', error);
         return res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+// ============================================================
+// ACTION: callback (Zoho OAuth callback)
+// ============================================================
+async function handleCallback(req, res) {
+    const { code } = req.query;
+
+    if (!code) {
+        return res.status(400).json({ error: "Authorization code missing" });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: "Zoho authorization code received",
+        code
+    });
+}
+
+// ============================================================
+// ROUTER
+// ============================================================
+export default withLogger(async function handler(req, res) {
+    const { action } = req.query;
+
+    switch (action) {
+        case 'pincode':
+            return handlePincodeLookup(req, res);
+        case 'callback':
+            return handleCallback(req, res);
+        default:
+            return res.status(404).json({ error: `Unknown lookup action: ${action}` });
     }
 });

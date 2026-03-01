@@ -32,7 +32,7 @@ const ContactContent = () => {
         setStatus({ loading: true, error: null });
 
         try {
-            const response = await fetch("/api/create-contact", {
+            const response = await fetch("/api/crm/create-contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

@@ -239,7 +239,7 @@ const ApplyForm = () => {
         });
 
         try {
-            const response = await axios.get(`/api/pincode-lookup?pincode=${pincode}`);
+            const response = await axios.get(`/api/lookup/pincode?pincode=${pincode}`);
             const data = response.data;
 
             if (data.eligible) {
@@ -350,7 +350,7 @@ const ApplyForm = () => {
                 setTimeout(() => reject(new Error("Request timed out")), 15000)
             );
 
-            const apiCall = axios.post('/api/create-lead', payload);
+            const apiCall = axios.post('/api/crm/create-lead', payload);
 
             const response = await Promise.race([apiCall, timeoutPromise]);
             const data = response.data;
