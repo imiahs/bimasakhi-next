@@ -216,20 +216,27 @@ async function handleStats(req, res) {
 export default withLogger(async function handler(req, res) {
     const { action } = req.query;
 
-    switch (action) {
-        case 'config-get':
-            // Public — no auth wrapper
-            return handleConfigGet(req, res);
-        case 'config-save':
-            // Protected
-            return withAuth(handleConfigSave)(req, res);
-        case 'leads-list':
-            // Protected
-            return withAuth(handleLeadsList)(req, res);
-        case 'stats':
-            // Protected
-            return withAuth(handleStats)(req, res);
-        default:
-            return res.status(404).json({ error: `Unknown admin-data action: ${action}` });
+    try {
+        switch (action) {
+            case 'config-get':
+                // Public — no auth wrapper
+                return await handleConfigGet(req, res);
+            case 'config-save':
+                // Protected
+                return await withAuth(handleConfigSave)(req, res);
+            case 'leads-list':
+                // Protected
+                return await withAuth(handleLeadsList)(req, res);
+            case 'stats':
+                // Protected
+                return await withAuth(handleStats)(req, res);
+            default:
+                return res.status(404).json({ error: `Unknown admin-data action: ${action}` });
+        }
+    } catch (err) {
+        console.error("CONFIG-GET ERROR:", err);
+        return res.status(500).json({
+            error: err.message
+        });
     }
 });

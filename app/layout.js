@@ -35,17 +35,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* Google Tag Manager */}
+        {/* Google Tag Manager - TEMPORARILY DISABLED
         <Script id="gtm" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          {\`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
           j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-KC9VM5VQ');`}
+          })(window,document,'script','dataLayer','GTM-KC9VM5VQ');\`}
         </Script>
+        */}
       </head>
       <body>
-        {/* GTM noscript fallback */}
+        {/* GTM noscript fallback - TEMPORARILY DISABLED
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-KC9VM5VQ"
@@ -54,11 +55,12 @@ export default function RootLayout({ children }) {
             style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
+        */}
 
         <ConfigProvider>
           <UserProvider>
             <LanguageProvider>
-              <AnalyticsTracker />
+              {/* <AnalyticsTracker /> - TEMPORARILY DISABLED */}
               <div className="app-container">
                 <Navbar />
                 <main className="main-content">{children}</main>
