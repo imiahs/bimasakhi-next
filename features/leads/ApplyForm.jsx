@@ -82,6 +82,35 @@ const ApplyForm = () => {
 
         window.open(waUrl, "_blank");
     };
+
+    // Updated WhatsApp handler for duplicate / reconnect
+    const handleWhatsAppClick = () => {
+        const waUrl = getWhatsAppUrl({
+            ...formData,
+            source: userState.source || "website",
+            leadId: status.leadId || userState?.lastLeadData?.leadId,
+            intent: "Follow-up Request",           // Clear intent for duplicates
+            category: "Duplicate / Reconnect"
+        });
+
+        analytics.track('whatsapp_click', {
+            context: 'apply_success_cta',
+            leadId: status.leadId || userState?.lastLeadData?.leadId
+        });
+
+        // 🔥 GTM WHATSAPP EVENT
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: "whatsapp_continue_click",
+            lead_id: status?.leadId || userState?.lastLeadData?.leadId || "unknown",
+            source: userState?.source || "website",
+            medium: userState?.medium || "direct",
+            campaign: userState?.campaign || "bima_sakhi",
+            intent: "Follow-up Request"
+        });
+
+        window.open(waUrl, '_blank');
+    };
     // 1. Pause Logic
     // Used when applications are temporarily stopped (operational / compliance reasons)
     if (config.isAppPaused) {
@@ -419,34 +448,6 @@ const ApplyForm = () => {
                 });
             }
         }
-    };
-    // Updated WhatsApp handler for duplicate / reconnect
-    const handleWhatsAppClick = () => {
-        const waUrl = getWhatsAppUrl({
-            ...formData,
-            source: userState.source || "website",
-            leadId: status.leadId || userState?.lastLeadData?.leadId,
-            intent: "Follow-up Request",           // Clear intent for duplicates
-            category: "Duplicate / Reconnect"
-        });
-
-        analytics.track('whatsapp_click', {
-            context: 'apply_success_cta',
-            leadId: status.leadId || userState?.lastLeadData?.leadId
-        });
-
-        // 🔥 GTM WHATSAPP EVENT
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-            event: "whatsapp_continue_click",
-            lead_id: status?.leadId || userState?.lastLeadData?.leadId || "unknown",
-            source: userState?.source || "website",
-            medium: userState?.medium || "direct",
-            campaign: userState?.campaign || "bima_sakhi",
-            intent: "Follow-up Request"
-        });
-
-        window.open(waUrl, '_blank');
     };
 
     // --- Steps Rendering ---
