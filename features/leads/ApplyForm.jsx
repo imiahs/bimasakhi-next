@@ -62,6 +62,15 @@ const ApplyForm = () => {
 
     const [errors, setErrors] = useState({}); // 🔥 For error management
 
+    // SAFEGUARD: Track mounted state to prevent memory leaks
+    // ⚠️ MUST be before any early returns to obey React Hook rules
+    const isMounted = useRef(true);
+
+    useEffect(() => {
+        isMounted.current = true;
+        return () => { isMounted.current = false; };
+    }, []);
+
     // 🔥 WhatsApp handler for paused state (no form submission required)
     const handlePausedWhatsAppClick = () => {
         const waUrl = getWhatsAppUrl({
@@ -344,13 +353,7 @@ const ApplyForm = () => {
         setStep(prev => prev - 1);
     };
 
-    // SAFEGUARD: Track mounted state to prevent memory leaks
-    const isMounted = useRef(true);
 
-    useEffect(() => {
-        isMounted.current = true;
-        return () => { isMounted.current = false; };
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
