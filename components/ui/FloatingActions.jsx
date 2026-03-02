@@ -2,9 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import FloatingApply from './FloatingApply';
+import dynamic from 'next/dynamic';
 import FloatingWhatsApp from './FloatingWhatsApp';
 import '../../styles/FloatingActions.css';
+
+// Build-time fix: Disable SSR for FloatingApply to prevent "E is not defined" ReferenceErrors
+// caused by `useSearchParams` in a global layout component.
+const FloatingApply = dynamic(() => import('./FloatingApply'), { ssr: false });
 
 const FloatingActions = () => {
 
