@@ -105,11 +105,12 @@ async function handleCreateLead(req, res) {
                 existingLeadData = existingLead;
 
                 // Log Duplicate Event
-                await supabase.from('lead_events').insert({
+                const { error: auditLogErr } = await supabase.from('lead_events').insert({
                     lead_id: existingLead.id,
                     event_type: 'duplicate_detected',
                     metadata: { attempt_source: source }
-                }).catch(err => console.error("Audit Log Error:", err));
+                });
+                if (auditLogErr) console.error("Audit Log Error:", auditLogErr);
             }
 
             // B. Insert New Lead (If Not Duplicate)
@@ -140,20 +141,22 @@ async function handleCreateLead(req, res) {
                     supabaseLeadId = newLead.id;
 
                     // Log Metadata
-                    await supabase.from('lead_metadata').insert({
+                    const { error: metaLogErr } = await supabase.from('lead_metadata').insert({
                         lead_id: newLead.id,
                         utm_source: source,
                         utm_medium: medium,
                         utm_campaign: campaign,
                         visited_pages: visitedPages,
                         user_agent: req.headers['user-agent']
-                    }).catch(err => console.error("Meta Log Error:", err));
+                    });
+                    if (metaLogErr) console.error("Meta Log Error:", metaLogErr);
 
                     // Log Creation Event
-                    await supabase.from('lead_events').insert({
+                    const { error: eventLogErr } = await supabase.from('lead_events').insert({
                         lead_id: newLead.id,
                         event_type: 'created'
-                    }).catch(err => console.error("Event Log Error:", err));
+                    });
+                    if (eventLogErr) console.error("Event Log Error:", eventLogErr);
 
                 } catch (insertError) {
                     // HANDLE UNIQUE CONSTRAINT RACE CONDITION
@@ -171,10 +174,11 @@ async function handleCreateLead(req, res) {
                             isDuplicate = true;
                             existingLeadData = raceLead;
 
-                            await supabase.from('lead_events').insert({
+                            const { error: raceLogErr } = await supabase.from('lead_events').insert({
                                 lead_id: raceLead.id,
                                 event_type: 'duplicate_race_condition'
-                            }).catch(e => console.error(e));
+                            });
+                            if (raceLogErr) console.error("Race Condition Log Error:", raceLogErr);
                         }
                     } else {
                         // Real Error -> Re-throw to fall back to Zoho
@@ -248,22 +252,21 @@ async function handleCreateLead(req, res) {
 
             // --- UPDATE SUPABASE BACK-REF (awaited before response) ---
             if (isSupabaseEnabled && supabaseLeadId && zohoId) {
-                try {
-                    await supabase.from('leads').update({
-                        zoho_lead_id: zohoId,
-                        status: 'contacted',
-                        updated_at: new Date()
-                    }).eq('id', supabaseLeadId);
+                const { error: updateErr } = await supabase.from('leads').update({
+                    zoho_lead_id: zohoId,
+                    status: 'contacted',
+                    updated_at: new Date()
+                }).eq('id', supabaseLeadId);
 
-                    await supabase.from('lead_events').insert({
-                        lead_id: supabaseLeadId,
-                        event_type: 'zoho_synced',
-                        metadata: { zoho_id: zohoId, action: action }
-                    });
-                } catch (err) {
-                    console.error("Back-ref Update Error:", err);
-                    // Non-fatal: lead was already synced to Zoho, just log the failure
-                }
+                if (updateErr) console.error("Back-ref Update Error:", updateErr);
+
+                const { error: syncEventErr } = await supabase.from('lead_events').insert({
+                    lead_id: supabaseLeadId,
+                    event_type: 'zoho_synced',
+                    metadata: { zoho_id: zohoId, action: action }
+                });
+
+                if (syncEventErr) console.error("Sync Event Log Error:", syncEventErr);
             }
 
             return res.status(200).json({

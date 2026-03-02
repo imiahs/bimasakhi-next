@@ -1,14 +1,12 @@
 'use client';
 
-import { useContext } from 'react';
+import { useContext, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { LanguageContext } from '../../context/LanguageContext';
 import "../../styles/FloatingActions.css";
 
-
-const FloatingApply = () => {
-
+const FloatingApplyContent = () => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const { language } = useContext(LanguageContext);
@@ -24,13 +22,15 @@ const FloatingApply = () => {
 
         const source = getSource();
 
-        // Google Tag Manager Event
+        // Google Tag Manager Event (Temporarily Disabled for debugging)
+        /*
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
             event: "apply_click",
             source: source,
             location: "floating_button"
         });
+        */
 
         // Ensure user lands at top of page
         window.scrollTo(0, 0);
@@ -51,6 +51,14 @@ const FloatingApply = () => {
         >
             📝 {text}
         </Link>
+    );
+};
+
+const FloatingApply = () => {
+    return (
+        <Suspense fallback={<div className="floating-pill apply-pill attention-pulse">📝 Apply Now</div>}>
+            <FloatingApplyContent />
+        </Suspense>
     );
 };
 
