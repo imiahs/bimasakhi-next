@@ -16,6 +16,7 @@ import '@/styles/LeadForm.css';
 const ApplyForm = () => {
     const { userState, markSubmitted } = useContext(UserContext); // 🔥 For user state management
     const { config } = useContext(ConfigContext); // 🔥 For config management
+    const { language } = useContext(LanguageContext); // 🔥 MOVED FROM renderStep1 TO OBEY HOOK RULES
     const router = useRouter();
     // Steps: 
     // 1: Identity
@@ -451,7 +452,7 @@ const ApplyForm = () => {
     // --- Steps Rendering ---
 
     const renderStep1 = () => {
-        const { language } = useContext(LanguageContext);
+        // language context is now passed from parent scope to obey hook rules
 
         const texts = {
             en: {

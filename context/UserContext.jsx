@@ -13,13 +13,24 @@ const DEFAULT_USER_STATE = {
 };
 
 export const UserProvider = ({ children }) => {
-    const [userState, setUserState] = useState(() => {
-        return getStorage(STORAGE_KEYS.USER, DEFAULT_USER_STATE);
-    });
+    const [userState, setUserState] = useState(DEFAULT_USER_STATE);
+    const [isMounted, setIsMounted] = useState(false);
 
+    // Initial Load - runs only on client
     useEffect(() => {
-        setStorage(STORAGE_KEYS.USER, userState);
-    }, [userState]);
+        setIsMounted(true);
+        const stored = getStorage(STORAGE_KEYS.USER, DEFAULT_USER_STATE);
+        if (stored) {
+            setUserState(stored);
+        }
+    }, []);
+
+    // Save to storage on change
+    useEffect(() => {
+        if (isMounted) {
+            setStorage(STORAGE_KEYS.USER, userState);
+        }
+    }, [userState, isMounted]);
 
     const markPageVisited = (pageName) => {
         setUserState((prev) => {
