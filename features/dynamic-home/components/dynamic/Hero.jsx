@@ -9,7 +9,8 @@ const Hero = ({
     customTitle,
     customSubtitle,
     customTrust,
-    primaryCTA
+    primaryCTA,
+    onApplyClick
 }) => {
 
     const { language } = useContext(LanguageContext);
@@ -33,13 +34,16 @@ const Hero = ({
     const t = content[language] || content.en;
 
     const handleApplyClick = () => {
-        if (isAdsMode) {
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-                event: "ads_hero_apply_click"
-            });
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: isAdsMode ? "ads_hero_apply_click" : "hero_apply_click"
+        });
 
-            router.push('/apply?source=google_ads');
+        // Use passed callback if available, otherwise navigate directly
+        if (onApplyClick) {
+            onApplyClick();
+        } else {
+            router.push(isAdsMode ? '/apply?source=google_ads' : '/apply');
         }
     };
 

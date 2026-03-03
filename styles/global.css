@@ -480,6 +480,16 @@ p {
     padding-top: 15px;
 }
 
+.visitor-counter {
+    font-size: 0.8rem;
+    color: #999;
+    margin-bottom: 8px;
+}
+
+.visitor-counter strong {
+    color: #4CAF50;
+}
+
 /*===========================
 This ensures footer stays at bottom.
 ===========================*/

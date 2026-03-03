@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import VisitorCounter from '../ui/VisitorCounter';
 
 const Footer = () => {
     return (
@@ -47,6 +48,7 @@ const Footer = () => {
             </div>
 
             <div className="footer-bottom">
+                <VisitorCounter />
                 © {new Date().getFullYear()} Bima Sakhi. All Rights Reserved.
             </div>
         </footer>

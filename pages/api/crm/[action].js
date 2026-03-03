@@ -19,6 +19,27 @@ const normalizeMobile = (mobile = '') => {
     return cleaned.length >= 10 ? cleaned.slice(-10) : cleaned;
 };
 
+// Generate user-friendly Reference ID: BS-TU/YYYYMMDD/XXXX
+async function generateRefId() {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}${mm}${dd}`;
+
+    // Atomic daily counter via Redis
+    const counterKey = `ref_id_counter:${dateStr}`;
+    const serial = await redis.incr(counterKey);
+
+    // Auto-expire counter key after 48 hours
+    if (serial === 1) {
+        await redis.expire(counterKey, 172800);
+    }
+
+    const serialStr = String(serial).padStart(4, '0');
+    return `BS-TU/${dateStr}/${serialStr}`;
+}
+
 // --- Safe Supabase Initialization ---
 let supabase = null;
 try {
@@ -88,13 +109,14 @@ async function handleCreateLead(req, res) {
     let isDuplicate = false;
     let supabaseLeadId = null;
     let existingLeadData = null;
+    let refId = null;
 
     if (isSupabaseEnabled) {
         try {
             // A. Check for Duplicate (Optimistic Check)
             const { data: existingLead, error: checkError } = await supabase
                 .from('leads')
-                .select('id, city, created_at, zoho_lead_id, full_name')
+                .select('id, city, created_at, zoho_lead_id, full_name, ref_id')
                 .eq('mobile', normalizedMobile)
                 .maybeSingle();
 
@@ -139,6 +161,15 @@ async function handleCreateLead(req, res) {
                     if (insertError) throw insertError;
 
                     supabaseLeadId = newLead.id;
+
+                    // Generate user-friendly Reference ID
+                    refId = await generateRefId();
+
+                    // Store refId in leads table
+                    const { error: refIdErr } = await supabase.from('leads').update({
+                        ref_id: refId
+                    }).eq('id', supabaseLeadId);
+                    if (refIdErr) console.error("RefId Update Error:", refIdErr);
 
                     // Log Metadata
                     const { error: metaLogErr } = await supabase.from('lead_metadata').insert({
@@ -202,7 +233,7 @@ async function handleCreateLead(req, res) {
         return res.status(200).json({
             success: true,
             duplicate: true,
-            lead_id: existingLeadData.id,
+            lead_id: existingLeadData.ref_id || existingLeadData.id,
             data: existingLeadData,
             message: "Welcome back! We already have your application."
         });
@@ -272,7 +303,7 @@ async function handleCreateLead(req, res) {
             return res.status(200).json({
                 success: true,
                 message: "Lead processed successfully",
-                lead_id: supabaseLeadId || zohoId,
+                lead_id: refId || supabaseLeadId || zohoId,
                 zoho_id: zohoId,
                 status: result.status,
                 action: action,
