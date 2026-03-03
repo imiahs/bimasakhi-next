@@ -14,7 +14,7 @@ import UrgencyTicker from '@/features/ads-landing/components/UrgencyTicker';
 import EmotionalSection from '@/features/ads-landing/components/EmotionalSection';
 import SocialProofSection from '@/features/ads-landing/components/SocialProofSection';
 import FinalCTASection from '@/features/ads-landing/components/FinalCTASection';
-import IncomeJourneySection from '@/features/ads-landing/components/IncomeJourneySection';
+//import IncomeJourneySection from '@/features/ads-landing/components/IncomeJourneySection';
 import PerformanceTierSection from '@/features/ads-landing/components/PerformanceTierSection';
 import EligibilityHighlightSection from '@/features/ads-landing/components/EligibilityHighlightSection';
 import TrustMicroSection from '@/features/ads-landing/components/TrustMicroSection';
@@ -112,7 +112,7 @@ const AdsLandingContent = () => {
             />
             <QuickInfoStrip />
             <EmotionalSection />
-            <IncomeJourneySection />
+            {/* <IncomeJourneySection /> */}
             <PerformanceTierSection />
             <EligibilityHighlightSection />
             <TrustMicroSection />
