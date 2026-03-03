@@ -47,9 +47,11 @@
     fill: none;
     stroke: var(--color-primary);
     stroke-width: 3;
-    stroke-dasharray: 600;
-    stroke-dashoffset: 600;
-    animation: drawCurve 1.8s ease forwards;
+    stroke-dasharray: 1000;
+    /* Increased for smoother animation on this short path */
+    stroke-dashoffset: 1000;
+    animation: drawCurve 2.5s ease forwards;
+    /* Slightly slower for better feel */
 }
 
 @keyframes drawCurve {
@@ -76,6 +78,7 @@
     border: 1px solid var(--border-color);
     min-width: 150px;
     font-weight: 600;
+    text-align: center;
 }
 
 /* Highlight Box */
@@ -101,13 +104,14 @@
     cursor: pointer;
     margin-top: 1rem;
     font-weight: 600;
-    transition: 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 @media (hover: hover) {
     .commission-btn:hover {
         background: var(--color-primary-hover);
         transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 }
 
@@ -120,6 +124,8 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    cursor: pointer;
+    /* Added: indicates clickable backdrop */
 }
 
 /* Modal Box */
@@ -130,17 +136,28 @@
     max-width: 420px;
     width: 90%;
     text-align: left;
+    cursor: default;
+    /* Added: normal cursor inside content */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    /* Added subtle shadow for depth */
 }
 
-/* Modal Button */
+/* Modal Button (close) */
 .modal-box button {
-    margin-top: 1rem;
-    padding: 0.6rem 1.5rem;
+    margin-top: 1.5rem;
+    padding: 0.7rem 1.8rem;
     border: none;
     background: var(--color-primary);
     color: var(--color-white);
     border-radius: 30px;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.modal-box button:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-1px);
 }
 
 /* Disclaimer */
@@ -148,4 +165,15 @@
     margin-top: 1.5rem;
     font-size: 0.8rem;
     color: var(--color-text-light);
+}
+
+/* Mobile adjustments for better readability */
+@media (max-width: 640px) {
+    .modal-box {
+        padding: 1.5rem;
+    }
+
+    .income-section {
+        padding: 3rem 1rem;
+    }
 }

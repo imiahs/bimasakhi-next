@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useEffect, useState, useRef, useContext } from "react";
+import { usePathname } from 'next/navigation';  // Added for route change detection
+
 import { LanguageContext } from "../../../context/LanguageContext";
 import "./IncomeJourneySection.css";
 
 const IncomeJourneySection = () => {
-
     const { language } = useContext(LanguageContext);
+    const pathname = usePathname();  // Tracks current URL path
 
     /* ============================
        1️⃣ Animated Counter Hook
@@ -63,6 +65,42 @@ const IncomeJourneySection = () => {
     ============================ */
     const [showModal, setShowModal] = useState(false);
 
+    // Auto-close modal on route/page change (fixes persistence across navigation)
+    useEffect(() => {
+        setShowModal(false);
+    }, [pathname]);
+
+    // Body scroll lock: prevent scrolling behind modal
+    useEffect(() => {
+        if (showModal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        // Cleanup on unmount or when modal closes
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [showModal]);
+
+    // Escape key to close modal
+    useEffect(() => {
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') {
+                setShowModal(false);
+            }
+        };
+
+        if (showModal) {
+            window.addEventListener('keydown', handleEsc);
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleEsc);
+        };
+    }, [showModal]);
+
     const content = {
         en: {
             title: "Your Income Growth Journey",
@@ -82,11 +120,16 @@ const IncomeJourneySection = () => {
 
     const t = content[language] || content.en;
 
+    // Helper to close only on backdrop click (not inside modal)
+    const handleBackdropClick = (e) => {
+        if (e.target === e.currentTarget) {
+            setShowModal(false);
+        }
+    };
+
     return (
         <section ref={sectionRef} className="income-section fade-in-section">
-
             <div className="income-container">
-
                 <h2>{t.title}</h2>
                 <p className="income-subtitle">{t.subtitle}</p>
 
@@ -139,14 +182,19 @@ const IncomeJourneySection = () => {
                 </button>
 
                 <div className="income-disclaimer">{t.disclaimer}</div>
-
             </div>
 
-            {/* Commission Modal */}
+            {/* Commission Modal – with backdrop click, ARIA */}
             {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-box">
-                        <h3>{t.modalTitle}</h3>
+                <div
+                    className="modal-overlay"
+                    onClick={handleBackdropClick}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="modal-title"
+                >
+                    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                        <h3 id="modal-title">{t.modalTitle}</h3>
                         <ul>
                             <li>✔ First year commission on policy sales</li>
                             <li>✔ Renewal commission every year</li>
@@ -157,7 +205,6 @@ const IncomeJourneySection = () => {
                     </div>
                 </div>
             )}
-
         </section>
     );
 };
