@@ -18,7 +18,7 @@ import FinalCTASection from '@/features/ads-landing/components/FinalCTASection';
 import PerformanceTierSection from '@/features/ads-landing/components/PerformanceTierSection';
 import EligibilityHighlightSection from '@/features/ads-landing/components/EligibilityHighlightSection';
 import TrustMicroSection from '@/features/ads-landing/components/TrustMicroSection';
-import PrestigeClubsSection from '@/features/ads-landing/components/PrestigeClubsSection';
+//import PrestigeClubsSection from '@/features/ads-landing/components/PrestigeClubsSection';
 import '@/styles/AdsLanding.css';
 
 const AdsLandingContent = () => {
@@ -116,7 +116,7 @@ const AdsLandingContent = () => {
             <PerformanceTierSection />
             <EligibilityHighlightSection />
             <TrustMicroSection />
-            <PrestigeClubsSection />
+            {/*<PrestigeClubsSection />*/}
             <SocialProofSection />
             <Testimonials />
             <FinalCTASection onApplyClick={handleApplyClick} />
