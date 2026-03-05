@@ -7,7 +7,8 @@ import Footer from '@/components/layout/Footer';
 import FloatingActions from '@/components/ui/FloatingActions';
 import LanguageToggle from '@/components/ui/LanguageToggle';
 import AnalyticsTracker from '@/components/core/AnalyticsTracker';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import '@/styles/reset.css';
 import '@/styles/variables.css';
