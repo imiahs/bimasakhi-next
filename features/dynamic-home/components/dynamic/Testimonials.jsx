@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useMemo } from 'react';
 import { LanguageContext } from '../../../../context/LanguageContext';
 import './Testimonials.css';
 
@@ -81,14 +81,14 @@ const Testimonials = () => {
         }
     };
 
-    const t = data[language];
+    const t = useMemo(() => data[language], [language]);
 
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentIndex(prev => (prev + 1) % t.items.length);
         }, 5000);
         return () => clearInterval(interval);
-    }, [language, t.items.length]);
+    }, [t]);
 
     const item = t.items[currentIndex];
 

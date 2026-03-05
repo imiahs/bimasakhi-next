@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useMemo } from 'react';
 import { LanguageContext } from '../../../context/LanguageContext';
 import '../../../styles/AdsLanding.css';
 
@@ -19,7 +19,7 @@ const UrgencyTicker = () => {
         ]
     };
 
-    const currentMessages = messages[language] || messages.en;
+    const currentMessages = useMemo(() => messages[language] || messages.en, [language]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -27,7 +27,7 @@ const UrgencyTicker = () => {
         }, 4000);
 
         return () => clearInterval(interval);
-    }, [currentMessages.length]);
+    }, [currentMessages]);
 
     return (
         <div className="ads-urgency-wrapper">

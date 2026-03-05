@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import { getStorage, setStorage, STORAGE_KEYS } from '@/utils/storage';
 
 export const UserContext = createContext();
@@ -39,18 +39,18 @@ export const UserProvider = ({ children }) => {
         });
     };
 
-    const setSource = (source) => {
+    const setSource = useCallback((source) => {
         setUserState((prev) => ({ ...prev, source }));
-    };
+    }, []);
 
-    const markSubmitted = (city, leadData = {}) => {
+    const markSubmitted = useCallback((city, leadData = {}) => {
         setUserState((prev) => ({
             ...prev,
             hasSubmitted: true,
             city,
             lastLeadData: leadData
         }));
-    };
+    }, []);
 
     return (
         <UserContext.Provider value={{ userState, markPageVisited, setSource, markSubmitted }}>
