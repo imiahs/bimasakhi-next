@@ -489,7 +489,7 @@
     background-color: #f0f2f5;
 
     /* Image Strategy: */
-    background-image: url('/public/images/home/about-intro.jpg');
+    background-image: url('/images/home/about-intro.jpg');
     background-size: cover;
     background-position: center;
 
@@ -866,7 +866,7 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 
     /* Placeholder for Mentor Image */
-    background-image: url('/public/images/home/mentor-profile.jpg');
+    background-image: url('/images/home/mentor-profile.jpg');
     background-size: cover;
     background-position: center;
 }
@@ -973,7 +973,7 @@
     background: radial-gradient(circle at center, #f8f9fa 0%, #fff 70%);
     opacity: 0.5;
     z-index: 0;
-    background-image: url('/public/images/home/delhi-map-abstract.jpg');
+    background-image: url('/images/home/delhi-map-abstract.jpg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

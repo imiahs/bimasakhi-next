@@ -8,7 +8,7 @@ const ContactContent = () => {
 
     const [formData, setFormData] = useState({
         name: "",
-        phone: "",
+        mobile: "",
         email: "",
         reason: "",
         message: ""
@@ -90,7 +90,7 @@ const ContactContent = () => {
             <section className="contact-form-section">
                 <form onSubmit={handleSubmit} className="contact-form">
                     <input type="text" name="name" placeholder="Your Full Name" required value={formData.name} onChange={handleChange} />
-                    <input type="phone" name="phone" placeholder="Your Mobile Number" required value={formData.phone} onChange={handleChange} />
+                    <input type="tel" name="mobile" placeholder="Your Mobile Number" required value={formData.mobile} onChange={handleChange} />
                     <input type="email" name="email" placeholder="Your Email Address" required value={formData.email} onChange={handleChange} />
 
                     <select name="reason" required value={formData.reason} onChange={handleChange}>
