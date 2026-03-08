@@ -208,9 +208,13 @@ const ResourcesIndex = () => {
                                     <input
                                         type="tel"
                                         required
-                                        pattern="[6-9][0-9]{9}"
+                                        pattern="^[6-9][0-9]{9}$"
+                                        maxLength="10"
                                         value={formData.mobile}
-                                        onChange={e => setFormData({ ...formData, mobile: e.target.value })}
+                                        onChange={e => {
+                                            const numericVal = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                            setFormData({ ...formData, mobile: numericVal });
+                                        }}
                                         placeholder="Enter your mobile"
                                     />
                                 </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useContext } from 'react';
+import Image from 'next/image';
 import { LanguageContext } from '../../../context/LanguageContext';
 import './EmotionalSection.css';
 
@@ -66,9 +67,12 @@ const EmotionalSection = () => {
 
                 {/* RIGHT VISUAL */}
                 <div className="ads-emotional-visual">
-                    <img
+                    <Image
                         src="/images/home/mentor-profile.jpg"
                         alt="Successful LIC Agent"
+                        width={500}
+                        height={500}
+                        style={{ width: '100%', height: 'auto', borderRadius: 'var(--border-radius-lg)', objectFit: 'cover' }}
                     />
                 </div>
 

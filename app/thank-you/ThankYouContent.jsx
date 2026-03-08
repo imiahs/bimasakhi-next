@@ -108,6 +108,24 @@ function ThankYouInner() {
                 >
                     Confirm & Continue on WhatsApp
                 </a>
+
+                {/* Return to Homepage CTA */}
+                <div style={{ marginTop: "24px", textAlign: "center" }}>
+                    <Link href="/" className="btn-secondary" style={{
+                        display: "inline-block",
+                        padding: "12px 24px",
+                        borderRadius: "8px",
+                        textDecoration: "none",
+                        fontWeight: "600",
+                        fontSize: "0.95em",
+                        color: "#4a5568",
+                        backgroundColor: "#e2e8f0",
+                        border: "1px solid #cbd5e1",
+                        transition: "background 0.2s"
+                    }}>
+                        ← Return to Homepage
+                    </Link>
+                </div>
             </section>
 
             {/* WHAT HAPPENS NEXT */}

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useContext, useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { LanguageContext } from '../../../../context/LanguageContext';
 import './Testimonials.css';
 
@@ -101,10 +102,13 @@ const Testimonials = () => {
                 <div className="testimonial-card">
 
                     <div className="testimonial-image-wrapper">
-                        <img
+                        <Image
                             src={item.image}
                             alt={item.name}
                             className="testimonial-image"
+                            width={80}
+                            height={80}
+                            style={{ objectFit: 'cover' }}
                         />
                         {item.verified && (
                             <span className="verified-badge">

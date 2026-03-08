@@ -2,6 +2,7 @@
 
 import { useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { LanguageContext } from '../../../../context/LanguageContext';
 import './Hero.css';
 const Hero = ({
@@ -78,9 +79,13 @@ const Hero = ({
 
                 {/* IMAGE BLOCK */}
                 <div className="ads-hero-img">
-                    <img
+                    <Image
                         src="/Bima_Sakhi_Ai.png"
                         alt="Confident LIC Agent"
+                        width={500}
+                        height={600}
+                        priority
+                        style={{ width: '100%', height: 'auto' }}
                     />
                 </div>
 

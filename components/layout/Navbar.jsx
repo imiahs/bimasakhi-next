@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const Navbar = () => {
@@ -29,7 +30,7 @@ const Navbar = () => {
 
                 {/* Logo */}
                 <Link href="/" className="brand-logo" onClick={closeMenu}>
-                    <img src="/images/home/logo.png" alt="Bima Sakhi Logo" />
+                    <Image src="/images/home/logo.png" alt="Bima Sakhi Logo" width={200} height={50} priority style={{ width: 'auto', height: 'auto', maxHeight: '50px' }} />
                     <div className="brand-text">
                         <span className="brand-name">Bima Sakhi</span>
                         <span className="brand-tagline">
