@@ -1,0 +1,56 @@
+.admin-pages-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.pages-list {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.page-item {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-item:last-child {
+    border-bottom: none;
+}
+
+.page-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    color: #0f172a;
+}
+
+.page-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.page-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-builder {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-builder:hover {
+    background-color: #2563eb;
+}

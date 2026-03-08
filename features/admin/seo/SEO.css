@@ -1,0 +1,65 @@
+.admin-seo-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.seo-routes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.seo-route-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.seo-route-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.route-path {
+    font-family: monospace;
+    background: #f1f5f9;
+    padding: 4px 12px;
+    border-radius: 6px;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.seo-snippet-preview {
+    margin-top: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+}
+
+.seo-preview-url {
+    color: #16a34a;
+    font-size: 0.85rem;
+    font-family: monospace;
+}
+
+.seo-preview-title {
+    color: #2563eb;
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 4px 0;
+}
+
+.seo-preview-desc {
+    color: #475569;
+    font-size: 0.9rem;
+    margin: 0;
+}

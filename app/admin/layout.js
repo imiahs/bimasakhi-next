@@ -1,11 +1,10 @@
+import AdminLayout from '@/components/admin/AdminLayout';
+
 export const metadata = {
-    robots: {
-        index: false,
-        follow: false,
-    },
-    title: 'Admin Panel | Bima Sakhi',
+    title: 'Admin Dashboard | Bima Sakhi',
+    robots: { index: false, follow: false },
 };
 
-export default function AdminLayout({ children }) {
-    return children;
+export default function Layout({ children }) {
+    return <AdminLayout>{children}</AdminLayout>;
 }

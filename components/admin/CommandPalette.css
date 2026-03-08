@@ -1,0 +1,147 @@
+.command-palette-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+}
+
+.command-palette-modal {
+    background: #ffffff;
+    width: 100%;
+    max-width: 650px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.command-search-bar {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+    gap: 12px;
+}
+
+.search-icon {
+    font-size: 1.25rem;
+}
+
+.command-search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+    color: #0f172a;
+    background: transparent;
+}
+
+.command-search-bar input::placeholder {
+    color: #94a3b8;
+}
+
+.esc-key {
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #cbd5e1;
+}
+
+.command-results-area {
+    padding: 24px;
+    min-height: 200px;
+    background: #fafafa;
+}
+
+.actions-title {
+    margin: 0 0 12px 0;
+    font-size: 0.85rem;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.quick-actions-grid ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.quick-actions-grid li {
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.quick-actions-grid li:hover {
+    background: #f1f5f9;
+    color: #2563eb;
+}
+
+.ai-response-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.ai-title {
+    color: #1d4ed8;
+    margin: 0 0 8px 0;
+}
+
+.ai-text {
+    color: #3b82f6;
+    margin: 0 0 16px 0;
+}
+
+.ai-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.ai-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.ai-btn.primary {
+    background: #2563eb;
+    color: white;
+}
+
+.ai-btn.secondary {
+    background: white;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
