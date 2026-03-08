@@ -1,16 +1,28 @@
 import BlogArticle from './BlogArticle';
-import { blogPosts } from '@/data/blogPosts';
+import { getServiceSupabase } from '@/utils/supabase';
 import Script from 'next/script';
 
-export function generateStaticParams() {
-    return blogPosts.map((post) => ({
+// Revalidate cache every hour (ISR)
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+    const supabase = getServiceSupabase();
+    const { data: posts } = await supabase.from('blog_posts').select('slug').eq('status', 'published');
+
+    return (posts || []).map((post) => ({
         slug: post.slug,
     }));
 }
 
 export async function generateMetadata({ params }) {
     const resolvedParams = await params;
-    const post = blogPosts.find((p) => p.slug === resolvedParams.slug);
+    const supabase = getServiceSupabase();
+    const { data: post } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('slug', resolvedParams.slug)
+        .eq('status', 'published')
+        .single();
 
     if (!post) {
         return {
@@ -19,51 +31,69 @@ export async function generateMetadata({ params }) {
     }
 
     return {
-        title: `${post.title} | Bima Sakhi`,
-        description: post.description,
+        title: `${post.meta_title || post.title} | Bima Sakhi`,
+        description: post.meta_description,
         alternates: {
             canonical: `https://bimasakhi.com/blog/${post.slug}`,
         },
         openGraph: {
-            title: post.title,
-            description: post.description,
+            title: post.meta_title || post.title,
+            description: post.meta_description,
             url: `https://bimasakhi.com/blog/${post.slug}`,
             images: [
                 {
-                    url: post.image,
+                    url: '/images/home/hero-bg.jpg', // Default until featured image column added
                     width: 1200,
                     height: 630,
                     alt: post.title,
                 },
             ],
             type: 'article',
-            publishedTime: post.date,
+            publishedTime: post.created_at,
             authors: [post.author],
         },
         twitter: {
             card: 'summary_large_image',
-            title: post.title,
-            description: post.description,
-            images: [post.image],
+            title: post.meta_title || post.title,
+            description: post.meta_description,
+            images: ['/images/home/hero-bg.jpg'],
         },
     };
 }
 
 export default async function BlogPostPage({ params }) {
     const resolvedParams = await params;
-    const post = blogPosts.find((p) => p.slug === resolvedParams.slug);
+
+    // Increment Views Action Could Be Placed Here or In a Client Component Hook
+    const supabase = getServiceSupabase();
+
+    // Read the post
+    const { data: post } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('slug', resolvedParams.slug)
+        .eq('status', 'published')
+        .single();
 
     if (!post) {
         return <div className="container py-8 text-center"><h1>Article not found</h1></div>;
     }
 
+    // Attempt to increment views silently internally
+    try {
+        await supabase
+            .from('blog_posts')
+            .update({ views: (post.views || 0) + 1 })
+            .eq('id', post.id);
+    } catch (e) { /* ignore view counting errors */ }
+
     const structuredData = {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: post.title,
-        description: post.description,
-        image: `https://bimasakhi.com${post.image}`,
-        datePublished: post.date,
+        description: post.meta_description,
+        image: `https://bimasakhi.com/images/home/hero-bg.jpg`,
+        datePublished: post.created_at,
         author: {
             '@type': 'Person',
             name: post.author,
@@ -97,8 +127,8 @@ export default async function BlogPostPage({ params }) {
             {
                 '@type': 'ListItem',
                 'position': 3,
-                'name': post.category,
-                'item': `https://bimasakhi.com/blog?category=${post.category}`
+                'name': 'Articles',
+                'item': `https://bimasakhi.com/blog`
             },
             {
                 '@type': 'ListItem',
@@ -108,6 +138,15 @@ export default async function BlogPostPage({ params }) {
             }
         ]
     };
+
+    // Fetch recent posts for sidebar
+    const { data: recentPostsData } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('status', 'published')
+        .neq('slug', resolvedParams.slug)
+        .order('created_at', { ascending: false })
+        .limit(5);
 
     return (
         <>
@@ -121,7 +160,7 @@ export default async function BlogPostPage({ params }) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
             />
-            <BlogArticle post={post} />
+            <BlogArticle post={post} recentPosts={recentPostsData || []} />
         </>
     );
 }

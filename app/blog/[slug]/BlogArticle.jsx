@@ -2,17 +2,14 @@
 
 import Link from 'next/link';
 import { useRef, useEffect } from 'react';
-import { blogPosts } from '@/data/blogPosts';
 import ReadingProgressBar from '@/components/blog/ReadingProgressBar';
 import TableOfContents from '@/components/blog/TableOfContents';
 import BlogSidebar from '@/components/blog/BlogSidebar';
 import Button from '@/components/ui/Button';
 import '@/styles/Blog.css';
 
-const BlogArticle = ({ post }) => {
+const BlogArticle = ({ post, recentPosts = [] }) => {
     const articleRef = useRef(null);
-    // Get up to 5 recent posts for the sidebar (excluding current)
-    const recentPosts = blogPosts.filter(p => p.slug !== post.slug).slice(0, 5);
 
     // Task 6: Blog Engagement Tracking
     useEffect(() => {
@@ -55,7 +52,7 @@ const BlogArticle = ({ post }) => {
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [post.title, post.category]);
+    }, [post.title]);
 
     return (
         <article className="blog-article-container">
@@ -64,12 +61,12 @@ const BlogArticle = ({ post }) => {
             <header className="article-hero">
                 <div className="container">
                     <div className="breadcrumb">
-                        <Link href="/">Home</Link> / <Link href="/blog">Blog</Link> / <span>{post.category}</span>
+                        <Link href="/">Home</Link> / <Link href="/blog">Blog</Link> / <span>Articles</span>
                     </div>
                     <h1>{post.title}</h1>
                     <div className="article-meta">
-                        <span>By <strong>{post.author}</strong></span>
-                        <span>Published on <strong>{post.date}</strong></span>
+                        <span>By <strong>{post.author || 'Admin'}</strong></span>
+                        <span>Published on <strong>{new Date(post.created_at).toLocaleDateString()}</strong></span>
                     </div>
                 </div>
             </header>
@@ -78,7 +75,7 @@ const BlogArticle = ({ post }) => {
                 {/* Left Column: Article Content */}
                 <main className="article-main">
                     <div className="article-image-container">
-                        <img src={post.image} alt={post.title} />
+                        <img src={'/images/home/hero-bg.jpg'} alt={post.title} />
                     </div>
 
                     <TableOfContents contentRef={articleRef} />
@@ -114,15 +111,16 @@ const BlogArticle = ({ post }) => {
                                 {recentPosts.slice(0, 3).map((relatedPost) => (
                                     <div className="blog-card" key={relatedPost.slug}>
                                         <div className="blog-card-image">
-                                            <img src={relatedPost.image} alt={relatedPost.title} />
+                                            {/* Fallback image */}
+                                            <div style={{ width: '100%', height: '100%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>📝</div>
                                         </div>
                                         <div className="blog-card-content">
                                             <div className="blog-meta">
-                                                <span className="blog-category">{relatedPost.category}</span>
-                                                <span className="blog-date">{relatedPost.date}</span>
+                                                <span className="blog-category">{relatedPost.author || 'Admin'}</span>
+                                                <span className="blog-date">{new Date(relatedPost.created_at).toLocaleDateString()}</span>
                                             </div>
                                             <h3>{relatedPost.title}</h3>
-                                            <p>{relatedPost.description}</p>
+                                            <p>{relatedPost.meta_description}</p>
                                             <Link href={`/blog/${relatedPost.slug}`} className="read-more">
                                                 Read Article →
                                             </Link>

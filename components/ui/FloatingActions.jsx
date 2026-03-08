@@ -13,7 +13,7 @@ const FloatingApply = dynamic(() => import('./FloatingApply'), { ssr: false });
 const FloatingActions = () => {
     const pathname = usePathname();
 
-    if (pathname === "/apply") return null;
+    if (pathname === "/apply" || pathname?.startsWith("/admin")) return null;
 
     return (
         <div className="floating-actions-wrapper">

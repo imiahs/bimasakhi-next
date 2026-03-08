@@ -1,7 +1,14 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import VisitorCounter from '../ui/VisitorCounter';
 
 const Footer = () => {
+    const pathname = usePathname();
+
+    if (pathname?.startsWith('/admin')) return null;
+
     return (
         <footer className="site-footer">
             <div className="container footer-grid">

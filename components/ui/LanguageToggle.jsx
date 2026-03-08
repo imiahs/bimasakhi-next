@@ -1,11 +1,15 @@
 'use client';
 
 import React, { useContext } from 'react';
+import { usePathname } from 'next/navigation';
 import { LanguageContext } from '../../context/LanguageContext';
 import '../../styles/LanguageToggle.css';
 
 const LanguageToggle = () => {
+    const pathname = usePathname();
     const { language, switchLanguage } = useContext(LanguageContext);
+
+    if (pathname?.startsWith("/admin")) return null;
 
     // Current language check
     const isEnglish = language === 'en';

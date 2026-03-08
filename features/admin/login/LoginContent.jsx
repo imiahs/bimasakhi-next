@@ -11,24 +11,29 @@ const LoginContent = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
-        // Mock authentication check
-        if (email === 'admin@bimasakhi.com' && password === 'bimasakhi2026') {
-            // In a real app, this would set a secure HTTP-only cookie
-            document.cookie = "admin-session=mock-token; path=/;";
+        try {
+            const res = await fetch('/api/admin/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
 
-            setTimeout(() => {
-                router.push('/admin/dashboard');
-            }, 800);
-        } else {
-            setTimeout(() => {
-                setError('Invalid credentials. Please try again.');
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.error || 'Invalid credentials. Please try again.');
                 setLoading(false);
-            }, 800);
+            } else {
+                router.push('/admin/dashboard');
+            }
+        } catch (err) {
+            setError('System error. Please contact technical support.');
+            setLoading(false);
         }
     };
 

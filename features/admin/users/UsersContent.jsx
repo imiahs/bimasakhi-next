@@ -1,19 +1,34 @@
 'use client';
 
-import React from 'react';
-
-const mockUsers = [
-    { id: 1, name: 'Raj Kumar', role: 'Super Admin', email: 'raj@bimasakhi.com', active: true },
-    { id: 2, name: 'Content Editor', role: 'Editor', email: 'editor@bimasakhi.com', active: true },
-    { id: 3, name: 'Support Staff', role: 'Viewer', email: 'support@bimasakhi.com', active: false },
-];
+import React, { useState, useEffect } from 'react';
 
 const UsersContent = () => {
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const res = await fetch('/api/admin/users');
+                const data = await res.json();
+                if (data.users) {
+                    setUsers(data.users);
+                }
+            } catch (error) {
+                console.error("Failed to load users", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
     return (
         <div className="flex flex-col gap-6 h-full">
             <div className="admin-page-header">
                 <h1>User Access & Permissions</h1>
-                <p>Manage RBAC roles for team members accessing the Bima Sakhi OS.</p>
+                <p>Manage RBAC roles for team members accessing the Bima Sakhi OS. (Currently restricted to super-admin properties)</p>
             </div>
 
             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -27,14 +42,16 @@ const UsersContent = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {mockUsers.map(user => (
+                        {loading ? (
+                            <tr><td colSpan="4" className="p-4 text-center">Loading Users...</td></tr>
+                        ) : users.map(user => (
                             <tr key={user.id} className="border-b border-slate-100 hover:bg-slate-50">
                                 <td className="p-4">
                                     <p className="font-semibold text-slate-800">{user.name}</p>
                                     <p className="text-sm text-slate-500">{user.email}</p>
                                 </td>
                                 <td className="p-4">
-                                    <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full">
+                                    <span className="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full capitalize">
                                         {user.role}
                                     </span>
                                 </td>
@@ -46,7 +63,7 @@ const UsersContent = () => {
                                     )}
                                 </td>
                                 <td className="p-4">
-                                    <button className="text-blue-600 hover:underline font-medium text-sm">Manage Access</button>
+                                    <button className="text-blue-600 hover:underline font-medium text-sm">Role Fixed</button>
                                 </td>
                             </tr>
                         ))}
@@ -54,8 +71,8 @@ const UsersContent = () => {
                 </table>
             </div>
 
-            <button className="self-start bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
-                + Invite New User
+            <button className="self-start bg-slate-400 text-white px-6 py-2 rounded-lg font-semibold cursor-not-allowed">
+                + Invite New User (Locked)
             </button>
         </div>
     );

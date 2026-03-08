@@ -5,31 +5,7 @@ import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import '@/styles/Resources.css';
 
-const resourcesData = [
-    {
-        id: 'ic38-study-guide',
-        title: 'IC-38 Exam Study Guide',
-        description: 'Comprehensive study material to help you pass the IRDAI IC-38 exam on your first attempt.',
-        icon: '📚',
-        fileUrl: '/resources/ic38-study-guide.pdf'
-    },
-    {
-        id: 'lic-sales-script',
-        title: 'LIC Agent Sales Script',
-        description: 'Proven conversational scripts and objection-handling techniques to close more LIC policies.',
-        icon: '💬',
-        fileUrl: '/resources/lic-sales-script.pdf'
-    },
-    {
-        id: 'lic-commission-chart',
-        title: 'LIC Commission Chart PDF',
-        description: 'Detailed breakdown of first-year and renewal commission rates across all major LIC plans.',
-        icon: '📈',
-        fileUrl: '/resources/lic-commission-chart.pdf'
-    }
-];
-
-const ResourcesIndex = () => {
+const ResourcesIndex = ({ initialResources = [] }) => {
     const [selectedResource, setSelectedResource] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [downloadReady, setDownloadReady] = useState(null); // stores the unlocked resource ID
@@ -42,9 +18,9 @@ const ResourcesIndex = () => {
     });
 
     const handleOpenModal = (resource) => {
-        if (downloadReady === resource.id) {
-            // Already unlocked
-            triggerDownload(resource.fileUrl, resource.title);
+        // Bypass gate if gated rules turned off
+        if (!resource.requires_lead_form || downloadReady === resource.id) {
+            triggerDownload(resource.file_url, resource.title);
             return;
         }
         setSelectedResource(resource);
@@ -116,7 +92,7 @@ const ResourcesIndex = () => {
 
                 // Success or Duplicate (we still allow download if they've registered before)
                 setDownloadReady(selectedResource.id);
-                triggerDownload(selectedResource.fileUrl, selectedResource.title);
+                triggerDownload(selectedResource.file_url, selectedResource.title);
 
                 // Clear modal after short delay
                 setTimeout(() => {
@@ -143,9 +119,9 @@ const ResourcesIndex = () => {
 
             <section className="resources-grid-section container py-12">
                 <div className="resources-grid">
-                    {resourcesData.map(resource => (
+                    {initialResources.map(resource => (
                         <div className="resource-card" key={resource.id}>
-                            <div className="resource-icon">{resource.icon}</div>
+                            <div className="resource-icon">⭐</div>
                             <h3>{resource.title}</h3>
                             <p>{resource.description}</p>
 
@@ -153,7 +129,7 @@ const ResourcesIndex = () => {
                                 className={`download-btn ${downloadReady === resource.id ? 'unlocked' : ''}`}
                                 onClick={() => handleOpenModal(resource)}
                             >
-                                {downloadReady === resource.id ? 'Download Again ↓' : 'Download Free Guide ↓'}
+                                {downloadReady === resource.id ? 'Download Again ↓' : (resource.requires_lead_form ? 'Unlock Free Guide ↓' : 'Download Now ↓')}
                             </button>
                         </div>
                     ))}
@@ -178,7 +154,7 @@ const ResourcesIndex = () => {
                         <button className="modal-close" onClick={handleCloseModal}>&times;</button>
 
                         <div className="modal-header">
-                            <span className="modal-icon">{selectedResource.icon}</span>
+                            <span className="modal-icon">⭐</span>
                             <h2>Unlock Your Free Resource</h2>
                             <p>Enter your details below to instantly download the <strong>{selectedResource.title}</strong>.</p>
                         </div>

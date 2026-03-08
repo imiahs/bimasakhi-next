@@ -1,5 +1,9 @@
 import ResourcesIndex from './ResourcesIndex';
 import Script from 'next/script';
+import { getServiceSupabase } from '@/utils/supabase';
+
+// Revalidate cache every hour (ISR)
+export const revalidate = 3600;
 
 export const metadata = {
     title: 'Free LIC Agent Study Material & Resources | Bima Sakhi',
@@ -20,7 +24,7 @@ export const metadata = {
     },
 };
 
-export default function ResourcesPage() {
+export default async function ResourcesPage() {
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'CreativeWork',
@@ -46,6 +50,13 @@ export default function ResourcesPage() {
         ]
     };
 
+    const supabase = getServiceSupabase();
+
+    const { data: resources } = await supabase
+        .from('resources')
+        .select('*')
+        .order('created_at', { ascending: false });
+
     return (
         <>
             <Script
@@ -53,7 +64,7 @@ export default function ResourcesPage() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            <ResourcesIndex />
+            <ResourcesIndex initialResources={resources || []} />
         </>
     );
 }

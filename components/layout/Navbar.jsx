@@ -23,6 +23,8 @@ const Navbar = () => {
 
     const navClass = (href) => pathname === href ? 'active' : '';
 
+    if (pathname?.startsWith('/admin')) return null;
+
     return (
         <header className="site-header">
 
