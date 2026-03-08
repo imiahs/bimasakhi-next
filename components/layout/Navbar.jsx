@@ -44,6 +44,7 @@ const Navbar = () => {
                     <Link href="/why" className={navClass('/why')}>Why Join</Link>
                     <Link href="/income" className={navClass('/income')}>Income</Link>
                     <Link href="/eligibility" className={navClass('/eligibility')}>Eligibility</Link>
+                    <Link href="/blog" className={navClass('/blog')}>Blog</Link>
                     <Link href="/downloads" className={navClass('/downloads')}>Downloads</Link>
                     <Link href="/about" className={navClass('/about')}>About</Link>
                     <Link href="/contact" className={navClass('/contact')}>Contact</Link>
@@ -81,6 +82,7 @@ const Navbar = () => {
                 <Link href="/why" onClick={closeMenu} className={navClass('/why')}>Why Join</Link>
                 <Link href="/income" onClick={closeMenu} className={navClass('/income')}>Income</Link>
                 <Link href="/eligibility" onClick={closeMenu} className={navClass('/eligibility')}>Eligibility</Link>
+                <Link href="/blog" onClick={closeMenu} className={navClass('/blog')}>Blog</Link>
                 <Link href="/downloads" onClick={closeMenu} className={navClass('/downloads')}>Downloads</Link>
                 <Link href="/about" onClick={closeMenu} className={navClass('/about')}>About</Link>
                 <Link href="/contact" onClick={closeMenu} className={navClass('/contact')}>Contact</Link>
