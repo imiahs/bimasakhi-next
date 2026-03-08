@@ -17,20 +17,15 @@ const FloatingApplyContent = () => {
     };
 
     const handleClick = (e) => {
-        // Log for live troubleshooting
-        console.log("Floating Apply Clicked", { source: getSource() });
-
         const source = getSource();
 
-        // Google Tag Manager Event (Temporarily Disabled for debugging)
-        /*
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-            event: "apply_click",
+            event: "floating_apply_click",
             source: source,
-            location: "floating_button"
+            location: "floating_button",
+            page: typeof window !== 'undefined' ? window.location.pathname : ''
         });
-        */
 
         // Ensure user lands at top of page
         window.scrollTo(0, 0);

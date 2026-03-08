@@ -74,7 +74,9 @@ const ContactContent = () => {
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
                 event: "callback_request_success",
-                contact_id: data.contact_id || "unknown"
+                contact_id: data.contact_id || "unknown",
+                lead_source: "contact_page",
+                page: "/contact"
             });
 
             setStatus({ loading: false, error: null, success: true });

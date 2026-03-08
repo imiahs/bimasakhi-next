@@ -413,7 +413,7 @@ const ApplyForm = () => {
                         source: userState.source
                     });
 
-                    // 3️⃣ GTM Event (keep but improve naming consistency)
+                    // 3️⃣ GTM Events
                     window.dataLayer = window.dataLayer || [];
                     window.dataLayer.push({
                         event: "bimasakhi_form_submit_success",
@@ -422,6 +422,12 @@ const ApplyForm = () => {
                         source: userState.source || "website",
                         medium: userState.medium || "direct",
                         campaign: userState.campaign || "bima_sakhi"
+                    });
+                    window.dataLayer.push({
+                        event: "lead_submit_success",
+                        lead_source: userState.source || "website",
+                        city: formData.city,
+                        page: "/apply"
                     });
 
                     // 4️⃣ Determine if Waitlist

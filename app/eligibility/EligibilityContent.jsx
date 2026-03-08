@@ -350,7 +350,16 @@ const EligibilityContent = () => {
                     <Link href="/income">
                         <Button variant="secondary">{t.ctaButtonIncome}</Button>
                     </Link>
-                    <Link href="/apply">
+                    <Link href="/apply" onClick={() => {
+                        if (typeof window !== 'undefined') {
+                            window.dataLayer = window.dataLayer || [];
+                            window.dataLayer.push({
+                                event: "eligibility_check_click",
+                                all_checks_passed: allChecked,
+                                page: "/eligibility"
+                            });
+                        }
+                    }}>
                         <Button variant="primary" disabled={!allChecked}>
                             {t.ctaButtonApply}
                         </Button>
