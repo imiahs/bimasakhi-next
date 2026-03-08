@@ -41,12 +41,12 @@ const Navbar = () => {
                 {/* Desktop Navigation */}
                 <nav className="nav-links desktop-menu">
                     <Link href="/" className={navClass('/')}>Home</Link>
+                    <Link href="/why" className={navClass('/why')}>Why Join</Link>
                     <Link href="/income" className={navClass('/income')}>Income</Link>
                     <Link href="/eligibility" className={navClass('/eligibility')}>Eligibility</Link>
-                    <Link href="/why" className={navClass('/why')}>Why Join?</Link>
-                    <Link href="/bima-sakhi-delhi" className={navClass('/bima-sakhi-delhi')}>Bima Sakhi Delhi</Link>
-                    <Link href="/about" className={navClass('/about')}>About Us</Link>
-                    <Link href="/contact" className={navClass('/contact')}>Contact Us</Link>
+                    <Link href="/downloads" className={navClass('/downloads')}>Downloads</Link>
+                    <Link href="/about" className={navClass('/about')}>About</Link>
+                    <Link href="/contact" className={navClass('/contact')}>Contact</Link>
                 </nav>
 
                 {/* Desktop CTA */}
@@ -78,12 +78,12 @@ const Navbar = () => {
             <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
 
                 <Link href="/" onClick={closeMenu} className={navClass('/')}>Home</Link>
+                <Link href="/why" onClick={closeMenu} className={navClass('/why')}>Why Join</Link>
                 <Link href="/income" onClick={closeMenu} className={navClass('/income')}>Income</Link>
                 <Link href="/eligibility" onClick={closeMenu} className={navClass('/eligibility')}>Eligibility</Link>
-                <Link href="/why" onClick={closeMenu} className={navClass('/why')}>Why Join?</Link>
-                <Link href="/bima-sakhi-delhi" onClick={closeMenu} className={navClass('/bima-sakhi-delhi')}>Bima Sakhi Delhi</Link>
-                <Link href="/about" onClick={closeMenu} className={navClass('/about')}>About Us</Link>
-                <Link href="/contact" onClick={closeMenu} className={navClass('/contact')}>Contact Us</Link>
+                <Link href="/downloads" onClick={closeMenu} className={navClass('/downloads')}>Downloads</Link>
+                <Link href="/about" onClick={closeMenu} className={navClass('/about')}>About</Link>
+                <Link href="/contact" onClick={closeMenu} className={navClass('/contact')}>Contact</Link>
 
                 <Link href="/apply" className="apply-btn mobile-apply" onClick={closeMenu}>
                     Apply Now

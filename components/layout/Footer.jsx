@@ -19,14 +19,24 @@ const Footer = () => {
                 <div>
                     <h4>Explore</h4>
                     <ul>
+                        <li><Link href="/why">Why Join</Link></li>
                         <li><Link href="/income">Income Model</Link></li>
                         <li><Link href="/eligibility">Eligibility</Link></li>
-                        <li><Link href="/why">Why Join</Link></li>
                         <li><Link href="/apply">Apply Now</Link></li>
                     </ul>
                 </div>
 
-                {/* Column 3 - Legal */}
+                {/* Column 3 - Resources */}
+                <div>
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><Link href="/downloads">Downloads</Link></li>
+                        <li><Link href="/contact">Contact Us</Link></li>
+                        <li><Link href="/about">About Us</Link></li>
+                    </ul>
+                </div>
+
+                {/* Column 4 - Legal */}
                 <div>
                     <h4>Legal</h4>
                     <ul>
@@ -34,15 +44,6 @@ const Footer = () => {
                         <li><Link href="/terms-conditions">Terms & Conditions</Link></li>
                         <li><Link href="/disclaimer">Disclaimer</Link></li>
                     </ul>
-                </div>
-
-                {/* Column 4 - Mission */}
-                <div>
-                    <h4>Our Mission</h4>
-                    <p>
-                        Supporting women across India in building sustainable
-                        careers through LIC's Bima Sakhi initiative.
-                    </p>
                 </div>
 
             </div>

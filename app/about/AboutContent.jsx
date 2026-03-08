@@ -2,6 +2,7 @@
 
 import { useEffect, useContext } from "react";
 import { LanguageContext } from "@/context/LanguageContext";
+import { WHATSAPP_LINK, PHONE_LINK } from "@/utils/config";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import "@/styles/About.css";
@@ -69,8 +70,8 @@ const AboutContent = () => {
             mapBtnText: "📍 Open in Google Maps",
             contactTitle: "Get in Touch",
             contactCards: [
-                { icon: "💬", title: "WhatsApp", desc: "Fastest way to reach us. Get instant reply.", btnText: "Chat Now", btnClass: "whatsapp", href: "https://wa.me/919315abortnumber" },
-                { icon: "📞", title: "Phone Call", desc: "Speak directly with our team.", btnText: "Call Now", btnClass: "phone", href: "tel:+919315000000" },
+                { icon: "💬", title: "WhatsApp", desc: "Fastest way to reach us. Get instant reply.", btnText: "Chat Now", btnClass: "whatsapp", href: WHATSAPP_LINK },
+                { icon: "📞", title: "Phone Call", desc: "Speak directly with our team.", btnText: "Call Now", btnClass: "phone", href: PHONE_LINK },
                 { icon: "📧", title: "Email", desc: "Send detailed queries anytime.", btnText: "Send Email", btnClass: "email", href: "mailto:info@bimasakhi.com" },
                 { icon: "🏢", title: "Visit Office", desc: "Meet us in person at our Delhi NCR office.", btnText: "Get Directions", btnClass: "visit", href: "https://maps.app.goo.gl/NtTeB6VSMcUFFH3G9" }
             ],
@@ -121,8 +122,8 @@ const AboutContent = () => {
             mapBtnText: "📍 Google Maps में खोलें",
             contactTitle: "संपर्क करें",
             contactCards: [
-                { icon: "💬", title: "WhatsApp", desc: "हम तक पहुँचने का सबसे तेज़ तरीका। तुरंत जवाब पाएं।", btnText: "चैट करें", btnClass: "whatsapp", href: "https://wa.me/919315000000" },
-                { icon: "📞", title: "फोन कॉल", desc: "हमारी टीम से सीधे बात करें।", btnText: "अभी कॉल करें", btnClass: "phone", href: "tel:+919315000000" },
+                { icon: "💬", title: "WhatsApp", desc: "हम तक पहुँचने का सबसे तेज़ तरीका। तुरंत जवाब पाएं।", btnText: "चैट करें", btnClass: "whatsapp", href: WHATSAPP_LINK },
+                { icon: "📞", title: "फोन कॉल", desc: "हमारी टीम से सीधे बात करें।", btnText: "अभी कॉल करें", btnClass: "phone", href: PHONE_LINK },
                 { icon: "📧", title: "ईमेल", desc: "विस्तृत प्रश्न कभी भी भेजें।", btnText: "ईमेल भेजें", btnClass: "email", href: "mailto:info@bimasakhi.com" },
                 { icon: "🏢", title: "ऑफिस आएं", desc: "दिल्ली NCR ऑफिस में व्यक्तिगत रूप से मिलें।", btnText: "दिशा निर्देश", btnClass: "visit", href: "https://maps.app.goo.gl/NtTeB6VSMcUFFH3G9" }
             ],

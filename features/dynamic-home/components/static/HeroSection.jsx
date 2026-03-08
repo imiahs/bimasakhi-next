@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useContext } from 'react';
-import { LanguageContext } from '../../../../context/LanguageContext'; // Adjust path if needed
+import { useRouter } from 'next/navigation';
+import { LanguageContext } from '../../../../context/LanguageContext';
 
 
 const HeroSection = () => {
     const { language } = useContext(LanguageContext);
+    const router = useRouter();
     const [activeIndex, setActiveIndex] = useState(0);
     const totalSlides = 4;
     const [progress, setProgress] = useState(0);
@@ -169,7 +171,7 @@ const HeroSection = () => {
                         <ul className="hero-options">
                             {t.slide1.options.map((item, i) => <li key={i}>{item}</li>)}
                         </ul>
-                        <div className="hero-cta"><button>{t.slide1.cta}</button></div>
+                        <div className="hero-cta"><button onClick={() => router.push('/why')}>{t.slide1.cta}</button></div>
                     </div>
 
                     {/* Slide 2 - Stipend Highlight */}
@@ -182,7 +184,7 @@ const HeroSection = () => {
                         <ul className="hero-options">
                             {t.slide2.options.map((item, i) => <li key={i}>{item}</li>)}
                         </ul>
-                        <div className="hero-cta"><button>{t.slide2.cta}</button></div>
+                        <div className="hero-cta"><button onClick={() => router.push('/income')}>{t.slide2.cta}</button></div>
                     </div>
 
                     {/* Slide 3 */}
@@ -195,7 +197,7 @@ const HeroSection = () => {
                         <ul className="hero-options">
                             {t.slide3.options.map((item, i) => <li key={i}>{item}</li>)}
                         </ul>
-                        <div className="hero-cta"><button>{t.slide3.cta}</button></div>
+                        <div className="hero-cta"><button onClick={() => router.push('/why')}>{t.slide3.cta}</button></div>
                     </div>
 
                     {/* Slide 4 */}
@@ -208,7 +210,7 @@ const HeroSection = () => {
                         <ul className="hero-options">
                             {t.slide4.options.map((item, i) => <li key={i}>{item}</li>)}
                         </ul>
-                        <div className="hero-cta"><button>{t.slide4.cta}</button></div>
+                        <div className="hero-cta"><button onClick={() => router.push('/apply')}>{t.slide4.cta}</button></div>
                     </div>
 
                     {/* Navigation Controls */}

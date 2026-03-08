@@ -3,6 +3,7 @@
 import { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "@/context/LanguageContext";
 import { getWhatsAppUrl } from "@/utils/whatsapp";
+import { WHATSAPP_LINK, PHONE_LINK } from "@/utils/config";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import "@/styles/Contact.css";
@@ -100,8 +101,8 @@ const ContactContent = () => {
             heroSubtitle: "Have questions before applying? Want guidance on eligibility, documents, or the process? Our team is here to help you every step of the way — absolutely free.",
             quickTitle: "Quick Ways to Reach Us",
             quickCards: [
-                { icon: "💬", title: "WhatsApp Chat", desc: "Get instant reply. Fastest way to reach us.", btnText: "Chat Now", btnClass: "whatsapp", href: "https://wa.me/919315000000" },
-                { icon: "📞", title: "Phone Call", desc: "Speak directly with our guidance team.", btnText: "Call Now", btnClass: "phone", href: "tel:+919315000000" },
+                { icon: "💬", title: "WhatsApp Chat", desc: "Get instant reply. Fastest way to reach us.", btnText: "Chat Now", btnClass: "whatsapp", href: WHATSAPP_LINK },
+                { icon: "📞", title: "Phone Call", desc: "Speak directly with our guidance team.", btnText: "Call Now", btnClass: "phone", href: PHONE_LINK },
                 { icon: "📧", title: "Email Us", desc: "Send detailed queries anytime.", btnText: "Send Email", btnClass: "email", href: "mailto:info@bimasakhi.com" },
                 { icon: "🏢", title: "Visit Office", desc: "Meet us in person at Delhi NCR office.", btnText: "Get Directions", btnClass: "visit", href: "https://maps.app.goo.gl/NtTeB6VSMcUFFH3G9" }
             ],
@@ -151,8 +152,8 @@ const ContactContent = () => {
             heroSubtitle: "अप्लाई करने से पहले कोई सवाल है? पात्रता, दस्तावेज़ या प्रक्रिया के बारे में मार्गदर्शन चाहिए? हमारी टीम हर कदम पर आपकी मदद के लिए तैयार है — बिल्कुल मुफ्त।",
             quickTitle: "हमसे जुड़ने के तरीके",
             quickCards: [
-                { icon: "💬", title: "WhatsApp चैट", desc: "तुरंत जवाब पाएं। हम तक पहुँचने का सबसे तेज़ तरीका।", btnText: "अभी चैट करें", btnClass: "whatsapp", href: "https://wa.me/919315000000" },
-                { icon: "📞", title: "फोन कॉल", desc: "हमारी मार्गदर्शन टीम से सीधे बात करें।", btnText: "अभी कॉल करें", btnClass: "phone", href: "tel:+919315000000" },
+                { icon: "💬", title: "WhatsApp चैट", desc: "तुरंत जवाब पाएं। हम तक पहुँचने का सबसे तेज़ तरीका।", btnText: "अभी चैट करें", btnClass: "whatsapp", href: WHATSAPP_LINK },
+                { icon: "📞", title: "फोन कॉल", desc: "हमारी मार्गदर्शन टीम से सीधे बात करें।", btnText: "अभी कॉल करें", btnClass: "phone", href: PHONE_LINK },
                 { icon: "📧", title: "ईमेल करें", desc: "विस्तृत प्रश्न कभी भी भेजें।", btnText: "ईमेल भेजें", btnClass: "email", href: "mailto:info@bimasakhi.com" },
                 { icon: "🏢", title: "ऑफिस आएं", desc: "दिल्ली NCR ऑफिस में व्यक्तिगत रूप से मिलें।", btnText: "दिशा निर्देश", btnClass: "visit", href: "https://maps.app.goo.gl/NtTeB6VSMcUFFH3G9" }
             ],
