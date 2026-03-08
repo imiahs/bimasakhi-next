@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { blogPosts } from '@/data/blogPosts';
 import ReadingProgressBar from '@/components/blog/ReadingProgressBar';
 import TableOfContents from '@/components/blog/TableOfContents';
@@ -12,6 +12,49 @@ const BlogArticle = ({ post }) => {
     const articleRef = useRef(null);
     // Get up to 5 recent posts for the sidebar (excluding current)
     const recentPosts = blogPosts.filter(p => p.slug !== post.slug).slice(0, 5);
+
+    // Task 6: Blog Engagement Tracking
+    useEffect(() => {
+        let tracked25 = false;
+        let tracked50 = false;
+        let tracked75 = false;
+        let tracked100 = false;
+
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY + window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollPercent = (scrollPosition / documentHeight) * 100;
+
+            const trackEvent = (threshold) => {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: `article_read_${threshold}`,
+                    article_title: post.title,
+                    article_category: post.category
+                });
+            };
+
+            if (scrollPercent >= 25 && !tracked25) {
+                tracked25 = true;
+                trackEvent(25);
+            }
+            if (scrollPercent >= 50 && !tracked50) {
+                tracked50 = true;
+                trackEvent(50);
+            }
+            if (scrollPercent >= 75 && !tracked75) {
+                tracked75 = true;
+                trackEvent(75);
+            }
+            if (scrollPercent >= 95 && !tracked100) { // 95% covers natural footer stops
+                tracked100 = true;
+                trackEvent(100);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [post.title, post.category]);
 
     return (
         <article className="blog-article-container">

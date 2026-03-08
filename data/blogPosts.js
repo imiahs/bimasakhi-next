@@ -25,6 +25,12 @@ export const blogPosts = [
             <p>While the stipend provides stability, the commission offers scalability. For every policy you sell, you earn a substantial percentage of the premium in your first year. But the real magic of LIC agency is the <strong>renewal commission</strong>. You continue to earn a percentage every time your client pays their premium in subsequent years. This creates a powerful passive income stream over time.</p>
             <p>Want to see the exact commission percentages? <a href="/income" class="cta-link">Check out our detailed Income Model →</a></p>
 
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg my-8 text-center">
+                <h3 class="text-xl font-bold mb-2">Want to prepare for the LIC Exam?</h3>
+                <p class="mb-4">Get our free comprehensive study material to pass the IRDAI IC-38 exam on your first attempt.</p>
+                <a href="/resources" class="cta-link !bg-[#ff9800] !text-white hover:!bg-[#e68a00]">Download Free IC-38 Study Guide 📚</a>
+            </div>
+
             <h2>Conclusion</h2>
             <p>The LIC Bima Sakhi income structure is arguably one of the safest yet most rewarding career paths for women today. It combines the safety net of a stipend with the limitless earning potential of commission. If you are a resident of Delhi NCR and want to take control of your financial future, this is the perfect time to start.</p>
             <p>Ready to begin? <a href="/apply" class="cta-link">Apply Now to become a Bima Sakhi →</a></p>
@@ -57,8 +63,15 @@ export const blogPosts = [
                 <li>Cancelled Bank Cheque</li>
             </ul>
 
-            <h2>Step 3: Training and the IC-38 Exam</h2>
-            <p>The IRDAI mandates a 25-hour training course, which you can complete online. This training covers insurance principles and prepares you for the IC-38 exam. The exam is a 50-mark multiple-choice test. You only need 35 marks to pass, and your Development Officer will provide all the necessary mock tests and study materials.</p>
+            <h2>Step 3: IC-38 Exam & Training</h2>
+            <p>Once your documents are verified and you have registered through the portal via your Development Officer, you will undergo mandatory 25-hours of training. This prepares you for the IRDAI IC-38 examination.</p>
+            <p>The exam is simple, consists of 50 multiple-choice questions, and requires only 18 marks (35%) to pass.</p>
+
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg my-8 text-center">
+                <h3 class="text-xl font-bold mb-2">Want to prepare for the LIC Exam?</h3>
+                <p class="mb-4">Get our free comprehensive study material to pass the IRDAI IC-38 exam on your first attempt.</p>
+                <a href="/resources" class="cta-link !bg-[#ff9800] !text-white hover:!bg-[#e68a00]">Download Free IC-38 Study Guide 📚</a>
+            </div>
 
             <h2>Conclusion</h2>
             <p>The journey to becoming an LIC agent is systematic and highly supportive. From day one, you are guided by experienced officers whose success depends on your success. Within just a few weeks of starting the process, you could be holding your official LIC Agent code and writing your first policy.</p>
@@ -84,6 +97,12 @@ export const blogPosts = [
             <h2>Renewal Commission: The Secret to Passive Income</h2>
             <p>This is where the LIC agency stands apart from almost any other sales profession. When your client pays their premium in the 2nd and 3rd years, you earn a 7.5% renewal commission. From the 4th year onwards, you earn a 5% commission every single time they pay their premium, until the policy matures. Sell once, get paid for 20 years!</p>
             <p>To dive deeper into the exact numbers, <a href="/income" class="cta-link">view our Income Calculator and Tables →</a></p>
+
+            <div class="bg-gray-50 border border-gray-200 p-6 rounded-lg my-8 text-center">
+                <h3 class="text-xl font-bold mb-2">Need a handy reference?</h3>
+                <p class="mb-4">Get our free comprehensive commission chart to easily explain benefits and forecast your own income.</p>
+                <a href="/resources" class="cta-link !bg-[#ff9800] !text-white hover:!bg-[#e68a00]">Download LIC Commission Chart 📈</a>
+            </div>
 
             <h2>Hereditary Commission Benefits</h2>
             <p>LIC ensures that your hard work secures your family's future even when you are not around. Under specific agency rules, the renewal commission you build can be passed down to your legal heir. Your agency essentially becomes an asset that generates hereditary income.</p>

@@ -345,6 +345,13 @@ const ApplyForm = () => {
 
     const handleNext = () => {
         if (validateStep(step)) {
+            // Task 5: Form Step Tracking
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: `apply_step_${step}_complete`,
+                form_name: "ApplyForm",
+                source: userState.source || "website"
+            });
             setStep(prev => prev + 1);
         }
     };
@@ -374,7 +381,10 @@ const ApplyForm = () => {
             source: userState.source || 'Website',
             medium: userState.medium || 'Direct',
             campaign: userState.campaign || 'Bima Sakhi',
-            visitedPages: userState.visitedPages
+            visitedPages: userState.visitedPages,
+            // Tasks 2 & 3: Lead Attribution
+            lead_source_page: window.location.pathname,
+            lead_source_type: ['blog', 'tools'].includes(userState.source) ? userState.source : 'funnel'
         };
 
         try {

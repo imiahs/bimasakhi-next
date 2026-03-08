@@ -187,13 +187,29 @@ async function handleStats(req, res) {
         const totalApplications = resTotal.data.data ? resTotal.data.data[0].count : 0;
         const sources = resSource.data.data || [];
 
+        // Task 9: Dashboard Metrics aggregation
+        let blog_leads = 0;
+        let tool_leads = 0;
+        let resource_leads = 0;
+        let apply_leads = 0;
+
+        sources.forEach(s => {
+            const count = parseInt(s.count) || 0;
+            const sourceName = (s.Lead_Source || '').toLowerCase();
+            if (sourceName === 'blog') blog_leads += count;
+            else if (sourceName === 'tools') tool_leads += count;
+            else if (sourceName === 'resources') resource_leads += count;
+            else apply_leads += count; // everything else mapped to apply_leads
+        });
+
         const stats = {
             range,
             generatedAt: new Date().toISOString(),
             totalApplications,
-            eligible: 0, // Placeholder
-            manualEntries: 0, // Placeholder
-            duplicates: 0, // Placeholder
+            blog_leads,
+            tool_leads,
+            resource_leads,
+            apply_leads,
             attribution: sources.map(s => ({ source: s.Lead_Source, count: s.count }))
         };
 

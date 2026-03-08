@@ -20,8 +20,43 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         setIsMounted(true);
         const stored = getStorage(STORAGE_KEYS.USER, DEFAULT_USER_STATE);
-        if (stored) {
-            setUserState(stored);
+
+        // Task 1: Traffic Source Tracking
+        let currentSource = stored ? stored.source : 'direct';
+
+        // Only override if we don't have a specific stored external source, or if we want to catch a new one
+        if (!stored || stored.source === 'website' || stored.source === 'direct') {
+            const params = new URLSearchParams(window.location.search);
+            const utmSource = params.get('utm_source');
+            const referrer = document.referrer;
+            const path = window.location.pathname;
+
+            if (utmSource) {
+                currentSource = utmSource.toLowerCase();
+            } else if (referrer) {
+                try {
+                    const refUrl = new URL(referrer);
+                    if (refUrl.hostname.includes('google')) currentSource = 'google';
+                    else if (refUrl.hostname.includes('facebook')) currentSource = 'facebook';
+                    else if (refUrl.hostname.includes('instagram')) currentSource = 'instagram';
+                    else if (refUrl.hostname.includes('youtube')) currentSource = 'youtube';
+                    else if (!refUrl.hostname.includes(window.location.hostname)) currentSource = 'referral';
+                } catch (e) {
+                    // ignore invalid URL
+                }
+            } else if (path.startsWith('/blog')) {
+                currentSource = 'blog';
+            } else if (path.startsWith('/tools')) {
+                currentSource = 'tools';
+            }
+        }
+
+        const newState = { ...(stored || DEFAULT_USER_STATE), source: currentSource };
+        setUserState(newState);
+
+        // Immediately store
+        if (!stored) {
+            setStorage(STORAGE_KEYS.USER, newState);
         }
     }, []);
 

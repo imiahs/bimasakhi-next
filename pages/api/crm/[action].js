@@ -69,7 +69,9 @@ async function handleCreateLead(req, res) {
         name, mobile, email,
         pincode, city, state, locality,
         education, occupation, reason,
-        source, medium, campaign, visitedPages
+        source, medium, campaign, visitedPages,
+        // Tasks 2 & 3: Lead Attribution
+        lead_source_page, lead_source_type
     } = req.body;
 
     // Normalize Mobile BEFORE Validation
@@ -250,8 +252,8 @@ async function handleCreateLead(req, res) {
         Zip_Code: pincode,
         Street: locality,
         Designation: occupation,
-        Description: `Education: ${education}\nReason: ${reason || ''}\n\nVisited Pages: ${JSON.stringify(visitedPages || [])}`,
-        Lead_Source: source || 'Website',
+        Description: `Education: ${education}\nReason: ${reason || ''}\n\nVisited Pages: ${JSON.stringify(visitedPages || [])}\nLead Source Page: ${lead_source_page || 'Unknown'}`,
+        Lead_Source: lead_source_type || source || 'Website',
         Lead_Medium: medium || 'Direct',
         Campaign_Source: campaign || 'Bima Sakhi'
     };

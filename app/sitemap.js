@@ -42,6 +42,30 @@ export default function sitemap() {
             priority: 0.8,
         },
         {
+            url: `${baseUrl}/tools`,
+            lastModified,
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/resources`,
+            lastModified,
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/tools/lic-income-calculator`,
+            lastModified,
+            changeFrequency: 'monthly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/tools/lic-commission-calculator`,
+            lastModified,
+            changeFrequency: 'monthly',
+            priority: 0.8,
+        },
+        {
             url: `${baseUrl}/contact`,
             lastModified,
             changeFrequency: 'monthly',
