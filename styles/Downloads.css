@@ -1,0 +1,403 @@
+/* =============================================
+   DOWNLOADS / RESOURCES PAGE STYLES
+   ============================================= */
+
+.downloads-container {
+    padding: 0 20px 60px;
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+}
+
+/* ---------- HERO ---------- */
+.downloads-hero {
+    text-align: center;
+    padding: 60px 0 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.downloads-hero h1 {
+    font-size: var(--font-size-xxl);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.3;
+}
+
+.downloads-hero .subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+/* ---------- SECTIONS ---------- */
+.downloads-section {
+    margin-top: var(--spacing-xxl);
+}
+
+.downloads-section h2 {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.downloads-section h2 .section-icon {
+    font-size: 28px;
+}
+
+/* ---------- EXAM INFO CARD ---------- */
+.exam-info-card {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid #90caf9;
+}
+
+.exam-info-card h3 {
+    color: #1565c0;
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.exam-info-card p {
+    color: #1565c0;
+    line-height: 1.7;
+    margin-bottom: var(--spacing-md);
+}
+
+.exam-info-card p:last-child {
+    margin-bottom: 0;
+}
+
+.exam-key-points {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.exam-key-point {
+    padding: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--border-radius-md);
+    text-align: center;
+}
+
+.exam-key-point .ekp-icon {
+    font-size: 32px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.exam-key-point .ekp-label {
+    font-size: var(--font-size-sm);
+    color: #1565c0;
+    font-weight: 600;
+}
+
+.exam-key-point .ekp-value {
+    font-size: var(--font-size-sm);
+    color: #1976d2;
+    margin-top: 2px;
+}
+
+/* ---------- RESOURCE CARDS GRID ---------- */
+.resource-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.resource-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    background: white;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.resource-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.resource-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.resource-card-header .rc-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+}
+
+.resource-card-header h3 {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-main);
+}
+
+.resource-card p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-md);
+}
+
+.resource-link {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    transition: opacity 0.2s;
+    background: var(--color-secondary);
+    color: var(--color-primary);
+}
+
+.resource-link:hover {
+    opacity: 0.8;
+}
+
+/* ---------- MOCK TEST CARDS ---------- */
+.mock-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.mock-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    background: white;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.mock-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.mock-card .mock-icon {
+    font-size: 42px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.mock-card h3 {
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-xs);
+}
+
+.mock-card p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+/* ---------- OFFICIAL LINKS ---------- */
+.official-links-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.official-link-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    background: linear-gradient(135deg, #f3e5f5, #ede7f6);
+    border: 1px solid #ce93d8;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.official-link-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.official-link-card .ol-icon {
+    font-size: 42px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.official-link-card h3 {
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-xs);
+}
+
+.official-link-card p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-md);
+}
+
+.official-link-btn {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    background: #7b1fa2;
+    color: white;
+    transition: opacity 0.2s;
+}
+
+.official-link-btn:hover {
+    opacity: 0.85;
+}
+
+/* ---------- CHECKLIST CARDS ---------- */
+.checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.checklist-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    background: #f9f9fa;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.checklist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.checklist-card .cl-icon {
+    font-size: 36px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.checklist-card h3 {
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-xs);
+}
+
+.checklist-card p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-md);
+}
+
+.checklist-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.checklist-items li {
+    padding: 6px 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-main);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.checklist-items li::before {
+    content: "☑";
+    color: var(--color-success);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+/* ---------- CTA SECTION ---------- */
+.downloads-cta {
+    margin-top: 60px;
+    text-align: center;
+    padding: var(--spacing-xxl) var(--spacing-lg);
+    background: linear-gradient(135deg, #111, #333);
+    border-radius: var(--border-radius-lg);
+    color: white;
+}
+
+.downloads-cta h2 {
+    color: white;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.downloads-cta p {
+    color: #ccc;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ---------- REVEAL ANIMATION ---------- */
+.dl-reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 0.8s ease;
+}
+
+.dl-reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 992px) {
+    .exam-key-points {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mock-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .official-links-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .checklist-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .downloads-hero h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .resource-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mock-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .official-links-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .checklist-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .exam-key-points {
+        grid-template-columns: 1fr;
+    }
+
+    .downloads-container {
+        padding: 0 16px 40px;
+    }
+}
