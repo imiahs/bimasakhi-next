@@ -1,0 +1,515 @@
+/* =============================================
+   WHY PAGE STYLES
+   ============================================= */
+
+.why-container {
+    padding: 0 20px 60px;
+    max-width: var(--container-desktop);
+    margin: 0 auto;
+}
+
+/* ---------- HERO ---------- */
+.why-hero {
+    text-align: center;
+    padding: 60px 0 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.why-hero h1 {
+    font-size: var(--font-size-xxl);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.3;
+}
+
+.why-hero .subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+/* ---------- SECTIONS ---------- */
+.why-section {
+    margin-top: var(--spacing-xxl);
+}
+
+.why-section h2 {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.why-section h2 .section-icon {
+    font-size: 28px;
+}
+
+/* ---------- LIC TRUST STATS GRID ---------- */
+.trust-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.trust-stat-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border: 1px solid #c8e6c9;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.trust-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.trust-stat-card .stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2e7d32;
+    margin-bottom: var(--spacing-xs);
+}
+
+.trust-stat-card .stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.trust-note {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    border-radius: var(--border-radius-md);
+    color: #1565c0;
+    font-size: var(--font-size-sm);
+}
+
+/* ---------- ENTREPRENEURSHIP GRID ---------- */
+.entrepreneur-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.entrepreneur-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    background: white;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.entrepreneur-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.entrepreneur-card .entre-icon {
+    font-size: 42px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.entrepreneur-card h3 {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-xs);
+}
+
+.entrepreneur-card p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+}
+
+.legacy-banner {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background: linear-gradient(135deg, #fff8e1, #fff3e0);
+    border-left: 5px solid #ff9800;
+    border-radius: var(--border-radius-lg);
+}
+
+.legacy-banner p {
+    color: #e65100;
+    font-weight: 600;
+    font-size: var(--font-size-lg);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ---------- WHO CAN JOIN GRID ---------- */
+.who-can-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.who-can-card {
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    background: white;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.who-can-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.who-can-card .who-icon {
+    font-size: 48px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.who-can-card h3 {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-xs);
+}
+
+.who-can-card p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+/* ---------- SKILL DEVELOPMENT ---------- */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-md);
+}
+
+.skill-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: #f9f9fa;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.skill-card:hover {
+    background: #f0f4ff;
+    border-color: #90caf9;
+}
+
+.skill-card .skill-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+}
+
+.skill-card h3 {
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-xs);
+}
+
+.skill-card p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ---------- SOCIAL RESPECT ---------- */
+.respect-banner {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, #f3e5f5, #ede7f6);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid #ce93d8;
+}
+
+.respect-points {
+    list-style: none;
+    padding: 0;
+    margin: var(--spacing-md) 0 0;
+}
+
+.respect-points li {
+    padding: 10px 0;
+    font-size: var(--font-size-base);
+    color: var(--color-text-main);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    border-bottom: 1px solid rgba(206, 147, 216, 0.3);
+}
+
+.respect-points li:last-child {
+    border-bottom: none;
+}
+
+.respect-points li .respect-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+/* ---------- COMPARISON TABLE ---------- */
+.comparison-table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    margin-top: var(--spacing-md);
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+.comparison-table thead {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+}
+
+.comparison-table thead th {
+    color: white;
+    padding: 14px 18px;
+    text-align: left;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.comparison-table thead th:first-child {
+    border-radius: var(--border-radius-lg) 0 0 0;
+}
+
+.comparison-table thead th:last-child {
+    border-radius: 0 var(--border-radius-lg) 0 0;
+    background: linear-gradient(135deg, #2e7d32, #388e3c);
+}
+
+.comparison-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+}
+
+.comparison-table tbody tr:hover {
+    background: #fef0f3;
+}
+
+.comparison-table tbody td {
+    padding: 14px 18px;
+    color: var(--color-text-main);
+    font-size: var(--font-size-base);
+}
+
+.comparison-table tbody td:last-child {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.comparison-verdict {
+    margin-top: var(--spacing-md);
+    display: inline-block;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, var(--color-success), #2e7d32);
+    color: white;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: var(--font-size-base);
+}
+
+/* ---------- CAREER GROWTH TIMELINE ---------- */
+.career-timeline {
+    margin-top: var(--spacing-md);
+    position: relative;
+}
+
+.career-timeline::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--color-primary), var(--color-accent), #2e7d32);
+    border-radius: 3px;
+}
+
+.career-step {
+    display: flex;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md) 0;
+    position: relative;
+}
+
+.career-step-number {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: var(--font-size-xl);
+    flex-shrink: 0;
+    z-index: 1;
+    box-shadow: 0 4px 12px rgba(232, 93, 117, 0.3);
+}
+
+.career-step:nth-child(2) .career-step-number {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.career-step:nth-child(3) .career-step-number {
+    background: linear-gradient(135deg, #7b1fa2, #9c27b0);
+    box-shadow: 0 4px 12px rgba(123, 31, 162, 0.3);
+}
+
+.career-step:nth-child(4) .career-step-number {
+    background: linear-gradient(135deg, #2e7d32, #388e3c);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+}
+
+.career-step-content {
+    padding-top: 6px;
+}
+
+.career-step-content h4 {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-xs);
+}
+
+.career-step-content p {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
+.career-step-content .career-badge {
+    display: inline-block;
+    margin-top: var(--spacing-xs);
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+}
+
+.badge-start {
+    background: #fce4ec;
+    color: var(--color-primary);
+}
+
+.badge-growth {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.badge-leadership {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.badge-pinnacle {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* ---------- CTA SECTION ---------- */
+.why-cta {
+    margin-top: 60px;
+    text-align: center;
+    padding: var(--spacing-xxl) var(--spacing-lg);
+    background: linear-gradient(135deg, #111, #333);
+    border-radius: var(--border-radius-lg);
+    color: white;
+}
+
+.why-cta h2 {
+    color: white;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.why-cta p {
+    color: #ccc;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* ---------- REVEAL ANIMATION ---------- */
+.why-reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: 0.8s ease;
+}
+
+.why-reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 992px) {
+    .trust-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .who-can-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .why-hero h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .trust-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .entrepreneur-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .who-can-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .why-container {
+        padding: 0 16px 40px;
+    }
+
+    .career-step-number {
+        width: 44px;
+        height: 44px;
+        font-size: var(--font-size-lg);
+    }
+
+    .trust-stat-card .stat-number {
+        font-size: 2rem;
+    }
+
+    .comparison-table {
+        min-width: 400px;
+    }
+}
