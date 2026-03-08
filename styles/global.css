@@ -9,12 +9,16 @@
 
 html,
 body {
-    height: 100%;
-    overflow-x: hidden; /* Prevent horizontal scrolling on mobile */
+    min-height: 100vh;
+    overflow-x: hidden;
+    /* Prevent horizontal scrolling on mobile */
+    display: flex;
+    flex-direction: column;
 }
 
 img {
     height: auto;
+    max-width: 100%;
 }
 
 body {

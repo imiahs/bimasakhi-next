@@ -11,25 +11,9 @@ import '../../styles/FloatingActions.css';
 const FloatingApply = dynamic(() => import('./FloatingApply'), { ssr: false });
 
 const FloatingActions = () => {
-
-    const [visible, setVisible] = useState(false);
     const pathname = usePathname();
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 250) {
-                setVisible(true);
-            } else {
-                setVisible(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
     if (pathname === "/apply") return null;
-    if (!visible) return null;
 
     return (
         <div className="floating-actions-wrapper">

@@ -6,6 +6,7 @@ import { blogPosts } from '@/data/blogPosts';
 import ReadingProgressBar from '@/components/blog/ReadingProgressBar';
 import TableOfContents from '@/components/blog/TableOfContents';
 import BlogSidebar from '@/components/blog/BlogSidebar';
+import Button from '@/components/ui/Button';
 import '@/styles/Blog.css';
 
 const BlogArticle = ({ post }) => {
@@ -83,6 +84,20 @@ const BlogArticle = ({ post }) => {
                     <TableOfContents contentRef={articleRef} />
 
                     <div className="article-body" ref={articleRef} dangerouslySetInnerHTML={{ __html: post.content }} />
+
+                    {/* Blog Exit CTA */}
+                    <div className="blog-exit-cta" style={{ marginTop: '40px', padding: '30px', backgroundColor: '#f0f4ff', borderRadius: '12px', border: '1px solid #d6e4ff', textAlign: 'center' }}>
+                        <h3 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '10px', color: '#1e3a8a' }}>Ready to Start Your Journey?</h3>
+                        <p style={{ marginBottom: '24px', color: '#475569' }}>Apply for the LIC Bima Sakhi program today or download our free study materials.</p>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                            <Link href="/apply">
+                                <Button variant="primary">Apply Now →</Button>
+                            </Link>
+                            <Link href="/resources">
+                                <Button variant="outline">View Free Resources</Button>
+                            </Link>
+                        </div>
+                    </div>
                 </main>
 
                 {/* Right Column: Sidebar */}

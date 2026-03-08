@@ -160,6 +160,17 @@ const ResourcesIndex = () => {
                 </div>
             </section>
 
+            {/* Conversion CTA */}
+            <section className="resources-cta container text-center" style={{ padding: '60px 20px', backgroundColor: '#fafafa', borderRadius: '16px', marginBottom: '40px' }}>
+                <h2>Ready to put these resources to work?</h2>
+                <p className="subtitle" style={{ marginTop: '16px', marginBottom: '32px', maxWidth: '600px', mx: 'auto', display: 'inline-block' }}>Apply for the LIC Bima Sakhi program and start earning with the strategies you just downloaded.</p>
+                <div>
+                    <Link href="/apply">
+                        <Button variant="primary" size="large">Apply Now to Become an Agent →</Button>
+                    </Link>
+                </div>
+            </section>
+
             {/* Gated Content Modal */}
             {selectedResource && (
                 <div className="modal-overlay">

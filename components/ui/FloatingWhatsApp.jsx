@@ -5,12 +5,14 @@ import { getWhatsAppUrl } from '../../utils/whatsapp'; // ← Central WhatsApp e
 import "../../styles/FloatingActions.css";
 
 const FloatingWhatsApp = () => {
-    const getUTMSource = () => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get("source") || "direct";
-    };
+    const [source, setSource] = React.useState("direct");
 
-    const source = getUTMSource();
+    React.useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            setSource(params.get("source") || "direct");
+        }
+    }, []);
 
     const handleClick = (e) => {
         // GTM tracking (existing logic)
