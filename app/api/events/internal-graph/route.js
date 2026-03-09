@@ -20,11 +20,11 @@ export async function GET(req) {
         // Fetch 3 related localities inside the same city, skipping our own locality
         const { data: peerPages } = await supabase
             .from('page_index')
-            .select('page_slug, crawl_priority')
+            .select('page_slug, page_type')
             .eq('city_id', cityId)
             .neq('locality_id', localityId)
             .eq('status', 'active')
-            .eq('crawl_priority', 'locality_page')
+            .eq('page_type', 'locality_page')
             .limit(3);
 
         if (peerPages) {
@@ -39,7 +39,7 @@ export async function GET(req) {
             .from('page_index')
             .select('page_slug')
             .eq('city_id', cityId)
-            .eq('crawl_priority', 'city_page')
+            .eq('page_type', 'city_page')
             .eq('status', 'active')
             .limit(1)
             .single();
@@ -48,6 +48,26 @@ export async function GET(req) {
             links.unshift({
                 slug: cityPage.page_slug,
                 anchor: `View All Bima Sakhi Programs in ${cityPage.page_slug.replace('bima-sakhi-', '')}`
+            });
+        }
+
+        // Add 2 Top Converting Pages (high priority crawl budget winners)
+        const { data: topPages } = await supabase
+            .from('page_index')
+            .select('page_slug')
+            .eq('status', 'active')
+            .eq('crawl_priority', 'high')
+            .order('crawl_score', { ascending: false })
+            .limit(2);
+
+        if (topPages) {
+            topPages.forEach(tp => {
+                if (tp.page_slug !== cityPage?.page_slug) {
+                    links.push({
+                        slug: tp.page_slug,
+                        anchor: `Trending Opportunity: ${tp.page_slug.replace('bima-sakhi-', '').replace(/-/g, ' ')}`
+                    });
+                }
             });
         }
 

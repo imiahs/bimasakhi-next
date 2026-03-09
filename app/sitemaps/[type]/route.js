@@ -27,23 +27,23 @@ export async function GET(request, { params }) {
             const pageNum = parseInt(pageIndexRaw, 10);
 
             if (!isNaN(pageNum) && pageNum > 0) {
-                const limit = 1000;
+                const limit = 2000;
                 const start = (pageNum - 1) * limit;
                 const end = start + limit - 1;
 
                 const { data: pageRange } = await supabase
                     .from('page_index')
-                    .select('page_slug, crawl_priority, updated_at')
+                    .select('page_slug, page_type, updated_at')
                     .eq('status', 'active')
-                    .order('crawl_priority', { ascending: true }) // Ranks cities highest natively
+                    .order('page_type', { ascending: true }) // Ranks cities highest natively
                     .range(start, end);
 
                 if (pageRange) {
                     urls = pageRange.map(page => ({
                         loc: `${siteUrl}/${page.page_slug}`,
                         lastmod: page.updated_at || new Date().toISOString(),
-                        changefreq: page.crawl_priority === 'city_page' ? 'daily' : 'weekly',
-                        priority: page.crawl_priority === 'city_page' ? 0.9 : 0.7
+                        changefreq: page.page_type === 'city_page' ? 'daily' : 'weekly',
+                        priority: page.page_type === 'city_page' ? 0.9 : 0.7
                     }));
                 }
             }

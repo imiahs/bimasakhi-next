@@ -53,12 +53,35 @@ const IndexHealthContent = () => {
                     Aggregating index matrices...
                 </div>
             ) : metrics ? (
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <MetricCard title="Indexed Active Pages" value={metrics.indexed_pages} color="green" />
-                    <MetricCard title="Pending Index Queue" value={metrics.pending_pages} color="orange" />
-                    <MetricCard title="No-Index/Disabled" value={metrics.noindex_pages} color="slate" />
-                    <MetricCard title="Crawl Error Events" value={metrics.crawl_errors} color="red" />
-                </div>
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <MetricCard title="Indexed Active Pages" value={metrics.indexed_pages} color="green" />
+                        <MetricCard title="Pending Index Queue" value={metrics.pending_pages} color="orange" />
+                        <MetricCard title="No-Index/Disabled" value={metrics.noindex_pages} color="slate" />
+                        <MetricCard title="Orphan Pages Flagged" value={metrics.orphan_pages} color="red" />
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl border border-slate-200 mt-6">
+                        <h3 className="font-semibold text-slate-800 mb-4">Crawl Priority Distribution</h3>
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                            <div className="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <div className="text-sm font-medium text-green-700 uppercase">High Priority</div>
+                                <div className="text-3xl font-bold text-green-600 mt-2">{metrics.priority_high}</div>
+                                <p className="text-xs text-green-500 mt-1">Crawled frequently (Score &gt; 80)</p>
+                            </div>
+                            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <div className="text-sm font-medium text-blue-700 uppercase">Medium Priority</div>
+                                <div className="text-3xl font-bold text-blue-600 mt-2">{metrics.priority_medium}</div>
+                                <p className="text-xs text-blue-500 mt-1">Crawled periodically (Score 40-80)</p>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                <div className="text-sm font-medium text-slate-700 uppercase">Low Priority</div>
+                                <div className="text-3xl font-bold text-slate-600 mt-2">{metrics.priority_low}</div>
+                                <p className="text-xs text-slate-500 mt-1">Rarely crawled (Score &lt; 40)</p>
+                            </div>
+                        </div>
+                    </div>
+                </>
             ) : (
                 <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl border border-red-200">
                     Unable to load SEO index matrices. DB connection severed.
