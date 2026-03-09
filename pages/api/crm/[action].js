@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 import { redis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
 import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
+import { getLocalDb } from '@/utils/localDb.js';
 
 // --- Shared Utilities ---
 function assertEnv(vars) {
@@ -70,6 +71,7 @@ async function handleCreateLead(req, res) {
         pincode, city, state, locality,
         education, occupation, reason,
         source, medium, campaign, visitedPages,
+        session_id,
         // Tasks 2 & 3: Lead Attribution
         lead_source_page, lead_source_type
     } = req.body;
@@ -190,6 +192,76 @@ async function handleCreateLead(req, res) {
                         event_type: 'created'
                     });
                     if (eventLogErr) console.error("Event Log Error:", eventLogErr);
+
+                    // Phase 19: Lead Intelligence & Scoring System
+                    if (session_id) {
+                        try {
+                            const db = getLocalDb();
+                            if (db) {
+                                // 1. Fetch Journey Events
+                                const events = db.prepare('SELECT event_type, route_path, metadata, created_at FROM event_stream WHERE session_id = ? ORDER BY created_at ASC').all(session_id);
+
+                                // 2. Compute Score
+                                let leadScore = 20; // Base score for form submission
+                                let journeySteps = events.map(e => ({
+                                    action: e.event_type,
+                                    path: e.route_path,
+                                    time: e.created_at
+                                }));
+
+                                events.forEach(evt => {
+                                    if (evt.event_type === 'page_view') leadScore += 2;
+                                    if (evt.event_type === 'calculator_used') leadScore += 10;
+                                    if (evt.event_type === 'resource_download') leadScore += 5;
+                                    if (evt.event_type.startsWith('apply_step_')) leadScore += 2;
+                                });
+
+                                // 3. Save Score
+                                await supabase.from('lead_scores').insert({
+                                    lead_id: newLead.id,
+                                    score: leadScore,
+                                    score_reason: 'Form submission + session engagement'
+                                });
+
+                                // 4. Save Journey
+                                await supabase.from('lead_journeys').insert({
+                                    lead_id: newLead.id,
+                                    session_id: session_id,
+                                    steps: journeySteps,
+                                    conversion_point: lead_source_page
+                                });
+                            }
+                        } catch (scoreErr) {
+                            console.error("Lead Intelligence Update Error:", scoreErr);
+                        }
+                    }
+
+                    // Phase 19: Content Analytics Lead Counter
+                    try {
+                        if (lead_source_page) {
+                            supabase.from('content_metrics').select('leads_generated, id').eq('target_path', lead_source_page).maybeSingle()
+                                .then(({ data }) => {
+                                    if (data) {
+                                        supabase.from('content_metrics').update({ leads_generated: data.leads_generated + 1, updated_at: new Date() }).eq('id', data.id).then();
+                                    } else {
+                                        supabase.from('content_metrics').insert({ target_path: lead_source_page, leads_generated: 1 }).then();
+                                    }
+                                });
+                        }
+
+                        if (source) {
+                            supabase.from('traffic_sources').select('leads, id').eq('source', source).maybeSingle()
+                                .then(({ data }) => {
+                                    if (data) {
+                                        supabase.from('traffic_sources').update({ leads: data.leads + 1, updated_at: new Date() }).eq('id', data.id).then();
+                                    } else {
+                                        supabase.from('traffic_sources').insert({ source, medium, campaign, leads: 1 }).then();
+                                    }
+                                });
+                        }
+                    } catch (metricErr) {
+                        console.error('Lead Metric Error:', metricErr);
+                    }
 
                 } catch (insertError) {
                     // HANDLE UNIQUE CONSTRAINT RACE CONDITION

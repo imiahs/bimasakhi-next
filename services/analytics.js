@@ -4,6 +4,8 @@
  * Respects 'isAnalyticsEnabled' flag from global config.
  */
 
+import { getStorage, STORAGE_KEYS } from '@/utils/storage';
+
 class AnalyticsService {
     constructor() {
         this.initialized = false;
@@ -81,6 +83,13 @@ class AnalyticsService {
      */
     pageView(path) {
         if (!this.initialized) return;
+
+        let sessionId = 'anonymous';
+        try {
+            const userState = getStorage(STORAGE_KEYS.USER);
+            if (userState && userState.session_id) sessionId = userState.session_id;
+        } catch (e) { }
+
         try {
             // GA4 Page View
             if (this.gtag) {
@@ -95,6 +104,19 @@ class AnalyticsService {
                     pagePath: path
                 });
             }
+
+            // Phase 19: Local Observability Integration
+            fetch('/api/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event_type: 'page_view',
+                    session_id: sessionId,
+                    route_path: path,
+                    metadata: { source: userState?.source || 'direct' }
+                })
+            }).catch(console.error);
+
         } catch (e) {
             // Silent fail
         }
@@ -107,6 +129,13 @@ class AnalyticsService {
      */
     track(eventName, params = {}) {
         if (!this.initialized) return;
+
+        let sessionId = 'anonymous';
+        try {
+            const userState = getStorage(STORAGE_KEYS.USER);
+            if (userState && userState.session_id) sessionId = userState.session_id;
+        } catch (e) { }
+
         try {
             // GA4
             if (this.gtag) {
@@ -119,6 +148,19 @@ class AnalyticsService {
                     ...params
                 });
             }
+
+            // Phase 19: Local Observability Integration
+            fetch('/api/events', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event_type: eventName,
+                    session_id: sessionId,
+                    route_path: window.location.pathname,
+                    metadata: params
+                })
+            }).catch(console.error);
+
         } catch (e) {
             // Silent fail
         }

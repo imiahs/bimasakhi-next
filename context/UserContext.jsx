@@ -5,11 +5,16 @@ import { getStorage, setStorage, STORAGE_KEYS } from '@/utils/storage';
 
 export const UserContext = createContext();
 
+const generateSessionId = () => {
+    return 'sess_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+};
+
 const DEFAULT_USER_STATE = {
     visitedPages: [],
     hasSubmitted: false,
     source: 'website',
-    city: ''
+    city: '',
+    session_id: null
 };
 
 export const UserProvider = ({ children }) => {
@@ -52,12 +57,13 @@ export const UserProvider = ({ children }) => {
         }
 
         const newState = { ...(stored || DEFAULT_USER_STATE), source: currentSource };
+        if (!newState.session_id) {
+            newState.session_id = generateSessionId();
+        }
         setUserState(newState);
 
         // Immediately store
-        if (!stored) {
-            setStorage(STORAGE_KEYS.USER, newState);
-        }
+        setStorage(STORAGE_KEYS.USER, newState);
     }, []);
 
     // Save to storage on change

@@ -377,11 +377,12 @@ const ApplyForm = () => {
         // Prepare Payload
         const payload = {
             ...formData,
-            recruitment_phase: formData.phaseTag,   // 🔥 CRM TAG
+            recruitment_phase: formData.phaseTag,
             source: userState.source || 'Website',
             medium: userState.medium || 'Direct',
             campaign: userState.campaign || 'Bima Sakhi',
             visitedPages: userState.visitedPages,
+            session_id: userState.session_id,
             // Tasks 2 & 3: Lead Attribution
             lead_source_page: window.location.pathname,
             lead_source_type: ['blog', 'tools'].includes(userState.source) ? userState.source : 'funnel'

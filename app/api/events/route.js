@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getLocalDb } from '@/utils/localDb';
+import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,6 +26,37 @@ export async function POST(request) {
             route_path,
             metadata ? JSON.stringify(metadata) : null
         );
+
+        // Phase 19: Asynchronous Supabase Metric Upserting (Fire & Forget)
+        if (event_type === 'page_view') {
+            const supabaseUrl = process.env.SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+            if (supabaseUrl && supabaseKey && process.env.SUPABASE_ENABLED === 'true') {
+                const supabase = createClient(supabaseUrl, supabaseKey);
+                const source = metadata?.source || 'direct';
+
+                // Fire-and-forget RPC call (requires Supabase RPC function, fallback to fetch/update)
+                // Since we don't have RPC defined yet, we will fetch then update
+                supabase.from('content_metrics').select('views').eq('target_path', route_path).single()
+                    .then(({ data }) => {
+                        if (data) {
+                            supabase.from('content_metrics').update({ views: data.views + 1, updated_at: new Date() }).eq('target_path', route_path).then();
+                        } else {
+                            supabase.from('content_metrics').insert({ target_path: route_path, views: 1 }).then();
+                        }
+                    });
+
+                supabase.from('traffic_sources').select('visits, id').eq('source', source).maybeSingle()
+                    .then(({ data }) => {
+                        if (data) {
+                            supabase.from('traffic_sources').update({ visits: data.visits + 1, updated_at: new Date() }).eq('id', data.id).then();
+                        } else {
+                            supabase.from('traffic_sources').insert({ source, visits: 1 }).then();
+                        }
+                    });
+            }
+        }
 
         return NextResponse.json({ success: true, message: 'Event logged successfully' });
     } catch (error) {
