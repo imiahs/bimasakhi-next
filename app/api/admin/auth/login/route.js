@@ -7,8 +7,29 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.ADMIN_PASSWORD || 'fallback_secret_for_development_only'
 );
 
+// In-memory rate limiting for brute force protection
+const loginAttempts = new Map();
+
 export async function POST(request) {
     try {
+        const ip = request.ip || request.headers.get('x-forwarded-for') || 'anon';
+        const now = Date.now();
+
+        // Rate limiting logic: Max 5 attempts per minute per IP
+        const attemptRecord = loginAttempts.get(ip) || { count: 0, firstAttempt: now };
+        if (now - attemptRecord.firstAttempt > 60000) {
+            // Reset after 1 minute
+            attemptRecord.count = 1;
+            attemptRecord.firstAttempt = now;
+        } else {
+            attemptRecord.count += 1;
+        }
+        loginAttempts.set(ip, attemptRecord);
+
+        if (attemptRecord.count > 5) {
+            return NextResponse.json({ error: 'Too many login attempts. Please try again later.' }, { status: 429 });
+        }
+
         const body = await request.json();
         const { email, password } = body;
 
@@ -53,11 +74,12 @@ export async function POST(request) {
         const token = await new SignJWT({
             sub: user.id,
             role: user.role,
-            email: user.email
+            email: user.email,
+            session_id: crypto.randomUUID() // Force new session generation
         })
             .setProtectedHeader({ alg: 'HS256' })
             .setIssuedAt()
-            .setExpirationTime('24h') // 24 hours
+            .setExpirationTime('8h') // 8 hours
             .sign(JWT_SECRET);
 
         // Prepare response with HttpOnly cookie
@@ -67,10 +89,10 @@ export async function POST(request) {
             name: 'admin-session',
             value: token,
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'strict',
             path: '/',
-            maxAge: 60 * 60 * 24 // 1 day
+            maxAge: 60 * 60 * 8 // 8 hours
         });
 
         return response;

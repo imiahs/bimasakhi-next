@@ -5,27 +5,39 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.ADMIN_PASSWORD || 'fallback_secret_for_development_only'
 );
 
-// Basic in-memory rate store for Edge environments (resets per cold boot)
+// Basic sliding window rate store for Edge environments (resets per cold boot)
+// Map<IP, { count: number, startTime: number }>
 const rateLimitStore = new Map();
 
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
     const ip = request.ip || request.headers.get('x-forwarded-for') || 'anon';
 
-    // 1. RATE LIMITING FOR API ROUTES
-    if (pathname.startsWith('/api/admin')) {
-        const currentCount = rateLimitStore.get(ip) || 0;
-        if (currentCount > 60) {
+    // 1. RATE LIMITING FOR API ROUTES & JOBS
+    if (pathname.startsWith('/api/admin') || pathname.startsWith('/api/jobs')) {
+        const now = Date.now();
+        const windowSize = 60 * 1000; // 1 minute
+        let record = rateLimitStore.get(ip) || { count: 0, startTime: now };
+
+        // Reset window if TTL surpassed
+        if (now - record.startTime > windowSize) {
+            record = { count: 0, startTime: now };
+        }
+
+        record.count++;
+        rateLimitStore.set(ip, record);
+
+        if (record.count > 100) {
             return NextResponse.json({ error: 'Too many requests / Rate limit globally exceeded.' }, { status: 429 });
         }
-        rateLimitStore.set(ip, currentCount + 1);
 
         // CSRF Protection Check for Mutations
-        if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)) {
-            const origin = request.headers.get('origin') || request.headers.get('referer');
-            if (origin && !origin.includes(process.env.NEXT_PUBLIC_SUPABASE_URL) && !origin.includes('bimasakhi')) {
-                // Mock implementation, would strictly check against allowed origins
-                // console.warn('Suspicious CSRF matched against origin:', origin);
+        if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method) && pathname !== '/api/admin/auth/login') {
+            const origin = request.headers.get('origin') || request.headers.get('referer') || '';
+            const host = request.headers.get('host') || '';
+            // Basic Origin/Host verification for CSRF in Admin
+            if (!origin.includes(host) && !origin.includes(process.env.NEXT_PUBLIC_SUPABASE_URL || 'never-match')) {
+                return NextResponse.json({ error: 'CSRF token missing or origin mismatch.' }, { status: 403 });
             }
         }
     }
@@ -73,9 +85,13 @@ export async function middleware(request) {
             return NextResponse.redirect(loginUrl);
         }
     }
+
     // 3. BOT CACHE DELIVERY FOR SEO
-    const userAgent = request.headers.get('user-agent') || '';
-    if (userAgent.toLowerCase().includes('googlebot') && pathname.startsWith('/bima-sakhi-')) {
+    const userAgent = request.headers.get('user-agent')?.toLowerCase() || '';
+    const botList = ['googlebot', 'bingbot', 'ahrefsbot', 'semrushbot', 'mj12bot', 'dotbot'];
+    const isBot = botList.some(bot => userAgent.includes(bot));
+
+    if (isBot && pathname.startsWith('/bima-sakhi-')) {
         const slug = pathname.substring(1); // removes leading slash
         try {
             const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -103,9 +119,8 @@ export async function middleware(request) {
 
 export const config = {
     // Match all request paths except for the ones starting with:
-    // - api (API routes)
     // - _next/static (static files)
     // - _next/image (image optimization files)
     // - favicon.ico (favicon file)
-    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+    matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

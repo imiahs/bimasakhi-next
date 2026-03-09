@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
 import { getLocalDb } from '@/utils/localDb';
+import { checkRedisStatus } from '@/lib/queue/redis';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
-        const statuses = {
+        const ObjectStatuses = {
             supabase: 'red',
             sqlite: 'red',
+            redis: 'red',
             zoho_api: 'yellow', // Simulated since we lack direct ping here
             background_workers: 'yellow',
             media_pipeline: 'green' // Native image components
@@ -38,12 +40,24 @@ export async function GET() {
             }
         } catch { }
 
+        // 4. Redis Check
+        try {
+            const redisCheck = await checkRedisStatus();
+            if (redisCheck.redis_status === 'online') {
+                ObjectStatuses.redis = 'green';
+            }
+        } catch { }
+
         // Aggregate system health
-        const allGreen = Object.values(statuses).every(s => s === 'green');
-        const anyRed = Object.values(statuses).some(s => s === 'red');
+        const allGreen = Object.values(ObjectStatuses).every(s => s === 'green');
+        const anyRed = Object.values(ObjectStatuses).some(s => s === 'red');
         const overall = anyRed ? 'red' : (allGreen ? 'green' : 'yellow');
 
-        return NextResponse.json({ success: true, statuses, overall });
+        // 5. Fetch telemetry snapshot for Performance Summary
+        const supabaseService = getServiceSupabase();
+        const { data: snapshot } = await supabaseService.from('system_metrics_snapshot').select('*').limit(1).single();
+
+        return NextResponse.json({ success: true, statuses: ObjectStatuses, overall, metrics: snapshot });
     } catch (error) {
         console.error('API /admin/system GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch system health' }, { status: 500 });

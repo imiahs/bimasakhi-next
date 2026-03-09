@@ -70,8 +70,6 @@ const LoginContent = () => {
                     <button type="submit" className="login-btn" disabled={loading}>
                         {loading ? 'Authenticating...' : 'Sign In'}
                     </button>
-
-                    <p className="text-sm text-gray-400 mt-6">(Hint: admin@bimasakhi.com / bimasakhi2026)</p>
                 </form>
             </div>
         </div>

@@ -14,6 +14,7 @@ const defaultRoutes = [
 const SEOContent = () => {
     const [routes, setRoutes] = useState(defaultRoutes);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     // Modal states
     const [isEditing, setIsEditing] = useState(false);
@@ -35,7 +36,13 @@ const SEOContent = () => {
     const fetchOverrides = async () => {
         try {
             setLoading(true);
+            setError(null);
             const res = await fetch('/api/admin/seo');
+
+            if (!res.ok) {
+                throw new Error('API returned an error');
+            }
+
             const data = await res.json();
 
             if (data.overrides) {
@@ -68,8 +75,9 @@ const SEOContent = () => {
 
                 setRoutes(mergedPaths);
             }
-        } catch (error) {
-            console.error('Failed to fetch SEO overrides', error);
+        } catch (err) {
+            console.error('Failed to fetch SEO overrides', err);
+            setError('System is currently offline or degraded. Unable to load SEO overrides at this time.');
         } finally {
             setLoading(false);
         }
@@ -147,6 +155,10 @@ const SEOContent = () => {
 
                     {loading ? (
                         <p style={{ padding: '20px' }}>Loading SEO Routes...</p>
+                    ) : error ? (
+                        <div className="p-8 text-center text-red-500 bg-red-50 rounded-xl border border-red-200">
+                            <strong>Service Alert: </strong> {error}
+                        </div>
                     ) : (
                         <div className="seo-routes-grid">
                             {routes.map(route => (

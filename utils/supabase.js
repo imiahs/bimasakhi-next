@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { metricsBatcher } from '@/lib/telemetry/metricsBatcher';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -31,4 +32,19 @@ export const getServiceSupabase = () => {
         });
     }
     return serviceClient;
+};
+
+export const executeWithSupabaseLatency = async (queryPromise) => {
+    const start = Date.now();
+    try {
+        const result = await queryPromise;
+        const latency = Date.now() - start;
+        metricsBatcher.recordSupabaseLatency(latency);
+        return result;
+    } catch (e) {
+        // Even if it failed, we can log the latency (the time until failure)
+        const latency = Date.now() - start;
+        metricsBatcher.recordSupabaseLatency(latency);
+        throw e;
+    }
 };

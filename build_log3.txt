@@ -1,0 +1,112 @@
+
+> bimasakhi-next@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.12
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ⚠ Compiled with warnings in 16.5s
+
+./app/api/admin/jobs/content-audit/route.js
+Attempted import error: 'contentAuditQueue' is not exported from '@/lib/queue/queues' (imported as 'contentAuditQueue').
+
+Import trace for requested module:
+./app/api/admin/jobs/content-audit/route.js
+
+./app/api/admin/jobs/page-generator/route.js
+Attempted import error: 'pageGeneratorQueue' is not exported from '@/lib/queue/queues' (imported as 'pageGeneratorQueue').
+
+Import trace for requested module:
+./app/api/admin/jobs/page-generator/route.js
+
+./components/blocks/PageBlocks.jsx
+Attempted import error: 'SmartCTA' is not exported from '@/components/ui/SmartCTA' (imported as 'SmartCTA').
+
+Import trace for requested module:
+./components/blocks/PageBlocks.jsx
+./app/pages/[slug]/page.js
+
+Failed to compile.
+
+./node_modules/ioredis/built/cluster/ClusterOptions.js
+Module not found: Can't resolve 'dns'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/ioredis/built/cluster/index.js
+./node_modules/ioredis/built/index.js
+./lib/queue/redis.js
+./lib/telemetry/alertEngine.js
+./lib/telemetry/metricsBatcher.js
+./utils/supabase.js
+./lib/supabase.js
+./lib/logger/systemLogger.js
+./app/global-error.js
+
+./node_modules/ioredis/built/cluster/util.js
+Module not found: Can't resolve 'net'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/ioredis/built/cluster/index.js
+./node_modules/ioredis/built/index.js
+./lib/queue/redis.js
+./lib/telemetry/alertEngine.js
+./lib/telemetry/metricsBatcher.js
+./utils/supabase.js
+./lib/supabase.js
+./lib/logger/systemLogger.js
+./app/global-error.js
+
+./node_modules/ioredis/built/connectors/SentinelConnector/index.js
+Module not found: Can't resolve 'net'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/ioredis/built/index.js
+./lib/queue/redis.js
+./lib/telemetry/alertEngine.js
+./lib/telemetry/metricsBatcher.js
+./utils/supabase.js
+./lib/supabase.js
+./lib/logger/systemLogger.js
+./app/global-error.js
+
+./node_modules/ioredis/built/connectors/SentinelConnector/index.js
+Module not found: Can't resolve 'tls'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/ioredis/built/index.js
+./lib/queue/redis.js
+./lib/telemetry/alertEngine.js
+./lib/telemetry/metricsBatcher.js
+./utils/supabase.js
+./lib/supabase.js
+./lib/logger/systemLogger.js
+./app/global-error.js
+
+./node_modules/ioredis/built/connectors/StandaloneConnector.js
+Module not found: Can't resolve 'net'
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./node_modules/ioredis/built/connectors/index.js
+./node_modules/ioredis/built/Redis.js
+./node_modules/ioredis/built/index.js
+./lib/queue/redis.js
+./lib/telemetry/alertEngine.js
+./lib/telemetry/metricsBatcher.js
+./utils/supabase.js
+./lib/supabase.js
+./lib/logger/systemLogger.js
+./app/global-error.js
+
+
+> Build failed because of webpack errors

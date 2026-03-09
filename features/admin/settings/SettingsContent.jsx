@@ -1,15 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const SettingsContent = () => {
     const [activeTab, setActiveTab] = useState('general');
+    const [systemOffline, setSystemOffline] = useState(false);
+
+    useEffect(() => {
+        const checkSystem = async () => {
+            try {
+                const res = await fetch('/api/admin/system');
+                const data = await res.json();
+                if (data.overall === 'red') setSystemOffline(true);
+            } catch {
+                setSystemOffline(true);
+            }
+        };
+        checkSystem();
+    }, []);
 
     return (
         <div className="flex flex-col gap-6 h-full">
             <div className="admin-page-header">
                 <h1>Platform Settings</h1>
                 <p>Global configuration, API hooks, and environment variables.</p>
+                {systemOffline && (
+                    <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm border border-red-200">
+                        <strong>Warning:</strong> Core services (Redis/DB) are offline. Some settings may fail to save.
+                    </div>
+                )}
             </div>
 
             <div className="flex bg-white rounded-xl border border-slate-200 overflow-hidden">

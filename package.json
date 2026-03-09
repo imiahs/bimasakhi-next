@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "worker": "node lib/scheduler/jobScheduler.js"
+    "worker": "node lib/workers/startWorkers.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",

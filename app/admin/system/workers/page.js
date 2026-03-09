@@ -2,6 +2,8 @@ import React from 'react';
 import { supabase } from '@/lib/supabase';
 import { getPageGeneratorQueue, getContentAuditQueue, getIndexQueue, getCacheQueue } from '@/lib/queue/queues';
 
+export const dynamic = 'force-dynamic';
+
 export default async function SystemWorkers() {
     // 1. Hardware State (Graceful Degradation protecting Native Node execution edges)
     const pq = getPageGeneratorQueue();
@@ -20,7 +22,7 @@ export default async function SystemWorkers() {
 
     const { data: heartbeats } = await supabase.from('worker_heartbeats').select('*').order('last_heartbeat', { ascending: false });
     const { data: dlq } = await supabase.from('dead_letter_queue').select('*').order('created_at', { ascending: false }).limit(20);
-    const { data: metrics } = await supabase.from('system_metrics').select('*').limit(1).single();
+    const { data: metrics } = await supabase.from('system_metrics_snapshot').select('*').limit(1).single();
 
     return (
         <div className="p-8">
@@ -30,7 +32,7 @@ export default async function SystemWorkers() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                 <div className="bg-gray-800 text-white p-4 rounded shadow">
                     <h3 className="text-xs font-bold text-gray-400 uppercase">Redis Queue Depth</h3>
-                    <p className="text-3xl font-black mt-1">{totalDepth}</p>
+                    <p className="text-3xl font-black mt-1">{metrics?.queue_depth || 0}</p>
                     <p className="text-xs text-gray-400 mt-2">Active pending bounded tasks.</p>
                 </div>
                 <div className="bg-gray-800 text-white p-4 rounded shadow">

@@ -66,13 +66,36 @@ const SystemHealthContent = () => {
                 </div>
             ) : status && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Overall Status Card */}
-                    <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-white p-6 rounded-xl border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <h3 className="text-lg font-semibold text-slate-800">Global Cluster Status</h3>
-                            <p className="text-slate-500 text-sm mt-1">Monitors active connection state</p>
+                    {/* Performance Summary Card */}
+                    <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-white p-6 rounded-xl border border-slate-200">
+                        <div className="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 className="text-lg font-semibold text-slate-800">Global Cluster Status</h3>
+                                <p className="text-slate-500 text-sm mt-1">Monitors active connection state & cluster vitals</p>
+                            </div>
+                            <StatusBadge val={status.overall} />
                         </div>
-                        <StatusBadge val={status.overall} />
+
+                        {status.metrics && (
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                <div>
+                                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Queue Load</div>
+                                    <div className="font-bold text-slate-800">{status.metrics.queue_depth} bounded</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Worker Uptime</div>
+                                    <div className="font-bold text-slate-800">{Math.floor(status.metrics.worker_uptime / 60)} minutes</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">DB Latency</div>
+                                    <div className="font-bold text-slate-800">{status.metrics.supabase_latency_ms} ms</div>
+                                </div>
+                                <div>
+                                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Redis Ping</div>
+                                    <div className="font-bold text-slate-800">{status.metrics.redis_latency_ms} ms</div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="bg-white p-6 rounded-xl border border-slate-200">
@@ -105,6 +128,14 @@ const SystemHealthContent = () => {
                             <StatusBadge val={status.statuses.background_workers} />
                         </div>
                         <p className="text-xs text-slate-500">Asynchronous internal CRON triggers governing database snapshotting and batching logic.</p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl border border-slate-200">
+                        <div className="flex justify-between items-start mb-4">
+                            <h3 className="font-semibold text-slate-800">Redis Memory Store</h3>
+                            <StatusBadge val={status.statuses.redis || 'red'} />
+                        </div>
+                        <p className="text-xs text-slate-500">In-memory data structure component routing queue events for BullMQ.</p>
                     </div>
 
                     <div className="bg-white p-6 rounded-xl border border-slate-200">
