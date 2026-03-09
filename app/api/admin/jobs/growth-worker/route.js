@@ -20,20 +20,24 @@ export async function POST(request) {
 
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        const [metricsRes, trafficRes] = await Promise.all([
+        const [metricsRes, trafficRes, predictionsRes, campaignsRes] = await Promise.all([
             supabase.from('content_metrics').select('*').order('leads_generated', { ascending: false }),
-            supabase.from('traffic_sources').select('*').order('leads', { ascending: false })
+            supabase.from('traffic_sources').select('*').order('leads', { ascending: false }),
+            supabase.from('lead_predictions').select('conversion_probability, generated_at').order('generated_at', { ascending: false }).limit(20),
+            supabase.from('campaign_insights').select('source, campaign, ai_insight').order('generated_at', { ascending: false }).limit(10)
         ]);
 
         const metrics = metricsRes.data || [];
         const traffic = trafficRes.data || [];
+        const predictions = predictionsRes.data || [];
+        const campaigns = campaignsRes.data || [];
 
         const topContent = metrics[0]?.target_path || 'None recorded';
         const worstContent = metrics[metrics.length - 1]?.target_path || 'None recorded';
         const topSource = traffic[0]?.source || 'None recorded';
 
-        const systemPrompt = "Analyze the recent growth metrics and formulate a 3 sentence executive summary discussing best performing traffic sources and any content optimization recommendations.";
-        const userPrompt = `Content Metrics:\n${JSON.stringify(metrics.slice(0, 5))}\nTraffic:\n${JSON.stringify(traffic.slice(0, 5))}`;
+        const systemPrompt = "You are the Bima Sakhi Master AI Growth Analyst. Synthesize the provided data across traffic, content, campaigns, and lead recruitment predictions into a comprehensive 3-paragraph Weekly Intelligence Report focused on actionable pipeline growth and conversion optimization.";
+        const userPrompt = `Content Metrics:\n${JSON.stringify(metrics.slice(0, 5))}\nTraffic:\n${JSON.stringify(traffic.slice(0, 5))}\nRecruitment Pipeline Health:\n${JSON.stringify(predictions.slice(0, 5))}\nCampaign Trends:\n${JSON.stringify(campaigns.slice(0, 5))}`;
 
         let aiSummary = "Summary not generated: No AI Provider.";
         try {
