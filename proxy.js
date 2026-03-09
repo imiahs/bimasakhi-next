@@ -73,6 +73,30 @@ export async function middleware(request) {
             return NextResponse.redirect(loginUrl);
         }
     }
+    // 3. BOT CACHE DELIVERY FOR SEO
+    const userAgent = request.headers.get('user-agent') || '';
+    if (userAgent.toLowerCase().includes('googlebot') && pathname.startsWith('/bima-sakhi-')) {
+        const slug = pathname.substring(1); // removes leading slash
+        try {
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+            // Direct REST fetch bypassing heavyweight Supabase client initialization at edge
+            const cacheRes = await fetch(`${supabaseUrl}/rest/v1/page_cache?page_slug=eq.${slug}&select=cached_html`, {
+                headers: { 'apikey': anonKey, 'Authorization': `Bearer ${anonKey}` }
+            });
+            const data = await cacheRes.json();
+
+            if (data && data.length > 0 && data[0].cached_html) {
+                return new NextResponse(data[0].cached_html, {
+                    status: 200,
+                    headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Edge-Cache': 'HIT' }
+                });
+            }
+        } catch (e) {
+            // Silently fallback to SSR render if edge fetch fails
+        }
+    }
 
     return NextResponse.next();
 }

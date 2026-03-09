@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "worker": "node lib/scheduler/jobScheduler.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
@@ -17,11 +18,13 @@
     "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.6.2",
+    "bullmq": "^5.70.4",
     "cookie": "^1.1.1",
     "ioredis": "^5.10.0",
     "jose": "^6.2.0",
     "jsonwebtoken": "^9.0.3",
-    "next": "16.1.6",
+    "next": "^15.2.3",
+    "node-cron": "^4.2.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "recharts": "^3.8.0",
