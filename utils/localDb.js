@@ -13,6 +13,16 @@ export function getLocalDb() {
 
         // Ensure tables exist on boot
         db.exec(`
+            CREATE TABLE IF NOT EXISTS system_errors (
+                id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+                layer TEXT NOT NULL,
+                message TEXT NOT NULL,
+                stack_trace TEXT,
+                source TEXT NOT NULL,
+                resolved INTEGER DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+
             CREATE TABLE IF NOT EXISTS observability_logs (
                 id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
                 level TEXT NOT NULL,

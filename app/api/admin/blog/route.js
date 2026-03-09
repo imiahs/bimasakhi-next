@@ -68,6 +68,25 @@ export async function PUT(request) {
 
         if (!id) return NextResponse.json({ error: 'Missing post ID' }, { status: 400 });
 
+        // Phase 18: Data Versioning Hook (Snapshot before update)
+        const { data: currentPost, error: fetchErr } = await supabase
+            .from('blog_posts')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (!fetchErr && currentPost) {
+            await supabase.from('blog_post_versions').insert({
+                post_id: currentPost.id,
+                title: currentPost.title,
+                content: currentPost.content,
+                meta_title: currentPost.meta_title,
+                meta_description: currentPost.meta_description,
+                author: currentPost.author,
+                status: currentPost.status
+            });
+        }
+
         const { data, error } = await supabase
             .from('blog_posts')
             .update(updates)

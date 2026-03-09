@@ -24,6 +24,10 @@ const SEOContent = () => {
         og_image: ''
     });
 
+    // AI States
+    const [analyzing, setAnalyzing] = useState(false);
+    const [aiSuggestions, setAiSuggestions] = useState(null);
+
     useEffect(() => {
         fetchOverrides();
     }, []);
@@ -106,6 +110,32 @@ const SEOContent = () => {
         }
     };
 
+    const handleAiOptimization = async () => {
+        setAnalyzing(true);
+        setAiSuggestions(null);
+        try {
+            const res = await fetch('/api/admin/seo/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    page_path: currentRoute.path,
+                    page_title: formData.meta_title || currentRoute.title,
+                    page_description: formData.meta_description || currentRoute.desc
+                })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setAiSuggestions(data.analysis);
+            } else {
+                alert('AI Analysis failed: ' + data.error);
+            }
+        } catch (error) {
+            alert('Failed to reach AI optimizer.');
+        } finally {
+            setAnalyzing(false);
+        }
+    };
+
     return (
         <div className="admin-seo-wrapper">
             {!isEditing ? (
@@ -143,7 +173,12 @@ const SEOContent = () => {
                             <h1>Edit Metadata</h1>
                             <p>Path: <strong>{currentRoute?.path}</strong></p>
                         </div>
-                        <button className="btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
+                        <div className="flex gap-3">
+                            <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium disabled:bg-slate-300" onClick={handleAiOptimization} disabled={analyzing}>
+                                {analyzing ? 'Analyzing...' : '✨ AI Optimize'}
+                            </button>
+                            <button className="btn-secondary" onClick={() => { setIsEditing(false); setAiSuggestions(null); }}>Cancel</button>
+                        </div>
                     </div>
 
                     <form className="blog-editor-form" style={{ maxWidth: '800px' }} onSubmit={handleSave}>
@@ -192,6 +227,28 @@ const SEOContent = () => {
                         </div>
 
                         <button type="submit" className="btn-primary" style={{ marginTop: '20px' }}>Save Overrides</button>
+
+                        {aiSuggestions && (
+                            <div className="mt-8 p-6 bg-purple-50 border border-purple-100 rounded-xl">
+                                <h3 className="text-lg font-bold text-purple-900 mb-4">✨ AI SEO Analysis (Score: {aiSuggestions.score}/100)</h3>
+
+                                <div className="mb-4">
+                                    <h4 className="font-semibold text-purple-800">Suggestions:</h4>
+                                    <ul className="list-disc pl-5 mt-2 space-y-1 text-purple-700">
+                                        {aiSuggestions.suggestions.map((s, i) => <li key={i}>{s}</li>)}
+                                    </ul>
+                                </div>
+
+                                <div className="mb-4">
+                                    <h4 className="font-semibold text-purple-800">Target Keywords generated:</h4>
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {aiSuggestions.generated_keywords.map((kw, i) => (
+                                            <span key={i} className="px-2 py-1 bg-white text-purple-600 rounded text-sm border border-purple-200">{kw}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </form>
                 </div>
             )}

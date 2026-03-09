@@ -38,6 +38,25 @@ export async function PUT(request) {
 
         let result;
         if (existing) {
+            // Phase 18: Data Versioning Hook (Snapshot before update)
+            const { data: currentSeo, error: fetchErr } = await supabase
+                .from('seo_overrides')
+                .select('*')
+                .eq('id', existing.id)
+                .single();
+
+            if (!fetchErr && currentSeo) {
+                await supabase.from('seo_versions').insert({
+                    seo_id: currentSeo.id,
+                    route: currentSeo.page_path,
+                    title: currentSeo.meta_title || '',
+                    description: currentSeo.meta_description || '',
+                    og_title: currentSeo.meta_title || '',
+                    og_description: currentSeo.meta_description || '',
+                    keywords: ''
+                });
+            }
+
             result = await supabase
                 .from('seo_overrides')
                 .update({ meta_title, meta_description, og_image })

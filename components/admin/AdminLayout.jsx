@@ -16,8 +16,12 @@ const ADMIN_LINKS = [
     { label: 'SEO', href: '/admin/seo', icon: '🔍' },
     { label: 'Media Library', href: '/admin/media', icon: '🖼️' },
     { label: 'Analytics', href: '/admin/analytics', icon: '📈' },
+    { label: 'AI Generator', href: '/admin/ai', icon: '🤖' },
     { label: 'Automation', href: '/admin/automation', icon: '⚡' },
     { label: 'Users', href: '/admin/users', icon: '🛡️' },
+    { label: 'System Errors', href: '/admin/errors', icon: '🚨' },
+    { label: 'Health Status', href: '/admin/system', icon: '🩺' },
+    { label: 'Backups', href: '/admin/settings/backups', icon: '💾' },
     { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
 ];
 
