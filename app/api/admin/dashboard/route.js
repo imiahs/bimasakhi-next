@@ -27,6 +27,46 @@ export const GET = withAdminAuth(async (request, user) => {
 
         const totalLeads = supabaseLeadsCount || 0;
 
+        // --- NEW OBSERVABILITY METRICS (Phase 18) ---
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+        // API Traffic (Last 24hrs)
+        const { count: apiRequests } = await supabase
+            .from('api_requests')
+            .select('*', { count: 'exact', head: true })
+            .gte('created_at', yesterday);
+
+        // Critical Unresolved Errors
+        const { count: unresolvedErrors } = await supabase
+            .from('system_runtime_errors')
+            .select('*', { count: 'exact', head: true })
+            .eq('resolved', false);
+
+        // Pending Sync Queue
+        const { count: queueSize } = await supabase
+            .from('lead_queue')
+            .select('*', { count: 'exact', head: true })
+            .or('synced_to_zoho.eq.false,synced_to_supabase.eq.false');
+
+        // Total Active Agents
+        const { count: activeAgents } = await supabase
+            .from('agents')
+            .select('*', { count: 'exact', head: true });
+
+        // Recruitment Pipeline Size
+        const { count: pipelineSize } = await supabase
+            .from('recruitment_pipeline')
+            .select('*', { count: 'exact', head: true });
+
+        // SEO Indexed Pages (Published articles + templates)
+        const { count: publishedPages } = await supabase
+            .from('custom_pages')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'published');
+
+        const totalSeoIndexed = (blogCount || 0) + (publishedPages || 0) + 14; // +14 static routes mapped in sitemap
+        // ---------------------------------------------
+
         // 4. Get recent activity
         const { data: recentBlogs } = await supabase
             .from('blog_posts')
@@ -68,7 +108,6 @@ export const GET = withAdminAuth(async (request, user) => {
             });
         }
 
-        // Sort combined activity by timestamp descending and take top 5
         activity.sort((a, b) => b.timestamp - a.timestamp);
         const recentActivity = activity.slice(0, 5);
 
@@ -77,6 +116,12 @@ export const GET = withAdminAuth(async (request, user) => {
                 totalLeads,
                 totalPosts: blogCount || 0,
                 resourceDownloads: totalDownloads,
+                apiRequests: apiRequests || 0,
+                unresolvedErrors: unresolvedErrors || 0,
+                queueSize: queueSize || 0,
+                activeAgents: activeAgents || 0,
+                pipelineSize: pipelineSize || 0,
+                seoIndexed: totalSeoIndexed
             },
             recentActivity
         });

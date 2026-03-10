@@ -4,6 +4,7 @@ import { getLocalDb } from '@/utils/localDb';
 import fs from 'fs';
 import path from 'path';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { updateWorkerHealth } from '@/lib/monitoring/workerHealth';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,8 +16,11 @@ export const GET = withAdminAuth(async (request, user) => {
     }
 
     try {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const backupDir = path.join(process.cwd(), 'backups', timestamp);
+        const today = new Date();
+        const isWeekly = today.getDay() === 0; // Sundays trigger full snapshots
+        const backupType = isWeekly ? 'weekly_snapshot' : 'daily_export';
+        const timestamp = today.toISOString().replace(/[:.]/g, '-');
+        const backupDir = path.join(process.cwd(), 'backups', backupType, timestamp);
 
         if (!fs.existsSync(backupDir)) {
             fs.mkdirSync(backupDir, { recursive: true });
@@ -36,8 +40,11 @@ export const GET = withAdminAuth(async (request, user) => {
         let backupStatus = {
             supabase: [],
             sqlite: false, // Deprecated
-            timestamp
+            timestamp,
+            type: backupType
         };
+
+        let totalSizeBytes = 0;
 
         // Snapshot Supabase Data
         for (const table of supabaseTables) {
@@ -45,9 +52,25 @@ export const GET = withAdminAuth(async (request, user) => {
             if (!error && data) {
                 const jsonPath = path.join(backupDir, `${table}.json`);
                 fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
+
+                try {
+                    totalSizeBytes += fs.statSync(jsonPath).size;
+                } catch (e) { }
+
                 backupStatus.supabase.push(table);
             }
         }
+
+        // Log to telemetry table
+        await supabase.from('system_backups').insert({
+            backup_type: backupType,
+            status: 'success',
+            file_path: backupDir,
+            tables_backed_up: backupStatus.supabase,
+            file_size_bytes: totalSizeBytes
+        });
+
+        await updateWorkerHealth('Cron_Backup_Worker', { jobsProcessed: 1, status: 'online' });
 
         return NextResponse.json({
             success: true,
@@ -56,6 +79,17 @@ export const GET = withAdminAuth(async (request, user) => {
         });
 
     } catch (error) {
+        await updateWorkerHealth('Cron_Backup_Worker', { failures: 1, status: 'crashed' });
+
+        try {
+            const supabase = getServiceSupabase();
+            await supabase.from('system_backups').insert({
+                backup_type: 'daily_export', // default assume
+                status: 'failed',
+                error: error.message
+            });
+        } catch (dbErr) { }
+
         return NextResponse.json({ error: 'Backup failed', details: error.message }, { status: 500 });
     }
 });

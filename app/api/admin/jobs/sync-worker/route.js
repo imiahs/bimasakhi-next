@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getLocalDb } from '@/utils/localDb';
 import { getServiceSupabase } from '@/utils/supabase';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { updateWorkerHealth } from '@/lib/monitoring/workerHealth';
 
 export const dynamic = 'force-dynamic';
 
@@ -93,6 +94,12 @@ export const GET = withAdminAuth(async (request, user) => {
             await supabase.from('observability_logs').insert(errorLogs);
         }
 
+        await updateWorkerHealth('Cron_Sync_Worker', {
+            jobsProcessed: syncedCount,
+            failures: errorLogs.length,
+            status: 'online'
+        });
+
         return NextResponse.json({
             success: true,
             message: `Processed ${pendingLeads.length} leads.`,
@@ -100,6 +107,7 @@ export const GET = withAdminAuth(async (request, user) => {
         });
 
     } catch (error) {
+        await updateWorkerHealth('Cron_Sync_Worker', { failures: 1, status: 'crashed' });
         return NextResponse.json({ error: 'Worker System Error', details: error.message }, { status: 500 });
     }
 });

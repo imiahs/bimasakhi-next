@@ -1,3 +1,4 @@
+import { logError } from '@/lib/monitoring/logError';
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
@@ -111,6 +112,10 @@ export async function middleware(request) {
             }
         } catch (e) {
             // Silently fallback to SSR render if edge fetch fails
+            // Avoid blocking edge thread execution
+            try {
+                await logError('EdgeMiddleware', 'SEO Cache Edge Fetch Failed', e);
+            } catch (loggingErr) { }
         }
     }
 

@@ -43,17 +43,27 @@
     margin-bottom: 20px;
 }
 
+.apply-hero h1,
+.apply-hero .subtitle,
+.apply-hero .lic-badge {
+    position: relative;
+    z-index: 10;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .apply-hero h1 {
     font-size: 2rem;
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 12px;
     letter-spacing: -0.5px;
+    color: #ffffff;
 }
 
 .apply-hero .subtitle {
-    font-size: 1.05em;
-    opacity: 0.9;
+    font-size: 1.1em;
+    opacity: 1;
+    color: #f8fafc;
     max-width: 540px;
     margin: 0 auto;
     line-height: 1.6;

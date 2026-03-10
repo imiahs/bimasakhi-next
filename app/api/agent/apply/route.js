@@ -39,7 +39,10 @@ export async function POST(req) {
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            systemLogger.logError('AgentApplyAPI', 'Supabase Insert Failed', error);
+            return NextResponse.json({ error: 'Application submission failed' }, { status: 500 });
+        }
 
         return NextResponse.json({ success: true, application: data });
     } catch (error) {
