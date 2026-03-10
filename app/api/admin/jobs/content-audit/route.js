@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
-import { contentAuditQueue } from '@/lib/queue/queues';
+import { getContentAuditQueue } from '@/lib/queue/queues';
 
 export async function POST(req) {
     try {
+        const contentAuditQueue = getContentAuditQueue();
+        if (!contentAuditQueue) {
+            return NextResponse.json({ error: 'Queue service unavailable.' }, { status: 503 });
+        }
         const job = await contentAuditQueue.add('audit-fingerprints', {}, { removeOnComplete: true });
 
         return NextResponse.json({

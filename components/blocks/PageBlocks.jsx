@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { SmartCTA } from '@/components/ui/SmartCTA';
+import SmartCTA from '@/components/ui/SmartCTA';
 
 export const HeroBlock = ({ data }) => {
     return (

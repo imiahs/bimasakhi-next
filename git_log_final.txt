@@ -1,0 +1,41 @@
+﻿87b1e1d Fix: PHASE - 26 completed with RLS Core, Heavy Aggregations Caching, DO Admin Features, Build Memory Stability Note
+bb3ab8b Fix: PHASE - 25 completed - SEO Crawl Budget Architecture Crawl Budget Engine Index Drip System Sitemap Sharding Orphan Page Detection Internal Link Graph SEO Observability
+de60cc0 Fix: PHASE till 24 completed
+5f9d57c Fix: PHASE 22 completed - Phase 22: Hyperlocal Expansion, Quality & Reliability Engine  Task 1: Database Schema (locations, indexing, queues, metrics, content_fingerprints, page_cache, worker_heartbeats, dead_letter_queue)  Task 2: Location Data Ingestion Engine (/api/admin/locations/import & Pincode script)  Task 3: Generation Queue System (Batch processing, Max 500 limits, and Retry logic)  Task 4: Content Duplicate Detector & Minimum Word Enforcer  Task 5: AI Hyperlocal Content Generator (Enrichment, SEO Metadata & Content Fingerprints)  Task 6: Hyperlocal Sitemap Discovery Engine & Crawler Optimization  Task 7: Index Control Worker (Rate limits, Crawl budgets & Pruning)  Task 8: Worker Heartbeat System & Auto-Restart Recovery Worker  Task 9: Hot Page Cache Worker (/api/admin/jobs/cache-worker) & Bot Optimization  Task 10: Admin Dashboards (Generation, Index, Content Quality, Performance, Workers, Alerts)  Task 11: Bulk Page Generator Admin UI (/admin/locations)  Task 12: Internal Link Graph Engine (Orphan detection & Boost logic)  Task 13: Queue Stuck Detector & Dead Letter Routing System  Task 14: Build Verification & Phase 22 Master Report Phase 22.5: Production Stabilization & Worker Infrastructure  Task 1: Disable Turbopack (Build Stability)  Task 2: Middleware Migration (/middleware.js to /proxy.js)  Task 3: Redis-Backed Worker Infrastructure (BullMQ)  Task 4: Cron Job Scheduling Infrastructure (jobScheduler.js)  Task 5: Worker Dashboard Telemetry  Task 6: Cache Stability & Bot Optimization  Task 7: Database Connection Pooling (/lib/supabase.js)  Task 8: Centralized Logging System (/lib/logger/systemLogger.js)  Task 9: Load Testing Scripts (scripts/load-test-pages.js)  Task 10: Build Verification & Phase 22.5 Report Phase 22.6: Build Pipeline Stabilization  Task 1: Verify Next.js version (15.2.3)  Task 2: Remove Turbopack artifacts (.next, node_modules)  Task 3: Force Webpack build script  Task 4: Redis Lazy Initialization (/lib/queue/redis.js)  Task 5: Worker Lazy Instantiation (/lib/workers/*)  Task 6: Admin Dashboard Fault Tolerance (/admin/system/workers)  Task 7: Ensure Build-Safe Imports  Task 8: Optional Redis mode during dev  Task 9: Build Verification  Task 10: Stabilization Report
+cce6014 Fix: PHASE 21 - Visual Page Builder & Dynamic Content Engine Dynamic Pages Table: The custom_pages schema tracks independent slugs and custom campaigns directly. Page Editor Admin UI: Found at /admin/pages and /admin/pages/[id], this React-based dashboard lets you sequentially construct websites dragging and dropping modular primitives without writing code. Block Components Matrix: HeroBlock, TestimonialBlock, CalculatorBlock etc. have been assembled mapping purely from JSON page_blocks payloads. AI Generation Override: An Admin can click Auto-Populate Page and the LLM engine instantly drops fully mapped generic structures configured perfectly for your campaign title. UI Versioning & Previews: Every single save dumps a structured snapshot onto page_versions mitigating user error via single-click rollbacks. Unpublished pages can safely be viewed utilizing secure administrative tokens ?preview_token parsed directly via Nextjs' Server routes. Passive Telemetry Mapping: Every page built in this system natively loads a PageTracker module passing form submissions, click intents, and scroll depths right back to your SQLite analytics array anonymously.
+afc0682 Fix: PHASE 20 - AI Recruitment & Automation Engine Created unified schemas encompassing AI recruitment tracking (lead_predictions), content adjustments (content_recommendations), UI adjustments (cta_recommendations), landing page forensics (landing_page_analysis), and overarching growth intelligence databases. Built the AI Recruitment Assistant at /admin/ai/recruiter which actively reads the highest lead_score entities to generate probabilities and bespoke follow-up actions against target individuals. Delivered AI Content & Landing Analyzers evaluating deep funnel metrics like scroll depth and bounce ratios inside /admin/ai/content and /admin/ai/landing. Engineered the Automatic CTA Rules Engine proposing active UI funnel redirects dynamically against drop-offs via /admin/ai/cta. Created the Growth Intelligence Engine at /admin/ai/growth tracking predictive conversion outcomes and analyzing top-performing Traffic sources. Background Auto-Reporting: The periodic growth-worker now intercepts all of the previous datasets natively orchestrating autonomous Weekly Executive Reports across traffic and recruitment pipelines securely.
+436fee1 Fix: PHASE 19 - Lead Intelligence & Growth Engine - 1. Created supabase schema for lead scoring, cta rules, growth reports, traffic sources, and content metrics.Intercepted session IDs natively to track anonymous journey flows. Updated the Create Lead webhook (api/crm/[action].js) to aggregate events, calculate dynamic Lead Scores automatically, and save comprehensive journeys to Supabase upon conversion. Embedded Supabase Upsert queries directly onto the frontend real-time /api/events receiver to populate precise traffic and engagement metrics in real-time. Constructed a <SmartCTA> hook retrieving database-enabled rule logic (/api/ui/smart-cta) shifting CTA links depending on prior navigation logic. Implemented a fully visual Conversion Funnel Drop-off mapping, Highest Score array, and Traffic Channel attribution using Recharts inside /admin/analytics. Engineered the AI logic routines /api/admin/ai/insights alongside a standalone periodic worker /api/admin/jobs/growth-worker producing automated, weekly reporting.
+58dd996 Fix: PHASE 18 - Data Integrity, Backup System & AI Automation Layer Added
+18e7112 Fix: PHASE 16 - Admin Panel Implementation
+0cc2c5f Fix: PHASE 16 - Admin Panel Implementation
+40435d8 Fix: PHASE 15.6 - Completion of Production Ready, adding Placeholder
+feb8cc5 Fix: PHASE 15.5 ΓÇö Website Stabilization & Conversion Leak Fix and floating button fix
+a6fb078 Fix: blog , tools etc
+44206ee Fix: blog section
+db589a7 Fix: buttons and linking
+b656d88 Fix: SEO & Tracking Infrastructure
+2af6d2f Addition: Adding new section download page
+d7a7b4e Fix: enriching contact page
+2785339 Fix: enriching about page
+ce7563d Fix: enriching why page
+fa925ae Fix: enriching homepage
+37b27a6 Fix: enriching eligibility page
+de9160a Fix: enriching income page
+1711fe4 Fix: fixing contact form due to mismatch of input name while backend expects mobile now fixed to phone
+e3accd6 Fix: fixing contact form due to mismatch of input name while backend expects mobile now fixed to phone
+2bf7709 Fix: fixing dom error
+8c828ef Fix: adding vercel speed insights enabled
+58ae8cf Fix: adding vercel analytics in layout
+4a0231c Fix: commenting Income Journey due to dom overlay issues
+991b903 Fix Application Form Submit Crash (ReferenceError)
+01de9f8 Fix Delhi page buttons, add user-friendly ref IDs, add footer visitor counter
+c5307a3 Fix React Error #300: Move hooks above early returns in ApplyForm
+6fb9237 Fix Application Form Submit Crash (ReferenceError)
+f8f1e5f Fix Client Hydration Error via Next dynamic SSR false
+549b87f Fix React Hydration #418 & Hook Violation ReferenceError
+018fd02 Fix Supabase v2 chained .catch() insert bug
+eba7221 Migrate api to pages/api (Next.js native routing)
+304a0e8 Production release: API consolidation (135), audit fixes, Slack alerting, smoke tests, debug route
+3c5337b Initial commit: Next.js project setup migrated from Vite
+3876f75 Vite to Next.js App Router migration - Production ready
+2575841 Initial commit from Create Next App

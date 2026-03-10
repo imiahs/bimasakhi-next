@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { pageGeneratorQueue } from '@/lib/queue/queues';
+import { getPageGeneratorQueue } from '@/lib/queue/queues';
 
 // This API now acts purely as an edge trigger for the external Node Worker cluster
 export async function POST(req) {
@@ -9,6 +9,10 @@ export async function POST(req) {
             // bypass restriction temporarily logic or enforce
         }
 
+        const pageGeneratorQueue = getPageGeneratorQueue();
+        if (!pageGeneratorQueue) {
+            return NextResponse.json({ error: 'Queue service unavailable.' }, { status: 503 });
+        }
         const job = await pageGeneratorQueue.add('generate-batch', { limit: 500 }, { removeOnComplete: true });
 
         return NextResponse.json({
