@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getIndexQueue } from '@/lib/queue/queues';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
-export async function POST(req) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const queue = getIndexQueue();
         if (!queue) return NextResponse.json({ error: 'Offline Node' }, { status: 503 });
@@ -11,4 +12,4 @@ export async function POST(req) {
     } catch (error) {
         return NextResponse.json({ error: 'Internal server routing boundary crash.' }, { status: 500 });
     }
-}
+});

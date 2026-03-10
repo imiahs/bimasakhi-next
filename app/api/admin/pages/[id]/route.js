@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request, { params }) {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const { id } = await params;
         const supabaseUrl = process.env.SUPABASE_URL;
@@ -28,9 +29,9 @@ export async function GET(request, { params }) {
         console.error("Error fetching page details:", err);
         return NextResponse.json({ error: "Failed to fetch page specifics." }, { status: 500 });
     }
-}
+});
 
-export async function PUT(request, { params }) {
+export const PUT = withAdminAuth(async (request, user) => {
     try {
         const { id } = await params;
         const reqData = await request.json();
@@ -102,4 +103,4 @@ export async function PUT(request, { params }) {
         console.error("Error synchronizing page details:", err);
         return NextResponse.json({ error: "Failed to save page map." }, { status: 500 });
     }
-}
+});

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 // Helper to generate a basic slug
 function generateSlug(text) {
@@ -11,7 +12,7 @@ function generateSlug(text) {
         .replace(/-+$/, '');            // Trim - from end of text
 }
 
-export async function POST(req) {
+export const POST = withAdminAuth(async (request, user) => {
     if (process.env.SUPABASE_ENABLED !== 'true') {
         return NextResponse.json({ error: 'Database operations are currently disabled.' }, { status: 503 });
     }
@@ -97,4 +98,4 @@ export async function POST(req) {
         console.error('Import engine error:', error);
         return NextResponse.json({ error: 'Internal server error during import.' }, { status: 500 });
     }
-}
+});

@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { generateAiContent } from '@/lib/ai';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const { title, is_campaign_page } = await request.json();
 
@@ -59,4 +60,4 @@ No markdown wrapping, just JSON.`;
         console.error("AI Page Generator Error:", error);
         return NextResponse.json({ error: 'Internal AI Routing Error' }, { status: 500 });
     }
-}
+});

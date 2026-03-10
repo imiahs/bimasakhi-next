@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
@@ -64,4 +65,4 @@ export async function GET() {
         console.error('Failed to fetch index health:', error);
         return NextResponse.json({ success: false, error: 'Database timeout' }, { status: 500 });
     }
-}
+});

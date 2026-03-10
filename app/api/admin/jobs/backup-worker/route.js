@@ -3,10 +3,11 @@ import { getServiceSupabase } from '@/utils/supabase';
 import { getLocalDb } from '@/utils/localDb';
 import fs from 'fs';
 import path from 'path';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request) {
+export const GET = withAdminAuth(async (request, user) => {
     // 1. Authenticate (simplified for brevity)
     const authHeader = request.headers.get('authorization');
     if (authHeader !== `Bearer ${process.env.ADMIN_PASSWORD || 'secret'}`) {
@@ -24,15 +25,17 @@ export async function GET(request) {
         const supabase = getServiceSupabase();
         const db = getLocalDb();
 
-        // Target Supabase Tables
+        // Target Supabase Tables - Consolidated
         const supabaseTables = [
             'blog_posts', 'resources', 'media_files',
-            'lead_cache', 'tool_configs', 'seo_overrides'
+            'lead_cache', 'tool_configs', 'seo_overrides',
+            'lead_queue', 'system_errors', 'api_requests',
+            'event_stream', 'sync_failures', 'observability_logs'
         ];
 
         let backupStatus = {
             supabase: [],
-            sqlite: false,
+            sqlite: false, // Deprecated
             timestamp
         };
 
@@ -46,27 +49,6 @@ export async function GET(request) {
             }
         }
 
-        // Snapshot SQLite Data (JSON logic)
-        const sqliteTables = ['lead_queue', 'system_errors', 'api_requests', 'event_stream', 'sync_failures'];
-        const sqliteSnapshot = {};
-
-        for (const table of sqliteTables) {
-            try {
-                const rows = db.prepare(`SELECT * FROM ${table}`).all();
-                sqliteSnapshot[table] = rows;
-            } catch (err) {
-                console.error(`Error reading SQLite table ${table}`, err);
-            }
-        }
-        fs.writeFileSync(path.join(backupDir, 'sqlite_snapshot.json'), JSON.stringify(sqliteSnapshot, null, 2));
-
-        // Copy actual SQLite file for SQL dump/raw restore
-        const dbPath = path.resolve(process.cwd(), 'observability.db');
-        if (fs.existsSync(dbPath)) {
-            fs.copyFileSync(dbPath, path.join(backupDir, 'observability.backup.db'));
-            backupStatus.sqlite = true;
-        }
-
         return NextResponse.json({
             success: true,
             message: 'Backup completed successfully',
@@ -76,4 +58,4 @@ export async function GET(request) {
     } catch (error) {
         return NextResponse.json({ error: 'Backup failed', details: error.message }, { status: 500 });
     }
-}
+});

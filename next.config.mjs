@@ -4,7 +4,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  serverExternalPackages: ['better-sqlite3'],
+  experimental: {
+    optimizePackageImports: ['@supabase/supabase-js', 'recharts', 'lucide-react', 'ioredis'],
+  }
 };
 
 export default nextConfig;

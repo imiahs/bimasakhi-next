@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 // GET: Fetch all media files
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
@@ -18,10 +19,10 @@ export async function GET() {
         console.error('API /admin/media GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch media' }, { status: 500 });
     }
-}
+});
 
 // DELETE: Remove a media file (Database record)
-export async function DELETE(request) {
+export const DELETE = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const { searchParams } = new URL(request.url);
@@ -44,4 +45,4 @@ export async function DELETE(request) {
         console.error('API /admin/media DELETE error:', error);
         return NextResponse.json({ error: 'Failed to delete media' }, { status: 500 });
     }
-}
+});

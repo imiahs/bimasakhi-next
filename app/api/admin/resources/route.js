@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 // GET: Fetch all resources
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
@@ -18,10 +19,10 @@ export async function GET() {
         console.error('API /admin/resources GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch resources' }, { status: 500 });
     }
-}
+});
 
 // POST: Create a new resource record
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const payload = await request.json();
@@ -39,10 +40,10 @@ export async function POST(request) {
         console.error('API /admin/resources POST error:', error);
         return NextResponse.json({ error: 'Failed to create resource' }, { status: 500 });
     }
-}
+});
 
 // PUT: Update an existing resource
-export async function PUT(request) {
+export const PUT = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const payload = await request.json();
@@ -64,10 +65,10 @@ export async function PUT(request) {
         console.error('API /admin/resources PUT error:', error);
         return NextResponse.json({ error: 'Failed to update resource' }, { status: 500 });
     }
-}
+});
 
 // DELETE: Remove a resource
-export async function DELETE(request) {
+export const DELETE = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const { searchParams } = new URL(request.url);
@@ -87,4 +88,4 @@ export async function DELETE(request) {
         console.error('API /admin/resources DELETE error:', error);
         return NextResponse.json({ error: 'Failed to delete resource' }, { status: 500 });
     }
-}
+});

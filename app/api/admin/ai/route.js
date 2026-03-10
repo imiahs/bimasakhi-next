@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { generateAiContent } from '@/lib/ai';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const body = await request.json();
         const { action, prompt, context } = body;
@@ -20,4 +21,4 @@ export async function POST(request) {
         console.error('AI Route Error:', error);
         return NextResponse.json({ error: error.message || 'AI generation failed' }, { status: 500 });
     }
-}
+});

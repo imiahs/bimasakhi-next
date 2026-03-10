@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
 const JWT_SECRET = new TextEncoder().encode(
-    process.env.ADMIN_PASSWORD || 'fallback_secret_for_development_only'
+    process.env.JWT_SECRET || process.env.ADMIN_PASSWORD
 );
 
 // Basic sliding window rate store for Edge environments (resets per cold boot)

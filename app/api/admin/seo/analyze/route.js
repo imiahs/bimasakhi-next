@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { generateAiContent } from '@/lib/ai';
 import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const body = await request.json();
         const { page_path, page_title, page_description } = body;
@@ -47,4 +48,4 @@ export async function POST(request) {
         console.error('AI SEO Analyze Route Error:', error);
         return NextResponse.json({ error: error.message || 'Analysis failed' }, { status: 500 });
     }
-}
+});

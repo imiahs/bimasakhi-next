@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { generateAiContent } from '@/lib/ai';
 import { getLocalDb } from '@/utils/localDb';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -20,9 +21,22 @@ export async function POST(request) {
         const { data: metrics } = await supabase.from('content_metrics').select('*').order('leads_generated', { ascending: false }).limit(10);
         const { data: traffic } = await supabase.from('traffic_sources').select('*').order('leads', { ascending: false }).limit(10);
 
-        // Fetch raw event behaviors locally
-        const db = getLocalDb();
-        const eventCounts = db.prepare('SELECT event_type, COUNT(*) as count FROM event_stream GROUP BY event_type ORDER BY count DESC LIMIT 10').all();
+        // Fetch raw event behaviors from Supabase
+        const { data: recentEvents } = await supabase
+            .from('event_stream')
+            .select('event_type')
+            .order('created_at', { ascending: false })
+            .limit(1000);
+
+        const freqMap = {};
+        (recentEvents || []).forEach(e => {
+            freqMap[e.event_type] = (freqMap[e.event_type] || 0) + 1;
+        });
+
+        const eventCounts = Object.keys(freqMap)
+            .map(type => ({ event_type: type, count: freqMap[type] }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10);
 
         const analyticalContext = {
             top_content_metrics: metrics || [],
@@ -50,4 +64,4 @@ Identify which content pieces drive the most leads, which traffic sources are mo
         console.error('AI Insight Generation Error:', error);
         return NextResponse.json({ error: 'Failed to generate Lead Insights' }, { status: 500 });
     }
-}
+});

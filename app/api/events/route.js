@@ -14,48 +14,46 @@ export async function POST(request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const db = getLocalDb();
-        const stmt = db.prepare(`
-            INSERT INTO event_stream (event_type, session_id, route_path, metadata)
-            VALUES (?, ?, ?, ?)
-        `);
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-        stmt.run(
+        if (!supabaseUrl || !supabaseKey || process.env.SUPABASE_ENABLED !== 'true') {
+            return NextResponse.json({ success: true, message: 'Event dropped (Telemetry Disabled)' });
+        }
+
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const { error: eventErr } = await supabase.from('event_stream').insert({
             event_type,
-            session_id || 'anonymous',
+            session_id: session_id || 'anonymous',
             route_path,
-            metadata ? JSON.stringify(metadata) : null
-        );
+            metadata: metadata ? metadata : null
+        });
+
+        if (eventErr) throw eventErr;
 
         // Phase 19: Asynchronous Supabase Metric Upserting (Fire & Forget)
         if (event_type === 'page_view') {
-            const supabaseUrl = process.env.SUPABASE_URL;
-            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            const source = metadata?.source || 'direct';
 
-            if (supabaseUrl && supabaseKey && process.env.SUPABASE_ENABLED === 'true') {
-                const supabase = createClient(supabaseUrl, supabaseKey);
-                const source = metadata?.source || 'direct';
+            // Fire-and-forget RPC call (fallback to fetch/update)
+            supabase.from('content_metrics').select('views, id').eq('target_path', route_path).maybeSingle()
+                .then(({ data }) => {
+                    if (data) {
+                        supabase.from('content_metrics').update({ views: data.views + 1, updated_at: new Date() }).eq('id', data.id).then();
+                    } else {
+                        supabase.from('content_metrics').insert({ target_path: route_path, views: 1 }).then();
+                    }
+                });
 
-                // Fire-and-forget RPC call (requires Supabase RPC function, fallback to fetch/update)
-                // Since we don't have RPC defined yet, we will fetch then update
-                supabase.from('content_metrics').select('views').eq('target_path', route_path).single()
-                    .then(({ data }) => {
-                        if (data) {
-                            supabase.from('content_metrics').update({ views: data.views + 1, updated_at: new Date() }).eq('target_path', route_path).then();
-                        } else {
-                            supabase.from('content_metrics').insert({ target_path: route_path, views: 1 }).then();
-                        }
-                    });
-
-                supabase.from('traffic_sources').select('visits, id').eq('source', source).maybeSingle()
-                    .then(({ data }) => {
-                        if (data) {
-                            supabase.from('traffic_sources').update({ visits: data.visits + 1, updated_at: new Date() }).eq('id', data.id).then();
-                        } else {
-                            supabase.from('traffic_sources').insert({ source, visits: 1 }).then();
-                        }
-                    });
-            }
+            supabase.from('traffic_sources').select('visits, id').eq('source', source).maybeSingle()
+                .then(({ data }) => {
+                    if (data) {
+                        supabase.from('traffic_sources').update({ visits: data.visits + 1, updated_at: new Date() }).eq('id', data.id).then();
+                    } else {
+                        supabase.from('traffic_sources').insert({ source, visits: 1 }).then();
+                    }
+                });
         }
 
         return NextResponse.json({ success: true, message: 'Event logged successfully' });
@@ -64,11 +62,18 @@ export async function POST(request) {
 
         // Log to observability_logs as fallback
         try {
-            const db = getLocalDb();
-            db.prepare('INSERT INTO observability_logs (level, message, source) VALUES (?, ?, ?)')
-                .run('ERROR', error.message, 'api_events');
+            const supabaseUrl = process.env.SUPABASE_URL;
+            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+            if (supabaseUrl && supabaseKey) {
+                const supabase = createClient(supabaseUrl, supabaseKey);
+                await supabase.from('observability_logs').insert({
+                    level: 'ERROR',
+                    message: error.message,
+                    source: 'api_events'
+                });
+            }
         } catch (e) {
-            console.error('Critical Database connection failure:', e);
+            console.error('Critical Telemetry failure:', e);
         }
 
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

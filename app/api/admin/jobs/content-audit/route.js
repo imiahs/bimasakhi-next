@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getContentAuditQueue } from '@/lib/queue/queues';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
-export async function POST(req) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const contentAuditQueue = getContentAuditQueue();
         if (!contentAuditQueue) {
@@ -18,4 +19,4 @@ export async function POST(req) {
         console.error('Audit Dispatch Error:', error);
         return NextResponse.json({ error: 'Internal server proxy allocation failure.' }, { status: 500 });
     }
-}
+});

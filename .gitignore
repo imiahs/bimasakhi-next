@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Project Tree
+project_bima_sakhi_tree.txt

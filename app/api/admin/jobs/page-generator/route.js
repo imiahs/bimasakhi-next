@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getPageGeneratorQueue } from '@/lib/queue/queues';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 // This API now acts purely as an edge trigger for the external Node Worker cluster
-export async function POST(req) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const authHeader = req.headers.get('authorization');
         if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -25,4 +26,4 @@ export async function POST(req) {
         console.error('Queue Dispatch Error:', error);
         return NextResponse.json({ error: 'Internal server error allocating node job.' }, { status: 500 });
     }
-}
+});

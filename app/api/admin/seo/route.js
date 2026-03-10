@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 // GET: Fetch all SEO overrides
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
@@ -18,10 +19,10 @@ export async function GET() {
         console.error('API /admin/seo GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch SEO metadata overrides' }, { status: 500 });
     }
-}
+});
 
 // PUT: Upsert an SEO override for a specific page path
-export async function PUT(request) {
+export const PUT = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const payload = await request.json();
@@ -78,4 +79,4 @@ export async function PUT(request) {
         console.error('API /admin/seo PUT error:', error);
         return NextResponse.json({ error: 'Failed to save SEO metadata override' }, { status: 500 });
     }
-}
+});

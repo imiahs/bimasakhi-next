@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { generateAiContent } from '@/lib/ai';
 import { getLocalDb } from '@/utils/localDb';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -16,18 +17,30 @@ export async function POST(request) {
 
         const supabase = createClient(supabaseUrl, supabaseKey);
 
-        // Fetch local SQLite event stream for bounce rate/cta clicks evaluation
-        const db = getLocalDb();
+        // Fetch Supabase event stream for bounce rate/cta clicks evaluation
+        const { data: rawEvents } = await supabase
+            .from('event_stream')
+            .select('route_path, event_type')
+            .order('created_at', { ascending: false })
+            .limit(2000);
 
-        const pathStats = db.prepare(`
-            SELECT route_path, 
-                   SUM(CASE WHEN event_type = 'page_view' THEN 1 ELSE 0 END) as views,
-                   SUM(CASE WHEN event_type IN ('smart_cta_click', 'funnel_step', 'converted') THEN 1 ELSE 0 END) as actions
-            FROM event_stream 
-            GROUP BY route_path
-            ORDER BY views DESC
-            LIMIT 10
-        `).all();
+        const events = rawEvents || [];
+        const statsMap = {};
+
+        events.forEach(e => {
+            if (!e.route_path) return;
+            if (!statsMap[e.route_path]) {
+                statsMap[e.route_path] = { route_path: e.route_path, views: 0, actions: 0 };
+            }
+            if (e.event_type === 'page_view') statsMap[e.route_path].views++;
+            if (['smart_cta_click', 'funnel_step', 'converted'].includes(e.event_type)) {
+                statsMap[e.route_path].actions++;
+            }
+        });
+
+        const pathStats = Object.values(statsMap)
+            .sort((a, b) => b.views - a.views)
+            .slice(0, 10);
 
         if (!pathStats || pathStats.length === 0) {
             return NextResponse.json({ success: true, message: 'No landing events to analyze.', analyses: [] });
@@ -81,9 +94,9 @@ export async function POST(request) {
         console.error('AI Landing Engine Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
-}
+});
 
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -107,4 +120,4 @@ export async function GET() {
         console.error("Error fetching landing analyses:", err);
         return NextResponse.json({ error: "Failed to fetch landing logic" }, { status: 500 });
     }
-}
+});

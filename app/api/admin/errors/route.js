@@ -1,59 +1,63 @@
 import { NextResponse } from 'next/server';
-import { getLocalDb } from '@/utils/localDb';
+import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
-        const db = getLocalDb();
+        const supabase = getServiceSupabase();
 
-        // Fetch last 50 system errors from local SQLite DB
-        const errors = db.prepare('SELECT * FROM system_errors ORDER BY created_at DESC LIMIT 50').all();
+        // Fetch system errors from Supabase (replaces SQLite)
+        const { data: errors, error } = await supabase
+            .from('system_errors')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(50);
 
-        return NextResponse.json({ success: true, errors });
+        return NextResponse.json({ success: true, errors: errors || [] });
     } catch (error) {
         console.error('API /admin/errors GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch system errors', details: error.message }, { status: 500 });
     }
-}
+});
 
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const payload = await request.json();
         const { layer, message, stack_trace, source } = payload;
 
-        const db = getLocalDb();
-        const stmt = db.prepare(`
-            INSERT INTO system_errors (layer, message, stack_trace, source) 
-            VALUES (?, ?, ?, ?)
-        `);
+        const supabase = getServiceSupabase();
+        const { error } = await supabase.from('system_errors').insert({
+            layer: layer || 'UNKNOWN',
+            message: message || 'No message provided',
+            stack_trace: stack_trace || '',
+            source: source || 'SYSTEM'
+        });
 
-        stmt.run(
-            layer || 'UNKNOWN',
-            message || 'No message provided',
-            stack_trace || '',
-            source || 'SYSTEM'
-        );
-
+        if (error) throw error;
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to log error' }, { status: 500 });
     }
-}
+});
 
-export async function PUT(request) {
+export const PUT = withAdminAuth(async (request, user) => {
     try {
         const payload = await request.json();
         const { id, resolved } = payload;
 
         if (!id) return NextResponse.json({ error: 'Missing error ID' }, { status: 400 });
 
-        const db = getLocalDb();
-        const stmt = db.prepare('UPDATE system_errors SET resolved = ? WHERE id = ?');
-        stmt.run(resolved ? 1 : 0, id);
+        const supabase = getServiceSupabase();
+        const { error } = await supabase
+            .from('system_errors')
+            .update({ resolved: resolved ? true : false })
+            .eq('id', id);
 
+        if (error) throw error;
         return NextResponse.json({ success: true });
     } catch (error) {
         return NextResponse.json({ error: 'Failed to update error status' }, { status: 500 });
     }
-}
+});

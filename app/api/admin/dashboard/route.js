@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
-import { getLocalDb } from '@/utils/localDb';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
@@ -20,19 +20,14 @@ export async function GET() {
 
         const totalDownloads = resourcesData ? resourcesData.reduce((acc, curr) => acc + (curr.download_count || 0), 0) : 0;
 
-        // 3. Get Leads count from SQLite (Active Queue) + Supabase (Synced)
-        const db = getLocalDb();
-        const localLeadsRow = db.prepare('SELECT COUNT(*) as count FROM lead_queue').get();
-        const localLeadsCount = localLeadsRow ? localLeadsRow.count : 0;
-
+        // 3. Get Leads count from Supabase
         const { count: supabaseLeadsCount } = await supabase
             .from('lead_cache')
             .select('*', { count: 'exact', head: true });
 
-        const totalLeads = localLeadsCount + (supabaseLeadsCount || 0);
+        const totalLeads = supabaseLeadsCount || 0;
 
         // 4. Get recent activity
-        // Merge recent leads and recent blog posts as proxy for activity log
         const { data: recentBlogs } = await supabase
             .from('blog_posts')
             .select('title, created_at')
@@ -64,7 +59,7 @@ export async function GET() {
             recentLeads.forEach(l => {
                 activity.push({
                     id: `lead_${l.created_at}`,
-                    action: 'New Lead Synced',
+                    action: 'New Lead',
                     detail: `${l.name} from ${l.city || 'Unknown'}`,
                     time: new Date(l.created_at).toLocaleString(),
                     type: 'lead',
@@ -72,19 +67,6 @@ export async function GET() {
                 });
             });
         }
-
-        // Add local leads to activity
-        const localRecentLeads = db.prepare('SELECT name, city, created_at FROM lead_queue ORDER BY created_at DESC LIMIT 3').all();
-        localRecentLeads.forEach(l => {
-            activity.push({
-                id: `locallead_${l.created_at}`,
-                action: 'New Lead Queued',
-                detail: `${l.name} from ${l.city || 'Unknown'}`,
-                time: new Date(l.created_at).toLocaleString(),
-                type: 'lead',
-                timestamp: new Date(l.created_at).getTime()
-            });
-        });
 
         // Sort combined activity by timestamp descending and take top 5
         activity.sort((a, b) => b.timestamp - a.timestamp);
@@ -95,7 +77,6 @@ export async function GET() {
                 totalLeads,
                 totalPosts: blogCount || 0,
                 resourceDownloads: totalDownloads,
-                conversionRate: '8.4%', // Placeholder until analytics integration
             },
             recentActivity
         });
@@ -104,4 +85,4 @@ export async function GET() {
         console.error('API /admin/dashboard GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch dashboard metrics' }, { status: 500 });
     }
-}
+});

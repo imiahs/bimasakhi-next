@@ -1,10 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { getWhatsAppUrl } from '@/utils/whatsapp';
+import '@/styles/ApplyPage.css';
 
 export default function ApplyContent() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const refCode = searchParams.get('ref') || '';
 
     const [formData, setFormData] = useState({
@@ -21,9 +24,25 @@ export default function ApplyContent() {
         }
     }, [refCode]);
 
+    // GTM page load
+    useEffect(() => {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: 'apply_page_loaded',
+            source: refCode ? 'referral' : 'organic',
+            ref_code: refCode || 'none'
+        });
+    }, [refCode]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setStatus({ loading: true, success: false, error: '' });
+
+        // Validate mobile (10 digits)
+        if (!/^\d{10}$/.test(formData.mobile)) {
+            setStatus({ loading: false, success: false, error: 'Please enter a valid 10-digit mobile number.' });
+            return;
+        }
 
         try {
             const res = await fetch('/api/agent/apply', {
@@ -34,8 +53,17 @@ export default function ApplyContent() {
 
             const data = await res.json();
             if (res.ok) {
-                setStatus({ loading: false, success: true, error: '' });
-                setFormData({ name: '', mobile: '', ref_code: refCode });
+                window.dataLayer?.push({
+                    event: 'apply_form_submitted',
+                    ref_code: refCode || 'none'
+                });
+
+                // Redirect to thank-you page with params
+                const params = new URLSearchParams({
+                    name: formData.name,
+                    ref: data.application?.candidate_id || ''
+                });
+                router.push(`/thank-you?${params.toString()}`);
             } else {
                 throw new Error(data.error || 'Failed to submit application');
             }
@@ -44,79 +72,211 @@ export default function ApplyContent() {
         }
     };
 
+    const whatsappUrl = getWhatsAppUrl({
+        name: 'Applicant',
+        source: 'Apply Page',
+        intent: 'Career Inquiry'
+    });
+
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight text-center">Join Team Utkarshan</h2>
-                    <p className="mt-2 text-sm text-slate-600 font-medium tracking-wide">
-                        Start your journey as an independent LIC Agent.
-                    </p>
-                </div>
+        <div className="apply-page">
 
-                {status.success ? (
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-center">
-                        <h3 className="text-lg font-medium text-green-800">Application Submitted!</h3>
-                        <p className="text-sm text-green-600 mt-2">
-                            A development officer will review your profile and contact you shortly to begin the exam preparation stage.
-                        </p>
+            {/* === HERO SECTION === */}
+            <section className="apply-hero">
+                <div className="lic-badge">🏛️ LIC of India — Government-Backed</div>
+                <h1>Start Your Career as a<br />Certified Insurance Professional</h1>
+                <p className="subtitle">
+                    Join the Bima Sakhi Program under LIC of India. Earn a monthly stipend of ₹7,000
+                    for 3 years + unlimited commissions. Empower yourself financially.
+                </p>
+            </section>
+
+            <div className="apply-content">
+
+                {/* === INCOME SECTION === */}
+                <section className="apply-section">
+                    <h2><span className="icon">💰</span> Your Income Potential</h2>
+                    <div className="income-grid">
+                        <div className="income-card">
+                            <div className="amount">₹7,000/mo</div>
+                            <div className="label">Monthly Stipend</div>
+                            <div className="detail">For first 3 years (Bima Sakhi)</div>
+                        </div>
+                        <div className="income-card">
+                            <div className="amount">25-35%</div>
+                            <div className="label">First Year Commission</div>
+                            <div className="detail">On every policy sold</div>
+                        </div>
+                        <div className="income-card">
+                            <div className="amount">5-7.5%</div>
+                            <div className="label">Renewal Commission</div>
+                            <div className="detail">Lifetime passive income</div>
+                        </div>
                     </div>
-                ) : (
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="name" className="block text-sm font-semibold text-slate-700">Full Name</label>
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                required
-                                value={formData.name}
-                                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                className="mt-1 appearance-none relative block w-full px-3 py-2.5 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="Rahul Sharma"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="mobile" className="block text-sm font-semibold text-slate-700">Mobile Number</label>
-                            <input
-                                id="mobile"
-                                name="mobile"
-                                type="tel"
-                                required
-                                value={formData.mobile}
-                                onChange={e => setFormData({ ...formData, mobile: e.target.value })}
-                                className="mt-1 appearance-none relative block w-full px-3 py-2.5 border border-slate-300 placeholder-slate-400 text-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                                placeholder="9876543210"
-                            />
-                        </div>
+                </section>
 
-                        {refCode && (
+                {/* === JOINING STEPS === */}
+                <section className="apply-section">
+                    <h2><span className="icon">📋</span> How to Join — Step by Step</h2>
+                    <ol className="steps-list">
+                        <li>
                             <div>
-                                <label className="block text-sm font-semibold text-slate-700">Referred By (Code)</label>
+                                <div className="step-title">Submit Application</div>
+                                <div className="step-desc">Fill the form below with your name and mobile number</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <div className="step-title">WhatsApp Discussion</div>
+                                <div className="step-desc">Our Development Officer will contact you for profile verification</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <div className="step-title">Exam Preparation</div>
+                                <div className="step-desc">Free training material for IRDA Agent Exam (IC-38)</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <div className="step-title">IRDA Exam</div>
+                                <div className="step-desc">Pass the IRDA exam to receive your Agent License</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div>
+                                <div className="step-title">Start Earning</div>
+                                <div className="step-desc">Begin selling policies and earning commissions immediately</div>
+                            </div>
+                        </li>
+                    </ol>
+                </section>
+
+                {/* === ELIGIBILITY === */}
+                <section className="apply-section">
+                    <h2><span className="icon">✅</span> Eligibility Criteria</h2>
+                    <div className="eligibility-grid">
+                        <div className="eligibility-item">
+                            <span className="check">✓</span> Age: 18-70 years
+                        </div>
+                        <div className="eligibility-item">
+                            <span className="check">✓</span> Education: 10th Pass minimum
+                        </div>
+                        <div className="eligibility-item">
+                            <span className="check">✓</span> Indian Citizen
+                        </div>
+                        <div className="eligibility-item">
+                            <span className="check">✓</span> No prior experience needed
+                        </div>
+                        <div className="eligibility-item">
+                            <span className="check">✓</span> Both men and women
+                        </div>
+                        <div className="eligibility-item">
+                            <span className="check">✓</span> Work from anywhere
+                        </div>
+                    </div>
+                </section>
+
+                {/* === DOCUMENTS REQUIRED === */}
+                <section className="apply-section">
+                    <h2><span className="icon">📄</span> Documents Required</h2>
+                    <div className="docs-grid">
+                        <div className="doc-item">📋 Aadhaar Card</div>
+                        <div className="doc-item">📋 PAN Card</div>
+                        <div className="doc-item">📋 10th Marksheet</div>
+                        <div className="doc-item">📋 Passport Size Photo</div>
+                        <div className="doc-item">📋 Bank Passbook</div>
+                        <div className="doc-item">📋 Mobile Number (Aadhaar linked)</div>
+                    </div>
+                </section>
+
+                {/* === TRUST SIGNALS === */}
+                <section className="apply-section" style={{ textAlign: 'center' }}>
+                    <h2 style={{ justifyContent: 'center' }}><span className="icon">🛡️</span> Why Trust This Opportunity?</h2>
+                    <div className="trust-bar">
+                        <div className="trust-badge">🏛️ Government of India Enterprise</div>
+                        <div className="trust-badge">📜 67+ Years Legacy</div>
+                        <div className="trust-badge">🇮🇳 30 Crore+ Policyholders</div>
+                        <div className="trust-badge">💼 13 Lakh+ Agents Nationwide</div>
+                        <div className="trust-badge">✅ IRDA Regulated</div>
+                    </div>
+                </section>
+
+                {/* === APPLICATION FORM === */}
+                <section className="apply-form-section" id="apply-form">
+                    <h2>📝 Apply Now — It&apos;s Free</h2>
+
+                    {status.success ? (
+                        <div className="form-success">
+                            <h3>✅ Application Submitted!</h3>
+                            <p>Redirecting to next steps...</p>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label htmlFor="apply-name">Full Name</label>
                                 <input
+                                    id="apply-name"
+                                    name="name"
                                     type="text"
-                                    disabled
-                                    value={refCode}
-                                    className="mt-1 bg-slate-100 appearance-none relative block w-full px-3 py-2.5 border border-slate-300 text-slate-500 rounded-lg sm:text-sm cursor-not-allowed"
+                                    required
+                                    value={formData.name}
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                    placeholder="Aapka Naam"
                                 />
                             </div>
-                        )}
-
-                        {status.error && (
-                            <div className="text-sm text-red-600 font-medium">
-                                {status.error}
+                            <div className="form-group">
+                                <label htmlFor="apply-mobile">Mobile Number</label>
+                                <input
+                                    id="apply-mobile"
+                                    name="mobile"
+                                    type="tel"
+                                    required
+                                    maxLength={10}
+                                    value={formData.mobile}
+                                    onChange={e => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '') })}
+                                    placeholder="10-digit mobile number"
+                                />
                             </div>
-                        )}
 
-                        <button
-                            type="submit"
-                            disabled={status.loading}
-                            className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                        >
-                            {status.loading ? 'Submitting...' : 'Apply Now'}
-                        </button>
-                    </form>
-                )}
+                            {refCode && (
+                                <div className="form-group">
+                                    <label>Referred By (Code)</label>
+                                    <input type="text" disabled value={refCode} />
+                                </div>
+                            )}
+
+                            {status.error && (
+                                <div className="form-error">{status.error}</div>
+                            )}
+
+                            <button
+                                type="submit"
+                                disabled={status.loading}
+                                className="apply-submit-btn"
+                            >
+                                {status.loading ? 'Submitting...' : '🚀 Submit Application — Free'}
+                            </button>
+                        </form>
+                    )}
+                </section>
+
+                {/* === WhatsApp CTA === */}
+                <a
+                    href={whatsappUrl}
+                    className="whatsapp-cta"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => {
+                        window.dataLayer?.push({
+                            event: 'apply_whatsapp_click',
+                            source: 'apply_page'
+                        });
+                    }}
+                >
+                    💬 Have Questions? Chat on WhatsApp
+                </a>
+
             </div>
         </div>
     );

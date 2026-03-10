@@ -55,12 +55,20 @@ try {
     console.error("Supabase Init Error:", e);
 }
 
+import { rateLimit } from '@/utils/rateLimiter.js';
+
 // ============================================================
 // ACTION: create-lead
 // ============================================================
 async function handleCreateLead(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'anon';
+    const rateLimitResult = await rateLimit(`apply_lead:${ip}`, 10, 3600); // 10 leads per hour per IP
+    if (!rateLimitResult.success) {
+        return res.status(429).json({ error: 'Too many submissions. Please try again later.' });
     }
 
     assertEnv(['REDIS_URL', 'ZOHO_CLIENT_ID', 'ZOHO_CLIENT_SECRET', 'ZOHO_REFRESH_TOKEN']);
@@ -195,44 +203,45 @@ async function handleCreateLead(req, res) {
 
                     // Phase 19: Lead Intelligence & Scoring System
                     if (session_id) {
-                        try {
-                            const db = getLocalDb();
-                            if (db) {
-                                // 1. Fetch Journey Events
-                                const events = db.prepare('SELECT event_type, route_path, metadata, created_at FROM event_stream WHERE session_id = ? ORDER BY created_at ASC').all(session_id);
+                        if (isSupabaseEnabled && supabase) {
+                            // 1. Fetch Journey Events from Supabase
+                            const { data: eventsData, error: eventErr } = await supabase
+                                .from('event_stream')
+                                .select('event_type, route_path, metadata, created_at')
+                                .eq('session_id', session_id)
+                                .order('created_at', { ascending: true });
 
-                                // 2. Compute Score
-                                let leadScore = 20; // Base score for form submission
-                                let journeySteps = events.map(e => ({
-                                    action: e.event_type,
-                                    path: e.route_path,
-                                    time: e.created_at
-                                }));
+                            const events = eventsData || [];
 
-                                events.forEach(evt => {
-                                    if (evt.event_type === 'page_view') leadScore += 2;
-                                    if (evt.event_type === 'calculator_used') leadScore += 10;
-                                    if (evt.event_type === 'resource_download') leadScore += 5;
-                                    if (evt.event_type.startsWith('apply_step_')) leadScore += 2;
-                                });
+                            // 2. Compute Score
+                            let leadScore = 20; // Base score for form submission
+                            let journeySteps = events.map(e => ({
+                                action: e.event_type,
+                                path: e.route_path,
+                                time: e.created_at
+                            }));
 
-                                // 3. Save Score
-                                await supabase.from('lead_scores').insert({
-                                    lead_id: newLead.id,
-                                    score: leadScore,
-                                    score_reason: 'Form submission + session engagement'
-                                });
+                            events.forEach(evt => {
+                                if (evt.event_type === 'page_view') leadScore += 2;
+                                if (evt.event_type === 'calculator_used') leadScore += 10;
+                                if (evt.event_type === 'resource_download') leadScore += 5;
+                                if (evt.event_type.startsWith('apply_step_')) leadScore += 2;
+                            });
 
-                                // 4. Save Journey
-                                await supabase.from('lead_journeys').insert({
-                                    lead_id: newLead.id,
-                                    session_id: session_id,
-                                    steps: journeySteps,
-                                    conversion_point: lead_source_page
-                                });
-                            }
-                        } catch (scoreErr) {
-                            console.error("Lead Intelligence Update Error:", scoreErr);
+                            // 3. Save Score
+                            await supabase.from('lead_scores').insert({
+                                lead_id: newLead.id,
+                                score: leadScore,
+                                score_reason: 'Form submission + session engagement'
+                            });
+
+                            // 4. Save Journey
+                            await supabase.from('lead_journeys').insert({
+                                lead_id: newLead.id,
+                                session_id: session_id,
+                                steps: journeySteps,
+                                conversion_point: lead_source_page
+                            });
                         }
                     }
 
@@ -409,6 +418,12 @@ async function handleCreateLead(req, res) {
 async function handleCreateContact(req, res) {
     if (req.method !== "POST") {
         return res.status(405).json({ success: false, error: "Method not allowed" });
+    }
+
+    const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'anon';
+    const rateLimitResult = await rateLimit(`apply_contact:${ip}`, 10, 3600); // 10 contacts per hour per IP
+    if (!rateLimitResult.success) {
+        return res.status(429).json({ error: 'Too many submissions. Please try again later.' });
     }
 
     // --- FAIL-FAST ENV GUARD ---

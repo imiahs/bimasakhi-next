@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const backupsDir = path.join(process.cwd(), 'backups');
 
@@ -41,4 +42,4 @@ export async function GET() {
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch backups', details: error.message }, { status: 500 });
     }
-}
+});

@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const { data, error } = await supabase
@@ -17,9 +18,9 @@ export async function GET() {
         console.error('API /admin/automation GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch automation rules' }, { status: 500 });
     }
-}
+});
 
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const payload = await request.json();
@@ -37,9 +38,9 @@ export async function POST(request) {
         console.error('API /admin/automation POST error:', error);
         return NextResponse.json({ error: 'Failed to create automation rule' }, { status: 500 });
     }
-}
+});
 
-export async function PUT(request) {
+export const PUT = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const payload = await request.json();
@@ -60,4 +61,4 @@ export async function PUT(request) {
         console.error('API /admin/automation PUT error:', error);
         return NextResponse.json({ error: 'Failed to update rule' }, { status: 500 });
     }
-}
+});

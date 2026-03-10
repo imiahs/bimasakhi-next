@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getLocalDb } from '@/utils/localDb';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -30,8 +31,7 @@ export async function GET() {
             topScores = scoresRes.data || [];
         }
 
-        // 2. Compute Funnel from Local SQLite `event_stream`
-        const db = getLocalDb();
+        // 2. Compute Funnel from Supabase `event_stream`
         const funnelSteps = [
             { id: 'homepage', path: '/' },
             { id: 'why', path: '/why' },
@@ -42,10 +42,32 @@ export async function GET() {
 
         let funnelData = [];
 
-        // Very basic aggregation for funnel
         try {
-            const counts = db.prepare(`SELECT route_path, COUNT(DISTINCT session_id) as unique_users FROM event_stream WHERE event_type = 'page_view' GROUP BY route_path`).all();
-            const countMap = counts.reduce((acc, row) => ({ ...acc, [row.route_path]: row.unique_users }), {});
+            // Fetch recent page_view events for funnel
+            let countsData = [];
+            if (supabase) {
+                const { data } = await supabase
+                    .from('event_stream')
+                    .select('route_path, session_id')
+                    .eq('event_type', 'page_view')
+                    .order('created_at', { ascending: false })
+                    .limit(5000);
+                countsData = data || [];
+            }
+
+            // Group by route_path and unique session_id
+            const uniqueSessions = {};
+            countsData.forEach(row => {
+                if (!uniqueSessions[row.route_path]) {
+                    uniqueSessions[row.route_path] = new Set();
+                }
+                uniqueSessions[row.route_path].add(row.session_id);
+            });
+
+            const countMap = {};
+            Object.keys(uniqueSessions).forEach(path => {
+                countMap[path] = uniqueSessions[path].size;
+            });
 
             let previousValue = 0;
             funnelData = funnelSteps.map((step, idx) => {
@@ -76,4 +98,4 @@ export async function GET() {
         console.error('Lead Intelligence Dashboard Error:', error);
         return NextResponse.json({ error: 'Failed to fetch dashboard intelligence' }, { status: 500 });
     }
-}
+});

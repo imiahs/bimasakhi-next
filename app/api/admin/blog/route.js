@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 // GET: Fetch all blog posts
-export async function GET(request) {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
@@ -31,10 +32,10 @@ export async function GET(request) {
         console.error('API /admin/blog GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
     }
-}
+});
 
 // POST: Create a new blog post
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const payload = await request.json();
@@ -57,10 +58,10 @@ export async function POST(request) {
         console.error('API /admin/blog POST error:', error);
         return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
     }
-}
+});
 
 // PUT: Update an existing blog post
-export async function PUT(request) {
+export const PUT = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const payload = await request.json();
@@ -101,10 +102,10 @@ export async function PUT(request) {
         console.error('API /admin/blog PUT error:', error);
         return NextResponse.json({ error: 'Failed to update post' }, { status: 500 });
     }
-}
+});
 
 // DELETE: Remove a blog post
-export async function DELETE(request) {
+export const DELETE = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const { searchParams } = new URL(request.url);
@@ -124,4 +125,4 @@ export async function DELETE(request) {
         console.error('API /admin/blog DELETE error:', error);
         return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 });
     }
-}
+});

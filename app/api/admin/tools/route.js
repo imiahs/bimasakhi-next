@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 // GET: Fetch all tool configurations
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
@@ -25,10 +26,10 @@ export async function GET() {
         console.error('API /admin/tools GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch tool configs' }, { status: 500 });
     }
-}
+});
 
 // PUT: Update multiple tool configs at once
-export async function PUT(request) {
+export const PUT = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
         const payload = await request.json();
@@ -83,4 +84,4 @@ export async function PUT(request) {
         console.error('API /admin/tools PUT error:', error);
         return NextResponse.json({ error: 'Failed to update tool configs' }, { status: 500 });
     }
-}
+});

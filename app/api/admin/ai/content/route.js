@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { generateAiContent } from '@/lib/ai';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -60,9 +61,9 @@ export async function POST(request) {
         console.error('AI Content Engine Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
-}
+});
 
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -86,4 +87,4 @@ export async function GET() {
         console.error("Error fetching content recommendations:", err);
         return NextResponse.json({ error: "Failed to fetch recommendations" }, { status: 500 });
     }
-}
+});

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
-export async function POST(req) {
+export const POST = withAdminAuth(async (request, user) => {
     if (process.env.SUPABASE_ENABLED !== 'true') {
         return NextResponse.json({ error: 'Database operations are disabled.' }, { status: 503 });
     }
@@ -70,4 +71,4 @@ export async function POST(req) {
         console.error('Queue Monitor Engine Error:', error);
         return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
     }
-}
+});

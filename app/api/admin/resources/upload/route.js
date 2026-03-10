@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const runtime = 'nodejs'; // Use Node runtime for fs operations
 
 // POST /api/admin/resources/upload
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const formData = await request.formData();
         const file = formData.get('file');
@@ -38,4 +39,4 @@ export async function POST(request) {
         console.error('Resource upload error:', error);
         return NextResponse.json({ error: 'File upload failed internally.' }, { status: 500 });
     }
-}
+});

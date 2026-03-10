@@ -2,31 +2,19 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
+import { rateLimit } from '@/utils/rateLimiter';
 
 const JWT_SECRET = new TextEncoder().encode(
-    process.env.ADMIN_PASSWORD || 'fallback_secret_for_development_only'
+    process.env.JWT_SECRET || process.env.ADMIN_PASSWORD
 );
-
-// In-memory rate limiting for brute force protection
-const loginAttempts = new Map();
 
 export async function POST(request) {
     try {
         const ip = request.ip || request.headers.get('x-forwarded-for') || 'anon';
-        const now = Date.now();
 
-        // Rate limiting logic: Max 5 attempts per minute per IP
-        const attemptRecord = loginAttempts.get(ip) || { count: 0, firstAttempt: now };
-        if (now - attemptRecord.firstAttempt > 60000) {
-            // Reset after 1 minute
-            attemptRecord.count = 1;
-            attemptRecord.firstAttempt = now;
-        } else {
-            attemptRecord.count += 1;
-        }
-        loginAttempts.set(ip, attemptRecord);
-
-        if (attemptRecord.count > 5) {
+        // Distributed Redis Rate Limiting (5 attempts / 60s)
+        const rateLimitResult = await rateLimit(`login:${ip}`, 5, 60);
+        if (!rateLimitResult.success) {
             return NextResponse.json({ error: 'Too many login attempts. Please try again later.' }, { status: 429 });
         }
 
@@ -59,15 +47,7 @@ export async function POST(request) {
         const isMatch = await bcrypt.compare(password, user.password_hash);
 
         if (!isMatch) {
-            // Development fallback backdoor check: 
-            // In case the DB was just seeded without hashes, allow the env var password once to securely set the hash.
-            // DO NOT leave this in production.
-            if (password === process.env.ADMIN_PASSWORD && user.password_hash === 'TEMP_HASH_PLACEHOLDER') {
-                const newHash = await bcrypt.hash(password, 10);
-                await supabase.from('admin_users').update({ password_hash: newHash }).eq('id', user.id);
-            } else {
-                return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-            }
+            return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
         }
 
         // Create JWT Session Token using jose (Edge compatible)

@@ -3,11 +3,12 @@ import { getServiceSupabase } from '@/utils/supabase';
 import sharp from 'sharp';
 import fs from 'fs/promises';
 import path from 'path';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const runtime = 'nodejs'; // Sharp requires Node runtime, not Edge
 
 // POST /api/admin/media/upload
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const formData = await request.formData();
         const file = formData.get('file');
@@ -73,4 +74,4 @@ export async function POST(request) {
         console.error('Media pipeline error:', error);
         return NextResponse.json({ error: 'Image processing failed internally.' }, { status: 500 });
     }
-}
+});
