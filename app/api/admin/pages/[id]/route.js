@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -14,7 +14,7 @@ export const GET = withAdminAuth(async (request, user) => {
             return NextResponse.json({ page: null, blocks: [], versions: [] });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const { data: page, error: pageErr } = await supabase.from('custom_pages').select('*').eq('id', id).single();
         if (pageErr) throw pageErr;
@@ -39,7 +39,7 @@ export const PUT = withAdminAuth(async (request, user) => {
 
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         // If it's a rollback request, fetch the snapshot and bypass standard blocks payload
         let blocksToApply = blocks;

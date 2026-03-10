@@ -26,9 +26,10 @@ export default function AgentBusinessContent() {
 
             if (tableName === 'renewals') {
                 // For renewals, we also join policies to get customer names
-                query = supabase.from('renewals').select('*, policies!inner(customer_name, agent_id)').eq('policies.agent_id', user.id);
+                query = supabase.from('renewals').select('*, policies!inner(customer_name, agent_id)').eq('policies.agent_id', user.id).limit(100);
             } else {
-                query = query.eq('agent_id', user.id).order('created_at', { ascending: false });
+                // Ensure large tables are capped
+                query = query.eq('agent_id', user.id).order('created_at', { ascending: false }).limit(100);
             }
 
             // Using RLS, only this agent's data is returned.
@@ -54,8 +55,8 @@ export default function AgentBusinessContent() {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`${activeTab === tab
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize`}
                         >
                             {tab}

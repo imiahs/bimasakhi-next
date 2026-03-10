@@ -1,5 +1,5 @@
 import { redis } from './_middleware/auth.js';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withLogger } from './_middleware/logger.js';
 
 // --- Health Check Endpoint ---
@@ -45,10 +45,7 @@ export default withLogger(async function handler(req, res) {
                 throw new Error('Supabase credentials not configured');
             }
 
-            const supabase = createClient(
-                process.env.SUPABASE_URL,
-                process.env.SUPABASE_SERVICE_ROLE_KEY
-            );
+            const supabase = getServiceSupabase();
 
             // Lightweight query to verify connectivity
             const { error } = await supabase.from('leads').select('id').limit(1);

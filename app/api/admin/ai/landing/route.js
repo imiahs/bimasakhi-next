@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai';
 import { getLocalDb } from '@/utils/localDb';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
@@ -15,7 +15,7 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ error: 'Supabase required for AI Landing Engine.' }, { status: 400 });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         // Fetch Supabase event stream for bounce rate/cta clicks evaluation
         const { data: rawEvents } = await supabase
@@ -105,7 +105,7 @@ export const GET = withAdminAuth(async (request, user) => {
             return NextResponse.json({ analyses: [] });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const { data, error } = await supabase
             .from('landing_page_analysis')

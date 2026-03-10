@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+const { getSupabaseClient, getServiceSupabase } = require('../utils/supabaseClientSingleton');
 const fs = require('fs');
 const readline = require('readline');
 const path = require('path');
@@ -12,7 +12,7 @@ if (!supabaseUrl || !supabaseKey) {
     process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = getServiceSupabase();
 
 function generateSlug(text) {
     return text.toString().toLowerCase()

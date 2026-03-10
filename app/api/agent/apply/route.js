@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/utils/supabase';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { systemLogger } from '@/lib/logger/systemLogger';
+import { withGuardrails } from '@/lib/middlewares/withGuardrails';
 
-export async function POST(req) {
+const applyHandler = async (req) => {
     try {
         const body = await req.json();
         const { name, mobile } = body;
@@ -10,6 +11,16 @@ export async function POST(req) {
 
         if (!name || !mobile) {
             return NextResponse.json({ error: 'Name and mobile are required.' }, { status: 400 });
+        }
+
+        // Strict validation
+        if (typeof name !== 'string' || name.length > 100 || name.length < 2) {
+            return NextResponse.json({ error: 'Invalid name provided. Must be between 2 and 100 characters.' }, { status: 400 });
+        }
+
+        const cleanMobile = mobile.replace(/\D/g, '');
+        if (cleanMobile.length !== 10) {
+            return NextResponse.json({ error: 'Invalid mobile number. Must be 10 digits.' }, { status: 400 });
         }
 
         const supabase = getServiceSupabase();
@@ -51,4 +62,6 @@ export async function POST(req) {
         systemLogger.logError('AgentApplyAPI', 'Failed to process application', error.message);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
-}
+};
+
+export const POST = withGuardrails(applyHandler, { rateLimit: true, timeoutMs: 8000 });

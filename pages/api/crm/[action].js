@@ -1,7 +1,7 @@
 // api/crm/[action].js
 // Consolidated CRM handler: create-lead + create-contact
 import axios from 'axios';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { redis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
 import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
@@ -45,7 +45,7 @@ async function generateRefId() {
 let supabase = null;
 try {
     if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+        supabase = getServiceSupabase();
     } else {
         if (process.env.SUPABASE_ENABLED === 'true') {
             console.warn("Supabase credentials missing. Supabase will be skipped.");

@@ -6,6 +6,9 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ['@supabase/supabase-js', 'recharts', 'lucide-react', 'ioredis'],
+    serverActions: {
+      bodySizeLimit: '1mb',
+    },
   }
 };
 

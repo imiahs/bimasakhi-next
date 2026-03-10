@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,7 +18,7 @@ export async function POST(request) {
             return NextResponse.json({ success: true, message: 'Supabase disabled, skipping metrics tracking.' });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         // Fetch current metrics
         const { data: metrics } = await supabase.from('page_metrics').select('*').eq('page_id', page_id).maybeSingle();

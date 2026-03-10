@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -13,7 +13,7 @@ export const GET = withAdminAuth(async (request, user) => {
             return NextResponse.json({ pages: [] });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const { data, error } = await supabase
             .from('custom_pages')
@@ -52,7 +52,7 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ error: 'Title and Slug are required.' }, { status: 400 });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const { data: existing } = await supabase.from('custom_pages').select('id').eq('slug', slug).maybeSingle();
         if (existing) {

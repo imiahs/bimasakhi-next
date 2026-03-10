@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient, getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { logger } from './logger';
 
 let supabase = null;
@@ -8,7 +8,7 @@ function getSupabase() {
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
         const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
         if (supabaseUrl && supabaseKey) {
-            supabase = createClient(supabaseUrl, supabaseKey);
+            supabase = getServiceSupabase();
         }
     }
     return supabase;

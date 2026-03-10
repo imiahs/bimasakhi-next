@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getLocalDb } from '@/utils/localDb';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,7 +21,7 @@ export async function POST(request) {
             return NextResponse.json({ success: true, message: 'Event dropped (Telemetry Disabled)' });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const { error: eventErr } = await supabase.from('event_stream').insert({
             event_type,
@@ -65,7 +65,7 @@ export async function POST(request) {
             const supabaseUrl = process.env.SUPABASE_URL;
             const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
             if (supabaseUrl && supabaseKey) {
-                const supabase = createClient(supabaseUrl, supabaseKey);
+                const supabase = getServiceSupabase();
                 await supabase.from('observability_logs').insert({
                     level: 'ERROR',
                     message: error.message,

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
@@ -14,7 +14,7 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ error: 'Supabase required for CTA Engine.' }, { status: 400 });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const { data: analyses } = await supabase.from('landing_page_analysis').select('*').order('analyzed_at', { ascending: false }).limit(5);
 
@@ -65,7 +65,7 @@ export const GET = withAdminAuth(async (request, user) => {
             return NextResponse.json({ recommendations: [] });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const { data, error } = await supabase
             .from('cta_recommendations')

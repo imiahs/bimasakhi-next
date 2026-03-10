@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
@@ -14,7 +14,7 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ error: 'Supabase required for AI Growth.' }, { status: 400 });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
         const { action } = await request.json(); // 'campaigns', 'forecast', 'suggestions'
 
         if (action === 'campaigns') {
@@ -82,7 +82,7 @@ export const GET = withAdminAuth(async (request, user) => {
             return NextResponse.json({ campaigns: [], forecasts: [], suggestions: [] });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const [cRes, fRes, sRes] = await Promise.all([
             supabase.from('campaign_insights').select('*').order('generated_at', { ascending: false }).limit(5),

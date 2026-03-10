@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
@@ -19,7 +19,7 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ error: 'Supabase required for Growth Reports' }, { status: 400 });
         }
 
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        const supabase = getServiceSupabase();
 
         const [metricsRes, trafficRes, predictionsRes, campaignsRes] = await Promise.all([
             supabase.from('content_metrics').select('*').order('leads_generated', { ascending: false }),

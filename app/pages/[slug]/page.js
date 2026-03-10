@@ -1,6 +1,6 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient, getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import * as Blocks from '@/components/blocks/PageBlocks';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -18,7 +18,7 @@ async function getPageData(slug, previewToken) {
         return null;
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = getServiceSupabase();
 
     // Fetch page bypassing published strictly, check below
     const { data: maybePage } = await supabase.from('custom_pages').select('*').eq('slug', slug).maybeSingle();

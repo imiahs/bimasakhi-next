@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getLocalDb } from '@/utils/localDb';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
@@ -9,7 +9,7 @@ export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-        const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
+        const supabase = (supabaseUrl && supabaseKey) ? getServiceSupabase() : null;
 
         // 1. Fetch Supabase Metrics
         let topPages = [];
