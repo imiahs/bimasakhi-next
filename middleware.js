@@ -2,9 +2,11 @@ import { logError } from '@/lib/monitoring/logError';
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
-const JWT_SECRET = new TextEncoder().encode(
-    process.env.JWT_SECRET || process.env.ADMIN_PASSWORD
-);
+if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not configured. Middleware cannot secure admin routes.');
+}
+
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 // Basic sliding window rate store for Edge environments (resets per cold boot)
 // Map<IP, { count: number, startTime: number }>
@@ -46,8 +48,12 @@ export async function middleware(request) {
     // 2. JWT ADMIN SESSION VALIDATION
     if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
 
-        // Exclude specific auth routes from JWT validation
-        if (pathname === '/admin/login' || pathname === '/api/admin/auth/login') {
+        // Exclude specific auth and public data routes from strict JWT validation
+        if (
+            pathname === '/admin/login' ||
+            pathname === '/api/admin/auth/login' ||
+            pathname === '/api/admin-data/config-get'
+        ) {
             return NextResponse.next();
         }
 

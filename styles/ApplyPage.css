@@ -61,12 +61,16 @@
 }
 
 .apply-hero .subtitle {
-    font-size: 1.1em;
-    opacity: 1;
-    color: #f8fafc;
+    font-size: 1.15em;
+    font-weight: 500;
+    opacity: 0.95;
+    color: #ffffff;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
     max-width: 540px;
     margin: 0 auto;
     line-height: 1.6;
+    z-index: 10;
+    position: relative;
 }
 
 /* --- Content Container --- */
