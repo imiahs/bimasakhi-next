@@ -5,7 +5,8 @@ import { systemLogger } from '@/lib/logger/systemLogger';
 export async function POST(req) {
     try {
         const body = await req.json();
-        const { name, mobile, ref_code } = body;
+        const { name, mobile } = body;
+        let { ref_code } = body;
 
         if (!name || !mobile) {
             return NextResponse.json({ error: 'Name and mobile are required.' }, { status: 400 });
@@ -24,6 +25,7 @@ export async function POST(req) {
             if (!agent) {
                 // We'll log a warning but still accept the application without failing the prospect organically
                 systemLogger.logWarning('AgentApplyAPI', `Invalid referral code used: ${ref_code}`);
+                ref_code = null; // Prevent FK constraint violation
             }
         }
 

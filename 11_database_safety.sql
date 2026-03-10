@@ -5,6 +5,16 @@
 -- 1. Index Optimizations
 -- ==========================================
 
+-- Ensure contact_inquiries exists before indexing
+CREATE TABLE IF NOT EXISTS public.contact_inquiries (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    mobile TEXT NOT NULL,
+    message TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
 -- Speeds up route_path grouping and time-based filtering in Analytics/AI engines
 CREATE INDEX IF NOT EXISTS idx_event_stream_path_time ON event_stream(route_path, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_event_stream_type ON event_stream(event_type);

@@ -2,6 +2,7 @@
 
 -- Part 1: System Metrics Snapshot
 -- Lightweight 1-row table for dashboards to read
+DROP TABLE IF EXISTS public.system_metrics_snapshot CASCADE;
 CREATE TABLE IF NOT EXISTS public.system_metrics_snapshot (
     id SERIAL PRIMARY KEY,
     jobs_processed INTEGER DEFAULT 0,
@@ -30,6 +31,7 @@ CREATE POLICY "Allow authenticated insert/update to system_metrics_snapshot"
 
 -- Part 2: Search Index Metrics
 -- Simple table for the /admin/seo/index-health dashboard
+DROP TABLE IF EXISTS public.search_index_metrics CASCADE;
 CREATE TABLE IF NOT EXISTS public.search_index_metrics (
     id SERIAL PRIMARY KEY,
     indexed_pages INTEGER DEFAULT 0,

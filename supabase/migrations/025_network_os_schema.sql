@@ -3,6 +3,13 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Agents Table
+DO $$
+BEGIN
+  IF EXISTS(SELECT 1 FROM information_schema.columns WHERE table_name='agents' AND column_name='id') THEN
+    ALTER TABLE public.agents RENAME COLUMN id TO agent_id;
+  END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS public.agents (
     agent_id UUID PRIMARY KEY, -- Links to auth.users theoretically (or managed directly)
     name TEXT NOT NULL,
@@ -20,6 +27,20 @@ CREATE TABLE IF NOT EXISTS public.agents (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Safely ensure columns exist without wiping potential legacy data
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS mobile TEXT;
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS city TEXT;
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS join_date TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending';
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'agent';
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS parent_agent_id UUID REFERENCES public.agents(agent_id) ON DELETE SET NULL;
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS depth_level INTEGER DEFAULT 0;
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS ref_code TEXT UNIQUE;
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS activation_status TEXT DEFAULT 'recruited';
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS first_policy_date TIMESTAMP WITH TIME ZONE;
+ALTER TABLE public.agents ADD COLUMN IF NOT EXISTS last_business_date TIMESTAMP WITH TIME ZONE;
 
 CREATE INDEX IF NOT EXISTS idx_agents_parent ON public.agents(parent_agent_id);
 CREATE INDEX IF NOT EXISTS idx_agents_ref_code ON public.agents(ref_code);

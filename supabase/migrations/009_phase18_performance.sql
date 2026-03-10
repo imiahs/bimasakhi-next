@@ -10,7 +10,7 @@ CREATE INDEX IF NOT EXISTS idx_lead_cache_source ON lead_cache(source);
 CREATE INDEX IF NOT EXISTS idx_lead_cache_created_at ON lead_cache(created_at DESC);
 
 -- 3. SEO Overrides Indexes
-CREATE INDEX IF NOT EXISTS idx_seo_overrides_path ON seo_overrides(page_path);
+CREATE INDEX IF NOT EXISTS idx_seo_overrides_path ON seo_overrides(route_path);
 
 -- 4. Resource Downloads Indexes
 CREATE INDEX IF NOT EXISTS idx_resources_download_count ON resources(download_count DESC);

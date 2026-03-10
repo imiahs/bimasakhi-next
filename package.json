@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run db:migrate && next build",
     "start": "next start",
-    "worker": "node lib/workers/startWorkers.js"
+    "worker": "node lib/workers/startWorkers.js",
+    "db:migrate": "node scripts/runSupabaseMigrations.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
@@ -24,6 +25,7 @@
     "jsonwebtoken": "^9.0.3",
     "next": "^15.2.3",
     "node-cron": "^4.2.1",
+    "pg": "^8.20.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "recharts": "^3.8.0",
