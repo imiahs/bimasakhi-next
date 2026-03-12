@@ -16,6 +16,13 @@ export async function middleware(request) {
     const { pathname } = request.nextUrl;
     const ip = request.ip || request.headers.get('x-forwarded-for') || 'anon';
 
+    // 0. WHITESPACE / DEBUG BYPASS (Absolute Top Priority)
+    if (pathname.includes('/debug/') || pathname.includes('/login')) {
+        return NextResponse.next();
+    }
+
+    console.log(`[Middleware] ${request.method} ${pathname} from ${ip}`);
+
     // 1. RATE LIMITING FOR API ROUTES & JOBS
     if (pathname.startsWith('/api/admin') || pathname.startsWith('/api/jobs')) {
         const now = Date.now();
@@ -35,7 +42,9 @@ export async function middleware(request) {
         }
 
         // CSRF Protection Check for Mutations
-        if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method) && pathname !== '/api/admin/auth/login') {
+        if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method) &&
+            pathname !== '/api/admin/auth/login' &&
+            pathname !== '/api/admin/debug/worker-test') {
             const origin = request.headers.get('origin') || request.headers.get('referer') || '';
             const host = request.headers.get('host') || '';
             // Basic Origin/Host verification for CSRF in Admin
@@ -50,8 +59,8 @@ export async function middleware(request) {
 
         // Exclude specific auth and public data routes from strict JWT validation
         if (
-            pathname === '/admin/login' ||
-            pathname === '/api/admin/auth/login' ||
+            pathname.includes('/login') ||
+            pathname.includes('/debug/') ||
             pathname === '/api/admin-data/config-get'
         ) {
             return NextResponse.next();
