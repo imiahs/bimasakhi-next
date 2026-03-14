@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPageGeneratorQueue, getContentAuditQueue, getIndexQueue, getCacheQueue, getCrawlBudgetQueue, getNetworkMetricsQueue } from '@/lib/queue/queues';
+import { getQStashClient, getBaseUrl } from '@/lib/queue/qstash';
 import { logError } from '@/lib/monitoring/logError';
 import { runAnomalyScan } from '@/lib/monitoring/incidentDetector';
 
@@ -7,9 +7,10 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Allow up to 60s for cron jobs
 
 /**
- * Vercel Cron Trigger — replaces node-cron scheduler.
+ * Vercel Cron Trigger — Replaces node-cron scheduler.
  * Each Vercel Cron job hits this route with ?job=<name>.
  * Auth via CRON_SECRET bearer token (Vercel injects this automatically).
+ * Uses Upstash QStash to queue Serverless worker jobs idempotently.
  */
 export async function GET(request) {
     // Verify Vercel Cron secret
@@ -27,54 +28,66 @@ export async function GET(request) {
 
     try {
         let result = null;
+        const qstash = getQStashClient();
+        const baseUrl = getBaseUrl();
+
+        if (!qstash && job !== 'incident-scan' && job !== 'metrics-flush') {
+            return NextResponse.json({ error: 'QStash client missing or queues disabled.' }, { status: 500 });
+        }
 
         switch (job) {
             case 'page-generator': {
-                const queue = getPageGeneratorQueue();
-                if (queue) {
-                    const added = await queue.add('generate-batch', { limit: 50 }, { removeOnComplete: true });
-                    result = { jobId: added.id, queue: 'PageGeneratorQueue' };
-                }
+                const added = await qstash.publishJSON({
+                    url: `${baseUrl}/api/jobs/pagegen`,
+                    body: { limit: 50 },
+                    retries: 3
+                });
+                result = { messageId: added.messageId, queue: 'QStash Node' };
                 break;
             }
             case 'content-audit': {
-                const queue = getContentAuditQueue();
-                if (queue) {
-                    const added = await queue.add('audit-fingerprints', {}, { removeOnComplete: true });
-                    result = { jobId: added.id, queue: 'ContentAuditQueue' };
-                }
+                const added = await qstash.publishJSON({
+                    url: `${baseUrl}/api/jobs/audit`,
+                    body: {},
+                    retries: 1
+                });
+                result = { messageId: added.messageId, queue: 'QStash Node' };
                 break;
             }
             case 'index-drip-feed': {
-                const queue = getIndexQueue();
-                if (queue) {
-                    const added = await queue.add('promote-pages', { batchSize: 200 }, { removeOnComplete: true });
-                    result = { jobId: added.id, queue: 'IndexQueue' };
-                }
+                const added = await qstash.publishJSON({
+                    url: `${baseUrl}/api/jobs/index`,
+                    body: { batchSize: 200 },
+                    retries: 3
+                });
+                result = { messageId: added.messageId, queue: 'QStash Node' };
                 break;
             }
             case 'crawl-budget': {
-                const queue = getCrawlBudgetQueue();
-                if (queue) {
-                    const added = await queue.add('compute-crawl-budget', {}, { removeOnComplete: true });
-                    result = { jobId: added.id, queue: 'CrawlBudgetQueue' };
-                }
+                const added = await qstash.publishJSON({
+                    url: `${baseUrl}/api/jobs/crawl`,
+                    body: {},
+                    retries: 2
+                });
+                result = { messageId: added.messageId, queue: 'QStash Node' };
                 break;
             }
             case 'cache-worker': {
-                const queue = getCacheQueue();
-                if (queue) {
-                    const added = await queue.add('pre-render-cache', {}, { removeOnComplete: true });
-                    result = { jobId: added.id, queue: 'CacheQueue' };
-                }
+                const added = await qstash.publishJSON({
+                    url: `${baseUrl}/api/jobs/cache`,
+                    body: {},
+                    retries: 3
+                });
+                result = { messageId: added.messageId, queue: 'QStash Node' };
                 break;
             }
             case 'network-metrics': {
-                const queue = getNetworkMetricsQueue();
-                if (queue) {
-                    const added = await queue.add('compute-network-metrics', {}, { removeOnComplete: true });
-                    result = { jobId: added.id, queue: 'NetworkMetricsQueue' };
-                }
+                const added = await qstash.publishJSON({
+                    url: `${baseUrl}/api/jobs/metrics`,
+                    body: {},
+                    retries: 1
+                });
+                result = { messageId: added.messageId, queue: 'QStash Node' };
                 break;
             }
             case 'metrics-flush': {
