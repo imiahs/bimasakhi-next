@@ -149,6 +149,7 @@ export async function middleware(request) {
 
     if (isBot && pathname.startsWith('/bima-sakhi-')) {
         const slug = pathname.substring(1); // removes leading slash
+        try {
             const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
             const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
@@ -168,6 +169,7 @@ export async function middleware(request) {
                     return addSecurityHeaders(response);
                 }
             }
+        } catch (e) {
             // Silently fallback to SSR render if edge fetch fails
             try {
                 await logError('EdgeMiddleware', 'SEO Cache Edge Fetch Failed', e);

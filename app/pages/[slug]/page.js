@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { cache } from 'react';
 import { notFound } from 'next/navigation';
 import { getSupabaseClient, getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import * as Blocks from '@/components/blocks/PageBlocks';
@@ -10,8 +10,8 @@ import PageTracker from '@/components/ui/PageTracker';
 
 export const revalidate = 60;
 
-// Fetch Page Data function
-async function getPageData(slug, previewToken) {
+// Fetch Page Data function mapped to React Cache
+const getPageData = cache(async (slug, previewToken) => {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!supabaseUrl || !supabaseKey || process.env.SUPABASE_ENABLED !== 'true') {
@@ -36,7 +36,7 @@ async function getPageData(slug, previewToken) {
     const { data: blocks } = await supabase.from('page_blocks').select('*').eq('page_id', page.id).order('block_order', { ascending: true });
 
     return { page, blocks: blocks || [] };
-}
+});
 
 export async function generateMetadata({ params, searchParams }) {
     const { slug } = await params;

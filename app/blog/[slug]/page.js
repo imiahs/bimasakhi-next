@@ -1,9 +1,20 @@
 import BlogArticle from './BlogArticle';
-import { getServiceSupabase } from '@/utils/supabase';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import Script from 'next/script';
+import { cache } from 'react';
 
 // Revalidate cache every hour (ISR)
 export const revalidate = 3600;
+
+const getBlogData = cache(async (slug) => {
+    const supabase = getServiceSupabase();
+    return await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('slug', slug)
+        .eq('status', 'published')
+        .single();
+});
 
 export async function generateStaticParams() {
     const supabase = getServiceSupabase();
@@ -16,13 +27,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
     const resolvedParams = await params;
-    const supabase = getServiceSupabase();
-    const { data: post } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('slug', resolvedParams.slug)
-        .eq('status', 'published')
-        .single();
+    const { data: post } = await getBlogData(resolvedParams.slug);
 
     if (!post) {
         return {
@@ -63,21 +68,13 @@ export async function generateMetadata({ params }) {
 
 export default async function BlogPostPage({ params }) {
     const resolvedParams = await params;
-
-    // Increment Views Action Could Be Placed Here or In a Client Component Hook
-    const supabase = getServiceSupabase();
-
-    // Read the post
-    const { data: post } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('slug', resolvedParams.slug)
-        .eq('status', 'published')
-        .single();
+    const { data: post } = await getBlogData(resolvedParams.slug);
 
     if (!post) {
         return <div className="container py-8 text-center"><h1>Article not found</h1></div>;
     }
+
+    const supabase = getServiceSupabase();
 
     // Attempt to increment views silently internally
     try {
@@ -86,8 +83,8 @@ export default async function BlogPostPage({ params }) {
             .update({ views: (post.views || 0) + 1 })
             .eq('id', post.id);
     } catch (e) {
-            console.error("Runtime Error:", e);
-        }
+        console.error("Runtime Error:", e);
+    }
 
     const structuredData = {
         '@context': 'https://schema.org',

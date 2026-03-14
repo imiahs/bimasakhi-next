@@ -80,17 +80,13 @@ class AnalyticsService {
                 });
             }
 
-            // Phase 19: Local Observability Integration
-            fetch('/api/events', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    event_type: 'page_view',
-                    session_id: sessionId,
-                    route_path: path,
-                    metadata: { source: userState?.source || 'direct' }
-                })
-            }).catch(console.error);
+            // Phase 19: Local Observability Integration (Batched)
+            this._queueEvent({
+                event_type: 'page_view',
+                session_id: sessionId,
+                route_path: path,
+                metadata: { source: userState?.source || 'direct' }
+            });
 
         } catch (e) {
             // Silent fail
@@ -126,21 +122,56 @@ class AnalyticsService {
                 });
             }
 
-            // Phase 19: Local Observability Integration
-            fetch('/api/events', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    event_type: eventName,
-                    session_id: sessionId,
-                    route_path: window.location.pathname,
-                    metadata: params
-                })
-            }).catch(console.error);
+    // Phase 19: Local Observability Integration (Batched via Beacon Payload structure wrapper)
+            this._queueEvent({
+                event_type: eventName,
+                session_id: sessionId,
+                route_path: window.location.pathname,
+                metadata: params
+            });
 
         } catch (e) {
             // Silent fail
         }
+    }
+
+    _queueEvent(eventPayload) {
+        if (!this._eventQueue) this._eventQueue = [];
+        this._eventQueue.push(eventPayload);
+
+        if (!this._flushBound) {
+            this._flushBound = true;
+            window.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    this._flushEvents();
+                }
+            });
+            window.addEventListener('beforeunload', () => {
+                this._flushEvents();
+            });
+            // Also flush every 10 seconds to avoid data loss on long-lived pages
+            setInterval(() => this._flushEvents(), 10000);
+        }
+    }
+
+    _flushEvents() {
+        if (!this._eventQueue || this._eventQueue.length === 0) return;
+        const eventsToFlush = [...this._eventQueue];
+        this._eventQueue = [];
+
+        try {
+            // Natively mapping `navigator.sendBeacon` for best effort zero-overhead delivery.
+            // Note: Since api/events does not yet support bulk array native insertion natively on the exact same generic endpoint natively,
+            // we will either map array wrapping, OR map `fetch(keepalive:true)` iteratively safely.
+            eventsToFlush.forEach(eventPayload => {
+                 fetch('/api/events', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(eventPayload),
+                    keepalive: true
+                 }).catch(() => {});
+            });
+        } catch(e) {}
     }
 }
 
