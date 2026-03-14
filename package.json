@@ -21,6 +21,7 @@
     "bullmq": "^5.70.4",
     "cookie": "^1.1.1",
     "ioredis": "^5.10.0",
+    "isomorphic-dompurify": "^3.3.0",
     "jose": "^6.2.0",
     "jsonwebtoken": "^9.0.3",
     "next": "^15.2.3",

@@ -1,10 +1,15 @@
 // api/debug/force-error.js
-// Temporary route to safely validate Slack error alerting.
-// Intentionally throws 500 so withLogger triggers alertSlack().
-// DELETE THIS FILE after Slack alerting is confirmed working.
+// Test route to validate Slack error alerting.
+// BLOCKED in production environments for security.
+
 import { withLogger } from '../_middleware/logger.js';
 
 export default withLogger(async function handler(req, res) {
+    // Block debug routes in production
+    if (process.env.NODE_ENV === 'production') {
+        return res.status(404).json({ error: 'Not Found' });
+    }
+
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }

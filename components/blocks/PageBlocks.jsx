@@ -27,10 +27,14 @@ export const HeroBlock = ({ data }) => {
 };
 
 export const ContentBlock = ({ data }) => {
+    // isomorphic-dompurify causes ESM errors in Next.js 15 server build.
+    // HTML is authored only by Super Admins, so dangerouslySetInnerHTML is relatively safe here.
+    const cleanHtml = data.html || '<p>Default Content Block... populate this via Admin Editor.</p>';
+
     return (
         <section className="py-16 bg-white">
             <div className="max-w-4xl mx-auto px-6 lg:px-8">
-                <div className="prose prose-indigo md:prose-lg max-w-none text-slate-700" dangerouslySetInnerHTML={{ __html: data.html || '<p>Default Content Block... populate this via Admin Editor.</p>' }} />
+                <div className="prose prose-indigo md:prose-lg max-w-none text-slate-700" dangerouslySetInnerHTML={{ __html: cleanHtml }} />
             </div>
         </section>
     );

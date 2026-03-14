@@ -85,7 +85,9 @@ export default async function BlogPostPage({ params }) {
             .from('blog_posts')
             .update({ views: (post.views || 0) + 1 })
             .eq('id', post.id);
-    } catch (e) { /* ignore view counting errors */ }
+    } catch (e) {
+            console.error("Runtime Error:", e);
+        }
 
     const structuredData = {
         '@context': 'https://schema.org',

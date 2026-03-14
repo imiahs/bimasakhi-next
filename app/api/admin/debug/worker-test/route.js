@@ -4,6 +4,11 @@ import { computeNetworkMetrics } from '@/lib/workers/networkMetricsWorker';
 import { updateWorkerHealth } from '@/lib/monitoring/workerHealth';
 
 export async function POST() {
+    // Block debug routes in production
+    if (process.env.NODE_ENV === 'production') {
+        return NextResponse.json({ error: 'Not Found' }, { status: 404 });
+    }
+
     try {
         console.log('[DebugAPI] Starting worker verification...');
 
@@ -27,7 +32,6 @@ export async function POST() {
 
         // 3. Native Logic Execution
         console.log('[DebugAPI] Beginning computeNetworkMetrics execution...');
-        // We wrap this in a timeout or try/catch to ensure we get a response
         try {
             await computeNetworkMetrics();
             console.log('[DebugAPI] computeNetworkMetrics completed successfully.');

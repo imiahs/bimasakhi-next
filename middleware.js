@@ -12,13 +12,46 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 // Map<IP, { count: number, startTime: number }>
 const rateLimitStore = new Map();
 
+/**
+ * Injects security headers into every response.
+ */
+function addSecurityHeaders(response) {
+    response.headers.set('X-Frame-Options', 'DENY');
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.headers.set('X-XSS-Protection', '1; mode=block');
+    response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    response.headers.set('Content-Security-Policy',
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com; " +
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+        "img-src 'self' data: https: blob:; " +
+        "font-src 'self' https://fonts.gstatic.com; " +
+        "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://region1.google-analytics.com; " +
+        "frame-src 'self' https://www.googletagmanager.com; " +
+        "frame-ancestors 'none';"
+    );
+    return response;
+}
+
 export async function middleware(request) {
     const { pathname } = request.nextUrl;
     const ip = request.ip || request.headers.get('x-forwarded-for') || 'anon';
 
-    // 0. WHITESPACE / DEBUG BYPASS (Absolute Top Priority)
-    if (pathname.includes('/debug/') || pathname.includes('/login')) {
-        return NextResponse.next();
+    // 0. LOGIN BYPASS (allow login page without auth)
+    if (pathname.includes('/login')) {
+        return addSecurityHeaders(NextResponse.next());
+    }
+
+    // 0.1 DEBUG ROUTE PROTECTION — block debug routes in production
+    if (pathname.includes('/debug/')) {
+        if (process.env.NODE_ENV === 'production') {
+            return addSecurityHeaders(
+                NextResponse.json({ error: 'Not Found' }, { status: 404 })
+            );
+        }
+        return addSecurityHeaders(NextResponse.next());
     }
 
     console.log(`[Middleware] ${request.method} ${pathname} from ${ip}`);
@@ -38,7 +71,9 @@ export async function middleware(request) {
         rateLimitStore.set(ip, record);
 
         if (record.count > 100) {
-            return NextResponse.json({ error: 'Too many requests / Rate limit globally exceeded.' }, { status: 429 });
+            return addSecurityHeaders(
+                NextResponse.json({ error: 'Too many requests / Rate limit globally exceeded.' }, { status: 429 })
+            );
         }
 
         // CSRF Protection Check for Mutations
@@ -48,8 +83,10 @@ export async function middleware(request) {
             const origin = request.headers.get('origin') || request.headers.get('referer') || '';
             const host = request.headers.get('host') || '';
             // Basic Origin/Host verification for CSRF in Admin
-            if (!origin.includes(host) && !origin.includes(process.env.NEXT_PUBLIC_SUPABASE_URL || 'never-match')) {
-                return NextResponse.json({ error: 'CSRF token missing or origin mismatch.' }, { status: 403 });
+            if (!origin.includes(host)) {
+                return addSecurityHeaders(
+                    NextResponse.json({ error: 'CSRF token missing or origin mismatch.' }, { status: 403 })
+                );
             }
         }
     }
@@ -60,21 +97,22 @@ export async function middleware(request) {
         // Exclude specific auth and public data routes from strict JWT validation
         if (
             pathname.includes('/login') ||
-            pathname.includes('/debug/') ||
             pathname === '/api/admin-data/config-get'
         ) {
-            return NextResponse.next();
+            return addSecurityHeaders(NextResponse.next());
         }
 
         const authCookie = request.cookies.get('admin-session')?.value;
 
         if (!authCookie) {
             if (pathname.startsWith('/api/')) {
-                return NextResponse.json({ error: 'Unauthorized. Missing token.' }, { status: 401 });
+                return addSecurityHeaders(
+                    NextResponse.json({ error: 'Unauthorized. Missing token.' }, { status: 401 })
+                );
             }
             const loginUrl = new URL('/admin/login', request.url);
             loginUrl.searchParams.set('redirect_to', pathname);
-            return NextResponse.redirect(loginUrl);
+            return addSecurityHeaders(NextResponse.redirect(loginUrl));
         }
 
         try {
@@ -86,19 +124,21 @@ export async function middleware(request) {
             requestHeaders.set('x-admin-role', payload.role);
             requestHeaders.set('x-admin-id', payload.sub);
 
-            return NextResponse.next({
+            return addSecurityHeaders(NextResponse.next({
                 request: {
                     headers: requestHeaders,
                 },
-            });
+            }));
         } catch (err) {
             // Token is invalid/expired
             if (pathname.startsWith('/api/')) {
-                return NextResponse.json({ error: 'Session expired or invalid token.' }, { status: 401 });
+                return addSecurityHeaders(
+                    NextResponse.json({ error: 'Session expired or invalid token.' }, { status: 401 })
+                );
             }
             const loginUrl = new URL('/admin/login', request.url);
             loginUrl.searchParams.set('error', 'session_expired');
-            return NextResponse.redirect(loginUrl);
+            return addSecurityHeaders(NextResponse.redirect(loginUrl));
         }
     }
 
@@ -120,21 +160,21 @@ export async function middleware(request) {
             const data = await cacheRes.json();
 
             if (data && data.length > 0 && data[0].cached_html) {
-                return new NextResponse(data[0].cached_html, {
+                const response = new NextResponse(data[0].cached_html, {
                     status: 200,
                     headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Edge-Cache': 'HIT' }
                 });
+                return addSecurityHeaders(response);
             }
         } catch (e) {
             // Silently fallback to SSR render if edge fetch fails
-            // Avoid blocking edge thread execution
             try {
                 await logError('EdgeMiddleware', 'SEO Cache Edge Fetch Failed', e);
             } catch (loggingErr) { }
         }
     }
 
-    return NextResponse.next();
+    return addSecurityHeaders(NextResponse.next());
 }
 
 export const config = {
