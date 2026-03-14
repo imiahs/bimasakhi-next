@@ -89,25 +89,11 @@ export async function POST(request) {
         if (event_type === 'page_view') {
             const source = sanitizedMetadata?.source || 'direct';
 
-            // Atomic increment for content_metrics
-            supabase.from('content_metrics').select('views, id').eq('target_path', route_path).maybeSingle()
-                .then(({ data }) => {
-                    if (data) {
-                        supabase.from('content_metrics').update({ views: data.views + 1, updated_at: new Date() }).eq('id', data.id).then();
-                    } else {
-                        supabase.from('content_metrics').insert({ target_path: route_path, views: 1 }).then();
-                    }
-                });
+            // Atomic increment for content_metrics via RPC
+            supabase.rpc('increment_content_views', { path: route_path }).then();
 
-            // Atomic increment for traffic_sources
-            supabase.from('traffic_sources').select('visits, id').eq('source', source).maybeSingle()
-                .then(({ data }) => {
-                    if (data) {
-                        supabase.from('traffic_sources').update({ visits: data.visits + 1, updated_at: new Date() }).eq('id', data.id).then();
-                    } else {
-                        supabase.from('traffic_sources').insert({ source, visits: 1 }).then();
-                    }
-                });
+            // Atomic increment for traffic_sources via RPC
+            supabase.rpc('increment_traffic_source', { src: source }).then();
         }
 
         return NextResponse.json({ success: true, message: 'Event logged successfully' });

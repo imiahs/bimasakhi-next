@@ -149,24 +149,25 @@ export async function middleware(request) {
 
     if (isBot && pathname.startsWith('/bima-sakhi-')) {
         const slug = pathname.substring(1); // removes leading slash
-        try {
-            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-            const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+            const upstashUrl = process.env.UPSTASH_REDIS_REST_URL;
+            const upstashToken = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-            // Direct REST fetch bypassing heavyweight Supabase client initialization at edge
-            const cacheRes = await fetch(`${supabaseUrl}/rest/v1/page_cache?page_slug=eq.${slug}&select=cached_html`, {
-                headers: { 'apikey': anonKey, 'Authorization': `Bearer ${anonKey}` }
-            });
-            const data = await cacheRes.json();
-
-            if (data && data.length > 0 && data[0].cached_html) {
-                const response = new NextResponse(data[0].cached_html, {
-                    status: 200,
-                    headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Edge-Cache': 'HIT' }
+            if (upstashUrl && upstashToken) {
+                // Direct REST fetch to Upstash KV cache
+                const cacheRes = await fetch(`${upstashUrl}/get/page_cache:${slug}`, {
+                    headers: { 'Authorization': `Bearer ${upstashToken}` }
                 });
-                return addSecurityHeaders(response);
+                const data = await cacheRes.json();
+
+                if (data && data.result) {
+                    const htmlContent = typeof data.result === 'string' ? data.result : JSON.stringify(data.result);
+                    const response = new NextResponse(htmlContent, {
+                        status: 200,
+                        headers: { 'Content-Type': 'text/html; charset=utf-8', 'X-Edge-Cache': 'HIT-KV' }
+                    });
+                    return addSecurityHeaders(response);
+                }
             }
-        } catch (e) {
             // Silently fallback to SSR render if edge fetch fails
             try {
                 await logError('EdgeMiddleware', 'SEO Cache Edge Fetch Failed', e);
