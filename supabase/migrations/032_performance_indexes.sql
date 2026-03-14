@@ -1,7 +1,6 @@
 -- Indexes for high-frequency queries
 CREATE INDEX IF NOT EXISTS idx_event_stream_created_at ON public.event_stream (created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_api_requests_created_at ON public.api_requests (created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_crm_leads_created_at ON public.crm_leads (created_at DESC);
 
 -- Prepare partitioning for event_stream (Future scaling, adding constraint as preparation)
 -- For now, just a retention function to clean up > 90 days.

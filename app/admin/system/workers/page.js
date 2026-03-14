@@ -1,23 +1,13 @@
 import React from 'react';
 import { supabase } from '@/lib/supabase';
-import { getPageGeneratorQueue, getContentAuditQueue, getIndexQueue, getCacheQueue } from '@/lib/queue/queues';
 
 export const dynamic = 'force-dynamic';
 
 export default async function SystemWorkers() {
-    // 1. Hardware State (Graceful Degradation protecting Native Node execution edges)
-    const pq = getPageGeneratorQueue();
-    const cq = getContentAuditQueue();
-    const iq = getIndexQueue();
-    const chq = getCacheQueue();
-
-    const pgCount = pq ? await pq.count().catch(() => 0) : 0;
-    const caCount = cq ? await cq.count().catch(() => 0) : 0;
-    const indCount = iq ? await iq.count().catch(() => 0) : 0;
-    const chCount = chq ? await chq.count().catch(() => 0) : 0;
-    const totalDepth = pgCount + caCount + indCount + chCount;
-
-    // Node memory heuristics mapping edge bounding limits
+    // 1. Hardware State (Migrated to Serverless observability bounds)
+    const { data: qstashMetrics } = await supabase.from('worker_health').select('metrics').order('created_at', { ascending: false }).limit(50);
+    
+    let activePending = 0; // In QStash, pending counts are external to local node
     const memoryMb = Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100;
 
     const { data: heartbeats } = await supabase.from('worker_heartbeats').select('*').order('last_heartbeat', { ascending: false });

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getNetworkMetricsQueue } from '@/lib/queue/queues';
-import { computeNetworkMetrics } from '@/lib/workers/networkMetricsWorker';
 import { updateWorkerHealth } from '@/lib/monitoring/workerHealth';
+import { getBaseUrl } from '@/lib/queue/qstash';
 
 export async function POST() {
     // Block debug routes in production
@@ -10,39 +9,31 @@ export async function POST() {
     }
 
     try {
-        console.log('[DebugAPI] Starting worker verification...');
+        console.log('[DebugAPI] Starting Serverless Webhook verification...');
 
         // 1. Initial health ping
-        await updateWorkerHealth('Node_BullMQ_Master', { status: 'starting' });
-        console.log('[DebugAPI] Initial health ping sent.');
+        await updateWorkerHealth('Node_Serverless_Edge', { status: 'starting' });
 
-        // 2. Queue injection test
-        const queue = getNetworkMetricsQueue();
-        let job_id = null;
-        if (queue) {
-            const job = await queue.add('compute-network-metrics-test', { test: true }, {
-                removeOnComplete: true,
-                attempts: 1
-            });
-            job_id = job.id;
-            console.log('[DebugAPI] Job added to queue:', job_id);
-        } else {
-            console.warn('[DebugAPI] Queue not found, skipping job injection.');
-        }
+        // 2. Queue injection test via Local API path
+        console.log('[DebugAPI] Binding integration test to isolated Next handler...');
+        let job_id = `debug-manual-${Date.now()}`;
+        const baseUrl = getBaseUrl();
+        
+        // 3. Native Logic Execution directly parsing the NetworkMetrics Webhook mapped to `route.js`
+        const hookRes = await fetch(`${baseUrl}/api/jobs/metrics`, {
+           method: 'POST',
+           headers: { 'upstash-message-id': job_id } 
+        });
 
-        // 3. Native Logic Execution
-        console.log('[DebugAPI] Beginning computeNetworkMetrics execution...');
-        try {
-            await computeNetworkMetrics();
-            console.log('[DebugAPI] computeNetworkMetrics completed successfully.');
-        } catch (computeError) {
-            console.error('[DebugAPI] computeNetworkMetrics failed:', computeError.message);
-            await updateWorkerHealth('Node_BullMQ_Master', { status: 'crashed', failures: 1 });
-            return NextResponse.json({ error: computeError.message, stage: 'compute' }, { status: 500 });
+        if (!hookRes.ok) {
+            const errBody = await hookRes.text();
+            console.error('[DebugAPI] Serverless API execution failed:', errBody);
+            await updateWorkerHealth('Node_Serverless_Edge', { status: 'crashed', failures: 1 });
+            return NextResponse.json({ error: errBody, stage: 'compute' }, { status: 500 });
         }
 
         // 4. Final health update
-        await updateWorkerHealth('Node_BullMQ_Master', { jobsProcessed: 1, status: 'online' });
+        await updateWorkerHealth('Node_Serverless_Edge', { jobsProcessed: 1, status: 'online' });
         console.log('[DebugAPI] Final health ping sent.');
 
         return NextResponse.json({
