@@ -9,14 +9,8 @@ CREATE TABLE IF NOT EXISTS public.admin_users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Insert a Mock Admin User for testing RBAC
--- Password Hash for 'bimasakhi2026' generated with bcrypt
-INSERT INTO public.admin_users (email, name, password_hash, role, active)
-VALUES (
-    'admin@bimasakhi.com', 
-    'Super Admin', 
-    '$2a$10$w81.mIt4Zp0F46XN2L0MCOx0iM.rU/W.L.tO.FqYInT4hYg5hZ95a', -- 'bimasakhi2026'
-    'super_admin', 
-    true
-)
-ON CONFLICT (email) DO NOTHING;
+-- Admin users should be created via the secure setup script:
+--   node scripts/setup-admin.js
+-- This script reads ADMIN_EMAIL and ADMIN_PASSWORD_PLAIN from environment variables,
+-- hashes the password with bcrypt, and inserts the admin user securely.
+-- NEVER hardcode credentials in migration files.
