@@ -9,17 +9,25 @@ const getEnv = (key) => {
 };
 
 async function runMigrations() {
-    // Construct PostgreSQL URI
-    const supabaseUrl = getEnv('NEXT_PUBLIC_SUPABASE_URL');
-    if (!supabaseUrl) throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL in environment.");
+    // Prefer explicit pooler URL for serverless compatibility (Supavisor)
+    // Migrations use session mode (direct connection or transaction pooler port 5432)
+    // since they require transactional DDL (BEGIN/COMMIT).
+    let connectionString = getEnv('SUPABASE_DIRECT_URL');
 
-    // e.g. https://xyz.supabase.co -> db.xyz.supabase.co
-    const host = supabaseUrl.replace('https://', 'db.');
-    const password = getEnv('Database_Password');
-    if (!password) throw new Error("Missing Database_Password in environment.");
+    if (!connectionString) {
+        // Fallback: construct from NEXT_PUBLIC_SUPABASE_URL
+        const supabaseUrl = getEnv('NEXT_PUBLIC_SUPABASE_URL');
+        if (!supabaseUrl) throw new Error("Missing SUPABASE_DIRECT_URL or NEXT_PUBLIC_SUPABASE_URL in environment.");
 
-    const connectionString = `postgresql://postgres:${encodeURIComponent(password)}@${host}:5432/postgres`;
+        // e.g. https://xyz.supabase.co -> db.xyz.supabase.co
+        const host = supabaseUrl.replace('https://', 'db.');
+        const password = getEnv('Database_Password');
+        if (!password) throw new Error("Missing Database_Password in environment.");
 
+        connectionString = `postgresql://postgres:${encodeURIComponent(password)}@${host}:5432/postgres`;
+    }
+
+    console.log('[Migrations] Connecting to database (session mode)...');
     const client = new Client({ connectionString });
     await client.connect();
 
@@ -35,9 +43,8 @@ async function runMigrations() {
             );
         `);
 
-        // 2. Discover Migration Files (From /supabase/migrations + root custom numbered ones natively)
+        // 2. Discover Migration Files (all consolidated in /supabase/migrations)
         const migrationsDir = path.join(__dirname, '..', 'supabase', 'migrations');
-        const rootDir = path.join(__dirname, '..');
 
         let allFiles = [];
 
@@ -47,12 +54,6 @@ async function runMigrations() {
                 .map(f => ({ name: f, fullPath: path.join(migrationsDir, f) }));
             allFiles.push(...files);
         }
-
-        const rootSqlFiles = fs.readdirSync(rootDir)
-            .filter(f => f.endsWith('.sql') && f.match(/^\d+_/))
-            .map(f => ({ name: f, fullPath: path.join(rootDir, f) }));
-
-        allFiles.push(...rootSqlFiles);
 
         // Sort files numerically by prefix (e.g. 001_..., 025_, 11_...)
         allFiles.sort((a, b) => {

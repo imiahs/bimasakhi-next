@@ -10,14 +10,37 @@ if (!process.env.JWT_SECRET) {
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
+const failedLoginStore = new Map();
+const MAX_FAILURES = 5;
+const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
+
 export async function POST(request) {
     try {
         const ip = request.ip || request.headers.get('x-forwarded-for') || 'anon';
+        const now = Date.now();
 
-        // Distributed Redis Rate Limiting (5 attempts / 60s)
-        const rateLimitResult = await rateLimit(`login:${ip}`, 5, 60);
+        // 1. Check strict IP lockout (Memory Fallback for absolute security)
+        const lockoutData = failedLoginStore.get(ip);
+        if (lockoutData && lockoutData.count >= MAX_FAILURES && (now - lockoutData.lastFailure < LOCKOUT_MS)) {
+            return NextResponse.json({ error: 'IP locked due to excessive failed attempts. Try again in 15 minutes.' }, { status: 429 });
+        }
+
+        // 2. Clear old lockout if expired
+        if (lockoutData && (now - lockoutData.lastFailure >= LOCKOUT_MS)) {
+            failedLoginStore.delete(ip);
+        }
+
+        const registerFailure = () => {
+            const data = failedLoginStore.get(ip) || { count: 0, lastFailure: now };
+            data.count++;
+            data.lastFailure = Date.now();
+            failedLoginStore.set(ip, data);
+        };
+
+        // Distributed Redis Rate Limiting (10 requests global limit per minute per IP to prevent spamming the endpoint entirely)
+        const rateLimitResult = await rateLimit(`login:${ip}`, 10, 60);
         if (!rateLimitResult.success) {
-            return NextResponse.json({ error: 'Too many login attempts. Please try again later.' }, { status: 429 });
+            return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
         }
 
         const body = await request.json();
@@ -43,6 +66,7 @@ export async function POST(request) {
                 .single();
 
             if (userError || !user) {
+                registerFailure();
                 return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
             }
 
@@ -54,8 +78,12 @@ export async function POST(request) {
             const isMatch = await bcrypt.compare(password, user.password_hash);
 
             if (!isMatch) {
+                registerFailure();
                 return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
             }
+
+            // Success - Reset failure count
+            failedLoginStore.delete(ip);
 
             // Create JWT Session Token using jose (Edge compatible)
             const token = await new SignJWT({
@@ -91,7 +119,7 @@ export async function POST(request) {
         ]);
 
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('Runtime Error:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

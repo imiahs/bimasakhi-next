@@ -55,7 +55,9 @@ export const GET = withAdminAuth(async (request, user) => {
 
                 try {
                     totalSizeBytes += fs.statSync(jsonPath).size;
-                } catch (e) { }
+                } catch (e) {
+            console.error("Runtime Error:", e);
+        }
 
                 backupStatus.supabase.push(table);
             }
@@ -88,7 +90,9 @@ export const GET = withAdminAuth(async (request, user) => {
                 status: 'failed',
                 error: error.message
             });
-        } catch (dbErr) { }
+        } catch (dbErr) {
+            console.error("Runtime Error:", dbErr);
+        }
 
         return NextResponse.json({ error: 'Backup failed', details: error.message }, { status: 500 });
     }

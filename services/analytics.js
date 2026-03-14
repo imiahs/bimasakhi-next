@@ -1,5 +1,5 @@
 /**
- * Analytics Service (Phase 5.6)
+ * Analytics Service
  * Handles dynamic injection of Google Analytics (GA4) and Google Tag Manager (GTM).
  * Respects 'isAnalyticsEnabled' flag from global config.
  */
@@ -9,60 +9,30 @@ import { getStorage, STORAGE_KEYS } from '@/utils/storage';
 class AnalyticsService {
     constructor() {
         this.initialized = false;
-        this.gaId = null;
-        this.gtmId = null;
+        this.gtag = null;
     }
 
     /**
-     * Initialize analytics with config from backend
-     * @param {Object} config - Global config object
+     * Initialize Analytics (GA4 + GTM)
+     * @param {string} measurementId - GA4 Measurement ID (e.g. 'G-XXXXXXX')
+     * @param {string} containerId - GTM Container ID (e.g. 'GTM-XXXXXXX')
      */
-    initialize(config) {
-        if (this.initialized) return;
-        if (!config || !config.isAnalyticsEnabled) {
-            console.log('Analytics: Disabled or Config Missing');
-            return;
-        }
+    init(measurementId, containerId) {
+        if (this.initialized || typeof window === 'undefined') return;
 
-        this.gaId = config.gaMeasurementId;
-        this.gtmId = config.gtmContainerId;
-
-        // Inject GA4
-        if (this.gaId) {
-            this._injectGA4(this.gaId);
-        }
-
-        // Inject GTM
-        if (this.gtmId) {
-            this._injectGTM(this.gtmId);
-        }
-
-        this.initialized = true;
-        console.log('Analytics: Initialized', { ga: this.gaId, gtm: this.gtmId });
-    }
-
-    _injectGA4(measurementId) {
         try {
-            // 1. Load Script
+            // GA4 Script
             const script = document.createElement('script');
             script.async = true;
             script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
             document.head.appendChild(script);
 
-            // 2. Init DataLayer
             window.dataLayer = window.dataLayer || [];
             function gtag() { window.dataLayer.push(arguments); }
             gtag('js', new Date());
             gtag('config', measurementId);
-
             this.gtag = gtag;
-        } catch (e) {
-            console.error('Analytics: GA4 Injection Failed', e);
-        }
-    }
 
-    _injectGTM(containerId) {
-        try {
             // GTM Script
             (function (w, d, s, l, i) {
                 w[l] = w[l] || []; w[l].push({
@@ -72,6 +42,8 @@ class AnalyticsService {
                     j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
                         'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
             })(window, document, 'script', 'dataLayer', containerId);
+
+            this.initialized = true;
         } catch (e) {
             console.error('Analytics: GTM Injection Failed', e);
         }
@@ -85,10 +57,13 @@ class AnalyticsService {
         if (!this.initialized) return;
 
         let sessionId = 'anonymous';
+        let userState = null;
         try {
-            const userState = getStorage(STORAGE_KEYS.USER);
+            userState = getStorage(STORAGE_KEYS.USER);
             if (userState && userState.session_id) sessionId = userState.session_id;
-        } catch (e) { }
+        } catch (e) {
+            console.error("Runtime Error:", e);
+        }
 
         try {
             // GA4 Page View
@@ -134,7 +109,9 @@ class AnalyticsService {
         try {
             const userState = getStorage(STORAGE_KEYS.USER);
             if (userState && userState.session_id) sessionId = userState.session_id;
-        } catch (e) { }
+        } catch (e) {
+            console.error("Runtime Error:", e);
+        }
 
         try {
             // GA4

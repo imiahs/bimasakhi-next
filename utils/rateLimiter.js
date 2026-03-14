@@ -1,19 +1,35 @@
 import { getRedisConnection } from '@/lib/queue/redis';
 
+const memoryStore = new Map();
+
 export async function rateLimit(identifier, limit = 5, windowSeconds = 60) {
     const redis = getRedisConnection();
+    const key = `rate_limit:${identifier}`;
+    const now = Date.now();
 
-    if (!redis || !process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-        console.warn('Redis not configured or missing Upstash ENV variables. Skipping rate limiting.');
-        return { success: true };
+    // Memory Fallback Strategy
+    const fallbackToMemory = () => {
+        let record = memoryStore.get(key) || { count: 0, startTime: now };
+        if (now - record.startTime > windowSeconds * 1000) {
+            record = { count: 0, startTime: now }; // reset
+        }
+        record.count++;
+        memoryStore.set(key, record);
+
+        if (record.count > limit) {
+            return { success: false, limit, remaining: 0, reset: windowSeconds };
+        }
+        return { success: true, limit, remaining: limit - record.count, reset: windowSeconds };
+    };
+
+    if (!redis) {
+        console.warn('Redis not available. Falling back to in-memory rate limiting.');
+        return fallbackToMemory();
     }
 
     try {
-        const key = `rate_limit:${identifier}`;
-
-        // Add a 3-second timeout to prevent Redis hanging Next.js
         const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Redis operation timed out")), 3000)
+            setTimeout(() => reject(new Error("Redis operation timed out")), 2000)
         );
 
         const currentCount = await Promise.race([
@@ -41,8 +57,7 @@ export async function rateLimit(identifier, limit = 5, windowSeconds = 60) {
             reset: windowSeconds
         };
     } catch (error) {
-        console.error('Rate Limiter Error:', error);
-        // Fail open if Redis is down
-        return { success: true };
+        console.error('Rate Limiter Error (Redis):', error.message, '- Falling back to memory store.');
+        return fallbackToMemory();
     }
 }

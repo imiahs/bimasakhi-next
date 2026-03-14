@@ -26,11 +26,15 @@ export const HeroBlock = ({ data }) => {
     );
 };
 
+import DOMPurify from 'isomorphic-dompurify';
+
 export const ContentBlock = ({ data }) => {
+    const cleanHtml = DOMPurify.sanitize(data.html || '<p>Default Content Block... populate this via Admin Editor.</p>');
+
     return (
         <section className="py-16 bg-white">
             <div className="max-w-4xl mx-auto px-6 lg:px-8">
-                <div className="prose prose-indigo md:prose-lg max-w-none text-slate-700" dangerouslySetInnerHTML={{ __html: data.html || '<p>Default Content Block... populate this via Admin Editor.</p>' }} />
+                <div className="prose prose-indigo md:prose-lg max-w-none text-slate-700" dangerouslySetInnerHTML={{ __html: cleanHtml }} />
             </div>
         </section>
     );
