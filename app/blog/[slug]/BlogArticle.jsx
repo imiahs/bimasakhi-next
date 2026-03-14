@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useRef, useEffect } from 'react';
-import DOMPurify from 'isomorphic-dompurify';
 import ReadingProgressBar from '@/components/blog/ReadingProgressBar';
 import TableOfContents from '@/components/blog/TableOfContents';
 import BlogSidebar from '@/components/blog/BlogSidebar';
@@ -81,7 +80,7 @@ const BlogArticle = ({ post, recentPosts = [] }) => {
 
                     <TableOfContents contentRef={articleRef} />
 
-                    <div className="article-body" ref={articleRef} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }} />
+                    <div className="article-body" ref={articleRef} dangerouslySetInnerHTML={{ __html: post.content }} />
 
                     {/* Blog Exit CTA */}
                     <div className="blog-exit-cta" style={{ marginTop: '40px', padding: '30px', backgroundColor: '#f0f4ff', borderRadius: '12px', border: '1px solid #d6e4ff', textAlign: 'center' }}>

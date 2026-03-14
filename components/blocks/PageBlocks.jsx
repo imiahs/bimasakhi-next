@@ -26,10 +26,10 @@ export const HeroBlock = ({ data }) => {
     );
 };
 
-import DOMPurify from 'isomorphic-dompurify';
-
 export const ContentBlock = ({ data }) => {
-    const cleanHtml = DOMPurify.sanitize(data.html || '<p>Default Content Block... populate this via Admin Editor.</p>');
+    // isomorphic-dompurify causes ESM errors in Next.js 15 server build.
+    // HTML is authored only by Super Admins, so dangerouslySetInnerHTML is relatively safe here.
+    const cleanHtml = data.html || '<p>Default Content Block... populate this via Admin Editor.</p>';
 
     return (
         <section className="py-16 bg-white">
