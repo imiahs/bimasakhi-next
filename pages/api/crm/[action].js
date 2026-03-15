@@ -383,6 +383,23 @@ async function handleCreateLead(req, res) {
                 if (syncEventErr) console.error("Sync Event Log Error:", syncEventErr);
             }
 
+            // --- PHASE 6: DISPATCH AI AUTOMATION WOKRERS ---
+            if (isSupabaseEnabled && supabaseLeadId) {
+                try {
+                    const { getQStashClient, getBaseUrl } = await import('@/lib/queue/qstash.js');
+                    const qstash = getQStashClient();
+                    const baseUrl = getBaseUrl();
+                    if (qstash) {
+                        await qstash.publishJSON({
+                            url: `${baseUrl}/api/jobs/ai-scorer`,
+                            body: { leadId: supabaseLeadId }
+                        });
+                    }
+                } catch(err) {
+                    console.error('Failed to dispatch AI scorer webhook:', err);
+                }
+            }
+
             return res.status(200).json({
                 success: true,
                 message: "Lead processed successfully",
