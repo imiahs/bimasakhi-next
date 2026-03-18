@@ -201,7 +201,8 @@ async function handleCreateLead(req, res) {
                     });
                     if (eventLogErr) console.error("Event Log Error:", eventLogErr);
 
-                    // Phase 19: Lead Intelligence & Scoring System
+                    // Phase 19: Lead Intelligence & Scoring System (REMOVED - Integrated into AI Scorer Worker)
+                    /*
                     if (session_id) {
                         if (isSupabaseEnabled && supabase) {
                             // 1. Fetch Journey Events from Supabase
@@ -244,6 +245,7 @@ async function handleCreateLead(req, res) {
                             });
                         }
                     }
+                    */
 
                     // Phase 19: Content Analytics Lead Counter
                     try {

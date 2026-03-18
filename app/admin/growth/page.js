@@ -1,0 +1,183 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
+import { 
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+    PieChart, Pie, Cell, LineChart, Line
+} from 'recharts';
+
+// Initialize Supabase client
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+);
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+
+export default function GrowthDashboard() {
+    const [loading, setLoading] = useState(true);
+    const [data, setData] = useState({
+        scoreDistribution: [],
+        routingStats: [],
+        marketingSource: [],
+        agentPerformance: [],
+        recentLogs: []
+    });
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            // 1. Lead Score Distribution
+            const { data: scoreData } = await supabase.from('leads').select('lead_score');
+            const distribution = [
+                { name: '0-20', count: 0 },
+                { name: '21-40', count: 0 },
+                { name: '41-60', count: 0 },
+                { name: '61-80', count: 0 },
+                { name: '81-100', count: 0 },
+            ];
+            scoreData?.forEach(l => {
+                const s = l.lead_score || 0;
+                if (s <= 20) distribution[0].count++;
+                else if (s <= 40) distribution[1].count++;
+                else if (s <= 60) distribution[2].count++;
+                else if (s <= 80) distribution[3].count++;
+                else distribution[4].count++;
+            });
+
+            // 2. Marketing Source Performance
+            const { data: trafficData } = await supabase
+                .from('traffic_sources')
+                .select('source, leads')
+                .order('leads', { ascending: false })
+                .limit(5);
+
+            // 3. Agent Conversion
+            const { data: agentData } = await supabase
+                .from('agent_business_metrics')
+                .select('agent_id, leads_assigned, leads_converted')
+                .order('leads_assigned', { ascending: false })
+                .limit(5);
+
+            // 4. Recent AI logs
+            const { data: logs } = await supabase
+                .from('ai_decision_logs')
+                .select('id, lead_id, decision_type, decision_reason, created_at')
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            setData({
+                scoreDistribution: distribution,
+                marketingSource: trafficData || [],
+                agentPerformance: agentData || [],
+                recentLogs: logs || []
+            });
+        } catch (err) {
+            console.error('Dashboard Fetch Error:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) return <div className="p-8 text-center">Loading Growth Insights...</div>;
+
+    return (
+        <div className="p-8 bg-gray-50 min-h-screen">
+            <h1 className="text-3xl font-bold mb-8 text-gray-800">AI Growth Dashboard</h1>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                {/* Score Distribution */}
+                <div className="bg-white p-6 rounded-xl shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4">Lead Score Distribution</h2>
+                    <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={data.scoreDistribution}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="name" />
+                                <YAxis />
+                                <Tooltip />
+                                <Bar dataKey="count" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* Marketing Sources */}
+                <div className="bg-white p-6 rounded-xl shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4">Top Lead Sources</h2>
+                    <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={data.marketingSource}
+                                    dataKey="leads"
+                                    nameKey="source"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={80}
+                                    label
+                                >
+                                    {data.marketingSource.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                                <Legend />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                {/* Agent Performance */}
+                <div className="bg-white p-6 rounded-xl shadow-sm">
+                    <h2 className="text-lg font-semibold mb-4">Agent Performance (Leads Assigned vs Converted)</h2>
+                    <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={data.agentPerformance} layout="vertical">
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis type="number" />
+                                <YAxis dataKey="agent_id" type="category" tick={false} width={0} />
+                                <Tooltip />
+                                <Legend />
+                                <Bar dataKey="leads_assigned" name="Assigned" fill="#93c5fd" />
+                                <Bar dataKey="leads_converted" name="Converted" fill="#1e40af" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                {/* AI Automation Logs */}
+                <div className="bg-white p-6 rounded-xl shadow-sm overflow-hidden">
+                    <h2 className="text-lg font-semibold mb-4">Recent AI Events</h2>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                            <thead className="bg-gray-50 border-b">
+                                <tr>
+                                    <th className="px-4 py-2 text-left font-medium">Type</th>
+                                    <th className="px-4 py-2 text-left font-medium">Reason</th>
+                                    <th className="px-4 py-2 text-left font-medium">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                                {data.recentLogs.map(log => (
+                                    <tr key={log.id} className="hover:bg-gray-50">
+                                        <td className="px-4 py-2 capitalize font-semibold text-indigo-600">{log.decision_type}</td>
+                                        <td className="px-4 py-2 text-gray-600 truncate max-w-xs">{log.decision_reason}</td>
+                                        <td className="px-4 py-2 text-gray-400">{new Date(log.created_at).toLocaleTimeString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
