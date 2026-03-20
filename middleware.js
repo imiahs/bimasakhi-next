@@ -44,7 +44,8 @@ export async function middleware(request) {
         // CSRF Protection Check for Mutations
         if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method) &&
             pathname !== '/api/admin/auth/login' &&
-            pathname !== '/api/admin/debug/worker-test') {
+            pathname !== '/api/admin/debug/worker-test' &&
+            !pathname.startsWith('/api/jobs')) {
             const origin = request.headers.get('origin') || request.headers.get('referer') || '';
             const host = request.headers.get('host') || '';
             // Basic Origin/Host verification for CSRF in Admin
