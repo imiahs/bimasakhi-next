@@ -7,11 +7,10 @@ import {
     PieChart, Pie, Cell, LineChart, Line
 } from 'recharts';
 
-// Initialize Supabase client
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+// Initialize Supabase client safely
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
@@ -26,7 +25,11 @@ export default function GrowthDashboard() {
     });
 
     useEffect(() => {
-        fetchData();
+        if (supabase) {
+            fetchData();
+        } else {
+            setLoading(false);
+        }
     }, []);
 
     const fetchData = async () => {
@@ -85,6 +88,7 @@ export default function GrowthDashboard() {
     };
 
     if (loading) return <div className="p-8 text-center">Loading Growth Insights...</div>;
+    if (!supabase) return <div className="p-8 text-center text-red-600 font-semibold">Database configuration missing. Please check your environment variables.</div>;
 
     return (
         <div className="p-8 bg-gray-50 min-h-screen">
