@@ -75,6 +75,7 @@ async function handleCreateLead(req, res) {
     assertEnv(['REDIS_URL', 'ZOHO_CLIENT_ID', 'ZOHO_CLIENT_SECRET', 'ZOHO_REFRESH_TOKEN']);
 
     // --- INPUT VALIDATION & NORMALIZATION ---
+    console.log("== RAW CRM PAYLOAD ==", JSON.stringify(req.body, null, 2));
     let {
         name, mobile, email,
         pincode, city, state, locality,
@@ -334,10 +335,8 @@ async function handleCreateLead(req, res) {
         Zip_Code: pincode,
         Street: locality,
         Designation: occupation,
-        Description: `Education: ${education}\nReason: ${reason || ''}\n\nVisited Pages: ${JSON.stringify(visitedPages || [])}\nLead Source Page: ${lead_source_page || 'Unknown'}`,
-        Lead_Source: lead_source_type || source || 'Website',
-        Lead_Medium: medium || 'Direct',
-        Campaign_Source: campaign || 'Bima Sakhi'
+        Description: `Education: ${education}\nReason: ${reason || ''}\n\nVisited Pages: ${JSON.stringify(visitedPages || [])}\nLead Source Page: ${lead_source_page || 'Unknown'}\nUTM Source: ${source}\nUTM Medium: ${medium}\nUTM Campaign: ${campaign}`,
+        Lead_Source: 'Website'
     };
 
     try {
