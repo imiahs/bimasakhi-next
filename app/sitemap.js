@@ -57,6 +57,25 @@ export default async function sitemap() {
                 }
             });
         }
+
+        // Phase 30: SEO Index Drip limit
+        // Gradually push programmatic location pages into sitemap avoiding bulk index penalties
+        const { data: locPages } = await supabase.from('page_index')
+            .select('page_slug, created_at')
+            .neq('status', 'draft')
+            .order('created_at', { ascending: false })
+            .limit(100); // 100 pages rolling drip limit
+        
+        if (locPages) {
+            locPages.forEach(page => {
+                dynamicPages.push({
+                    url: `${baseUrl}/${page.page_slug}`,
+                    lastModified: new Date(page.created_at || lastModified).toISOString(),
+                    changeFrequency: 'weekly',
+                    priority: 0.7,
+                });
+            });
+        }
     } catch (e) {
         logError('SEO_Engine', "Sitemap generation error", e);
     }
