@@ -3,10 +3,10 @@ import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request) {
+export async function POST(request) {
     const authHeader = request.headers.get('authorization');
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (authHeader !== `Bearer ${process.env.QSTASH_TOKEN}`) {
+        return NextResponse.json({ error: 'Unauthorized QStash Hook' }, { status: 401 });
     }
 
     const supabase = getServiceSupabase();
