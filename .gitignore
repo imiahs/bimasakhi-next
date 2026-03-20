@@ -44,3 +44,5 @@ next-env.d.ts
 
 # Project Tree
 project_bima_sakhi_tree.txt
+scripts/
+*.txt   
