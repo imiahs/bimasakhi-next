@@ -274,6 +274,55 @@ async function handleCreateLead(req, res) {
                         console.error('Lead Metric Error:', metricErr);
                     }
 
+                    // Phase 27: PIPELINE CONNECTION (CRM -> AI -> SEO)
+                    if (city) {
+                        try {
+                            // 1. Map string city to UUID
+                            let targetCityId = null;
+                            const { data: cityMatch } = await supabase.from('cities').select('id').ilike('city_name', city.trim()).limit(1).maybeSingle();
+                            
+                            if (cityMatch) {
+                                targetCityId = cityMatch.id;
+                            } else {
+                                const { data: defCity } = await supabase.from('cities').select('id').limit(1).maybeSingle();
+                                if (defCity) targetCityId = defCity.id;
+                            }
+                            
+                            // 2. Insert into Queue
+                            if (targetCityId) {
+                                const cleanCity = city.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                                const generatedSlug = `lic-agent-in-${cleanCity}-${Date.now()}`;
+                                
+                                await supabase.from('generation_queue').insert({
+                                    status: 'pending',
+                                    progress: 0,
+                                    priority: 1,
+                                    created_by: 'crm_auto',
+                                    payload: {
+                                        pages: [{
+                                            slug: generatedSlug,
+                                            keyword_text: `LIC Agent Job in ${city.trim()}`,
+                                            city_id: targetCityId,
+                                            page_type: 'city_page',
+                                            content_level: 'city'
+                                        }]
+                                    }
+                                });
+
+                                // 3. Trigger AI Flow (Non-blocking)
+                                const qToken = process.env.QSTASH_TOKEN ? process.env.QSTASH_TOKEN.replace(/"/g, '') : '';
+                                const hookUrl = `https://bimasakhi.com/api/jobs/pagegen`;
+                                
+                                fetch(hookUrl, {
+                                    method: 'POST',
+                                    headers: { 'Authorization': `Bearer ${qToken}` }
+                                }).catch(e => console.error("Auto trigger edge fetch error:", e));
+                            }
+                        } catch (pipelineErr) {
+                            console.error('Pipeline Connection Error:', pipelineErr);
+                        }
+                    }
+
                 } catch (insertError) {
                     // HANDLE UNIQUE CONSTRAINT RACE CONDITION
                     if (insertError.code === '23505') { // Unique Violation
