@@ -31,7 +31,16 @@ export async function POST(request) {
 
         let processedCount = 0;
         for (const pageReq of batchList) {
-            const { slug, city_id, locality_id, keyword_variation_id, keyword_text, page_type, content_level } = pageReq;
+            const { slug, keyword_variation_id, keyword_text, page_type, content_level } = pageReq;
+            
+            // LOCATION FALLBACK LOGIC
+            const city_id = pageReq.city_id || 1; // Default to 1 (e.g. Delhi marker)
+            const locality_id = pageReq.locality_id || null;
+            
+            if (!pageReq.city_id) {
+                console.warn(`WARNING: Missing city_id for slug ${slug}, assigned default ${city_id}`);
+            }
+
             const { data: existingPage } = await supabase.from('page_index').select('id').eq('page_slug', slug).single();
             if (existingPage) { processedCount++; continue; }
 
