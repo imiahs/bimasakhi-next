@@ -11,6 +11,7 @@ import { getWhatsAppUrl } from '@/utils/whatsapp';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Button from '@/components/ui/Button';
+import { validateApplyStep } from '@/features/leads/ApplyFormValidation';
 import '@/styles/LeadForm.css';
 
 const ApplyForm = () => {
@@ -190,46 +191,10 @@ const ApplyForm = () => {
     }
 
     // --- Validation Logic ---
-    // Each step validates only its own required fields
+    // Each step validates only its own required fields via external module
     const validateStep = (currentStep) => {
-        let tempErrors = {};
-        let isValid = true;
-
-        if (currentStep === 1) {
-            if (!formData.name.trim()) tempErrors.name = "Name is required";
-            if (!formData.mobile || !/^\d{10}$/.test(formData.mobile))
-                tempErrors.mobile = "Valid 10-digit mobile number required";
-            if (!formData.dndConsent)
-                tempErrors.dndConsent = "Please provide consent to proceed.";
-        }
-
-        if (currentStep === 2) {
-            if (!formData.pincode || !/^\d{6}$/.test(formData.pincode))
-                tempErrors.pincode = "Valid 6-digit Pincode required";
-            if (!formData.city)
-                tempErrors.city = "City could not be detected";
-            // Only require locality if not manual mode
-            if (!formData.locality && !locationStatus.isManual)
-                tempErrors.locality = "Locality / Area is required";
-
-        }
-
-        if (currentStep === 3) {
-            if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
-                tempErrors.email = "Valid Email is required";
-            if (!formData.education)
-                tempErrors.education = "Education level is required";
-            if (!formData.occupation)
-                tempErrors.occupation = "Current status is required";
-        }
-
-        if (Object.keys(tempErrors).length > 0) {
-            setErrors(tempErrors);
-            isValid = false;
-        } else {
-            setErrors({});
-        }
-
+        const { isValid, tempErrors } = validateApplyStep(currentStep, formData, locationStatus);
+        setErrors(tempErrors);
         return isValid;
     };
 
