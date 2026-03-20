@@ -6,7 +6,8 @@ import { redis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
 import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
 import { getLocalDb } from '@/utils/localDb.js';
-
+import { calculateLeadScore } from '@/lib/ai/leadScorer';
+import { routeLeadToAgent } from '@/lib/ai/leadRouter';
 // --- Shared Utilities ---
 function assertEnv(vars) {
     const missing = vars.filter(v => !process.env[v]);
@@ -381,6 +382,14 @@ async function handleCreateLead(req, res) {
                 });
 
                 if (syncEventErr) console.error("Sync Event Log Error:", syncEventErr);
+            }
+
+            // PHASE 5: Trigger Non-Blocking AI Lead Scoring & Routing
+            if (isSupabaseEnabled && supabaseLeadId) {
+                setTimeout(async () => {
+                    await calculateLeadScore(supabaseLeadId);
+                    await routeLeadToAgent(supabaseLeadId);
+                }, 0);
             }
 
             return res.status(200).json({
