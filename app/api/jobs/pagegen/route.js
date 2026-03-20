@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai/generateContent';
+import { getSystemPrompt, buildPagePrompt } from '@/lib/ai/promptTemplates';
 import crypto from 'crypto';
 
 export const maxDuration = 60; // Max time on Vercel
@@ -30,66 +31,126 @@ export async function POST(request) {
         }
 
         let processedCount = 0;
+        let skippedCount = 0;
+
         for (const pageReq of batchList) {
             const { slug, keyword_variation_id, keyword_text, page_type, content_level } = pageReq;
             
             // LOCATION FALLBACK LOGIC
-            const city_id = pageReq.city_id || 1; // Default to 1 (e.g. Delhi marker)
+            const city_id = pageReq.city_id || null;
             const locality_id = pageReq.locality_id || null;
             
             if (!pageReq.city_id) {
-                console.warn(`WARNING: Missing city_id for slug ${slug}, assigned default ${city_id}`);
+                console.warn(`[PageGen] WARNING: Missing city_id for slug ${slug}`);
             }
 
+            // Skip if page already exists
             const { data: existingPage } = await supabase.from('page_index').select('id').eq('page_slug', slug).single();
             if (existingPage) { processedCount++; continue; }
 
-            const prompt = `Act as an expert LIC Recruiter. Write a 600-word localized high-converting landing page for keyword "${keyword_text}" targeting "${slug}". Focus on the benefits for women achieving financial independence through LIC. Format as valid JSON exact match: { "hero_headline": "string", "local_opportunity_description": "string", "meta_title": "string", "meta_description": "string", "cta_text": "string" }`;
+            // --- ADVANCED PROMPT ENGINE ---
+            const cityName = pageReq.city_name || slug.split('-').pop() || 'your city';
+            const systemPrompt = getSystemPrompt();
+            const userPrompt = buildPagePrompt({
+                city: cityName,
+                keyword: keyword_text,
+                slug: slug,
+                audience: "women aged 25-45 from middle-class families looking for financial independence"
+            });
 
-            const responseText = await generateAiContent("You are an SEO expert. Output ONLY JSON.", prompt);
+            // --- RESILIENT AI CALL (never throws) ---
+            const responseText = await generateAiContent(systemPrompt, userPrompt);
             
+            if (!responseText) {
+                console.warn(`[PageGen] AI returned null for slug ${slug} — skipping`);
+                skippedCount++;
+                continue;
+            }
+
+            // --- PARSE AI JSON RESPONSE ---
             let aiContent;
             try {
                 let clean = responseText.trim();
-                if (clean.startsWith('```json')) clean = clean.substring(7, clean.length - 3).trim();
-                else if (clean.startsWith('```')) clean = clean.substring(3, clean.length - 3).trim();
+                // Strip markdown code fences if present
+                if (clean.startsWith('```json')) clean = clean.substring(7);
+                else if (clean.startsWith('```')) clean = clean.substring(3);
+                if (clean.endsWith('```')) clean = clean.substring(0, clean.length - 3);
+                clean = clean.trim();
                 aiContent = JSON.parse(clean);
             } catch (e) {
-                console.warn('AI Parsing failed, skipping.', e);
+                console.warn(`[PageGen] JSON parse failed for slug ${slug}:`, e.message);
+                skippedCount++;
                 continue;
             }
 
-            if (!aiContent.local_opportunity_description || aiContent.local_opportunity_description.length < 500) {
-                console.warn('Content failed minimum validation.');
+            // --- CONTENT QUALITY VALIDATION ---
+            const mainContent = aiContent.local_opportunity_description || '';
+            const realWordCount = mainContent.replace(/<[^>]*>/g, ' ').split(/\s+/).filter(w => w.length > 0).length;
+
+            if (realWordCount < 200) {
+                console.warn(`[PageGen] Content too short for ${slug}: ${realWordCount} words (min 200)`);
+                skippedCount++;
                 continue;
             }
 
-            const contentStr = `${aiContent.hero_headline} ${aiContent.local_opportunity_description}`;
+            // --- DB INSERTS ---
+            const contentStr = `${aiContent.hero_headline || ''} ${mainContent}`;
             const contentHash = crypto.createHash('sha256').update(contentStr).digest('hex');
 
-            const { data: newPage } = await supabase.from('page_index').insert({
-                page_slug: slug, city_id, locality_id, keyword_variation_id, status: 'pending_index', page_type: page_type || 'locality_page'
+            const { data: newPage, error: pageErr } = await supabase.from('page_index').insert({
+                page_slug: slug, city_id, locality_id, keyword_variation_id, 
+                status: 'pending_index', page_type: page_type || 'locality_page'
             }).select('id').single();
 
+            if (pageErr) {
+                console.error(`[PageGen] page_index insert failed for ${slug}:`, pageErr.message);
+                skippedCount++;
+                continue;
+            }
+
             if (newPage) {
-                await supabase.from('content_fingerprints').insert({ page_index_id: newPage.id, content_hash: contentHash });
-                await supabase.from('location_content').insert({
-                    page_index_id: newPage.id, content_level, city_id, locality_id, keyword_variation: keyword_text,
-                    hero_headline: aiContent.hero_headline, local_opportunity_description: aiContent.local_opportunity_description,
-                    faq_data: [{question: 'How to apply?', answer: 'Fill the form above.'}], cta_text: aiContent.cta_text || 'Apply Now', 
-                    meta_title: aiContent.meta_title, meta_description: aiContent.meta_description,
-                    word_count: 800
+                // Content fingerprint (best effort)
+                await supabase.from('content_fingerprints').insert({ 
+                    page_index_id: newPage.id, content_hash: contentHash 
+                }).catch(e => console.warn('[PageGen] fingerprint insert warning:', e.message));
+
+                // Location content
+                const { error: contentErr } = await supabase.from('location_content').insert({
+                    page_index_id: newPage.id, 
+                    content_level: content_level || 'locality_page', 
+                    city_id, 
+                    locality_id, 
+                    keyword_variation: keyword_text,
+                    hero_headline: aiContent.hero_headline || '',
+                    local_opportunity_description: mainContent,
+                    faq_data: aiContent.faq_data || [{question: 'How to apply?', answer: 'Fill the form above.'}],
+                    cta_text: aiContent.cta_text || 'Apply Now', 
+                    meta_title: aiContent.meta_title || '',
+                    meta_description: aiContent.meta_description || '',
+                    word_count: realWordCount
                 });
+
+                if (contentErr) {
+                    console.error(`[PageGen] location_content insert failed for ${slug}:`, contentErr.message);
+                } else {
+                    console.log(`[PageGen] ✅ Generated page: ${slug} (${realWordCount} words)`);
+                }
             }
             processedCount++;
         }
 
         const newProgress = queueJob.progress + processedCount;
-        await supabase.from('generation_queue').update({ status: newProgress >= pagesToGenerate.length ? 'completed' : 'processing', progress: newProgress }).eq('id', queueJob.id);
+        const isComplete = newProgress >= pagesToGenerate.length;
+        await supabase.from('generation_queue').update({ 
+            status: isComplete ? 'completed' : 'processing', 
+            progress: newProgress,
+            ...(isComplete ? { completed_at: new Date().toISOString() } : {})
+        }).eq('id', queueJob.id);
 
-        return NextResponse.json({ success: true, processed: processedCount });
+        return NextResponse.json({ success: true, processed: processedCount, skipped: skippedCount });
     } catch (e) {
-        console.error('PageGen Cron Error:', e);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        console.error('[PageGen] Cron Error:', e);
+        // Even on unexpected errors, return a structured response instead of crashing
+        return NextResponse.json({ error: 'Internal Server Error', detail: e.message }, { status: 500 });
     }
 }
