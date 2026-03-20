@@ -3,7 +3,13 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request) {
-    console.log("Webhook hit");
+    const envStatus = {
+        GEMINI: !!process.env.GEMINI_API_KEY,
+        CRON: !!process.env.CRON_SECRET,
+        SUPABASE_WEBHOOK: !!process.env.SUPABASE_WEBHOOK_SECRET
+    };
+    console.log("ENV TEST:", envStatus);
+
     try {
         // Only accept webhooks if secret is set and matches
         const secret = request.headers.get('authorization');
