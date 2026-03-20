@@ -434,10 +434,18 @@ async function handleCreateLead(req, res) {
 
             // PHASE 5: Trigger Non-Blocking AI Lead Scoring & Routing
             if (isSupabaseEnabled && supabaseLeadId) {
-                setTimeout(async () => {
-                    await calculateLeadScore(supabaseLeadId);
-                    await routeLeadToAgent(supabaseLeadId);
-                }, 0);
+                const qToken = process.env.QSTASH_TOKEN ? process.env.QSTASH_TOKEN.replace(/"/g, '') : '';
+                const qstashEndpoint = `https://qstash.upstash.io/v2/publish/https://bimasakhi.com/api/jobs/ai-scorer`;
+                
+                fetch(qstashEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${qToken}`,
+                        'Content-Type': 'application/json',
+                        'Upstash-Delay': '5s' // minor cooling gap
+                    },
+                    body: JSON.stringify({ leadId: supabaseLeadId })
+                }).catch(e => console.error("AI Scorer QStash Auto-trigger error:", e));
             }
 
             return res.status(200).json({
