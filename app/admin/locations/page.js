@@ -1,5 +1,6 @@
 import React from 'react';
 import { supabase } from '@/lib/supabase';
+import QStashTrigger from '@/components/admin/QStashTrigger';
 
 export default async function LocationGeneratorAdmin() {
     const { count: cityCount } = await supabase.from('cities').select('id', { count: 'exact', head: true });
@@ -32,9 +33,11 @@ export default async function LocationGeneratorAdmin() {
             <div className="bg-white rounded shadow p-6 mb-8">
                 <div className="flex justify-between items-center mb-4 border-b pb-4">
                     <h2 className="text-xl font-bold">Top Target Cities</h2>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm transition">
-                        + Bulk Generate City Batch
-                    </button>
+                    <QStashTrigger 
+                        label="+ Bulk Generate City Batch" 
+                        cssClass="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm transition"
+                        endpoint="/api/jobs/pagegen"
+                    />
                 </div>
 
                 <table className="w-full text-left">

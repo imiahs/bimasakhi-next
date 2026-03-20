@@ -1,5 +1,6 @@
 import React from 'react';
 import { supabase } from '@/lib/supabase';
+import QueueControls from '@/components/admin/QueueControls';
 
 export default async function GenerationQueueDashboard() {
     const { data: queueStats } = await supabase.from('generation_queue').select('status, progress, total_items') || [];
@@ -12,6 +13,8 @@ export default async function GenerationQueueDashboard() {
     return (
         <div className="p-8">
             <h1 className="text-3xl font-bold mb-6">Mass Generation Engine</h1>
+            
+            <QueueControls />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white p-6 rounded shadow border-l-4 border-blue-500">
