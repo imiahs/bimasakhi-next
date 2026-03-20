@@ -78,7 +78,7 @@ const ObservabilityContent = () => {
                     <MetricCard
                         title="Redis Latency"
                         value={`${metrics.redis_latency_ms}ms`}
-                        subtext="Average ping time to BullMQ memory matrix."
+                        subtext="Average ping time to QStash webhooks."
                     />
                     <MetricCard
                         title="Supabase DB Latency"

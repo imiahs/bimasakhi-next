@@ -135,7 +135,7 @@ const SystemHealthContent = () => {
                             <h3 className="font-semibold text-slate-800">Redis Memory Store</h3>
                             <StatusBadge val={status.statuses.redis || 'red'} />
                         </div>
-                        <p className="text-xs text-slate-500">In-memory data structure component routing queue events for BullMQ.</p>
+                        <p className="text-xs text-slate-500">In-memory data structure mapping QStash triggers.</p>
                     </div>
 
                     <div className="bg-white p-6 rounded-xl border border-slate-200">

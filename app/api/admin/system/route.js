@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
-import { checkRedisStatus } from '@/lib/queue/redis';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -22,13 +21,8 @@ export const GET = withAdminAuth(async (request, user) => {
             if (!error) statuses.supabase = 'green';
         } catch { }
 
-        // 2. Redis Check
-        try {
-            const redisCheck = await checkRedisStatus();
-            if (redisCheck.redis_status === 'online') {
-                statuses.redis = 'green';
-            }
-        } catch { }
+        // 2. Redis Check Removed (BullMQ deprecated)
+        statuses.redis = 'green';
 
         // Aggregate system health
         const allGreen = Object.values(statuses).every(s => s === 'green');

@@ -1,22 +1,12 @@
 import React from 'react';
 import { supabase } from '@/lib/supabase';
-import { getPageGeneratorQueue, getContentAuditQueue, getIndexQueue, getCacheQueue } from '@/lib/queue/queues';
 
 export const dynamic = 'force-dynamic';
 
 export default async function SystemWorkers() {
-    // 1. Hardware State (Graceful Degradation protecting Native Node execution edges)
-    const pq = getPageGeneratorQueue();
-    const cq = getContentAuditQueue();
-    const iq = getIndexQueue();
-    const chq = getCacheQueue();
-
-    const pgCount = pq ? await pq.count().catch(() => 0) : 0;
-    const caCount = cq ? await cq.count().catch(() => 0) : 0;
-    const indCount = iq ? await iq.count().catch(() => 0) : 0;
-    const chCount = chq ? await chq.count().catch(() => 0) : 0;
-    const totalDepth = pgCount + caCount + indCount + chCount;
-
+    // 1. Hardware State (Migrated to QStash + Postgres)
+    const { count: pgCount } = await supabase.from('generation_queue').select('id', { count: 'exact', head: true });
+    
     // Node memory heuristics mapping edge bounding limits
     const memoryMb = Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100;
 
