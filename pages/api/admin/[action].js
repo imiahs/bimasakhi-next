@@ -322,6 +322,26 @@ async function handleClearFailed(req, res) {
     }
 }
 
+async function handleGetFailed(req, res) {
+    const startTime = Date.now();
+    try {
+        const supabase = getServiceSupabase();
+        
+        // Capped query fetching the 50 most recent anomalous leads
+        const { data: failed, error } = await supabase.from('failed_leads')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(50);
+            
+        if (error) throw error;
+        
+        const payload = sanitizeResponse({ failed_leads: failed || [] });
+        return res.status(200).json({ success: true, data: payload, debug: process.env.ADMIN_DEBUG === 'true' ? { execution_time: Date.now() - startTime } : undefined });
+    } catch(e) {
+        return res.status(500).json({error: e.message});
+    }
+}
+
 async function handleMarkConverted(req, res) {
     try {
         if (req.method !== 'POST') return res.status(405).json({error: 'Method Not Allowed'});
@@ -454,6 +474,9 @@ export default withLogger(async function handler(req, res) {
         case 'clear-failed':
             if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
             return handleClearFailed(req, res);
+        case 'get-failed':
+            if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
+            return handleGetFailed(req, res);
         case 'mark-converted':
             if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
             return handleMarkConverted(req, res);

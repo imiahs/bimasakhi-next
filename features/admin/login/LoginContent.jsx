@@ -17,19 +17,20 @@ const LoginContent = () => {
         setError('');
 
         try {
-            const res = await fetch('/api/admin/auth/login', {
+            const res = await fetch('/api/admin?action=login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
 
-            const data = await res.json();
+            let response;
+            try { response = await res.json(); } catch(e) { response = {}; }
 
-            if (!res.ok) {
-                setError(data.error || 'Invalid credentials. Please try again.');
+            if (!res.ok || (response && response.error) || response.success === false) {
+                setError(response?.error || 'Invalid credentials. Please try again.');
                 setLoading(false);
             } else {
-                router.push('/admin/dashboard');
+                router.push('/admin');
             }
         } catch (err) {
             setError('System error. Please contact technical support.');

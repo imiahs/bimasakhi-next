@@ -2,36 +2,41 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import CommandPalette from './CommandPalette';
 import './AdminLayout.css';
 
 const ADMIN_LINKS = [
-    { label: 'Dashboard', href: '/admin/dashboard', icon: '📊' },
+    { label: 'Dashboard', href: '/admin', icon: '📊' },
     { label: 'Leads', href: '/admin/leads', icon: '👥' },
-    { label: 'Blog CMS', href: '/admin/blog', icon: '📝' },
-    { label: 'Resources', href: '/admin/resources', icon: '📁' },
-    { label: 'Tools', href: '/admin/tools', icon: '🧮' },
-    { label: 'Pages', href: '/admin/pages', icon: '📄' },
-    { label: 'SEO', href: '/admin/seo', icon: '🔍' },
-    { label: 'Media Library', href: '/admin/media', icon: '🖼️' },
-    { label: 'AI Recruiter', href: '/admin/ai/recruiter', icon: '🎯' },
-    { label: 'AI Content', href: '/admin/ai/content', icon: '📝' },
-    { label: 'AI Landing', href: '/admin/ai/landing', icon: '🖥️' },
-    { label: 'AI CTA Rules', href: '/admin/ai/cta', icon: '🔁' },
-    { label: 'AI Growth', href: '/admin/ai/growth', icon: '🚀' },
-    { label: 'Automation', href: '/admin/automation', icon: '⚡' },
-    { label: 'Users', href: '/admin/users', icon: '🛡️' },
-    { label: 'System Errors', href: '/admin/errors', icon: '🚨' },
-    { label: 'Health Status', href: '/admin/system', icon: '🩺' },
-    { label: 'Backups', href: '/admin/settings/backups', icon: '💾' },
-    { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
+    { label: 'Queue', href: '/admin/seo/queue', icon: '⏳' },
+    { label: 'Revenue', href: '/admin/revenue', icon: '💰' },
+    { label: 'System Health', href: '/admin/system', icon: '🩺' },
+    { label: 'Failed Leads', href: '/admin/failed', icon: '🚨' },
+    { label: 'Settings', href: '/admin/settings', icon: '⚙️' }
 ];
 
 const AdminLayout = ({ children }) => {
     const pathname = usePathname();
+    const router = useRouter(); // Require 'useRouter' injection at top
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [paletteOpen, setPaletteOpen] = useState(false);
+
+    // Global Authenticatication Check Effect
+    useEffect(() => {
+        if (pathname === '/admin/login') return;
+        fetch('/api/admin?action=check')
+            .then(res => res.json())
+            .then(data => { if (!data.authenticated) router.push('/admin/login'); })
+            .catch(() => router.push('/admin/login'));
+    }, [pathname, router]);
+
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/admin?action=logout', { method: 'POST' });
+            router.push('/admin/login');
+        } catch(e) { console.error("Logout failed", e); }
+    };
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -77,14 +82,15 @@ const AdminLayout = ({ children }) => {
             {/* MAIN CONTENT WRAPPER */}
             <div className="admin-main-wrapper">
                 {/* TOPBAR */}
-                <header className="admin-topbar">
-                    <div className="topbar-search" onClick={() => setPaletteOpen(true)} style={{ cursor: 'pointer' }}>
-                        <span>🔎</span>
-                        <input type="text" placeholder="Search leads, posts, pages... (Cmd+K)" readOnly style={{ cursor: 'pointer' }} />
+                <header className="admin-topbar flex justify-between items-center py-4 px-6 bg-white border-b border-slate-200">
+                    <div className="topbar-search flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-1/3" onClick={() => setPaletteOpen(true)} style={{ cursor: 'pointer' }}>
+                        <span className="text-slate-400 mr-2">🔎</span>
+                        <input type="text" placeholder="Search operations (Cmd+K)" readOnly className="bg-transparent border-none outline-none text-sm w-full cursor-pointer text-slate-600" />
                     </div>
-                    <div className="topbar-profile">
-                        <button className="notification-btn">🔔</button>
-                        <div className="profile-avatar">S</div>
+                    <div className="topbar-profile flex items-center gap-4">
+                        <span className="font-semibold text-slate-700 text-sm hidden md:block">Administrator</span>
+                        <Link href="/admin/profile" className="profile-avatar bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-9 h-9 flex items-center justify-center font-bold transition">A</Link>
+                        <button onClick={handleLogout} className="text-sm bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 font-medium transition cursor-pointer">Logout</button>
                     </div>
                 </header>
 
