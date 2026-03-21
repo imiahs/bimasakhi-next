@@ -1,3 +1,4 @@
+import './globals.css';
 import Script from 'next/script';
 import { ConfigProvider } from '@/context/ConfigContext';
 import { UserProvider } from '@/context/UserContext';
