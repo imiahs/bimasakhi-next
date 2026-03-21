@@ -161,6 +161,17 @@ async function handleCheck(req, res) {
 // ============================================================
 // ADMIN HELPERS & NEW ACTIONS
 // ============================================================
+// TASK 3: RESPONSE VALIDATOR
+function sanitizeResponse(data) {
+    if (!data || typeof data !== 'object') return data;
+    Object.keys(data).forEach(key => {
+        if (data[key] === undefined || data[key] === null) {
+            data[key] = 0;
+        }
+    });
+    return data;
+}
+
 async function verifyAdmin(req) {
     try {
         const cookies = parse(req.headers.cookie || '');
@@ -174,21 +185,26 @@ async function verifyAdmin(req) {
 }
 
 async function handleSystemHealth(req, res) {
+    const startTime = Date.now();
     try {
         const supabase = getServiceSupabase();
         
+        const yesterday = new Date(Date.now() - 24*60*60*1000).toISOString();
         const today = new Date();
         today.setHours(0,0,0,0);
+        
         const { count: total_leads_today } = await supabase.from('leads')
                                         .select('*', {count: 'exact', head: true})
                                         .gte('created_at', today.toISOString());
         
         const { count: failed_leads_count } = await supabase.from('failed_leads')
-                                        .select('*', {count: 'exact', head: true});
+                                        .select('*', {count: 'exact', head: true})
+                                        .gte('created_at', yesterday);
         
         const { count: retry_pending } = await supabase.from('failed_leads')
                                         .select('*', {count: 'exact', head: true})
-                                        .lt('retry_count', 3);
+                                        .lt('retry_count', 3)
+                                        .gte('created_at', yesterday);
         
         const { data: last_10_errors } = await supabase.from('system_logs')
                                         .select('*')
@@ -196,35 +212,82 @@ async function handleSystemHealth(req, res) {
                                         .order('created_at', {ascending: false})
                                         .limit(10);
         
-        return res.status(200).json({
+        // TASK 1: DATA CONSISTENCY CHECK
+        if ((retry_pending || 0) > (failed_leads_count || 0)) {
+            await logSystemEvent('DATA_MISMATCH', 'Admin metrics mismatch', {
+                failed_leads_count: failed_leads_count || 0,
+                retry_pending: retry_pending || 0
+            });
+        }
+
+        // TASK 2: SANITY CHECK RULES
+        if ((failed_leads_count || 0) > (total_leads_today || 0)) {
+            await logSystemEvent('DATA_WARNING', 'Failed leads exceed daily volume', {
+                failed_leads_count: failed_leads_count || 0,
+                total_leads_today: total_leads_today || 0
+            });
+        }
+
+        const data = sanitizeResponse({
             total_leads_today,
             failed_leads_count,
             retry_pending,
-            last_10_errors,
+            last_10_errors: last_10_errors || [],
             ai_status: "Operational",
-            crm_status: failed_leads_count > 10 ? "Degraded" : "Operational"
+            crm_status: (failed_leads_count || 0) > 10 ? "Degraded" : "Operational"
         });
+
+        const responsePayload = { success: true, data };
+
+        // TASK 4: ADMIN DEBUG MODE
+        if (process.env.ADMIN_DEBUG === 'true') {
+            responsePayload.debug = {
+                raw_queries: ['leads_count', 'failed_leads_count', 'retry_pending_count', 'last_10_errors'],
+                execution_time: Date.now() - startTime
+            };
+        }
+
+        return res.status(200).json(responsePayload);
     } catch (e) {
         return res.status(500).json({error: e.message});
     }
 }
 
 async function handleQueueStatus(req, res) {
+    const startTime = Date.now();
     try {
         const supabase = getServiceSupabase();
-        const { data: qData } = await supabase.from('generation_queue').select('status');
         
-        let pending = 0, processing = 0, completed = 0, failed = 0;
-        if (qData) {
-            qData.forEach(q => {
-                if (q.status === 'pending') pending++;
-                if (q.status === 'processing') processing++;
-                if (q.status === 'completed') completed++;
-                if (q.status === 'failed') failed++;
-            });
+        const [
+            { count: pending },
+            { count: processing },
+            { count: completed },
+            { count: failed }
+        ] = await Promise.all([
+            supabase.from('generation_queue').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+            supabase.from('generation_queue').select('*', { count: 'exact', head: true }).eq('status', 'processing'),
+            supabase.from('generation_queue').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+            supabase.from('generation_queue').select('*', { count: 'exact', head: true }).eq('status', 'failed')
+        ]);
+        
+        const data = sanitizeResponse({ 
+            pending, 
+            processing, 
+            completed, 
+            failed 
+        });
+
+        const responsePayload = { success: true, data };
+
+        // TASK 4: ADMIN DEBUG MODE
+        if (process.env.ADMIN_DEBUG === 'true') {
+            responsePayload.debug = {
+                raw_queries: ['generation_queue_pending', 'generation_queue_processing', 'generation_queue_completed', 'generation_queue_failed'],
+                execution_time: Date.now() - startTime
+            };
         }
         
-        return res.status(200).json({ pending, processing, completed, failed });
+        return res.status(200).json(responsePayload);
     } catch (e) {
         return res.status(500).json({error: e.message});
     }
@@ -234,9 +297,15 @@ async function handleRetryFailed(req, res) {
     try {
         const proto = req.headers['x-forwarded-proto'] || 'http';
         const host = req.headers.host;
-        const response = await fetch(`${proto}://${host}/api/jobs/retry-failed-leads`, { method: 'POST' });
+        const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'anon';
+        
+        const response = await fetch(`${proto}://${host}/api/jobs/retry-failed-leads`, { 
+            method: 'POST',
+            headers: { 'x-forwarded-for': `retry_admin:${ip}` }
+        });
+        
         const result = await response.json();
-        return res.status(200).json(result);
+        return res.status(200).json({ success: true, data: result });
     } catch (e) {
         return res.status(500).json({error: e.message});
     }
@@ -245,11 +314,95 @@ async function handleRetryFailed(req, res) {
 async function handleClearFailed(req, res) {
     try {
         const supabase = getServiceSupabase();
-        // Delete all bypasses RLS
-        await supabase.from('failed_leads').delete().neq('id', '00000000-0000-0000-0000-000000000000'); 
-        return res.status(200).json({ success: true, message: 'All failed leads cleared.' });
+        // Delete safely bounded by origin epoch
+        await supabase.from('failed_leads').delete().gt('created_at', '1970-01-01'); 
+        return res.status(200).json({ success: true, data: { message: 'All failed leads cleared.' } });
     } catch (e) {
         return res.status(500).json({error: e.message});
+    }
+}
+
+async function handleMarkConverted(req, res) {
+    try {
+        if (req.method !== 'POST') return res.status(405).json({error: 'Method Not Allowed'});
+        const { lead_id, conversion_value } = req.body;
+        if (!lead_id) return res.status(400).json({error: 'lead_id is required'});
+        
+        const supabase = getServiceSupabase();
+        const value = parseInt(conversion_value) || 0;
+        
+        const { error } = await supabase.from('leads')
+            .update({
+                is_converted: true,
+                converted_at: new Date().toISOString(),
+                conversion_value: value
+            })
+            .eq('id', lead_id);
+            
+        if (error) throw error;
+        
+        return res.status(200).json({ success: true, data: { message: "Lead marked as converted", lead_id, value } });
+    } catch (e) { 
+        return res.status(500).json({error: e.message}); 
+    }
+}
+
+async function handleBusinessMetrics(req, res) {
+    const startTime = Date.now();
+    try {
+        const supabase = getServiceSupabase();
+        
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
+        const { count: total_leads } = await supabase.from('leads').select('*', {count: 'exact', head: true});
+        const { count: converted_leads } = await supabase.from('leads').select('*', {count: 'exact', head: true}).eq('is_converted', true);
+        const { count: today_leads } = await supabase.from('leads').select('*', {count: 'exact', head: true}).gte('created_at', today.toISOString());
+        const { count: today_conversions } = await supabase.from('leads').select('*', {count: 'exact', head: true}).eq('is_converted', true).gte('converted_at', today.toISOString());
+        
+        const { data: revData } = await supabase.from('leads').select('conversion_value').eq('is_converted', true);
+        let estimated_revenue = 0;
+        if (revData) estimated_revenue = revData.reduce((acc, lead) => acc + (lead.conversion_value || 0), 0);
+        
+        const conversion_rate = total_leads > 0 ? ((converted_leads / total_leads) * 100).toFixed(2) + '%' : '0%';
+        
+        // Sampling top performance (bounded node memory protection)
+        const { data: sampleData } = await supabase.from('leads').select('city, source, is_converted').order('created_at', {ascending: false}).limit(5000);
+        
+        let cityMap = {}, sourceMap = {}, convertSourceMap = {};
+        if (sampleData) {
+            sampleData.forEach(l => {
+                const c = l.city || 'Unknown';
+                const s = l.source || 'Organic';
+                cityMap[c] = (cityMap[c] || 0) + 1;
+                sourceMap[s] = (sourceMap[s] || 0) + 1;
+                if (l.is_converted) convertSourceMap[s] = (convertSourceMap[s] || 0) + 1;
+            });
+        }
+        
+        const payload = sanitizeResponse({
+            total_leads: total_leads ?? 0,
+            converted_leads: converted_leads ?? 0,
+            today_leads: today_leads ?? 0,
+            today_conversions: today_conversions ?? 0,
+            estimated_revenue,
+            conversion_rate
+        });
+        
+        payload.top_cities = Object.entries(cityMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>({name:x[0], value:x[1]}));
+        payload.top_sources = Object.entries(sourceMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>({name:x[0], value:x[1]}));
+        payload.top_converting_sources = Object.entries(convertSourceMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>({name:x[0], value:x[1]}));
+        
+        const responsePayload = { success: true, data: payload };
+        if (process.env.ADMIN_DEBUG === 'true') {
+            responsePayload.debug = {
+                raw_queries: ['business_aggregation'],
+                execution_time: Date.now() - startTime
+            };
+        }
+        return res.status(200).json(responsePayload);
+    } catch(e) { 
+        return res.status(500).json({error: e.message}); 
     }
 }
 
@@ -266,12 +419,21 @@ export default withLogger(async function handler(req, res) {
     }
 
     const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'anon';
-    const rateLimitResult = await rateLimit(`admin_api:${ip}`, 60, 3600); // Admin API limits
+    const { action } = req.query;
+
+    // TASK 5: LOG EVERY ADMIN CALL
+    try {
+        await logSystemEvent('ADMIN_ACCESS', 'Admin API used', { action: action || 'unknown', ip });
+    } catch (e) { 
+        console.error("Admin log failed:", e); 
+    }
+
+    const rateLimitPrefix = action === 'login' ? 'admin_login' : 'admin_actions';
+    const rateLimitResult = await rateLimit(`${rateLimitPrefix}:${ip}`, 60, 3600); // Admin API limits
+    
     if (!rateLimitResult.success) {
         return res.status(429).json({ error: 'Too many requests. Please try again later.' });
     }
-
-    const { action } = req.query;
 
     switch (action) {
         case 'login':
@@ -292,6 +454,12 @@ export default withLogger(async function handler(req, res) {
         case 'clear-failed':
             if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
             return handleClearFailed(req, res);
+        case 'mark-converted':
+            if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
+            return handleMarkConverted(req, res);
+        case 'business-metrics':
+            if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
+            return handleBusinessMetrics(req, res);
         default:
             return res.status(404).json({ error: `Unknown admin action: ${action}` });
     }
