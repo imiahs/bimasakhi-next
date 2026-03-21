@@ -218,7 +218,7 @@ const ApplyForm = () => {
             if (formData.city || locationStatus.isManual) {
                 setFormData(prev => ({
                     ...prev,
-                    city: '',
+                    city: locationStatus.isManual ? prev.city : '',
                     state: '',
                     locality: ''
                 }));
@@ -334,7 +334,7 @@ const ApplyForm = () => {
         if (status.isSubmitting) return;
 
         // GUARD 2: Validation
-        if (!validateStep(3)) return;
+        if (!validateStep(1) || !validateStep(2) || !validateStep(3)) return;
 
         // LOCK UI
         setStatus(prev => ({ ...prev, isSubmitting: true, error: null }));
@@ -342,6 +342,7 @@ const ApplyForm = () => {
         // Prepare Payload
         const payload = {
             ...formData,
+            city: formData.city || '',
             recruitment_phase: formData.phaseTag,
             source: userState.source || 'Website',
             medium: userState.medium || 'Direct',

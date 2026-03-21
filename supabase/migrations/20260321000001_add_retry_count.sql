@@ -1,0 +1,1 @@
+ALTER TABLE failed_leads ADD COLUMN IF NOT EXISTS retry_count INT DEFAULT 0;

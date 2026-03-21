@@ -8,6 +8,10 @@ import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
 import { getLocalDb } from '@/utils/localDb.js';
 import { calculateLeadScore } from '@/lib/ai/leadScorer';
 import { routeLeadToAgent } from '@/lib/ai/leadRouter';
+import { logSystemEvent } from '@/lib/systemLogger.js';
+
+let systemBootLogged = false;
+
 // --- Shared Utilities ---
 function assertEnv(vars) {
     const missing = vars.filter(v => !process.env[v]);
@@ -72,7 +76,26 @@ async function handleCreateLead(req, res) {
         return res.status(429).json({ error: 'Too many submissions. Please try again later.' });
     }
 
-    assertEnv(['REDIS_URL', 'ZOHO_CLIENT_ID', 'ZOHO_CLIENT_SECRET', 'ZOHO_REFRESH_TOKEN']);
+    if (!systemBootLogged) {
+        try {
+            const commitHash = process.env.VERCEL_GIT_COMMIT_SHA || 'local';
+            await logSystemEvent('SYSTEM_BOOT', 'Deployment successful', {
+                timestamp: new Date().toISOString(),
+                version: commitHash
+            });
+            systemBootLogged = true;
+        } catch (e) {
+            console.error("Boot log failed", e);
+        }
+    }
+
+    const requiredEnvs = ['REDIS_URL', 'ZOHO_CLIENT_ID', 'ZOHO_CLIENT_SECRET', 'ZOHO_REFRESH_TOKEN'];
+    for (const envStr of requiredEnvs) {
+        if (!process.env[envStr]) {
+            console.error("Missing ENV:", envStr);
+            return res.status(500).json({ error: "Server Misconfigured" });
+        }
+    }
 
     // --- INPUT VALIDATION & NORMALIZATION ---
     console.log("== RAW CRM PAYLOAD ==", JSON.stringify(req.body, null, 2));
@@ -89,7 +112,27 @@ async function handleCreateLead(req, res) {
     // Normalize Mobile BEFORE Validation
     const normalizedMobile = normalizeMobile(mobile);
 
-    if (!name || !normalizedMobile || !city || !occupation || !email || !pincode) {
+    // TASK 5: Add Debug Logging
+    console.log("[CRM DEBUG PAYLOAD]", {
+        name,
+        mobile: normalizedMobile,
+        city,
+        occupation,
+        email,
+        pincode,
+        source
+    });
+
+    // TASK 4: Backend Hardening (Failsafe Only)
+    // Fallback normalization (NON-BREAKING)
+    const isCityMissing = !city;
+    if (!city) {
+        city = 'Unknown';
+    }
+    occupation = occupation || 'Not Specified';
+    source = source || 'Website';
+
+    if (!name || !normalizedMobile || !email || !pincode) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -167,7 +210,8 @@ async function handleCreateLead(req, res) {
                             source,
                             medium,
                             campaign,
-                            status: 'new'
+                            status: 'new',
+                            is_city_missing: isCityMissing
                         })
                         .select()
                         .single();
@@ -389,6 +433,19 @@ async function handleCreateLead(req, res) {
     };
 
     try {
+        if (process.env.SYSTEM_MODE === 'dry-run') {
+            await logSystemEvent('DRY_RUN', 'Bypassed Zoho POST', { payload: leadData });
+            return res.status(200).json({
+                success: true,
+                message: "Dry Run: Lead processed successfully",
+                lead_id: refId || supabaseLeadId || 'dry-run-zoho-id',
+                zoho_id: 'dry-run-zoho-id',
+                status: 'success',
+                action: 'insert',
+                duplicate: false
+            });
+        }
+
         const accessToken = await getZohoAccessToken();
         const ZOHO_API_DOMAIN = getZohoApiDomain();
 
@@ -448,6 +505,12 @@ async function handleCreateLead(req, res) {
                 }).catch(e => console.error("AI Scorer QStash Auto-trigger error:", e));
             }
 
+            // TASK 5: ADD SUCCESS LOGGING
+            await logSystemEvent('CRM_SUCCESS', 'Lead created', {
+                lead_id: refId || supabaseLeadId || zohoId,
+                city
+            });
+
             return res.status(200).json({
                 success: true,
                 message: "Lead processed successfully",
@@ -459,6 +522,25 @@ async function handleCreateLead(req, res) {
             });
         } else {
             console.error("Zoho CRM Data Error:", JSON.stringify(crmResponse.data));
+
+            // TASK 3: LOG CRM FAILURES
+            await logSystemEvent('CRM_ERROR', 'Zoho failure', {
+                error: "CRM Validation Failed",
+                payload: { name, mobile: normalizedMobile, city }
+            });
+
+            // TASK 4: ZERO LEAD LOSS MECHANISM
+            if (isSupabaseEnabled && supabase) {
+                await supabase.from('failed_leads').insert({
+                    name,
+                    mobile: normalizedMobile,
+                    email,
+                    city,
+                    payload: req.body,
+                    error: "CRM Validation Failed: " + JSON.stringify(crmResponse.data)
+                });
+            }
+
             return res.status(400).json({
                 success: false,
                 error: "CRM Validation Failed",
@@ -469,6 +551,25 @@ async function handleCreateLead(req, res) {
     } catch (error) {
         // Allow retry: clear idempotency lock on failure
         await redis.del(idempotencyKey).catch(() => { });
+
+        // TASK 3: LOG SYSTEM FAILURES
+        await logSystemEvent('CRM_ERROR', 'System failure', {
+            error: error.message,
+            payload: { name, mobile: normalizedMobile, city }
+        });
+
+        // TASK 4: ZERO LEAD LOSS MECHANISM
+        if (isSupabaseEnabled && supabase) {
+            await supabase.from('failed_leads').insert({
+                name,
+                mobile: normalizedMobile,
+                email,
+                city,
+                payload: req.body,
+                error: error.message
+            });
+        }
+
         console.error("System Error in Create-Lead:", error.response ? error.response.data : error.message);
         return res.status(500).json({
             success: false,
