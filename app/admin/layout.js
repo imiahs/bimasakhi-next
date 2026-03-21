@@ -1,10 +1,10 @@
-import AdminLayout from '@/components/admin/AdminLayout';
+import ClientLayout from './ClientLayout';
 
 export const metadata = {
-    title: 'Admin Dashboard | Bima Sakhi',
+    title: 'Bima Sakhi OS | Business Control',
     robots: { index: false, follow: false },
 };
 
 export default function Layout({ children }) {
-    return <AdminLayout>{children}</AdminLayout>;
+    return <ClientLayout>{children}</ClientLayout>;
 }

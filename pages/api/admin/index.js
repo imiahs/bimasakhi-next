@@ -357,6 +357,31 @@ async function handleGetFailed(req, res) {
     }
 }
 
+async function handleGetLogs(req, res) {
+    const startTime = Date.now();
+    try {
+        const supabase = getServiceSupabase();
+        const { type } = req.query;
+        
+        let query = supabase.from('system_logs')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(100);
+            
+        if (type) {
+            query = query.eq('type', type);
+        }
+        
+        const { data: logs, error } = await query;
+        if (error) throw error;
+        
+        const payload = sanitizeResponse({ logs: logs || [] });
+        return res.status(200).json({ success: true, data: payload, debug: process.env.ADMIN_DEBUG === 'true' ? { execution_time: Date.now() - startTime } : undefined });
+    } catch(e) {
+        return res.status(500).json({error: e.message});
+    }
+}
+
 async function handleMarkConverted(req, res) {
     try {
         if (req.method !== 'POST') return res.status(405).json({error: 'Method Not Allowed'});
@@ -492,6 +517,9 @@ export default withLogger(async function handler(req, res) {
         case 'get-failed':
             if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
             return handleGetFailed(req, res);
+        case 'get-logs':
+            if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
+            return handleGetLogs(req, res);
         case 'mark-converted':
             if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
             return handleMarkConverted(req, res);
