@@ -2,6 +2,7 @@
 // Consolidated Admin Auth handler: login + logout + check
 import crypto from 'crypto';
 import { parse } from 'cookie';
+import { SignJWT } from 'jose';
 import { redis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
@@ -64,15 +65,27 @@ async function handleLogin(req, res) {
         // --- Successful login: clear rate limit counter ---
         await redis.del(rateLimitKey);
 
-        // Generate a random session ID
-        const sessionId = crypto.randomUUID();
+        // Generate base UUID
+        const baseTarget = crypto.randomUUID();
 
-        // Store session in Redis with 15-minute sliding window (900 seconds)
-        await redis.set(`session:${sessionId}`, 'active', 'EX', 900);
+        // Wrap as JWT to satisfy Edge Middleware boundary (which strictly demands jwtVerify natively)
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+        const jwtPayload = await new SignJWT({ role: 'admin', sub: baseTarget })
+            .setProtectedHeader({ alg: 'HS256' })
+            .setIssuedAt()
+            .setExpirationTime('24h')
+            .sign(secret);
 
-        // Set HttpOnly Cookie (Session Cookie - No Max-Age)
+        const sessionId = jwtPayload;
+
+        // Store session in Redis with 24-hour expiration exactly as mapped
+        await redis.set(`admin_session:${sessionId}`, JSON.stringify({ active: true, created_at: Date.now() }), 'EX', 86400);
+
+        console.log("SESSION CREATED:", sessionId);
+        console.log("SET COOKIE:", sessionId);
+
         const isProd = process.env.NODE_ENV === 'production';
-        const cookieValue = `admin_session=${sessionId}; Path=/; HttpOnly; ${isProd ? 'Secure;' : ''} SameSite=Strict`;
+        const cookieValue = `admin_session=${sessionId}; Path=/; HttpOnly; SameSite=Lax; ${isProd ? 'Secure;' : ''} Max-Age=86400`;
 
         res.setHeader('Set-Cookie', cookieValue);
 
@@ -112,7 +125,7 @@ async function handleLogout(req, res) {
         // Clear Cookie
         // Max-Age=0 expires it immediately
         const isProd = process.env.NODE_ENV === 'production';
-        const cookieValue = `admin_session=; Path=/; HttpOnly; ${isProd ? 'Secure;' : ''} SameSite=Strict; Max-Age=0`;
+        const cookieValue = `admin_session=; Path=/; HttpOnly; SameSite=Lax; ${isProd ? 'Secure;' : ''} Max-Age=0`;
         res.setHeader('Set-Cookie', cookieValue);
 
         return res.status(200).json({ success: true });
@@ -141,14 +154,14 @@ async function handleCheck(req, res) {
         }
 
         // Check Redis for session validity
-        const sessionStatus = await redis.get(`session:${sessionId}`);
+        const session = await redis.get(`admin_session:${sessionId}`);
 
-        if (sessionStatus !== 'active') {
+        if (session === null || !session) {
             return res.status(200).json({ authenticated: false });
         }
 
-        // Sliding Window: Extend session by 15 mins (900s) on active check
-        await redis.expire(`session:${sessionId}`, 900);
+        // Refresh TTL mapping safely
+        await redis.expire(`admin_session:${sessionId}`, 86400);
 
         return res.status(200).json({ authenticated: true });
 
@@ -178,8 +191,9 @@ async function verifyAdmin(req) {
         const cookies = parse(req.headers.cookie || '');
         const sessionId = cookies.admin_session;
         if (!sessionId) return false;
-        const sessionStatus = await redis.get(`session:${sessionId}`);
-        return sessionStatus === 'active';
+        const session = await redis.get(`admin_session:${sessionId}`);
+        console.log("COOKIE RECEIVED:", sessionId);
+        return session !== null;
     } catch {
         return false;
     }
