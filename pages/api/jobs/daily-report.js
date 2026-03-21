@@ -1,5 +1,5 @@
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
-import { logSystemEvent } from '@/lib/systemLogger.js';
+import { safeLog } from '@/lib/safeLogger.js';
 
 export default async function handler(req, res) {
     if (req.method !== 'POST' && req.method !== 'GET') {
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
         };
         
         // Log explicitly against telemetry logic
-        await logSystemEvent('DAILY_REPORT', 'Automated Daily Business Generation Report', report);
+        safeLog('DAILY_REPORT', 'Automated Daily Business Generation Report', report);
         
         return res.status(200).json({ success: true, data: report });
     } catch (e) {

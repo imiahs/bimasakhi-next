@@ -6,6 +6,7 @@ import { redis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { rateLimit } from '@/utils/rateLimiter.js';
+import { safeLog } from '@/lib/safeLogger.js';
 
 // --- FAIL-FAST ENV GUARD ---
 function assertEnv(vars) {
@@ -214,7 +215,7 @@ async function handleSystemHealth(req, res) {
         
         // TASK 1: DATA CONSISTENCY CHECK
         if ((retry_pending || 0) > (failed_leads_count || 0)) {
-            await logSystemEvent('DATA_MISMATCH', 'Admin metrics mismatch', {
+            safeLog('DATA_MISMATCH', 'Admin metrics mismatch', {
                 failed_leads_count: failed_leads_count || 0,
                 retry_pending: retry_pending || 0
             });
@@ -222,7 +223,7 @@ async function handleSystemHealth(req, res) {
 
         // TASK 2: SANITY CHECK RULES
         if ((failed_leads_count || 0) > (total_leads_today || 0)) {
-            await logSystemEvent('DATA_WARNING', 'Failed leads exceed daily volume', {
+            safeLog('DATA_WARNING', 'Failed leads exceed daily volume', {
                 failed_leads_count: failed_leads_count || 0,
                 total_leads_today: total_leads_today || 0
             });
@@ -443,7 +444,7 @@ export default withLogger(async function handler(req, res) {
 
     // TASK 5: LOG EVERY ADMIN CALL
     try {
-        await logSystemEvent('ADMIN_ACCESS', 'Admin API used', { action: action || 'unknown', ip });
+        safeLog('ADMIN_ACCESS', 'Admin API used', { action: action || 'unknown', ip });
     } catch (e) { 
         console.error("Admin log failed:", e); 
     }

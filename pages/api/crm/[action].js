@@ -8,7 +8,7 @@ import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
 import { getLocalDb } from '@/utils/localDb.js';
 import { calculateLeadScore } from '@/lib/ai/leadScorer';
 import { routeLeadToAgent } from '@/lib/ai/leadRouter';
-import { logSystemEvent } from '@/lib/systemLogger.js';
+import { safeLog } from '@/lib/safeLogger.js';
 
 let systemBootLogged = false;
 
@@ -79,7 +79,7 @@ async function handleCreateLead(req, res) {
     if (!systemBootLogged) {
         try {
             const commitHash = process.env.VERCEL_GIT_COMMIT_SHA || 'local';
-            await logSystemEvent('SYSTEM_BOOT', 'Deployment successful', {
+            safeLog('SYSTEM_BOOT', 'Deployment successful', {
                 timestamp: new Date().toISOString(),
                 version: commitHash
             });
@@ -437,7 +437,7 @@ async function handleCreateLead(req, res) {
 
     try {
         if (process.env.SYSTEM_MODE === 'dry-run') {
-            await logSystemEvent('DRY_RUN', 'Bypassed Zoho POST', { payload: leadData });
+            safeLog('DRY_RUN', 'Bypassed Zoho POST', { payload: leadData });
             return res.status(200).json({
                 success: true,
                 message: "Dry Run: Lead processed successfully",
@@ -509,7 +509,7 @@ async function handleCreateLead(req, res) {
             }
 
             // TASK 5: ADD SUCCESS LOGGING
-            await logSystemEvent('CRM_SUCCESS', 'Lead created', {
+            safeLog('CRM_SUCCESS', 'Lead created', {
                 lead_id: refId || supabaseLeadId || zohoId,
                 city
             });
@@ -527,7 +527,7 @@ async function handleCreateLead(req, res) {
             console.error("Zoho CRM Data Error:", JSON.stringify(crmResponse.data));
 
             // TASK 3: LOG CRM FAILURES
-            await logSystemEvent('CRM_ERROR', 'Zoho failure', {
+            safeLog('CRM_ERROR', 'Zoho failure', {
                 error: "CRM Validation Failed",
                 payload: { name, mobile: normalizedMobile, city }
             });
@@ -556,7 +556,7 @@ async function handleCreateLead(req, res) {
         await redis.del(idempotencyKey).catch(() => { });
 
         // TASK 3: LOG SYSTEM FAILURES
-        await logSystemEvent('CRM_ERROR', 'System failure', {
+        safeLog('CRM_ERROR', 'System failure', {
             error: error.message,
             payload: { name, mobile: normalizedMobile, city }
         });

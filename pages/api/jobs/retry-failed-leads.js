@@ -1,6 +1,6 @@
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
-import { logSystemEvent } from '@/lib/systemLogger.js';
+import { safeLog } from '@/lib/safeLogger.js';
 import { rateLimit } from '@/utils/rateLimiter.js';
 import axios from 'axios';
 
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
             .select('*', { count: 'exact', head: true });
 
         if (!countErr && count > 10) {
-            await logSystemEvent('ALERT', 'High failed leads spike', { count });
+            safeLog('ALERT', 'High failed leads spike', { count });
         }
 
         // TASK 1: AUTO RETRY FAILED LEADS
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
                         visitedPages = JSON.parse(visitedPages);
                     }
                 } catch (e) {
-                    await logSystemEvent('PARSE_ERROR', 'JSON parse failed for visitedPages in retry', { id: record.id });
+                    safeLog('PARSE_ERROR', 'JSON parse failed for visitedPages in retry', { id: record.id });
                     visitedPages = []; // skip safely
                 }
                 
@@ -97,7 +97,7 @@ export default async function handler(req, res) {
                 };
 
                 if (process.env.SYSTEM_MODE === 'dry-run') {
-                    await logSystemEvent('DRY_RUN', 'Bypassed Zoho POST inside Retry', { payload: leadData });
+                    safeLog('DRY_RUN', 'Bypassed Zoho POST inside Retry', { payload: leadData });
                     await supabase.from('failed_leads').delete().eq('id', record.id);
                     successCount++;
                     continue;
@@ -123,7 +123,7 @@ export default async function handler(req, res) {
                 if (result && (result.status === 'success' || result.status === 'duplicate')) {
                     // Success!
                     await supabase.from('failed_leads').delete().eq('id', record.id);
-                    await logSystemEvent('RETRY_SUCCESS', 'Successfully retried failed lead', { failed_lead_id: record.id, zoho_id: result.details?.id });
+                    safeLog('RETRY_SUCCESS', 'Successfully retried failed lead', { failed_lead_id: record.id, zoho_id: result.details?.id });
                     successCount++;
                 } else {
                     // Failed again
