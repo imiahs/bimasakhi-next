@@ -8,6 +8,7 @@ import { withLogger } from '../_middleware/logger.js';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { rateLimit } from '@/utils/rateLimiter.js';
 import { safeLog } from '@/lib/safeLogger.js';
+import { generateAlerts, generateActionQueue, generateRecommendations } from '@/lib/intelligenceEngine.js';
 
 // --- FAIL-FAST ENV GUARD ---
 function assertEnv(vars) {
@@ -446,7 +447,8 @@ async function handleBusinessMetrics(req, res) {
             today_leads: today_leads ?? 0,
             today_conversions: today_conversions ?? 0,
             estimated_revenue,
-            conversion_rate
+            conversion_rate,
+            revenue_per_lead: (total_leads ?? 0) > 0 ? Math.round(estimated_revenue / total_leads) : 0
         });
         
         payload.top_cities = Object.entries(cityMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>({name:x[0], value:x[1]}));
@@ -464,6 +466,28 @@ async function handleBusinessMetrics(req, res) {
     } catch(e) { 
         return res.status(500).json({error: e.message}); 
     }
+}
+
+async function handleGetAlerts(req, res) {
+    try {
+        const alerts = await generateAlerts();
+        return res.status(200).json({ success: true, data: alerts });
+    } catch (e) { return res.status(500).json({error: e.message}); }
+}
+
+async function handleGetActionQueue(req, res) {
+    try {
+        const alerts = await generateAlerts();
+        const queue = generateActionQueue(alerts);
+        return res.status(200).json({ success: true, data: queue });
+    } catch (e) { return res.status(500).json({error: e.message}); }
+}
+
+async function handleGetRecommendations(req, res) {
+    try {
+        const recommendations = await generateRecommendations();
+        return res.status(200).json({ success: true, data: recommendations });
+    } catch (e) { return res.status(500).json({error: e.message}); }
 }
 
 // ============================================================
@@ -526,6 +550,15 @@ export default withLogger(async function handler(req, res) {
         case 'business-metrics':
             if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
             return handleBusinessMetrics(req, res);
+        case 'get-alerts':
+            if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
+            return handleGetAlerts(req, res);
+        case 'get-action-queue':
+            if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
+            return handleGetActionQueue(req, res);
+        case 'get-recommendations':
+            if (!await verifyAdmin(req)) return res.status(401).json({error: 'Unauthorized'});
+            return handleGetRecommendations(req, res);
         default:
             return res.status(404).json({ error: `Unknown admin action: ${action}` });
     }
