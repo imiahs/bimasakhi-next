@@ -334,7 +334,14 @@ const ApplyForm = () => {
         if (status.isSubmitting) return;
 
         // GUARD 2: Validation
-        if (!validateStep(1) || !validateStep(2) || !validateStep(3)) return;
+        const step1Valid = validateStep(1);
+        if (!step1Valid) return;
+
+        const step2Valid = validateStep(2);
+        if (!step2Valid) return;
+
+        const step3Valid = validateStep(3);
+        if (!step3Valid) return;
 
         // LOCK UI
         setStatus(prev => ({ ...prev, isSubmitting: true, error: null }));

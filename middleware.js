@@ -55,24 +55,54 @@ export async function middleware(request) {
         }
     }
 
-    // 2. JWT ADMIN SESSION VALIDATION
-    if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
+    // 2. JWT ADMIN SESSION VALIDATION FOR API
+    if (pathname.startsWith('/api/admin')) {
+        const action = request.nextUrl.searchParams.get('action');
 
+        const publicActions = ['login'];
+
+        if (publicActions.includes(action) || pathname === '/api/admin-data/config-get' || pathname.includes('/debug/')) {
+            return NextResponse.next();
+        }
+
+        const authCookie = request.cookies.get('admin_session');
+
+        if (!authCookie) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        
+        try {
+            // Cryptographically verify the JWT using Edge-compatible logic
+            const { payload } = await jwtVerify(authCookie?.value || authCookie, JWT_SECRET);
+
+            // Allow request through, append headers if needed
+            const requestHeaders = new Headers(request.headers);
+            requestHeaders.set('x-admin-role', payload.role);
+            requestHeaders.set('x-admin-id', payload.sub);
+
+            return NextResponse.next({
+                request: {
+                    headers: requestHeaders,
+                },
+            });
+        } catch (err) {
+            return NextResponse.json({ error: 'Session expired or invalid token.' }, { status: 401 });
+        }
+    }
+
+    // 2.5 JWT ADMIN SESSION VALIDATION FOR FRONTEND
+    else if (pathname.startsWith('/admin')) {
         // Exclude specific auth and public data routes from strict JWT validation
         if (
             pathname.includes('/login') ||
-            pathname.includes('/debug/') ||
-            pathname === '/api/admin-data/config-get'
+            pathname.includes('/debug/')
         ) {
             return NextResponse.next();
         }
 
-        const authCookie = request.cookies.get('admin-session')?.value;
+        const authCookie = request.cookies.get('admin_session') || request.cookies.get('admin-session');
 
         if (!authCookie) {
-            if (pathname.startsWith('/api/')) {
-                return NextResponse.json({ error: 'Unauthorized. Missing token.' }, { status: 401 });
-            }
             const loginUrl = new URL('/admin/login', request.url);
             loginUrl.searchParams.set('redirect_to', pathname);
             return NextResponse.redirect(loginUrl);
@@ -80,7 +110,7 @@ export async function middleware(request) {
 
         try {
             // Cryptographically verify the JWT using Edge-compatible logic
-            const { payload } = await jwtVerify(authCookie, JWT_SECRET);
+            const { payload } = await jwtVerify(authCookie?.value || authCookie, JWT_SECRET);
 
             // Allow request through, append headers if needed
             const requestHeaders = new Headers(request.headers);
@@ -94,9 +124,6 @@ export async function middleware(request) {
             });
         } catch (err) {
             // Token is invalid/expired
-            if (pathname.startsWith('/api/')) {
-                return NextResponse.json({ error: 'Session expired or invalid token.' }, { status: 401 });
-            }
             const loginUrl = new URL('/admin/login', request.url);
             loginUrl.searchParams.set('error', 'session_expired');
             return NextResponse.redirect(loginUrl);

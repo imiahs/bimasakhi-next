@@ -133,15 +133,18 @@ async function handleCreateLead(req, res) {
     source = source || 'Website';
 
     if (!name || !normalizedMobile || !email || !pincode) {
+        console.error("[CRM VALIDATION FAILED]", req.body);
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const mobileRegex = /^[6-9]\d{9}$/;
     if (!mobileRegex.test(normalizedMobile)) {
+        console.error("[CRM VALIDATION FAILED]", req.body);
         return res.status(400).json({ error: 'Invalid Indian mobile number' });
     }
 
     if (!source) {
+        console.error("[CRM VALIDATION FAILED]", req.body);
         return res.status(400).json({ error: 'Missing mandatory metadata: source' });
     }
 
