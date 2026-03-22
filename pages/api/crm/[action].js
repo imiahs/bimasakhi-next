@@ -49,12 +49,12 @@ async function generateRefId() {
 // --- Safe Supabase Initialization ---
 let supabase = null;
 try {
-    if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const dbUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+    const dbKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
+    if (dbUrl && dbKey) {
         supabase = getServiceSupabase();
     } else {
-        if (process.env.SUPABASE_ENABLED === 'true') {
-            console.warn("Supabase credentials missing. Supabase will be skipped.");
-        }
+        console.warn("Supabase credentials missing. Supabase will be skipped.");
     }
 } catch (e) {
     console.error("Supabase Init Error:", e);
@@ -164,7 +164,7 @@ async function handleCreateLead(req, res) {
 
     // --- SUPABASE FLOW (SAFE & HARDENED) ---
 
-    const isSupabaseEnabled = process.env.SUPABASE_ENABLED === 'true' && supabase !== null;
+    const isSupabaseEnabled = supabase !== null;
 
     let isDuplicate = false;
     let supabaseLeadId = null;
