@@ -44,8 +44,8 @@ export default function DashboardPage() {
         <div className="space-y-8 animate-in fade-in duration-300">
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800 tracking-tight">System Overview</h1>
-                    <p className="text-slate-500 mt-1 text-sm">Real-time metrics and operational intelligence.</p>
+                    <h1 className="text-[22px] font-semibold text-zinc-900 tracking-tight">System Overview</h1>
+                    <p className="text-zinc-500 mt-1 text-sm">Real-time metrics and operational intelligence.</p>
                 </div>
             </div>
 
@@ -77,27 +77,27 @@ export default function DashboardPage() {
             </div>
 
             {/* INFRASTRUCTURE SNAPSHOT */}
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-                 <h2 className="font-semibold text-slate-800 mb-6">Service Health</h2>
+            <div className="bg-white p-6 rounded-xl border border-zinc-200">
+                 <h2 className="font-semibold text-zinc-900 mb-6 tracking-tight text-sm uppercase">Service Health</h2>
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                     <div className="p-4 bg-slate-50 rounded-lg border border-slate-100 flex justify-between items-center">
+                     <div className="p-4 bg-[#fafafa] rounded-lg border border-zinc-200 flex justify-between items-center transition-colors hover:border-zinc-300">
                          <div>
-                            <p className="text-sm font-medium text-slate-700 mb-1">Zoho Pipeline</p>
-                            <p className="text-xs text-slate-500">Outbound data wrapper</p>
+                            <p className="text-sm font-medium text-zinc-800 mb-0.5">Zoho Pipeline</p>
+                            <p className="text-xs text-zinc-500">Outbound data wrapper</p>
                          </div>
                          <StatusBadge status={health?.crm_status || 'Pending'} />
                      </div>
-                     <div className="p-4 bg-slate-50 rounded-lg border border-slate-100 flex justify-between items-center">
+                     <div className="p-4 bg-[#fafafa] rounded-lg border border-zinc-200 flex justify-between items-center transition-colors hover:border-zinc-300">
                          <div>
-                            <p className="text-sm font-medium text-slate-700 mb-1">AI Generator</p>
-                            <p className="text-xs text-slate-500">Content chron engine</p>
+                            <p className="text-sm font-medium text-zinc-800 mb-0.5">AI Generator</p>
+                            <p className="text-xs text-zinc-500">Content chron engine</p>
                          </div>
                          <StatusBadge status={health?.ai_status || 'Pending'} />
                      </div>
-                     <div className="p-4 bg-slate-50 rounded-lg border border-slate-100 flex justify-between items-center">
+                     <div className="p-4 bg-[#fafafa] rounded-lg border border-zinc-200 flex justify-between items-center transition-colors hover:border-zinc-300">
                          <div>
-                            <p className="text-sm font-medium text-slate-700 mb-1">Dropped Anomalies</p>
-                            <p className="text-xs text-slate-500">Failed ingestions</p>
+                            <p className="text-sm font-medium text-zinc-800 mb-0.5">Dropped Anomalies</p>
+                            <p className="text-xs text-zinc-500">Failed ingestions</p>
                          </div>
                          <StatusBadge status={(health?.failed_leads_count || 0) > 0 ? 'Failed' : 'Operational'} />
                      </div>

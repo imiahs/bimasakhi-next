@@ -55,25 +55,25 @@ export default function AIPanelPage() {
 
     const columns = [
         { key: 'phase', label: 'Queue Phase' },
-        { key: 'count', label: 'Item Count', render: (row) => <span className="font-semibold text-slate-800">{row.count} items</span> },
+        { key: 'count', label: 'Item Count', render: (row) => <span className="font-semibold text-zinc-900 tracking-tight">{row.count} items</span> },
         { key: 'status', label: 'Status', render: (row) => <StatusBadge status={row.status} /> }
     ];
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex justify-between items-center bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex justify-between items-center bg-white px-6 py-5 rounded-xl border border-zinc-200">
                 <div>
-                    <h1 className="text-xl font-bold text-slate-800 tracking-tight">AI Control Panel</h1>
-                    <p className="text-sm text-slate-500 mt-1">Monitor SEO generation queues natively via QStash.</p>
+                    <h1 className="text-lg font-semibold text-zinc-900 tracking-tight">AI Control Panel</h1>
+                    <p className="text-sm text-zinc-500 mt-1">Monitor SEO generation queues natively via QStash.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button onClick={fetchQueue} disabled={loading} className="bg-slate-50 border text-sm font-semibold border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg hover:bg-slate-100 transition shadow-sm">
+                    <button onClick={fetchQueue} disabled={loading} className="bg-white border border-zinc-200 text-sm font-medium text-zinc-600 px-4 py-2 rounded-md hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
                         ↻ Sync Status
                     </button>
                     <button 
                         onClick={triggerGeneration}
                         disabled={actionLoading}
-                        className="bg-blue-600 border border-transparent text-sm font-semibold text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-sm disabled:opacity-50"
+                        className="bg-black border border-transparent text-sm font-medium text-white px-4 py-2 rounded-md hover:bg-zinc-800 transition-colors disabled:opacity-50"
                     >
                         {actionLoading ? 'Generating...' : '⚡ Generate Payload'}
                     </button>
@@ -81,7 +81,7 @@ export default function AIPanelPage() {
             </div>
 
             {toast && (
-                <div className={`p-4 rounded-lg font-medium shadow-sm transition-all ${toast.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
+                <div className={`px-4 py-3 rounded-md text-sm font-medium transition-all ${toast.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
                     {toast.text}
                 </div>
             )}

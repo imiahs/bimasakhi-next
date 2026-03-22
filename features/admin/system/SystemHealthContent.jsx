@@ -31,15 +31,15 @@ const SystemHealthContent = () => {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex justify-between items-center bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+            <div className="flex justify-between items-center bg-white px-6 py-5 rounded-xl border border-zinc-200">
                 <div>
-                    <h1 className="text-xl font-bold text-slate-800 tracking-tight">Infrastructure Telemetry</h1>
-                    <p className="text-sm text-slate-500 mt-1">Real-time health monitoring of edge functions and CRM data transmission queues.</p>
+                    <h1 className="text-xl font-bold text-zinc-900 tracking-tight">Infrastructure Telemetry</h1>
+                    <p className="text-sm text-zinc-500 mt-1">Real-time health monitoring of edge functions and CRM data transmission queues.</p>
                 </div>
                 <button
                     onClick={fetchStatus}
                     disabled={loading}
-                    className="bg-slate-50 border text-sm font-semibold border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg hover:bg-slate-100 transition shadow-sm"
+                    className="bg-white border text-sm font-medium border-zinc-200 text-zinc-600 px-4 py-2 rounded-md hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
                 >
                     {loading ? 'Pinging...' : '↻ Ping Services'}
                 </button>
@@ -47,8 +47,8 @@ const SystemHealthContent = () => {
 
             {loading && !status ? (
                 <div className="flex flex-col flex-1 h-[40vh] items-center justify-center">
-                    <div className="w-8 h-8 border-4 border-slate-300 border-t-blue-600 rounded-full animate-spin"></div>
-                    <p className="mt-4 text-slate-500 font-medium text-sm">Validating Endpoints...</p>
+                    <div className="w-8 h-8 border-4 border-zinc-200 border-t-black rounded-full animate-spin"></div>
+                    <p className="mt-4 text-zinc-500 font-medium text-sm">Validating Endpoints...</p>
                 </div>
             ) : status && (
                 <>
@@ -78,31 +78,31 @@ const SystemHealthContent = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div className="bg-white p-6 rounded-xl border border-zinc-200 flex flex-col justify-between hover:border-zinc-300 transition-colors">
                             <div className="flex justify-between items-start mb-6">
                                 <div>
-                                    <h3 className="font-bold text-slate-800">Zoho CRM Sync</h3>
-                                    <p className="text-sm text-slate-500 mt-1">Outbound data piping API.</p>
+                                    <h3 className="font-semibold text-zinc-900 tracking-tight">Zoho CRM Sync</h3>
+                                    <p className="text-sm text-zinc-500 mt-1">Outbound data piping API.</p>
                                 </div>
                                 <StatusBadge status={status?.crm_status || 'Unknown'} />
                             </div>
-                            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
-                                <span className="text-slate-500">Last Synced</span>
-                                <span className="font-semibold text-slate-700">Just Now</span>
+                            <div className="pt-4 border-t border-zinc-100 flex items-center justify-between text-sm">
+                                <span className="text-zinc-500">Last Synced</span>
+                                <span className="font-medium text-zinc-900">Just Now</span>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                        <div className="bg-white p-6 rounded-xl border border-zinc-200 flex flex-col justify-between hover:border-zinc-300 transition-colors">
                             <div className="flex justify-between items-start mb-6">
                                 <div>
-                                    <h3 className="font-bold text-slate-800">AI Background Jobs</h3>
-                                    <p className="text-sm text-slate-500 mt-1">Text and meta generation workers.</p>
+                                    <h3 className="font-semibold text-zinc-900 tracking-tight">AI Background Jobs</h3>
+                                    <p className="text-sm text-zinc-500 mt-1">Text and meta generation workers.</p>
                                 </div>
                                 <StatusBadge status={status?.ai_status || 'Unknown'} />
                             </div>
-                            <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-sm">
-                                <span className="text-slate-500">Last Execution</span>
-                                <span className="font-semibold text-slate-700">Recent</span>
+                            <div className="pt-4 border-t border-zinc-100 flex items-center justify-between text-sm">
+                                <span className="text-zinc-500">Last Execution</span>
+                                <span className="font-medium text-zinc-900">Recent</span>
                             </div>
                         </div>
                     </div>
