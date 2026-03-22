@@ -1,28 +1,25 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import CommandPalette from './CommandPalette';
-import './AdminLayout.css';
 
 const ADMIN_LINKS = [
     { label: 'Dashboard', href: '/admin', icon: '📊' },
     { label: 'Leads', href: '/admin/leads', icon: '👥' },
-    { label: 'Queue', href: '/admin/seo/queue', icon: '⏳' },
-    { label: 'Revenue', href: '/admin/revenue', icon: '💰' },
-    { label: 'System Health', href: '/admin/system', icon: '🩺' },
     { label: 'Failed Leads', href: '/admin/failed', icon: '🚨' },
-    { label: 'Settings', href: '/admin/settings', icon: '⚙️' }
+    { label: 'AI Queue', href: '/admin/ai', icon: '⚡' },
+    { label: 'Analytics', href: '/admin/analytics', icon: '📈' },
+    { label: 'Logs', href: '/admin/logs', icon: '📋' },
+    { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
 ];
 
 const AdminLayout = ({ children }) => {
     const pathname = usePathname();
-    const router = useRouter(); // Require 'useRouter' injection at top
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const router = useRouter();
     const [paletteOpen, setPaletteOpen] = useState(false);
 
-    // Global Authenticatication Check Effect
+    // Auth Check (Existing - untouched)
     useEffect(() => {
         if (pathname === '/admin/login') return;
         fetch('/api/admin?action=check')
@@ -31,13 +28,17 @@ const AdminLayout = ({ children }) => {
             .catch(() => router.push('/admin/login'));
     }, [pathname, router]);
 
+    // Logout (Existing - untouched)
     const handleLogout = async () => {
         try {
             await fetch('/api/admin?action=logout', { method: 'POST' });
             router.push('/admin/login');
-        } catch(e) { console.error("Logout failed", e); }
+        } catch (e) {
+            console.error("Logout failed", e);
+        }
     };
 
+    // Cmd + K (Existing - untouched)
     useEffect(() => {
         const handleKeyDown = (e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -49,54 +50,80 @@ const AdminLayout = ({ children }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // Don't show layout on login page
     if (pathname === '/admin/login') {
         return <div className="admin-login-wrapper">{children}</div>;
     }
 
     return (
-        <div className="admin-layout-container">
-            {/* LEFT SIDEBAR */}
-            <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
-                <div className="admin-sidebar-header">
-                    <span className="text-2xl">🔥</span>
-                    <h2>Bima Sakhi OS</h2>
+        <div className="flex h-screen bg-gray-950 overflow-hidden">
+            {/* Sidebar - More Premium Look */}
+            <aside className="w-72 bg-gray-950 border-r border-gray-800 flex flex-col">
+                <div className="p-6 border-b border-gray-800 flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-inner">
+                        BS
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-white tracking-tighter">Bima Sakhi</h1>
+                        <p className="text-xs text-gray-500 -mt-1">OS Control • Root Access</p>
+                    </div>
                 </div>
-                <nav className="admin-nav">
-                    <ul>
-                        {ADMIN_LINKS.map(link => {
-                            const isActive = pathname.startsWith(link.href);
-                            return (
-                                <li key={link.href} className="admin-nav-item">
-                                    <Link href={link.href} className={`admin-nav-link ${isActive ? 'active' : ''}`}>
-                                        <span className="nav-icon">{link.icon}</span>
-                                        <span className="nav-label">{link.label}</span>
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
+
+                <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+                    {ADMIN_LINKS.map((link) => {
+                        const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+                        return (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl text-sm font-medium transition-all ${isActive
+                                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/40'
+                                        : 'text-gray-400 hover:bg-gray-900 hover:text-white'
+                                    }`}
+                            >
+                                <span className="text-xl opacity-90">{link.icon}</span>
+                                <span>{link.label}</span>
+                            </Link>
+                        );
+                    })}
                 </nav>
+
+                <div className="p-4 border-t border-gray-800">
+                    <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 w-full px-5 py-3 text-red-400 hover:bg-red-950/60 rounded-2xl text-sm font-medium transition-all"
+                    >
+                        <span className="text-xl">⛔</span>
+                        Logout Securely
+                    </button>
+                </div>
             </aside>
 
-            {/* MAIN CONTENT WRAPPER */}
-            <div className="admin-main-wrapper">
-                {/* TOPBAR */}
-                <header className="admin-topbar flex justify-between items-center py-4 px-6 bg-white border-b border-slate-200">
-                    <div className="topbar-search flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 w-1/3" onClick={() => setPaletteOpen(true)} style={{ cursor: 'pointer' }}>
-                        <span className="text-slate-400 mr-2">🔎</span>
-                        <input type="text" placeholder="Search operations (Cmd+K)" readOnly className="bg-transparent border-none outline-none text-sm w-full cursor-pointer text-slate-600" />
+            {/* Main Area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <header className="h-16 bg-gray-900 border-b border-gray-800 px-8 flex items-center justify-between">
+                    <div
+                        onClick={() => setPaletteOpen(true)}
+                        className="flex items-center bg-gray-800 border border-gray-700 hover:border-gray-600 rounded-2xl px-5 py-2 w-96 cursor-pointer transition-all"
+                    >
+                        <span className="text-gray-400 mr-3 text-xl">🔎</span>
+                        <span className="text-gray-400 text-sm">Search anything... (Ctrl + K)</span>
                     </div>
-                    <div className="topbar-profile flex items-center gap-4">
-                        <span className="font-semibold text-slate-700 text-sm hidden md:block">Administrator</span>
-                        <Link href="/admin/profile" className="profile-avatar bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-9 h-9 flex items-center justify-center font-bold transition">A</Link>
-                        <button onClick={handleLogout} className="text-sm bg-red-50 text-red-600 px-4 py-2 rounded-lg hover:bg-red-100 font-medium transition cursor-pointer">Logout</button>
+
+                    <div className="flex items-center gap-6">
+                        <div className="text-right">
+                            <p className="text-sm font-medium text-white">Administrator</p>
+                            <p className="text-xs text-emerald-400">● Online</p>
+                        </div>
+                        <div className="w-9 h-9 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold ring-2 ring-indigo-500/30">
+                            A
+                        </div>
                     </div>
                 </header>
 
-                {/* DYNAMIC WORKSPACE */}
-                <main className="admin-workspace">
-                    {children}
+                <main className="flex-1 overflow-auto bg-gray-950 p-6 lg:p-8">
+                    <div className="max-w-screen-2xl mx-auto">
+                        {children}
+                    </div>
                 </main>
             </div>
 
