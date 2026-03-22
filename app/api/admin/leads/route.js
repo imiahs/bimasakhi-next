@@ -8,18 +8,18 @@ export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
-        // Fetch leads from Supabase (SQLite removed — incompatible with Vercel)
+        // Fetch real-time leads from the primary source of truth (leads table)
         const { data, error } = await supabase
-            .from('lead_cache')
-            .select('id, name, mobile, city, source, status, created_at')
+            .from('leads')
+            .select('id, full_name, mobile, city, source, status, created_at')
             .order('created_at', { ascending: false })
-            .limit(50);
+            .limit(100); // 🚀 PERFORMANCE RULES: ALWAYS use limits
 
         let leads = [];
         if (!error && data) {
             leads = data.map(lead => ({
                 id: lead.id,
-                name: lead.name,
+                name: lead.full_name || 'Unknown',
                 mobile: lead.mobile,
                 city: lead.city,
                 source: lead.source,
