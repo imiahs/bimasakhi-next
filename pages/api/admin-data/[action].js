@@ -137,6 +137,7 @@ async function handleLeadsList(req, res) {
         try {
             const { getServiceSupabase } = require('@/utils/supabaseClientSingleton');
             const supabase = getServiceSupabase();
+            if (!supabase) throw new Error("Supabase Client is offline");
             const { data: fallbackLeads } = await supabase.from('leads')
                  .select('*')
                  .order('created_at', { ascending: false })
