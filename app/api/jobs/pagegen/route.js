@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai/generateContent';
 import { getSystemPrompt, buildPagePrompt } from '@/lib/ai/promptTemplates';
+import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
 import crypto from 'crypto';
 
 export const maxDuration = 60; // Max time on Vercel
@@ -13,6 +14,13 @@ export async function POST(request) {
         return NextResponse.json({ error: 'Unauthorized QStash Hook' }, { status: 401 });
     }
 
+    // ═══ SYSTEM CONTROL GUARD ═══
+    const config = await getSystemConfig();
+    if (config.queue_paused) {
+        await logSystemAction('GUARD_BLOCKED', { guard: 'queue_paused', route: '/api/jobs/pagegen' });
+        return NextResponse.json({ success: true, message: 'System paused via control config.' });
+    }
+
     const supabase = getServiceSupabase();
     
     try {
@@ -22,7 +30,7 @@ export async function POST(request) {
         if (!queueJob) return NextResponse.json({ success: true, message: 'No pending queue.' });
 
         const pagesToGenerate = queueJob.payload.pages || [];
-        const limit = 20; // Serverless cap
+        const limit = Math.min(config.batch_size || 5, 50); // Use config batch_size, cap at 50
         const batchList = pagesToGenerate.slice(queueJob.progress, queueJob.progress + limit);
 
         if (batchList.length === 0) {

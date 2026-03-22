@@ -9,6 +9,7 @@ import { getLocalDb } from '@/utils/localDb.js';
 import { calculateLeadScore } from '@/lib/ai/leadScorer';
 import { routeLeadToAgent } from '@/lib/ai/leadRouter';
 import { safeLog } from '@/lib/safeLogger.js';
+import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
 
 let systemBootLogged = false;
 
@@ -417,6 +418,22 @@ async function handleCreateLead(req, res) {
             lead_id: existingLeadData.ref_id || existingLeadData.id,
             data: existingLeadData,
             message: "Welcome back! We already have your application."
+        });
+    }
+
+    // ═══ SYSTEM CONTROL GUARD: CRM Auto-Routing ═══
+    const sysConfig = await getSystemConfig();
+    if (!sysConfig.crm_auto_routing) {
+        await logSystemAction('GUARD_BLOCKED', { guard: 'crm_auto_routing', route: '/api/crm/create-lead', lead_id: refId || supabaseLeadId });
+        // Lead is saved in Supabase — skip Zoho push
+        return res.status(200).json({
+            success: true,
+            message: 'Lead saved locally. CRM auto-routing disabled.',
+            lead_id: refId || supabaseLeadId || 'local-only',
+            zoho_id: null,
+            status: 'success',
+            action: 'local_save',
+            duplicate: false
         });
     }
 

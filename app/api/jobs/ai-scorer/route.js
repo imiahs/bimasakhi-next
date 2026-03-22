@@ -3,10 +3,18 @@ import { calculateLeadScore } from '@/lib/ai/leadScorer';
 import { routeLeadToAgent } from '@/lib/ai/leadRouter';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
+import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
 
 export const maxDuration = 300;
 
 async function handler(request) {
+    // ═══ SYSTEM CONTROL GUARD ═══
+    const config = await getSystemConfig();
+    if (!config.ai_enabled) {
+        await logSystemAction('GUARD_BLOCKED', { guard: 'ai_enabled', route: '/api/jobs/ai-scorer' });
+        return NextResponse.json({ success: true, message: 'AI scoring disabled via control config.' });
+    }
+
     const startTime = Date.now();
     const upstashMessageId = request.headers.get('upstash-message-id') || `manual-${Date.now()}`;
     
