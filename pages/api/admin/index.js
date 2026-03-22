@@ -349,7 +349,10 @@ async function handleGetFailed(req, res) {
             .order('created_at', { ascending: false })
             .limit(50);
             
-        if (error) throw error;
+        if (error) {
+            if (error.code === 'PGRST205') return res.status(200).json({ success: true, data: sanitizeResponse({ failed_leads: [] }) });
+            throw error;
+        }
         
         const payload = sanitizeResponse({ failed_leads: failed || [] });
         return res.status(200).json({ success: true, data: payload, debug: process.env.ADMIN_DEBUG === 'true' ? { execution_time: Date.now() - startTime } : undefined });
@@ -374,7 +377,10 @@ async function handleGetLogs(req, res) {
         }
         
         const { data: logs, error } = await query;
-        if (error) throw error;
+        if (error) {
+            if (error.code === 'PGRST205') return res.status(200).json({ success: true, data: sanitizeResponse({ logs: [] }) });
+            throw error;
+        }
         
         const payload = sanitizeResponse({ logs: logs || [] });
         return res.status(200).json({ success: true, data: payload, debug: process.env.ADMIN_DEBUG === 'true' ? { execution_time: Date.now() - startTime } : undefined });

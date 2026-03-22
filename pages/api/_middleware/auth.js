@@ -26,13 +26,13 @@ export function withAuth(handler) {
             }
 
             // Check Redis for session validity
-            const sessionStatus = await redis.get(`session:${sessionId}`);
+            const sessionStatus = await redis.get(`admin_session:${sessionId}`);
             if (!sessionStatus) {
                 return res.status(401).json({ error: 'Unauthorized: Invalid Session' });
             }
 
             // Sliding Window: Extend session by 15 minutes (900s) on every authenticated request
-            await redis.expire(`session:${sessionId}`, 900);
+            await redis.expire(`admin_session:${sessionId}`, 900);
 
             // Attach sessionId to request for downstream use (optional)
             req.sessionId = sessionId;
