@@ -210,20 +210,20 @@ async function handleSystemHealth(req, res) {
         today.setHours(0,0,0,0);
         
         const { count: total_leads_today } = await supabase.from('leads')
-                                        .select('*', {count: 'exact', head: true})
+                                        .select('id', {count: 'exact', head: true})
                                         .gte('created_at', today.toISOString());
         
         const { count: failed_leads_count } = await supabase.from('failed_leads')
-                                        .select('*', {count: 'exact', head: true})
+                                        .select('id', {count: 'exact', head: true})
                                         .gte('created_at', yesterday);
         
         const { count: retry_pending } = await supabase.from('failed_leads')
-                                        .select('*', {count: 'exact', head: true})
+                                        .select('id', {count: 'exact', head: true})
                                         .lt('retry_count', 3)
                                         .gte('created_at', yesterday);
         
         const { data: last_10_errors } = await supabase.from('system_logs')
-                                        .select('*')
+                                        .select('id, type, message, created_at')
                                         .eq('type', 'CRM_ERROR')
                                         .order('created_at', {ascending: false})
                                         .limit(10);
@@ -280,10 +280,10 @@ async function handleQueueStatus(req, res) {
             { count: completed },
             { count: failed }
         ] = await Promise.all([
-            supabase.from('generation_queue').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-            supabase.from('generation_queue').select('*', { count: 'exact', head: true }).eq('status', 'processing'),
-            supabase.from('generation_queue').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
-            supabase.from('generation_queue').select('*', { count: 'exact', head: true }).eq('status', 'failed')
+            supabase.from('generation_queue').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+            supabase.from('generation_queue').select('id', { count: 'exact', head: true }).eq('status', 'processing'),
+            supabase.from('generation_queue').select('id', { count: 'exact', head: true }).eq('status', 'completed'),
+            supabase.from('generation_queue').select('id', { count: 'exact', head: true }).eq('status', 'failed')
         ]);
         
         const data = sanitizeResponse({ 
@@ -345,7 +345,7 @@ async function handleGetFailed(req, res) {
         
         // Capped query fetching the 50 most recent anomalous leads
         const { data: failed, error } = await supabase.from('failed_leads')
-            .select('*')
+            .select('id, name, created_at, retry_count, reason') // explicit columns
             .order('created_at', { ascending: false })
             .limit(50);
             
@@ -365,9 +365,9 @@ async function handleGetLogs(req, res) {
         const { type } = req.query;
         
         let query = supabase.from('system_logs')
-            .select('*')
+            .select('id, type, message, created_at') // precision select
             .order('created_at', { ascending: false })
-            .limit(100);
+            .limit(50); // Hard limit 50
             
         if (type) {
             query = query.eq('type', type);
@@ -428,7 +428,7 @@ async function handleBusinessMetrics(req, res) {
         const conversion_rate = total_leads > 0 ? ((converted_leads / total_leads) * 100).toFixed(2) + '%' : '0%';
         
         // Sampling top performance (bounded node memory protection)
-        const { data: sampleData } = await supabase.from('leads').select('city, source, is_converted').order('created_at', {ascending: false}).limit(5000);
+        const { data: sampleData } = await supabase.from('leads').select('city, source, is_converted').order('created_at', {ascending: false}).limit(50);
         
         let cityMap = {}, sourceMap = {}, convertSourceMap = {};
         if (sampleData) {

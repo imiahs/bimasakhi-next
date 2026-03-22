@@ -11,8 +11,9 @@ export const GET = withAdminAuth(async (request, user) => {
         // Fetch leads from Supabase (SQLite removed — incompatible with Vercel)
         const { data, error } = await supabase
             .from('lead_cache')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .select('id, name, mobile, city, source, status, created_at')
+            .order('created_at', { ascending: false })
+            .limit(50);
 
         let leads = [];
         if (!error && data) {

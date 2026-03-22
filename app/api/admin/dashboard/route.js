@@ -11,7 +11,7 @@ export const GET = withAdminAuth(async (request, user) => {
         // 1. Get blog count
         const { count: blogCount } = await supabase
             .from('blog_posts')
-            .select('*', { count: 'exact', head: true });
+            .select('id', { count: 'exact', head: true });
 
         // 2. Get resources downloads sum
         const { data: resourcesData } = await supabase
@@ -23,7 +23,7 @@ export const GET = withAdminAuth(async (request, user) => {
         // 3. Get Leads count from Supabase
         const { count: supabaseLeadsCount } = await supabase
             .from('lead_cache')
-            .select('*', { count: 'exact', head: true });
+            .select('id', { count: 'exact', head: true });
 
         const totalLeads = supabaseLeadsCount || 0;
 
@@ -33,35 +33,35 @@ export const GET = withAdminAuth(async (request, user) => {
         // API Traffic (Last 24hrs)
         const { count: apiRequests } = await supabase
             .from('api_requests')
-            .select('*', { count: 'exact', head: true })
+            .select('id', { count: 'exact', head: true })
             .gte('created_at', yesterday);
 
         // Critical Unresolved Errors
         const { count: unresolvedErrors } = await supabase
             .from('system_runtime_errors')
-            .select('*', { count: 'exact', head: true })
+            .select('id', { count: 'exact', head: true })
             .eq('resolved', false);
 
         // Pending Sync Queue
         const { count: queueSize } = await supabase
             .from('lead_queue')
-            .select('*', { count: 'exact', head: true })
+            .select('id', { count: 'exact', head: true })
             .or('synced_to_zoho.eq.false,synced_to_supabase.eq.false');
 
         // Total Active Agents
         const { count: activeAgents } = await supabase
             .from('agents')
-            .select('*', { count: 'exact', head: true });
+            .select('id', { count: 'exact', head: true });
 
         // Recruitment Pipeline Size
         const { count: pipelineSize } = await supabase
             .from('recruitment_pipeline')
-            .select('*', { count: 'exact', head: true });
+            .select('id', { count: 'exact', head: true });
 
         // SEO Indexed Pages (Published articles + templates)
         const { count: publishedPages } = await supabase
             .from('custom_pages')
-            .select('*', { count: 'exact', head: true })
+            .select('id', { count: 'exact', head: true })
             .eq('status', 'published');
 
         const totalSeoIndexed = (blogCount || 0) + (publishedPages || 0) + 14; // +14 static routes mapped in sitemap
