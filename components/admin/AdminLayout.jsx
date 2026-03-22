@@ -7,9 +7,12 @@ import CommandPalette from './CommandPalette';
 const ADMIN_LINKS = [
     { label: 'Dashboard', href: '/admin', icon: '📊' },
     { label: 'Leads', href: '/admin/leads', icon: '👥' },
+    { label: 'CRM', href: '/admin/crm', icon: '🔗' },
     { label: 'Failed Leads', href: '/admin/failed', icon: '🚨' },
     { label: 'AI Queue', href: '/admin/ai', icon: '⚡' },
+    { label: 'Pages', href: '/admin/pages', icon: '📄' },
     { label: 'Analytics', href: '/admin/analytics', icon: '📈' },
+    { label: 'System', href: '/admin/system', icon: '🛡️' },
     { label: 'Logs', href: '/admin/logs', icon: '📋' },
     { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
 ];
