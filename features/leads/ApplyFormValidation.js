@@ -4,8 +4,8 @@ export const validateApplyStep = (currentStep, formData, locationStatus) => {
 
     if (currentStep === 1) {
         if (!formData.name.trim()) tempErrors.name = "Name is required";
-        if (!formData.mobile || !/^\d{10}$/.test(formData.mobile))
-            tempErrors.mobile = "Valid 10-digit mobile number required";
+        if (!formData.mobile || !/^[6-9]\d{9}$/.test(formData.mobile))
+            tempErrors.mobile = "Please enter a valid 10-digit Indian mobile number (Starting with 6-9)";
         if (!formData.dndConsent)
             tempErrors.dndConsent = "Please provide consent to proceed.";
     }

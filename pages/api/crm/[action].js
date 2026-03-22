@@ -327,19 +327,19 @@ async function handleCreateLead(req, res) {
                             // 1. Map string city to UUID
                             let targetCityId = null;
                             const { data: cityMatch } = await supabase.from('cities').select('id').ilike('city_name', city.trim()).limit(1).maybeSingle();
-                            
+
                             if (cityMatch) {
                                 targetCityId = cityMatch.id;
                             } else {
                                 const { data: defCity } = await supabase.from('cities').select('id').limit(1).maybeSingle();
                                 if (defCity) targetCityId = defCity.id;
                             }
-                            
+
                             // 2. Insert into Queue
                             if (targetCityId) {
                                 const cleanCity = city.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
                                 const generatedSlug = `lic-agent-in-${cleanCity}-${Date.now()}`;
-                                
+
                                 await supabase.from('generation_queue').insert({
                                     status: 'pending',
                                     progress: 0,
@@ -359,7 +359,7 @@ async function handleCreateLead(req, res) {
                                 // 3. Trigger AI Flow (Non-blocking)
                                 const qToken = process.env.QSTASH_TOKEN ? process.env.QSTASH_TOKEN.replace(/"/g, '') : '';
                                 const hookUrl = `https://bimasakhi.com/api/jobs/pagegen`;
-                                
+
                                 fetch(hookUrl, {
                                     method: 'POST',
                                     headers: { 'Authorization': `Bearer ${qToken}` }
@@ -496,7 +496,7 @@ async function handleCreateLead(req, res) {
             if (isSupabaseEnabled && supabaseLeadId) {
                 const qToken = process.env.QSTASH_TOKEN ? process.env.QSTASH_TOKEN.replace(/"/g, '') : '';
                 const qstashEndpoint = `https://qstash.upstash.io/v2/publish/https://bimasakhi.com/api/jobs/ai-scorer`;
-                
+
                 fetch(qstashEndpoint, {
                     method: 'POST',
                     headers: {
