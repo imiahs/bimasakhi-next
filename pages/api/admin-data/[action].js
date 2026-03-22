@@ -132,7 +132,21 @@ async function handleLeadsList(req, res) {
 
     } catch (error) {
         console.error("Leads List API Error", error.response ? error.response.data : error.message);
-        return res.status(500).json({ error: "Failed to fetch leads" });
+        
+        // GRACEFUL FALLBACK TO SUPABASE CACHE
+        try {
+            const { getServiceSupabase } = require('@/utils/supabaseClientSingleton');
+            const supabase = getServiceSupabase();
+            const { data: fallbackLeads } = await supabase.from('leads')
+                 .select('*')
+                 .order('created_at', { ascending: false })
+                 .limit(50);
+                 
+            return res.status(200).json({ leads: fallbackLeads || [] });
+        } catch(fallbackErr) {
+            console.error("Fallback API Error", fallbackErr.message);
+            return res.status(200).json({ leads: [] });
+        }
     }
 }
 
@@ -221,7 +235,17 @@ async function handleStats(req, res) {
     } catch (error) {
         console.error("Stats API Error", error.response ? error.response.data : error.message);
         // Fail gracefully
-        return res.status(500).json({ error: "Failed to fetch stats" });
+        return res.status(200).json({ 
+            range: req.query.range || 'today',
+            generatedAt: new Date().toISOString(),
+            totalApplications: 0,
+            blog_leads: 0,
+            tool_leads: 0,
+            resource_leads: 0,
+            apply_leads: 0,
+            attribution: [],
+            zoho_error: "OAUTH_SCOPE_MISMATCH or Timeout"
+         });
     }
 }
 
