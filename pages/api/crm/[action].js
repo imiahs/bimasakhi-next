@@ -176,7 +176,7 @@ async function handleCreateLead(req, res) {
             // A. Check for Duplicate (Optimistic Check)
             const { data: existingLead, error: checkError } = await supabase
                 .from('leads')
-                .select('id, city, created_at, zoho_lead_id, full_name, ref_id')
+                .select('id, city, created_at, zoho_lead_id, full_name') // Removed ref_id as it causes 42703 (Missing Column)
                 .eq('mobile', normalizedMobile)
                 .maybeSingle();
 
@@ -213,8 +213,8 @@ async function handleCreateLead(req, res) {
                             source,
                             medium,
                             campaign,
-                            status: 'new',
-                            is_city_missing: isCityMissing
+                            status: 'new'
+                            // Removed is_city_missing to prevent PGRST204 (Missing Column) cache failures
                         })
                         .select()
                         .single();
@@ -226,11 +226,11 @@ async function handleCreateLead(req, res) {
                     // Generate user-friendly Reference ID
                     refId = await generateRefId();
 
-                    // Store refId in leads table
+                    // Store refId in leads table (Non-Blocking / Graceful degradation)
                     const { error: refIdErr } = await supabase.from('leads').update({
                         ref_id: refId
                     }).eq('id', supabaseLeadId);
-                    if (refIdErr) console.error("RefId Update Error:", refIdErr);
+                    if (refIdErr) console.warn("Graceful DB Skip: 'ref_id' column missing in schema, continuing with generator...", refIdErr.message);
 
                     // Log Metadata
                     const { error: metaLogErr } = await supabase.from('lead_metadata').insert({
