@@ -345,7 +345,7 @@ async function handleGetFailed(req, res) {
         
         // Capped query fetching the 50 most recent anomalous leads
         const { data: failed, error } = await supabase.from('failed_leads')
-            .select('id, name, created_at, retry_count, reason') // explicit columns
+            .select('*')
             .order('created_at', { ascending: false })
             .limit(50);
             
@@ -365,7 +365,7 @@ async function handleGetLogs(req, res) {
         const { type } = req.query;
         
         let query = supabase.from('system_logs')
-            .select('id, type, message, created_at') // precision select
+            .select('*')
             .order('created_at', { ascending: false })
             .limit(50); // Hard limit 50
             
