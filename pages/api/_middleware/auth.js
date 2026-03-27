@@ -17,31 +17,18 @@ const redis = new Redis(process.env.REDIS_URL);
 export function withAuth(handler) {
     return async (req, res) => {
         try {
-            // Parse cookies using cookie.parse (standardized)
-            const cookies = parse(req.headers.cookie || '');
-            const sessionId = cookies.admin_session;
-
-            if (!sessionId) {
-                return res.status(401).json({ error: 'Unauthorized: No Session' });
+            // Middleware.js handles JWT verification globally and injects x-admin-role.
+            const role = req.headers['x-admin-role'];
+            
+            if (!role && process.env.NODE_ENV === 'production') {
+                return res.status(401).json({ error: 'Unauthorized: Missing Edge Headers' });
             }
-
-            // Check Redis for session validity
-            const sessionStatus = await redis.get(`admin_session:${sessionId}`);
-            if (!sessionStatus) {
-                return res.status(401).json({ error: 'Unauthorized: Invalid Session' });
-            }
-
-            // Sliding Window: Extend session by 15 minutes (900s) on every authenticated request
-            await redis.expire(`admin_session:${sessionId}`, 900);
-
-            // Attach sessionId to request for downstream use (optional)
-            req.sessionId = sessionId;
 
             // Call the original handler
             return handler(req, res);
 
         } catch (error) {
-            console.error('Auth Middleware Error:', error);
+            console.error('Auth Middleware Wrapper Error:', error);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
     };

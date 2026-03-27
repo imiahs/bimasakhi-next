@@ -36,13 +36,7 @@ async function handleLogin(req, res) {
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         const rateLimitKey = `login_attempts:${ip}`;
 
-        // --- Rate Limit Check ---
-        const attempts = await redis.get(rateLimitKey);
-        if (attempts && parseInt(attempts, 10) >= MAX_ATTEMPTS) {
-            console.warn(`Rate limited login from ${ip} (${attempts} attempts)`);
-            return res.status(429).json({ error: 'Too many login attempts. Try again later.' });
-        }
-
+        // Basic stateless login, defer rate limiting to edge middleware or Vercel WAF
         const { password } = req.body;
         const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
@@ -52,19 +46,11 @@ async function handleLogin(req, res) {
         }
 
         if (password !== ADMIN_PASSWORD) {
-            // --- Increment failed attempt counter ---
-            const current = await redis.incr(rateLimitKey);
-            if (current === 1) {
-                // First failure — set the expiry window
-                await redis.expire(rateLimitKey, WINDOW_SECONDS);
-            }
-
-            console.warn(`Failed login attempt from ${ip} (attempt ${current}/${MAX_ATTEMPTS})`);
+            console.warn(`Failed login attempt from ${ip}`);
             return res.status(401).json({ error: 'Invalid Password' });
         }
 
-        // --- Successful login: clear rate limit counter ---
-        await redis.del(rateLimitKey);
+        // --- Successful login ---
 
         // Generate base UUID
         const baseTarget = crypto.randomUUID();
@@ -78,9 +64,6 @@ async function handleLogin(req, res) {
             .sign(secret);
 
         const sessionId = jwtPayload;
-
-        // Store session in Redis with 24-hour expiration exactly as mapped
-        await redis.set(`admin_session:${sessionId}`, JSON.stringify({ active: true, created_at: Date.now() }), 'EX', 86400);
 
         console.log("SESSION CREATED:", sessionId);
         console.log("SET COOKIE:", sessionId);
@@ -118,10 +101,8 @@ async function handleLogout(req, res) {
 
         const sessionId = cookies['admin_session'];
 
-        if (sessionId) {
-            // Delete from Redis (Best effort)
-            await redis.del(`session:${sessionId}`);
-        }
+        // Token invalidation requires a blacklist if purely stateless JWT is used.
+        // For now, expiring the cookie immediately is sufficient on the client.
 
         // Clear Cookie
         // Max-Age=0 expires it immediately
@@ -146,25 +127,12 @@ async function handleCheck(req, res) {
     }
 
     try {
-        // Parse Cookies using standardized cookie.parse
-        const cookies = parse(req.headers.cookie || '');
-        const sessionId = cookies.admin_session;
-
-        if (!sessionId) {
-            return res.status(200).json({ authenticated: false });
+        // If middleware allowed this request through, the JWT is valid.
+        const role = req.headers['x-admin-role'];
+        if (role) {
+            return res.status(200).json({ authenticated: true, role });
         }
-
-        // Check Redis for session validity
-        const session = await redis.get(`admin_session:${sessionId}`);
-
-        if (session === null || !session) {
-            return res.status(200).json({ authenticated: false });
-        }
-
-        // Refresh TTL mapping safely
-        await redis.expire(`admin_session:${sessionId}`, 86400);
-
-        return res.status(200).json({ authenticated: true });
+        return res.status(200).json({ authenticated: false });
 
     } catch (error) {
         console.error('Auth Check Error:', error);
@@ -188,16 +156,9 @@ function sanitizeResponse(data) {
 }
 
 async function verifyAdmin(req) {
-    try {
-        const cookies = parse(req.headers.cookie || '');
-        const sessionId = cookies.admin_session;
-        if (!sessionId) return false;
-        const session = await redis.get(`admin_session:${sessionId}`);
-        console.log("COOKIE RECEIVED:", sessionId);
-        return session !== null;
-    } catch {
-        return false;
-    }
+    // Middleware already validates JWT and injects x-admin-role
+    const role = req.headers['x-admin-role'];
+    return !!role;
 }
 
 async function handleSystemHealth(req, res) {

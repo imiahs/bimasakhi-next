@@ -71,8 +71,6 @@ export async function middleware(request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         
-        console.log("DETECTED COOKIE:", authCookie ? 'YES' : 'NO');
-        
         try {
             // Cryptographically verify the JWT using Edge-compatible logic
             const { payload } = await jwtVerify(authCookie?.value || authCookie, JWT_SECRET);

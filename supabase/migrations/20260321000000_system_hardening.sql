@@ -9,10 +9,11 @@ CREATE TABLE IF NOT EXISTS failed_leads (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS system_logs (
+CREATE TABLE IF NOT EXISTS observability_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    type TEXT,
+    level TEXT,
     message TEXT,
+    source TEXT DEFAULT 'system',
     metadata JSONB,
     created_at TIMESTAMP DEFAULT NOW()
 );
