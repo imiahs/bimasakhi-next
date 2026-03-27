@@ -5,7 +5,6 @@ import { ConfigContext } from '../../context/ConfigContext';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
-import axios from 'axios';
 import useIdleTimer from '../../hooks/useIdleTimer';
 import InsightsTab from './tabs/InsightsTab';
 import LeadsTab from './tabs/LeadsTab';
@@ -31,8 +30,13 @@ const AdminShell = () => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get('/api/admin/check');
-                if (res.data.authenticated) {
+                const res = await fetch('/api/admin/check', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (data.authenticated) {
                     setIsAuthenticated(true);
                 }
             } catch (err) {
@@ -47,7 +51,14 @@ const AdminShell = () => {
         if (!password) return;
         setStatus({ loading: true, msg: 'Logging in...' });
         try {
-            await axios.post('/api/admin/login', { password });
+            const res = await fetch('/api/admin/login', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            if (!res.ok) throw new Error('Invalid Password');
+            await res.json();
             setIsAuthenticated(true);
             setStatus({ loading: false, msg: '' });
         } catch (error) {
@@ -59,7 +70,11 @@ const AdminShell = () => {
 
     const handleLogout = async () => {
         try {
-            await axios.post('/api/admin/logout');
+            await fetch('/api/admin/logout', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+            });
             setIsAuthenticated(false);
             setPassword('');
         } catch (error) {
@@ -86,17 +101,27 @@ const AdminShell = () => {
             // BUT for axios we might need withCredentials: true if cross-origin, 
             // but here it is same-origin so it should be fine.
             // However, just to be safe with axios defaults:
-            await axios.post('/api/admin-data/config-save', formData);
+            const res = await fetch('/api/admin-data/config-save', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            if (!res.ok) {
+                if (res.status === 401) {
+                    setIsAuthenticated(false);
+                    alert("Session Expired");
+                    throw new Error('Unauthorized');
+                }
+                throw new Error('Failed to save config');
+            }
+            await res.json();
 
             setStatus({ loading: false, msg: 'Saved Successfully!' });
             refreshConfig();
         } catch (error) {
             console.error(error);
             setStatus({ loading: false, msg: 'Error: Unauthorized or Network Fail' });
-            if (error.response && error.response.status === 401) {
-                setIsAuthenticated(false);
-                alert("Session Expired");
-            }
         }
     };
 

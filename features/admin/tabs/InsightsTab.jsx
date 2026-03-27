@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Button from '../../../components/ui/Button';
 import Card from '../../../components/ui/Card';
-import axios from 'axios';
 
 const InsightsTab = () => {
     const [range, setRange] = useState('today');
@@ -19,8 +18,14 @@ const InsightsTab = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await axios.get(`/api/admin-data/stats?range=${range}`);
-            setStats(res.data);
+            const res = await fetch(`/api/admin-data/stats?range=${range}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (!res.ok) throw new Error('Failed to fetch stats');
+            const data = await res.json();
+            setStats(data);
         } catch (err) {
             console.error("Stats Error", err);
             setError("Could not load stats. Zoho might be busy.");

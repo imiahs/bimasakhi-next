@@ -10,7 +10,7 @@ let supabaseServiceClient = null;
 /**
  * Gets the singleton Supabase Anon Client
  */
-export const getSupabaseClient = () => {
+export function getSupabaseClient() {
     if (!supabaseUrl || !supabaseAnonKey) {
         console.warn('Supabase URL or Anon Key is missing in environment variables.');
         return null;
@@ -22,12 +22,12 @@ export const getSupabaseClient = () => {
         });
     }
     return supabaseAnonClient;
-};
+}
 
 /**
  * Gets the singleton Supabase Service Role Client
  */
-export const getServiceSupabase = () => {
+export function getServiceSupabase() {
     if (!supabaseUrl || !serviceRoleKey) {
         console.warn('Supabase URL or Service Role Key is missing in environment variables.');
         return null;
@@ -39,7 +39,7 @@ export const getServiceSupabase = () => {
         });
     }
     return supabaseServiceClient;
-};
+}
 
 // Exporting as default for convenience, or specific instances
 export const supabase = getSupabaseClient();

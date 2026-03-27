@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Card from '../../../components/ui/Card';
-import axios from 'axios';
 
 const LeadsTab = () => {
     const [leads, setLeads] = useState([]);
@@ -12,8 +11,14 @@ const LeadsTab = () => {
         const fetchLeads = async () => {
             setLoading(true);
             try {
-                const res = await axios.get('/api/admin-data/leads-list');
-                setLeads(res.data.leads || []);
+                const res = await fetch('/api/admin-data/leads-list', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (!res.ok) throw new Error('Network response was not ok');
+                const data = await res.json();
+                setLeads(data.leads || []);
             } catch (err) {
                 console.error(err);
             } finally {
