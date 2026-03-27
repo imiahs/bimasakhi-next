@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
 import { parse } from 'cookie';
+import { verifyEdgeSession } from '@/lib/auth/verifyEdgeSession';
 
 // Initialize Redis outside handler for connection reuse
 const redis = new Redis(process.env.REDIS_URL);
@@ -17,11 +18,25 @@ const redis = new Redis(process.env.REDIS_URL);
 export function withAuth(handler) {
     return async (req, res) => {
         try {
-            // Middleware.js handles JWT verification globally and injects x-admin-role.
+            // Layer 1: Middleware.js handles JWT verification globally and injects x-admin-role.
             const role = req.headers['x-admin-role'];
             
             if (!role && process.env.NODE_ENV === 'production') {
                 return res.status(401).json({ error: 'Unauthorized: Missing Edge Headers' });
+            }
+
+            // Layer 2: Perform DEFENSE-IN-DEPTH server-side crypto validation.
+            // DO NOT trust headers blindly, they could theoretically be spoofed in edge deployments bypassing WAF
+            const session = await verifyEdgeSession(req);
+            
+            if (!session.authenticated) {
+                console.warn('[Security] Layer 2 Session Auth Failed (Defense in Depth)');
+                return res.status(401).json({ error: 'Unauthorized: Invalid Session Proof' });
+            }
+
+            // Restrict admin operations tightly to admin role
+            if (session.user.role !== 'admin') {
+                return res.status(403).json({ error: 'Forbidden: Insufficient privileges' });
             }
 
             // Call the original handler

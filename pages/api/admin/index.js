@@ -3,6 +3,7 @@
 import crypto from 'crypto';
 import { parse } from 'cookie';
 import { SignJWT } from 'jose';
+import { verifyEdgeSession } from '@/lib/auth/verifyEdgeSession';
 import { redis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
@@ -127,11 +128,18 @@ async function handleCheck(req, res) {
     }
 
     try {
-        // If middleware allowed this request through, the JWT is valid.
+        // Layer 1: Middleware Check
         const role = req.headers['x-admin-role'];
-        if (role) {
-            return res.status(200).json({ authenticated: true, role });
+        if (!role) {
+            return res.status(200).json({ authenticated: false });
         }
+
+        // Layer 2: Defense-in-depth crypto validation
+        const session = await verifyEdgeSession(req);
+        if (session.authenticated && session.user?.role === 'admin') {
+            return res.status(200).json({ authenticated: true, role: session.user.role });
+        }
+        
         return res.status(200).json({ authenticated: false });
 
     } catch (error) {
@@ -156,9 +164,17 @@ function sanitizeResponse(data) {
 }
 
 async function verifyAdmin(req) {
-    // Middleware already validates JWT and injects x-admin-role
+    // Layer 1: Middleware
     const role = req.headers['x-admin-role'];
-    return !!role;
+    if (!role) return false;
+
+    // Layer 2: Defense-in-Depth Crypto Validation
+    const session = await verifyEdgeSession(req);
+    if (!session.authenticated || session.user?.role !== 'admin') {
+        return false;
+    }
+
+    return true;
 }
 
 async function handleSystemHealth(req, res) {
