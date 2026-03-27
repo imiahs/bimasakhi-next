@@ -4,6 +4,7 @@ import axios from 'axios';
 import { withAuth, redis as sharedRedis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
 import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 
 // --- FAIL-FAST ENV GUARD ---
 function assertEnv(vars) {
@@ -135,10 +136,9 @@ async function handleLeadsList(req, res) {
         
         // GRACEFUL FALLBACK TO SUPABASE CACHE
         try {
-            const { getServiceSupabase } = require('@/utils/supabaseClientSingleton');
             const supabase = getServiceSupabase();
             if (!supabase) throw new Error("Supabase Client is offline");
-            const { data: fallbackLeads } = await supabase.from('leads')
+            const { data: fallbackLeads } = await supabase.from('lead_queue')
                  .select('*')
                  .order('created_at', { ascending: false })
                  .limit(50);

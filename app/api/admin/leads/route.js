@@ -10,8 +10,8 @@ export const GET = withAdminAuth(async (request, user) => {
 
         // Fetch real-time leads from the primary source of truth (leads table)
         const { data, error } = await supabase
-            .from('leads')
-            .select('id, full_name, mobile, city, source, status, created_at')
+            .from('lead_queue')
+            .select('id, name, mobile, city, source, created_at')
             .order('created_at', { ascending: false })
             .limit(100); // 🚀 PERFORMANCE RULES: ALWAYS use limits
 
@@ -19,11 +19,11 @@ export const GET = withAdminAuth(async (request, user) => {
         if (!error && data) {
             leads = data.map(lead => ({
                 id: lead.id,
-                name: lead.full_name || 'Unknown',
+                name: lead.name || 'Unknown',
                 mobile: lead.mobile,
                 city: lead.city,
                 source: lead.source,
-                status: lead.status || 'new',
+                status: 'new', // Using default since lead_queue lacks status
                 created_at: lead.created_at,
                 storage: 'Supabase'
             }));

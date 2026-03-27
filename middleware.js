@@ -71,6 +71,8 @@ export async function middleware(request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
         
+        console.log("DETECTED COOKIE:", authCookie ? 'YES' : 'NO');
+        
         try {
             // Cryptographically verify the JWT using Edge-compatible logic
             const { payload } = await jwtVerify(authCookie?.value || authCookie, JWT_SECRET);
@@ -100,7 +102,7 @@ export async function middleware(request) {
             return NextResponse.next();
         }
 
-        const authCookie = request.cookies.get('admin_session') || request.cookies.get('admin-session');
+        const authCookie = request.cookies.get('admin_session');
 
         if (!authCookie) {
             const loginUrl = new URL('/admin/login', request.url);

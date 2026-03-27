@@ -209,7 +209,7 @@ async function handleSystemHealth(req, res) {
         const today = new Date();
         today.setHours(0,0,0,0);
         
-        const { count: total_leads_today } = await supabase.from('leads')
+        const { count: total_leads_today } = await supabase.from('lead_queue')
                                         .select('id', {count: 'exact', head: true})
                                         .gte('created_at', today.toISOString());
         
@@ -222,9 +222,9 @@ async function handleSystemHealth(req, res) {
                                         .lt('retry_count', 3)
                                         .gte('created_at', yesterday);
         
-        const { data: last_10_errors } = await supabase.from('system_logs')
-                                        .select('id, type, message, created_at')
-                                        .eq('type', 'CRM_ERROR')
+        const { data: last_10_errors } = await supabase.from('observability_logs')
+                                        .select('id, level, message, created_at')
+                                        .eq('level', 'ERROR')
                                         .order('created_at', {ascending: false})
                                         .limit(10);
         
@@ -367,13 +367,13 @@ async function handleGetLogs(req, res) {
         const supabase = getServiceSupabase();
         const { type } = req.query;
         
-        let query = supabase.from('system_logs')
+        let query = supabase.from('observability_logs')
             .select('*')
             .order('created_at', { ascending: false })
             .limit(50); // Hard limit 50
             
         if (type) {
-            query = query.eq('type', type);
+            query = query.eq('level', type);
         }
         
         const { data: logs, error } = await query;
@@ -398,11 +398,9 @@ async function handleMarkConverted(req, res) {
         const supabase = getServiceSupabase();
         const value = parseInt(conversion_value) || 0;
         
-        const { error } = await supabase.from('leads')
+        const { error } = await supabase.from('lead_queue')
             .update({
-                is_converted: true,
-                converted_at: new Date().toISOString(),
-                conversion_value: value
+                synced_to_zoho: true
             })
             .eq('id', lead_id);
             
@@ -422,19 +420,19 @@ async function handleBusinessMetrics(req, res) {
         const today = new Date();
         today.setHours(0,0,0,0);
         
-        const { count: total_leads } = await supabase.from('leads').select('*', {count: 'exact', head: true});
-        const { count: converted_leads } = await supabase.from('leads').select('*', {count: 'exact', head: true}).eq('is_converted', true);
-        const { count: today_leads } = await supabase.from('leads').select('*', {count: 'exact', head: true}).gte('created_at', today.toISOString());
-        const { count: today_conversions } = await supabase.from('leads').select('*', {count: 'exact', head: true}).eq('is_converted', true).gte('converted_at', today.toISOString());
+        const { count: total_leads } = await supabase.from('lead_queue').select('*', {count: 'exact', head: true});
+        const { count: converted_leads } = await supabase.from('lead_queue').select('*', {count: 'exact', head: true}).eq('synced_to_zoho', true);
+        const { count: today_leads } = await supabase.from('lead_queue').select('*', {count: 'exact', head: true}).gte('created_at', today.toISOString());
+        const { count: today_conversions } = await supabase.from('lead_queue').select('*', {count: 'exact', head: true}).eq('synced_to_zoho', true).gte('created_at', today.toISOString());
         
-        const { data: revData } = await supabase.from('leads').select('conversion_value').eq('is_converted', true);
+        const { data: revData } = await supabase.from('lead_queue').select('id').eq('synced_to_zoho', true);
         let estimated_revenue = 0;
         if (revData) estimated_revenue = revData.reduce((acc, lead) => acc + (lead.conversion_value || 0), 0);
         
         const conversion_rate = total_leads > 0 ? ((converted_leads / total_leads) * 100).toFixed(2) + '%' : '0%';
         
         // Sampling top performance (bounded node memory protection)
-        const { data: sampleData } = await supabase.from('leads').select('city, source, is_converted').order('created_at', {ascending: false}).limit(50);
+        const { data: sampleData } = await supabase.from('lead_queue').select('city, source, synced_to_zoho').order('created_at', {ascending: false}).limit(50);
         
         let cityMap = {}, sourceMap = {}, convertSourceMap = {};
         if (sampleData) {
@@ -443,7 +441,7 @@ async function handleBusinessMetrics(req, res) {
                 const s = l.source || 'Organic';
                 cityMap[c] = (cityMap[c] || 0) + 1;
                 sourceMap[s] = (sourceMap[s] || 0) + 1;
-                if (l.is_converted) convertSourceMap[s] = (convertSourceMap[s] || 0) + 1;
+                if (l.synced_to_zoho) convertSourceMap[s] = (convertSourceMap[s] || 0) + 1;
             });
         }
         
