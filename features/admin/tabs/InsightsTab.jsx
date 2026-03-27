@@ -18,7 +18,7 @@ const InsightsTab = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`/api/admin-data/stats?range=${range}`, {
+            const res = await fetch(`/api/admin/stats?range=${range}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' }

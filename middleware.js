@@ -78,7 +78,7 @@ export async function middleware(request) {
             // Allow request through, append headers if needed
             const requestHeaders = new Headers(request.headers);
             requestHeaders.set('x-admin-role', payload.role);
-            requestHeaders.set('x-admin-id', payload.sub);
+            requestHeaders.set('x-admin-user', payload.sub);
 
             return NextResponse.next({
                 request: {
@@ -115,7 +115,7 @@ export async function middleware(request) {
             // Allow request through, append headers if needed
             const requestHeaders = new Headers(request.headers);
             requestHeaders.set('x-admin-role', payload.role);
-            requestHeaders.set('x-admin-id', payload.sub);
+            requestHeaders.set('x-admin-user', payload.sub);
 
             return NextResponse.next({
                 request: {

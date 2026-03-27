@@ -13,7 +13,7 @@ const SystemHealthContent = () => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch('/api/admin?action=system-health');
+            const res = await fetch('/api/admin/system-health');
             const response = await res.json();
             if (response.success) {
                 setStatus(response.data);

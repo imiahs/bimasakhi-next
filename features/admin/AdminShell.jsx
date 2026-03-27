@@ -101,7 +101,7 @@ const AdminShell = () => {
             // BUT for axios we might need withCredentials: true if cross-origin, 
             // but here it is same-origin so it should be fine.
             // However, just to be safe with axios defaults:
-            const res = await fetch('/api/admin-data/config-save', {
+            const res = await fetch('/api/admin/config', {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },

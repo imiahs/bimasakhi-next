@@ -11,7 +11,7 @@ const LeadsTab = () => {
         const fetchLeads = async () => {
             setLoading(true);
             try {
-                const res = await fetch('/api/admin-data/leads-list', {
+                const res = await fetch('/api/admin/leads', {
                     method: 'GET',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' }
