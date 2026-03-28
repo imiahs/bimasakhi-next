@@ -4,36 +4,45 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export const GET = withAdminAuth(async (request, user) => {
+export const GET = withAdminAuth(async () => {
     try {
         const supabase = getServiceSupabase();
 
-        // Fetch real-time leads from the primary source of truth (leads table)
         const { data, error } = await supabase
             .from('lead_queue')
-            .select('id, name, mobile, city, source, created_at')
+            .select('id, name, mobile, city, source, created_at, synced_to_zoho')
             .order('created_at', { ascending: false })
-            .limit(100); // 🚀 PERFORMANCE RULES: ALWAYS use limits
+            .limit(100);
 
-        let leads = [];
-        if (!error && data) {
-            leads = data.map(lead => ({
-                id: lead.id,
-                name: lead.name || 'Unknown',
-                mobile: lead.mobile,
-                city: lead.city,
-                source: lead.source,
-                status: 'new', // Using default since lead_queue lacks status
-                created_at: lead.created_at,
-                storage: 'Supabase'
-            }));
-        } else if (error) {
-            console.error('Supabase fetch error for leads:', error);
+        if (error) {
+            console.error('Leads DB error:', error);
+            return NextResponse.json({ leads: [] }, { status: 200 });
         }
 
+        const leads = (data || []).map((lead) => ({
+            id: lead.id,
+
+            // NEW STRUCTURE
+            name: lead.name || 'Unknown',
+            mobile: lead.mobile || '',
+            city: lead.city || '',
+            source: lead.source || 'Direct',
+
+            // BACKWARD COMPATIBILITY (CRITICAL)
+            Last_Name: lead.name || 'Unknown',
+            Mobile: lead.mobile || '',
+            City: lead.city || '',
+            Lead_Source: lead.source || 'Direct',
+
+            created_at: lead.created_at,
+            synced_to_zoho: !!lead.synced_to_zoho,
+            status: lead.synced_to_zoho ? 'converted' : 'new'
+        }));
+
         return NextResponse.json({ leads });
+
     } catch (error) {
-        console.error('API /admin/leads GET error:', error);
-        return NextResponse.json({ error: 'Failed to fetch leads from sources' }, { status: 500 });
+        console.error('Leads API crash:', error);
+        return NextResponse.json({ leads: [] }, { status: 200 });
     }
 });
