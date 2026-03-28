@@ -11,32 +11,28 @@ export const GET = withAdminAuth(async () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const [
-            totalRes,
-            conversionRes,
-            todayRes,
-            activePagesRes,
-            queueRes
-        ] = await Promise.all([
-            supabase
-                .from('leads')
-                .select('id', { count: 'exact', head: true }),
-            supabase
-                .from('leads')
-                .select('id', { count: 'exact', head: true })
-                .eq('is_converted', true),
-            supabase
-                .from('leads')
-                .select('id', { count: 'exact', head: true })
-                .gte('created_at', today.toISOString()),
-            supabase
-                .from('page_index')
-                .select('id', { count: 'exact', head: true })
-                .eq('status', 'active'),
-            supabase
-                .from('generation_queue')
-                .select('status')
-        ]);
+        const totalRes = await supabase
+            .from('leads')
+            .select('id', { count: 'exact', head: true });
+
+        const conversionRes = await supabase
+            .from('leads')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_converted', true);
+
+        const todayRes = await supabase
+            .from('leads')
+            .select('id', { count: 'exact', head: true })
+            .gte('created_at', today.toISOString());
+
+        const activePagesRes = await supabase
+            .from('page_index')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'active');
+
+        const queueRes = await supabase
+            .from('generation_queue')
+            .select('status');
 
         const requiredErrors = [
             totalRes.error,
@@ -50,7 +46,7 @@ export const GET = withAdminAuth(async () => {
             return NextResponse.json({
                 success: false,
                 error: 'Failed to fetch required metrics',
-                details: requiredErrors.map((err) => err.message || String(err))
+                details: requiredErrors.map((err) => err.message || JSON.stringify(err))
             }, { status: 500 });
         }
 
