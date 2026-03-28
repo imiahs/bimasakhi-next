@@ -70,12 +70,10 @@ export default function AIPanelPage() {
         { key: 'status', label: 'Status', render: (row) => <StatusBadge status={row.status} /> }
     ], []);
 
-    const totalItems = (queue?.pending ?? 0) + (queue?.processing ?? 0) + (queue?.completed ?? 0) + (queue?.failed ?? 0);
-
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
             {/* Header */}
-            <div className="flex justify-between items-center bg-white px-6 py-5 rounded-xl border border-zinc-200">
+            <div className="flex justify-between items-center bg-white px-6 py-5 rounded-2xl border border-zinc-200 shadow-sm">
                 <div>
                     <h1 className="text-lg font-semibold text-zinc-900 tracking-tight">AI Control Panel</h1>
                     <p className="text-sm text-zinc-500 mt-1">Monitor SEO generation queues via QStash.</p>
@@ -111,7 +109,7 @@ export default function AIPanelPage() {
 
             {/* Quick Metrics Row */}
             {queue && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     <MetricCard 
                         title="Pending" 
                         value={queue.pending ?? 0}
@@ -131,6 +129,10 @@ export default function AIPanelPage() {
                         title="Failed" 
                         value={queue.failed ?? 0}
                         statusColor={queue.failed > 0 ? 'error' : null}
+                    />
+                    <MetricCard
+                        title="Total"
+                        value={queue.total ?? ((queue.pending ?? 0) + (queue.processing ?? 0) + (queue.completed ?? 0) + (queue.failed ?? 0))}
                     />
                 </div>
             )}

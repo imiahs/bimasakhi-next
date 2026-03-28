@@ -45,7 +45,8 @@ export default function SettingsPage() {
         setSaving(true);
 
         try {
-            await adminApi.saveConfig(config);
+            const res = await adminApi.saveConfig(config);
+            setConfig({ ...DEFAULT_CONFIG, ...(res?.data || config) });
             setToast({ type: 'success', text: 'Runtime controls updated.' });
         } catch (err) {
             setToast({ type: 'error', text: `Save blocked: ${err.message}` });
@@ -69,6 +70,22 @@ export default function SettingsPage() {
             <div>
                 <h1 className="text-2xl font-bold text-slate-800">System Configuration</h1>
                 <p className="text-sm text-slate-500 mt-1">These controls affect the live lead, AI, queue, and followup engine.</p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {[
+                    { label: 'CRM Auto Routing', enabled: config.crm_auto_routing },
+                    { label: 'Queue Running', enabled: !config.queue_paused },
+                    { label: 'AI Enabled', enabled: config.ai_enabled },
+                    { label: 'Followup Enabled', enabled: config.followup_enabled }
+                ].map((item) => (
+                    <div key={item.label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{item.label}</p>
+                        <p className={`mt-3 text-lg font-bold ${item.enabled ? 'text-emerald-700' : 'text-slate-500'}`}>
+                            {item.enabled ? 'ON' : 'OFF'}
+                        </p>
+                    </div>
+                ))}
             </div>
 
             {toast && (

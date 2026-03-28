@@ -24,20 +24,20 @@ function StatusBadge({ status, size = 'sm' }) {
     if (
         s.includes('pending') || s.includes('draft') || s.includes('degraded') ||
         s.includes('processing') || s.includes('training') || s.includes('recruited') ||
-        s.includes('waiting')
+        s.includes('waiting') || s.includes('paused')
     ) {
         colorClass = 'bg-yellow-50 text-yellow-700 border-yellow-200';
         dotClass = 'bg-yellow-500';
     } else if (
         s.includes('completed') || s.includes('published') || s.includes('operational') ||
         s.includes('success') || s.includes('active') || s.includes('converted') ||
-        s.includes('hot') || s.includes('online')
+        s.includes('hot') || s.includes('online') || s === 'on'
     ) {
         colorClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
         dotClass = 'bg-emerald-500';
     } else if (
         s.includes('failed') || s.includes('downtime') || s.includes('error') ||
-        s.includes('inactive') || s.includes('lapsed') || s.includes('rejected')
+        s.includes('inactive') || s.includes('lapsed') || s.includes('rejected') || s === 'off'
     ) {
         colorClass = 'bg-red-50 text-red-700 border-red-200';
         dotClass = 'bg-red-500';

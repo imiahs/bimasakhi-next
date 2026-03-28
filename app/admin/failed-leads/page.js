@@ -59,8 +59,8 @@ export default function FailedLeadsPage() {
         <div className="space-y-6 animate-in fade-in duration-300">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">Failed Leads Sandbox</h1>
-                    <p className="text-sm text-slate-500 mt-1">Review stuck webhook payloads tracking internal CRM rejection anomalies.</p>
+                    <h1 className="text-2xl font-bold text-slate-800">Failed Lead Recovery</h1>
+                    <p className="text-sm text-slate-500 mt-1">Inspect real CRM failures, retry them safely, or clear the recovery buffer.</p>
                 </div>
                 
                 <div className="flex items-center gap-3">
@@ -82,7 +82,7 @@ export default function FailedLeadsPage() {
                 </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 {loading ? (
                     <div className="p-12 text-center text-slate-400 flex flex-col items-center">
                         <div className="w-8 h-8 border-4 border-slate-200 border-t-indigo-500 rounded-full animate-spin mb-3"></div>
@@ -93,8 +93,8 @@ export default function FailedLeadsPage() {
                 ) : failedLeads.length === 0 ? (
                     <div className="p-12 text-center flex flex-col items-center">
                         <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-3xl mb-4">✓</div>
-                        <h3 className="text-lg font-bold text-slate-700">Zero System Failures</h3>
-                        <p className="text-slate-400 mt-1">All pipelines are functioning optimally.</p>
+                        <h3 className="text-lg font-bold text-slate-700">No Failed Leads</h3>
+                        <p className="text-slate-400 mt-1">The recovery buffer is currently empty.</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">

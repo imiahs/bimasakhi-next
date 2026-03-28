@@ -16,7 +16,7 @@ export const GET = withAdminAuth(async () => {
             conversionRes,
             todayRes,
             activePagesRes,
-            distributionRes
+            queueRes
         ] = await Promise.all([
             supabase
                 .from('leads')
@@ -34,26 +34,46 @@ export const GET = withAdminAuth(async () => {
                 .select('id', { count: 'exact', head: true })
                 .eq('status', 'active'),
             supabase
-                .from('leads')
-                .select('source, city, conversion_value, is_converted')
+                .from('generation_queue')
+                .select('status')
         ]);
 
-        const firstError =
-            totalRes.error ||
-            conversionRes.error ||
-            todayRes.error ||
-            activePagesRes.error ||
-            distributionRes.error;
+        const requiredErrors = [
+            totalRes.error,
+            conversionRes.error,
+            todayRes.error,
+            activePagesRes.error,
+            queueRes.error
+        ].filter(Boolean);
 
-        if (firstError) {
-            throw firstError;
+        if (requiredErrors.length > 0) {
+            return NextResponse.json({
+                success: false,
+                error: 'Failed to fetch required metrics',
+                details: requiredErrors.map((err) => err.message || String(err))
+            }, { status: 500 });
         }
 
         const total = totalRes.count || 0;
         const conversions = conversionRes.count || 0;
         const todayLeads = todayRes.count || 0;
         const activePages = activePagesRes.count || 0;
-        const distributionRows = distributionRes.data || [];
+        const queueRows = queueRes.data || [];
+        const queuePending = queueRows.filter((row) => row.status === 'pending').length;
+        const queueTotal = queueRows.length;
+
+        let distributionRows = [];
+        const distributionRes = await supabase
+            .from('leads')
+            .select('source, city, conversion_value, is_converted')
+            .order('created_at', { ascending: false })
+            .limit(500);
+
+        if (!distributionRes.error) {
+            distributionRows = distributionRes.data || [];
+        } else {
+            console.error('Metrics API distribution query error:', distributionRes.error);
+        }
 
         const buildTopList = (rows, key, fallback) => {
             const counts = new Map();
@@ -83,6 +103,8 @@ export const GET = withAdminAuth(async () => {
                 converted_leads: conversions,
                 conversion_rate: total > 0 ? (conversions / total) * 100 : 0,
                 active_pages: activePages,
+                queue_pending: queuePending,
+                queue_total: queueTotal,
                 estimated_revenue: estimatedRevenue,
                 top_sources: buildTopList(distributionRows, 'source', 'Website'),
                 top_cities: buildTopList(distributionRows, 'city', 'Unknown')
@@ -92,18 +114,8 @@ export const GET = withAdminAuth(async () => {
     } catch (error) {
         console.error('Metrics API error:', error);
         return NextResponse.json({
-            success: true,
-            data: {
-                total_leads: 0,
-                today_leads: 0,
-                conversions: 0,
-                converted_leads: 0,
-                conversion_rate: 0,
-                active_pages: 0,
-                estimated_revenue: 0,
-                top_sources: [],
-                top_cities: []
-            }
-        });
+            success: false,
+            error: 'Failed to fetch metrics'
+        }, { status: 500 });
     }
 });

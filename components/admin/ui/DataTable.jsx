@@ -57,7 +57,7 @@ function DataTable({
     const endRow = Math.min(currentPage * pageSize, dataLen);
 
     return (
-        <div className="bg-white rounded-xl border border-zinc-200 overflow-hidden">
+        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm whitespace-nowrap">
                     <thead className="bg-zinc-50 border-b border-zinc-200 text-zinc-500 text-[11px] uppercase tracking-wider">
@@ -93,7 +93,7 @@ function DataTable({
                             pageData.map((row, i) => (
                                 <tr 
                                     key={row.id || `row-${i}`} 
-                                    className={`hover:bg-zinc-50/50 transition-colors text-zinc-700 ${onRowClick ? 'cursor-pointer' : ''}`}
+                                    className={`hover:bg-zinc-50/70 transition-colors text-zinc-700 ${onRowClick ? 'cursor-pointer' : ''}`}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
                                     {columns.map((col, j) => (

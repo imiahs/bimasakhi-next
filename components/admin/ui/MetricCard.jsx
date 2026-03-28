@@ -24,11 +24,11 @@ function MetricCard({ title, value, subtitle, trend, trendLabel, icon, statusCol
     const accentClass = statusColor ? accentMap[statusColor] || '' : '';
 
     return (
-        <div className={`bg-white rounded-xl p-6 border border-zinc-200 flex flex-col hover:border-zinc-300 transition-colors ${accentClass ? `border-l-[3px] ${accentClass}` : ''}`}>
+        <div className={`flex flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-md ${accentClass ? `border-l-[3px] ${accentClass}` : ''}`}>
             <div className="flex justify-between items-start mb-4">
                 <p className="text-zinc-500 font-medium text-sm leading-tight">{title}</p>
                 {icon && (
-                    <div className="text-zinc-400 bg-zinc-50 p-2 rounded-lg text-base flex-shrink-0">
+                    <div className="text-zinc-500 bg-zinc-100 p-2.5 rounded-xl text-base flex-shrink-0">
                         {icon}
                     </div>
                 )}
