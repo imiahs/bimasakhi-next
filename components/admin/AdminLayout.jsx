@@ -25,7 +25,10 @@ const AdminLayout = ({ children }) => {
     // Auth Check (Existing - untouched)
     useEffect(() => {
         if (pathname === '/admin/login') return;
-        fetch('/api/admin?action=check')
+        fetch('/api/admin/check', {
+            method: 'GET',
+            credentials: 'include'
+        })
             .then(res => res.json())
             .then(data => { if (!data.authenticated) router.push('/admin/login'); })
             .catch(() => router.push('/admin/login'));
@@ -34,7 +37,7 @@ const AdminLayout = ({ children }) => {
     // Logout (Existing - untouched)
     const handleLogout = async () => {
         try {
-            await fetch('/api/admin?action=logout', { method: 'POST' });
+            await fetch('/api/admin/logout', { method: 'POST' });
             router.push('/admin/login');
         } catch (e) {
             console.error("Logout failed", e);

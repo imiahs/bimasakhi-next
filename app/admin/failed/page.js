@@ -12,7 +12,7 @@ export default function AdminFailedLeads() {
     useEffect(() => {
         const fetchFailed = async () => {
             try {
-                const res = await fetch('/api/admin?action=get-failed').then(r => r.json());
+                const res = await fetch('/api/admin/failed').then(r => r.json());
                 if (res.success) setFailedLeads(res.data.failed_leads || []);
             } catch (err) {
                 console.error("Failed Leads fetch failed", err);
@@ -33,7 +33,7 @@ export default function AdminFailedLeads() {
 
         setRetrying(id);
         try {
-            const res = await fetch('/api/admin?action=retry-failed', { method: 'POST' }).then(r=>r.json());
+            const res = await fetch('/api/admin/failed/retry', { method: 'POST' }).then(r=>r.json());
             if (res.success) {
                 showToast(`Retry job queued dynamically. Workers are processing anomalistic payloads.`);
                 setFailedLeads(failedLeads.filter(l => l.id !== id));
