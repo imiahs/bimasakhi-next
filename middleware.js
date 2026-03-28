@@ -43,7 +43,7 @@ export async function middleware(request) {
 
         // CSRF Protection Check for Mutations
         if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method) &&
-            pathname !== '/api/admin/auth/login' &&
+            pathname !== '/api/admin/login' &&
             pathname !== '/api/admin/debug/worker-test' &&
             !pathname.startsWith('/api/jobs')) {
             const origin = request.headers.get('origin') || request.headers.get('referer') || '';
@@ -57,11 +57,11 @@ export async function middleware(request) {
 
     // 2. JWT ADMIN SESSION VALIDATION FOR API
     if (pathname.startsWith('/api/admin')) {
-        const action = request.nextUrl.searchParams.get('action');
+        const publicPaths = [
+            '/api/admin/login'
+        ];
 
-        const publicActions = ['login'];
-
-        if (publicActions.includes(action) || pathname === '/api/admin-data/config-get' || pathname.includes('/debug/')) {
+        if (publicPaths.some(path => pathname.startsWith(path))) {
             return NextResponse.next();
         }
 
