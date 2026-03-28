@@ -4,6 +4,37 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
+function serializeError(error) {
+    if (!error) return null;
+
+    return {
+        message: error.message || '',
+        details: error.details || '',
+        hint: error.hint || '',
+        code: error.code || ''
+    };
+}
+
+async function runCountQuery(label, query) {
+    const result = await query();
+    const error = serializeError(result?.error);
+    const hasCount = typeof result?.count === 'number';
+    const isFatal = Boolean(error && (
+        error.message ||
+        error.details ||
+        error.hint ||
+        error.code ||
+        !hasCount
+    ));
+
+    return {
+        label,
+        count: hasCount ? result.count : 0,
+        error,
+        isFatal
+    };
+}
+
 export const GET = withAdminAuth(async () => {
     try {
         const supabase = getServiceSupabase();
@@ -11,52 +42,79 @@ export const GET = withAdminAuth(async () => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const totalRes = await supabase
-            .from('leads')
-            .select('id', { count: 'exact', head: true });
+        const totalRes = await runCountQuery('total_leads', () => (
+            supabase
+                .from('leads')
+                .select('id', { count: 'exact' })
+                .limit(1)
+        ));
 
-        const conversionRes = await supabase
-            .from('leads')
-            .select('id', { count: 'exact', head: true })
-            .eq('is_converted', true);
+        const conversionRes = await runCountQuery('conversions', () => (
+            supabase
+                .from('leads')
+                .select('id', { count: 'exact' })
+                .eq('is_converted', true)
+                .limit(1)
+        ));
 
-        const todayRes = await supabase
-            .from('leads')
-            .select('id', { count: 'exact', head: true })
-            .gte('created_at', today.toISOString());
+        const todayRes = await runCountQuery('today_leads', () => (
+            supabase
+                .from('leads')
+                .select('id', { count: 'exact' })
+                .gte('created_at', today.toISOString())
+                .limit(1)
+        ));
 
-        const activePagesRes = await supabase
-            .from('page_index')
-            .select('id', { count: 'exact', head: true })
-            .eq('status', 'active');
+        const activePagesRes = await runCountQuery('active_pages', () => (
+            supabase
+                .from('page_index')
+                .select('id', { count: 'exact' })
+                .eq('status', 'active')
+                .limit(1)
+        ));
 
-        const queueRes = await supabase
-            .from('generation_queue')
-            .select('status');
+        const queuePendingRes = await runCountQuery('queue_pending', () => (
+            supabase
+                .from('generation_queue')
+                .select('id', { count: 'exact' })
+                .eq('status', 'pending')
+                .limit(1)
+        ));
+
+        const queueTotalRes = await runCountQuery('queue_total', () => (
+            supabase
+                .from('generation_queue')
+                .select('id', { count: 'exact' })
+                .limit(1)
+        ));
 
         const requiredErrors = [
-            totalRes.error,
-            conversionRes.error,
-            todayRes.error,
-            activePagesRes.error,
-            queueRes.error
-        ].filter(Boolean);
+            totalRes,
+            conversionRes,
+            todayRes,
+            activePagesRes,
+            queuePendingRes,
+            queueTotalRes
+        ].filter((item) => item.isFatal);
 
         if (requiredErrors.length > 0) {
+            console.error('Metrics API required query failure:', requiredErrors);
             return NextResponse.json({
                 success: false,
                 error: 'Failed to fetch required metrics',
-                details: requiredErrors.map((err) => err.message || JSON.stringify(err))
+                details: requiredErrors.map((item) => ({
+                    query: item.label,
+                    ...item.error
+                }))
             }, { status: 500 });
         }
 
-        const total = totalRes.count || 0;
-        const conversions = conversionRes.count || 0;
-        const todayLeads = todayRes.count || 0;
-        const activePages = activePagesRes.count || 0;
-        const queueRows = queueRes.data || [];
-        const queuePending = queueRows.filter((row) => row.status === 'pending').length;
-        const queueTotal = queueRows.length;
+        const total = totalRes.count;
+        const conversions = conversionRes.count;
+        const todayLeads = todayRes.count;
+        const activePages = activePagesRes.count;
+        const queuePending = queuePendingRes.count;
+        const queueTotal = queueTotalRes.count;
 
         let distributionRows = [];
         const distributionRes = await supabase

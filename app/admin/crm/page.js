@@ -27,8 +27,8 @@ export default function CRMPage() {
     const fetchLeads = async () => {
         try {
             setLoading(true);
-            const res = await adminApi.getLeads();
-            setLeads(res.leads || []);
+            const response = await adminApi.getLeads();
+            setLeads(response.leads || []);
             setError(null);
         } catch (err) {
             setError(err.message);
@@ -41,16 +41,16 @@ export default function CRMPage() {
         fetchLeads();
     }, []);
 
-    const sourceOptions = useMemo(() => {
-        return ['All', ...Array.from(new Set(leads.map((lead) => lead.Lead_Source || lead.source || 'Website')))];
-    }, [leads]);
+    const sourceOptions = useMemo(() => (
+        ['All', ...Array.from(new Set(leads.map((lead) => lead.Lead_Source || lead.source || 'Website')))]
+    ), [leads]);
 
-    const statusOptions = useMemo(() => {
-        return ['All', ...Array.from(new Set(leads.map((lead) => {
+    const statusOptions = useMemo(() => (
+        ['All', ...Array.from(new Set(leads.map((lead) => {
             if (lead.is_converted) return 'Converted';
             return lead.status || lead.Lead_Status || 'new';
-        })))];
-    }, [leads]);
+        })))]
+    ), [leads]);
 
     const filteredLeads = useMemo(() => {
         const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -76,7 +76,8 @@ export default function CRMPage() {
             const rightScore = Number(right.lead_score || right.score || 0);
 
             if (sortBy === 'newest') {
-                return new Date(right.created_at || right.Created_Time || 0).getTime() - new Date(left.created_at || left.Created_Time || 0).getTime();
+                return new Date(right.created_at || right.Created_Time || 0).getTime()
+                    - new Date(left.created_at || left.Created_Time || 0).getTime();
             }
 
             if (sortBy === 'score_asc') return leftScore - rightScore;
@@ -118,61 +119,59 @@ export default function CRMPage() {
 
     if (loading) {
         return (
-            <div className="flex min-h-[60vh] flex-col items-center justify-center">
-                <div className="h-9 w-9 animate-spin rounded-full border-4 border-zinc-200 border-t-black" />
-                <p className="mt-4 text-sm font-medium text-zinc-500">Loading live CRM leads...</p>
+            <div className="flex min-h-[60vh] items-center justify-center">
+                <div className="admin-panel flex flex-col items-center rounded-[2rem] px-10 py-12 text-center">
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/70 border-t-teal-700" />
+                    <p className="admin-kicker mt-6">CRM sync</p>
+                    <p className="mt-3 text-sm font-medium text-zinc-600">Loading live CRM leads...</p>
+                </div>
             </div>
         );
     }
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-500">Leads Panel</p>
-                    <h1 className="mt-2 text-3xl font-semibold tracking-tight text-zinc-950">CRM Pipeline</h1>
-                    <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-500">
-                        Real lead records, score visibility, Zoho sync state, and conversion tracking in one operator view.
-                    </p>
-                </div>
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-7 lg:px-8 lg:py-8">
+                <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p className="admin-kicker">Lead operations</p>
+                        <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Work the real CRM pipeline, not a sample table.</h1>
+                        <p className="admin-copy mt-5 max-w-2xl text-base">
+                            This board shows actual lead records, score visibility, Zoho sync state, and conversion actions for the production pipeline.
+                        </p>
+                    </div>
 
-                <button
-                    onClick={fetchLeads}
-                    className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-50"
-                >
-                    Refresh Leads
-                </button>
-            </div>
+                    <button onClick={fetchLeads} className="admin-button-secondary">
+                        Refresh leads
+                    </button>
+                </div>
+            </section>
 
             {toast && (
-                <div className={`rounded-2xl border px-4 py-3 text-sm font-medium shadow-sm ${
-                    toast.type === 'success'
-                        ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                        : 'border-rose-200 bg-rose-50 text-rose-700'
-                }`}>
+                <div className={`rounded-[1.5rem] px-4 py-3 text-sm font-medium shadow-sm ${toast.type === 'success' ? 'admin-toast-success' : 'admin-toast-error'}`}>
                     {toast.text}
                 </div>
             )}
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-                <MetricCard title="Total Leads" value={summary.total} subtitle="Visible in the CRM workbench" statusColor="success" />
-                <MetricCard title="Hot Leads" value={summary.hot} subtitle="Lead score 80 or higher" statusColor={summary.hot > 0 ? 'warning' : null} />
-                <MetricCard title="Zoho Synced" value={summary.zohoSynced} subtitle="Records with CRM sync ids" />
-                <MetricCard title="Converted" value={summary.converted} subtitle="Closed or revenue-attributed leads" />
+                <MetricCard title="Total Leads" value={summary.total} subtitle="Visible in the CRM workbench" icon="TL" statusColor="success" />
+                <MetricCard title="Hot Leads" value={summary.hot} subtitle="Lead score 80 or higher" icon="HT" statusColor={summary.hot > 0 ? 'warning' : null} />
+                <MetricCard title="Zoho Synced" value={summary.zohoSynced} subtitle="Records with CRM sync ids" icon="ZH" />
+                <MetricCard title="Converted" value={summary.converted} subtitle="Revenue-attributed leads" icon="CV" />
             </div>
 
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <section className="admin-panel rounded-[2rem] p-6">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <input
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}
                         placeholder="Search lead, mobile, email..."
-                        className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 focus:bg-white"
+                        className="admin-input px-4 py-3 text-sm"
                     />
                     <select
                         value={sourceFilter}
                         onChange={(event) => setSourceFilter(event.target.value)}
-                        className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 focus:bg-white"
+                        className="admin-select px-4 py-3 text-sm"
                     >
                         {sourceOptions.map((option) => (
                             <option key={option} value={option}>{option}</option>
@@ -181,7 +180,7 @@ export default function CRMPage() {
                     <select
                         value={statusFilter}
                         onChange={(event) => setStatusFilter(event.target.value)}
-                        className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 focus:bg-white"
+                        className="admin-select px-4 py-3 text-sm"
                     >
                         {statusOptions.map((option) => (
                             <option key={option} value={option}>{option}</option>
@@ -190,16 +189,16 @@ export default function CRMPage() {
                     <select
                         value={sortBy}
                         onChange={(event) => setSortBy(event.target.value)}
-                        className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 focus:bg-white"
+                        className="admin-select px-4 py-3 text-sm"
                     >
                         {SORT_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                     </select>
                 </div>
-            </div>
+            </section>
 
-            <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+            <section className="admin-panel overflow-hidden rounded-[2rem]">
                 {error ? (
                     <div className="px-6 py-10 text-center text-sm font-medium text-rose-600">
                         Failed to load leads: {error}
@@ -211,7 +210,7 @@ export default function CRMPage() {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="bg-zinc-50 text-xs uppercase tracking-[0.18em] text-zinc-500">
+                            <thead className="bg-[rgba(255,255,255,0.72)] text-xs uppercase tracking-[0.18em] text-zinc-500">
                                 <tr>
                                     <th className="px-5 py-4 font-semibold">Lead</th>
                                     <th className="px-5 py-4 font-semibold">City</th>
@@ -222,7 +221,7 @@ export default function CRMPage() {
                                     <th className="px-5 py-4 font-semibold text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-zinc-100">
+                            <tbody className="divide-y divide-[rgba(77,61,40,0.06)]">
                                 {filteredLeads.map((lead) => {
                                     const name = lead.Last_Name || lead.name || 'Unknown';
                                     const city = lead.City || lead.city || 'Unknown';
@@ -232,10 +231,10 @@ export default function CRMPage() {
                                     const status = lead.is_converted ? 'Converted' : (lead.status || lead.Lead_Status || 'new');
 
                                     return (
-                                        <tr key={lead.id} className={`transition hover:bg-zinc-50/80 ${lead.is_converted ? 'opacity-70' : ''}`}>
+                                        <tr key={lead.id} className={`transition hover:bg-[rgba(255,255,255,0.52)] ${lead.is_converted ? 'opacity-70' : ''}`}>
                                             <td className="px-5 py-4">
                                                 <div>
-                                                    <p className="font-medium text-zinc-950">{name}</p>
+                                                    <p className="font-semibold text-zinc-950">{name}</p>
                                                     <p className="mt-1 text-xs text-zinc-500">{lead.Mobile || lead.mobile || 'N/A'}</p>
                                                     {lead.email && <p className="mt-1 text-xs text-zinc-400">{lead.email}</p>}
                                                 </div>
@@ -262,14 +261,14 @@ export default function CRMPage() {
                                             <td className="px-5 py-4 text-right">
                                                 {lead.is_converted ? (
                                                     <span className="text-xs font-semibold text-emerald-700">
-                                                        Converted {lead.conversion_value ? `(₹${Number(lead.conversion_value).toLocaleString()})` : ''}
+                                                        Converted {lead.conversion_value ? `(Rs ${Number(lead.conversion_value).toLocaleString()})` : ''}
                                                     </span>
                                                 ) : (
                                                     <button
                                                         onClick={() => setConvertingId(lead.id)}
-                                                        className="rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-600 hover:text-white"
+                                                        className="admin-button-secondary px-3 py-2 text-xs"
                                                     >
-                                                        Mark Converted
+                                                        Mark converted
                                                     </button>
                                                 )}
                                             </td>
@@ -280,26 +279,27 @@ export default function CRMPage() {
                         </table>
                     </div>
                 )}
-            </div>
+            </section>
 
             {convertingId && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/50 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl">
-                        <div className="border-b border-zinc-100 bg-zinc-50 px-6 py-5">
-                            <h2 className="text-xl font-semibold tracking-tight text-zinc-950">Mark Lead as Converted</h2>
-                            <p className="mt-1 text-sm text-zinc-500">Store the conversion value against the real lead record.</p>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/55 p-4 backdrop-blur-sm">
+                    <div className="admin-panel w-full max-w-md overflow-hidden rounded-[2rem] shadow-2xl">
+                        <div className="border-b border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.48)] px-6 py-5">
+                            <p className="admin-kicker">Conversion record</p>
+                            <h2 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-zinc-950">Mark lead as converted</h2>
+                            <p className="mt-2 text-sm text-zinc-500">Store the conversion value against the real lead record.</p>
                         </div>
 
                         <form onSubmit={handleConvert} className="space-y-5 p-6">
                             <div>
-                                <label className="mb-2 block text-sm font-semibold text-zinc-800">Conversion Value (₹)</label>
+                                <label className="admin-kicker block">Conversion value (Rs)</label>
                                 <input
                                     type="number"
                                     value={conversionValue}
                                     onChange={(event) => setConversionValue(event.target.value)}
                                     min="0"
                                     required
-                                    className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 focus:bg-white"
+                                    className="admin-input mt-3 px-4 py-3 text-sm font-semibold"
                                 />
                             </div>
 
@@ -307,14 +307,14 @@ export default function CRMPage() {
                                 <button
                                     type="button"
                                     onClick={() => setConvertingId(null)}
-                                    className="flex-1 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+                                    className="admin-button-secondary flex-1"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={actionLoading}
-                                    className="flex-1 rounded-xl bg-black px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-50"
+                                    className="admin-button-primary flex-1"
                                 >
                                     {actionLoading ? 'Saving...' : 'Confirm'}
                                 </button>

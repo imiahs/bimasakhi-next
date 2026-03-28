@@ -1,55 +1,59 @@
 'use client';
 import React, { memo } from 'react';
 
-/**
- * StatusBadge — Small pill UI mapped to status value
- * 
- * Statuses detected:
- *   success  → green  (completed, published, operational, success, active, converted, hot)
- *   warning  → yellow (pending, draft, degraded, processing, training, recruited)
- *   error    → red    (failed, downtime, error, inactive, lapsed)
- *   default  → gray
- * 
- * @param {string}   status — The status text to display
- * @param {'sm'|'md'} size  — Badge size variant (default: 'sm')
- */
 function StatusBadge({ status, size = 'sm' }) {
     if (!status) return null;
-    
-    const s = String(status).toLowerCase();
-    
-    let colorClass = 'bg-zinc-50 text-zinc-600 border-zinc-200';
-    let dotClass = 'bg-zinc-400';
+
+    const normalized = String(status).toLowerCase();
+
+    let colorClass = 'bg-zinc-50/85 text-zinc-700 border-zinc-200';
+    let dotClass = 'bg-zinc-500';
 
     if (
-        s.includes('pending') || s.includes('draft') || s.includes('degraded') ||
-        s.includes('processing') || s.includes('training') || s.includes('recruited') ||
-        s.includes('waiting') || s.includes('paused')
+        normalized.includes('pending') ||
+        normalized.includes('draft') ||
+        normalized.includes('degraded') ||
+        normalized.includes('processing') ||
+        normalized.includes('training') ||
+        normalized.includes('recruited') ||
+        normalized.includes('waiting') ||
+        normalized.includes('paused')
     ) {
-        colorClass = 'bg-yellow-50 text-yellow-700 border-yellow-200';
-        dotClass = 'bg-yellow-500';
+        colorClass = 'bg-amber-50/90 text-amber-700 border-amber-200';
+        dotClass = 'bg-amber-500';
     } else if (
-        s.includes('completed') || s.includes('published') || s.includes('operational') ||
-        s.includes('success') || s.includes('active') || s.includes('converted') ||
-        s.includes('hot') || s.includes('online') || s === 'on'
+        normalized.includes('completed') ||
+        normalized.includes('published') ||
+        normalized.includes('operational') ||
+        normalized.includes('success') ||
+        normalized.includes('active') ||
+        normalized.includes('converted') ||
+        normalized.includes('hot') ||
+        normalized.includes('online') ||
+        normalized === 'on'
     ) {
-        colorClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        colorClass = 'bg-emerald-50/90 text-emerald-700 border-emerald-200';
         dotClass = 'bg-emerald-500';
     } else if (
-        s.includes('failed') || s.includes('downtime') || s.includes('error') ||
-        s.includes('inactive') || s.includes('lapsed') || s.includes('rejected') || s === 'off'
+        normalized.includes('failed') ||
+        normalized.includes('downtime') ||
+        normalized.includes('error') ||
+        normalized.includes('inactive') ||
+        normalized.includes('lapsed') ||
+        normalized.includes('rejected') ||
+        normalized === 'off'
     ) {
-        colorClass = 'bg-red-50 text-red-700 border-red-200';
-        dotClass = 'bg-red-500';
+        colorClass = 'bg-rose-50/90 text-rose-700 border-rose-200';
+        dotClass = 'bg-rose-500';
     }
 
     const sizeClass = size === 'md'
-        ? 'px-2.5 py-1 text-xs'
-        : 'px-2 py-0.5 text-[11px]';
+        ? 'px-3 py-1.5 text-[11px]'
+        : 'px-2.5 py-1 text-[10px]';
 
     return (
-        <span className={`inline-flex items-center gap-1.5 rounded-md uppercase tracking-wider font-semibold border ${colorClass} ${sizeClass}`}>
-            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotClass}`} />
+        <span className={`inline-flex items-center gap-1.5 rounded-full border font-semibold uppercase tracking-[0.18em] shadow-sm ${colorClass} ${sizeClass}`}>
+            <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${dotClass}`} />
             {status}
         </span>
     );

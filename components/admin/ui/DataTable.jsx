@@ -1,44 +1,29 @@
 'use client';
-import React, { memo, useState, useMemo, useCallback } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
-/**
- * DataTable — Production-grade paginated table
- * 
- * Features:
- *  - Column-based rendering with custom render functions
- *  - Built-in pagination (configurable page size, default 20, max 50)
- *  - Loading / empty / error states
- *  - Keyboard-navigable pagination controls
- *  - Minimal DOM: only renders visible page rows
- * 
- * @param {Array}    columns      — [{ key, label, render?(row) }]
- * @param {Array}    data         — Row data array
- * @param {boolean}  loading      — Show loading skeleton
- * @param {string}   error        — Error message to display
- * @param {string}   emptyMessage — Text when data is empty
- * @param {number}   pageSize     — Rows per page (default 20, capped at 50)
- * @param {Function} onRowClick   — Optional row click handler
- */
-function DataTable({ 
-    columns = [], 
-    data = [], 
-    loading = false, 
+function DataTable({
+    columns = [],
+    data = [],
+    loading = false,
     error = null,
-    emptyMessage = 'No data available.', 
+    emptyMessage = 'No data available.',
     pageSize: rawPageSize = 20,
     onRowClick
 }) {
     const pageSize = Math.min(rawPageSize, 50);
     const [currentPage, setCurrentPage] = useState(1);
 
-    const totalPages = useMemo(() => Math.max(1, Math.ceil((data?.length || 0) / pageSize)), [data?.length, pageSize]);
+    const totalPages = useMemo(
+        () => Math.max(1, Math.ceil((data?.length || 0) / pageSize)),
+        [data?.length, pageSize]
+    );
 
-    // Reset page to 1 when data changes substantially
-    const dataLen = data?.length || 0;
-    const prevDataLenRef = React.useRef(dataLen);
-    if (dataLen !== prevDataLenRef.current) {
-        prevDataLenRef.current = dataLen;
-        if (currentPage > Math.max(1, Math.ceil(dataLen / pageSize))) {
+    const dataLength = data?.length || 0;
+    const previousLengthRef = useRef(dataLength);
+
+    if (dataLength !== previousLengthRef.current) {
+        previousLengthRef.current = dataLength;
+        if (currentPage > Math.max(1, Math.ceil(dataLength / pageSize))) {
             setCurrentPage(1);
         }
     }
@@ -54,28 +39,29 @@ function DataTable({
     }, [totalPages]);
 
     const startRow = (currentPage - 1) * pageSize + 1;
-    const endRow = Math.min(currentPage * pageSize, dataLen);
+    const endRow = Math.min(currentPage * pageSize, dataLength);
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <div className="admin-panel overflow-hidden rounded-[1.75rem]">
             <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm whitespace-nowrap">
-                    <thead className="bg-zinc-50 border-b border-zinc-200 text-zinc-500 text-[11px] uppercase tracking-wider">
+                <table className="w-full whitespace-nowrap text-left text-sm">
+                    <thead className="border-b border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.72)] text-[11px] uppercase tracking-[0.2em] text-zinc-500">
                         <tr>
-                            {columns.map((col, i) => (
-                                <th key={col.key || i} className="px-6 py-3 font-semibold">
-                                    {col.label}
+                            {columns.map((column, index) => (
+                                <th key={column.key || index} className="px-6 py-3 font-semibold">
+                                    {column.label}
                                 </th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-zinc-100">
+
+                    <tbody className="divide-y divide-[rgba(77,61,40,0.06)]">
                         {loading ? (
-                            Array.from({ length: 5 }).map((_, i) => (
-                                <tr key={`skel-${i}`}>
-                                    {columns.map((col, j) => (
-                                        <td key={j} className="px-6 py-4">
-                                            <div className="h-4 bg-zinc-100 rounded animate-pulse w-3/4" />
+                            Array.from({ length: 5 }).map((_, rowIndex) => (
+                                <tr key={`skeleton-${rowIndex}`}>
+                                    {columns.map((column, columnIndex) => (
+                                        <td key={column.key || columnIndex} className="px-6 py-4">
+                                            <div className="h-4 w-3/4 animate-pulse rounded-full bg-zinc-200/70" />
                                         </td>
                                     ))}
                                 </tr>
@@ -84,21 +70,21 @@ function DataTable({
                             <tr>
                                 <td colSpan={columns.length} className="px-6 py-12 text-center">
                                     <div className="flex flex-col items-center gap-2">
-                                        <span className="text-red-500 text-lg">⚠</span>
-                                        <p className="text-red-600 font-medium text-sm">{error}</p>
+                                        <span className="text-lg text-rose-500">!</span>
+                                        <p className="text-sm font-medium text-rose-600">{error}</p>
                                     </div>
                                 </td>
                             </tr>
                         ) : pageData.length > 0 ? (
-                            pageData.map((row, i) => (
-                                <tr 
-                                    key={row.id || `row-${i}`} 
-                                    className={`hover:bg-zinc-50/70 transition-colors text-zinc-700 ${onRowClick ? 'cursor-pointer' : ''}`}
+                            pageData.map((row, index) => (
+                                <tr
+                                    key={row.id || `row-${index}`}
+                                    className={`text-zinc-700 transition-colors hover:bg-[rgba(255,255,255,0.52)] ${onRowClick ? 'cursor-pointer' : ''}`}
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
-                                    {columns.map((col, j) => (
-                                        <td key={col.key || j} className="px-6 py-4">
-                                            {col.render ? col.render(row) : (row[col.key] ?? '—')}
+                                    {columns.map((column, columnIndex) => (
+                                        <td key={column.key || columnIndex} className="px-6 py-4">
+                                            {column.render ? column.render(row) : (row[column.key] ?? '--')}
                                         </td>
                                     ))}
                                 </tr>
@@ -107,8 +93,8 @@ function DataTable({
                             <tr>
                                 <td colSpan={columns.length} className="px-6 py-12 text-center">
                                     <div className="flex flex-col items-center gap-2">
-                                        <span className="text-zinc-300 text-2xl">📭</span>
-                                        <p className="text-zinc-500 text-sm">{emptyMessage}</p>
+                                        <span className="text-2xl text-zinc-300">[]</span>
+                                        <p className="text-sm text-zinc-500">{emptyMessage}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -117,47 +103,47 @@ function DataTable({
                 </table>
             </div>
 
-            {/* Pagination Footer — only when data exceeds pageSize */}
-            {!loading && !error && dataLen > pageSize && (
-                <div className="bg-zinc-50 border-t border-zinc-200 px-6 py-3 flex items-center justify-between">
-                    <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wider">
-                        Showing {startRow}–{endRow} of {dataLen}
+            {!loading && !error && dataLength > pageSize && (
+                <div className="flex items-center justify-between border-t border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.58)] px-6 py-3">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500">
+                        Showing {startRow}-{endRow} of {dataLength}
                     </p>
+
                     <div className="flex items-center gap-1">
                         <button
                             onClick={() => goToPage(1)}
                             disabled={currentPage === 1}
-                            className="px-2 py-1 text-xs font-medium text-zinc-600 bg-white border border-zinc-200 rounded hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="rounded-full border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
                             aria-label="First page"
                         >
-                            ««
+                            {'<<'}
                         </button>
                         <button
                             onClick={() => goToPage(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className="px-2.5 py-1 text-xs font-medium text-zinc-600 bg-white border border-zinc-200 rounded hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="rounded-full border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
                             aria-label="Previous page"
                         >
-                            ‹ Prev
+                            Prev
                         </button>
-                        <span className="px-3 py-1 text-xs font-semibold text-zinc-900 bg-white border border-zinc-200 rounded">
+                        <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-900">
                             {currentPage} / {totalPages}
                         </span>
                         <button
                             onClick={() => goToPage(currentPage + 1)}
                             disabled={currentPage === totalPages}
-                            className="px-2.5 py-1 text-xs font-medium text-zinc-600 bg-white border border-zinc-200 rounded hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="rounded-full border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
                             aria-label="Next page"
                         >
-                            Next ›
+                            Next
                         </button>
                         <button
                             onClick={() => goToPage(totalPages)}
                             disabled={currentPage === totalPages}
-                            className="px-2 py-1 text-xs font-medium text-zinc-600 bg-white border border-zinc-200 rounded hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            className="rounded-full border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-40"
                             aria-label="Last page"
                         >
-                            »»
+                            {'>>'}
                         </button>
                     </div>
                 </div>
