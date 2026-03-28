@@ -36,10 +36,10 @@ export default function AIPanelPage() {
         if (!confirm('Manually trigger background SEO Generation queue?')) return;
         setActionLoading(true);
         try {
-            const res = await fetch('/api/jobs/pagegen', { method: 'POST' });
+            const res = await fetch('/api/admin/queue', { method: 'POST' });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Server error');
-            setToast({ type: 'success', text: `Triggered successfully. ${data.processed || 0} items processed.` });
+            setToast({ type: 'success', text: `Triggered successfully. ${data.data?.processed || data.processed || 0} items processed.` });
             fetchQueue();
         } catch (err) {
             setToast({ type: 'error', text: `Failed to trigger AI Engine: ${err.message}` });

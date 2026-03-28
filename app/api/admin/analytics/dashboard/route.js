@@ -21,14 +21,17 @@ export const GET = withAdminAuth(async (request, user) => {
                 supabase.from('content_metrics').select('*').order('leads_generated', { ascending: false }).limit(5),
                 supabase.from('traffic_sources').select('*').order('leads', { ascending: false }).limit(5),
                 supabase.from('lead_scores')
-                    .select('score, lead_id, score_reason, lead_cache(full_name, mobile)')
+                    .select('score, lead_id, score_reason, leads(full_name, mobile)')
                     .order('score', { ascending: false })
                     .limit(5)
             ]);
 
             topPages = pagesRes.data || [];
             topTraffic = trafficRes.data || [];
-            topScores = scoresRes.data || [];
+            topScores = (scoresRes.data || []).map((row) => ({
+                ...row,
+                lead_cache: row.leads
+            }));
         }
 
         // 2. Compute Funnel from Supabase `event_stream`

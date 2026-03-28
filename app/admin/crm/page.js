@@ -19,7 +19,7 @@ export default function CRMPage() {
             
             // PRIORITY ENGINE: Enhance Leads payload sorting High -> Medium -> Low
             const mappedLeads = (res.leads || []).map(lead => {
-                const score = lead.lead_score || 0;
+                const score = Number(lead.lead_score || lead.score || 0);
                 let priorityCode = 'Low';
                 let priorityWeight = 1;
                 
@@ -129,7 +129,7 @@ export default function CRMPage() {
                                                 </span>
                                             ) : (
                                                 <button 
-                                                    onClick={() => setConvertingId(lead.id || lead.Last_Name)}
+                                                    onClick={() => setConvertingId(lead.id)}
                                                     className="bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm"
                                                 >
                                                     Mark Converted

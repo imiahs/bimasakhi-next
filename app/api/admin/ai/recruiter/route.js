@@ -23,7 +23,7 @@ export const POST = withAdminAuth(async (request, user) => {
                 lead_id,
                 score,
                 score_reason,
-                lead_cache (full_name, mobile, email, status)
+                leads (full_name, mobile, email, status)
             `)
             .order('score', { ascending: false })
             .limit(5);
@@ -57,7 +57,7 @@ export const POST = withAdminAuth(async (request, user) => {
 
             if (shouldGenerate) {
                 const systemPrompt = "You are the Bima Sakhi AI Recruitment Assistant. Analyze the lead's score and context relative to an insurance agency recruitment pipeline. Output ONLY a valid JSON object strictly matching this schema: { \"conversion_probability\": number between 0 and 100, \"recommended_action\": \"string detailing EXACTLY how the admin should follow up\" }. Do not output markdown code blocks or any other conversational text.";
-                const userPrompt = `Lead Name: ${lead.lead_cache?.full_name}\nScore: ${lead.score}\nReason: ${lead.score_reason}\nStatus: ${lead.lead_cache?.status}`;
+                const userPrompt = `Lead Name: ${lead.leads?.full_name}\nScore: ${lead.score}\nReason: ${lead.score_reason}\nStatus: ${lead.leads?.status}`;
 
                 try {
                     const aiResponse = await generateAiContent(systemPrompt, userPrompt);
@@ -80,13 +80,13 @@ export const POST = withAdminAuth(async (request, user) => {
                     }).select().single();
 
                     if (!insertErr && inserted) {
-                        predictions.push({ ...inserted, lead: lead.lead_cache });
+                        predictions.push({ ...inserted, lead: lead.leads });
                     }
                 } catch (aiErr) {
                     console.error("Failed to generate prediction for lead", lead.lead_id, aiErr);
                 }
             } else {
-                predictions.push({ ...existing, lead: lead.lead_cache });
+                predictions.push({ ...existing, lead: lead.leads });
             }
         }
 

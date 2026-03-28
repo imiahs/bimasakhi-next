@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/utils/supabase';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -10,12 +10,23 @@ export const GET = withAdminAuth(async (request, user) => {
         const range = searchParams.get('range') || 'today';
         
         const supabase = getServiceSupabase();
+        const now = new Date();
+        const rangeStart = new Date(now);
+
+        if (range === '7d') {
+            rangeStart.setDate(now.getDate() - 7);
+        } else if (range === '30d') {
+            rangeStart.setDate(now.getDate() - 30);
+        } else {
+            rangeStart.setHours(0, 0, 0, 0);
+        }
         
         // Very basic mock query since tmp-admin-data wasn't fully restored, 
         // to conform to InsightsTab expectation of stats
         const { data, error } = await supabase
-            .from('lead_queue')
-            .select('source');
+            .from('leads')
+            .select('source')
+            .gte('created_at', rangeStart.toISOString());
             
         let totalApplications = 0;
         let attributionMap = {};

@@ -74,7 +74,7 @@ export async function POST(request) {
         }
 
         // Audit log — every config change MUST be logged
-        const adminId = request.headers.get('x-admin-id') || 'unknown';
+        const adminId = request.headers.get('x-admin-user') || request.headers.get('x-admin-id') || 'unknown';
         await logSystemAction('CONFIG_UPDATED', {
             changes: updatePayload,
             admin_id: adminId,

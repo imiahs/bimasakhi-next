@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/utils/supabase';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -20,12 +20,17 @@ export const GET = withAdminAuth(async (request, user) => {
 
         const totalDownloads = resourcesData ? resourcesData.reduce((acc, curr) => acc + (curr.download_count || 0), 0) : 0;
 
-        // 3. Get Leads count from Supabase
+        // 3. Get Leads count from source-of-truth table
         const { count: supabaseLeadsCount } = await supabase
-            .from('lead_cache')
+            .from('leads')
             .select('id', { count: 'exact', head: true });
 
         const totalLeads = supabaseLeadsCount || 0;
+
+        const { count: convertedLeads } = await supabase
+            .from('leads')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_converted', true);
 
         // --- NEW OBSERVABILITY METRICS (Phase 18) ---
         const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -44,9 +49,9 @@ export const GET = withAdminAuth(async (request, user) => {
 
         // Pending Sync Queue
         const { count: queueSize } = await supabase
-            .from('lead_queue')
+            .from('generation_queue')
             .select('id', { count: 'exact', head: true })
-            .or('synced_to_zoho.eq.false,synced_to_supabase.eq.false');
+            .in('status', ['pending', 'processing', 'failed']);
 
         // Total Active Agents
         const { count: activeAgents } = await supabase
@@ -58,13 +63,13 @@ export const GET = withAdminAuth(async (request, user) => {
             .from('recruitment_pipeline')
             .select('id', { count: 'exact', head: true });
 
-        // SEO Indexed Pages (Published articles + templates)
+        // SEO Indexed Pages
         const { count: publishedPages } = await supabase
-            .from('custom_pages')
+            .from('page_index')
             .select('id', { count: 'exact', head: true })
-            .eq('status', 'published');
+            .eq('status', 'active');
 
-        const totalSeoIndexed = (blogCount || 0) + (publishedPages || 0) + 14; // +14 static routes mapped in sitemap
+        const totalSeoIndexed = publishedPages || 0;
         // ---------------------------------------------
 
         // 4. Get recent activity
@@ -75,8 +80,8 @@ export const GET = withAdminAuth(async (request, user) => {
             .limit(3);
 
         const { data: recentLeads } = await supabase
-            .from('lead_cache')
-            .select('name, city, created_at')
+            .from('leads')
+            .select('full_name, city, created_at')
             .order('created_at', { ascending: false })
             .limit(3);
 
@@ -100,7 +105,7 @@ export const GET = withAdminAuth(async (request, user) => {
                 activity.push({
                     id: `lead_${l.created_at}`,
                     action: 'New Lead',
-                    detail: `${l.name} from ${l.city || 'Unknown'}`,
+                    detail: `${l.full_name || 'Unknown'} from ${l.city || 'Unknown'}`,
                     time: new Date(l.created_at).toLocaleString(),
                     type: 'lead',
                     timestamp: new Date(l.created_at).getTime()
@@ -116,6 +121,7 @@ export const GET = withAdminAuth(async (request, user) => {
                 totalLeads,
                 totalPosts: blogCount || 0,
                 resourceDownloads: totalDownloads,
+                conversionRate: totalLeads > 0 ? `${((convertedLeads || 0) / totalLeads * 100).toFixed(1)}%` : '0%',
                 apiRequests: apiRequests || 0,
                 unresolvedErrors: unresolvedErrors || 0,
                 queueSize: queueSize || 0,

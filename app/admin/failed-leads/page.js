@@ -13,7 +13,7 @@ export default function FailedLeadsPage() {
         setLoading(true);
         try {
             const res = await adminApi.getFailedLeads();
-            setFailedLeads(res.failed_leads || []);
+            setFailedLeads(res.failed_leads || res.data?.failed_leads || []);
             setError(null);
         } catch (err) {
             setError(err.message);
@@ -29,7 +29,8 @@ export default function FailedLeadsPage() {
         setActionLoading(true);
         try {
             const res = await adminApi.retryFailed();
-            setToast({ type: 'success', text: `Retried successfully. ${res.data?.successCount || 0} recovered.` });
+            const recovered = res.successCount || res.data?.successCount || 0;
+            setToast({ type: 'success', text: `Retried successfully. ${recovered} recovered.` });
             fetchFailed();
         } catch (err) {
             setToast({ type: 'error', text: `Retry failed: ${err.message}` });
@@ -43,8 +44,8 @@ export default function FailedLeadsPage() {
         if (!confirm('DANGER: This permanently deletes the failure logs. Proceed?')) return;
         setActionLoading(true);
         try {
-            await adminApi.clearFailed();
-            setToast({ type: 'success', text: 'All failed leads cleared.' });
+            const res = await adminApi.clearFailed();
+            setToast({ type: 'success', text: `Cleared ${res.deleted || 0} failed lead records.` });
             fetchFailed();
         } catch (err) {
             setToast({ type: 'error', text: `Clear failed: ${err.message}` });

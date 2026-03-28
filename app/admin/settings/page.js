@@ -1,9 +1,17 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { adminApi } from '@/lib/adminApi';
 
+const DEFAULT_CONFIG = {
+    ai_enabled: false,
+    queue_paused: true,
+    batch_size: 5,
+    crm_auto_routing: false,
+    followup_enabled: false
+};
+
 export default function SettingsPage() {
-    const [config, setConfig] = useState({});
+    const [config, setConfig] = useState(DEFAULT_CONFIG);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [toast, setToast] = useState(null);
@@ -12,23 +20,33 @@ export default function SettingsPage() {
         try {
             setLoading(true);
             const res = await adminApi.getConfig();
-            setConfig(res || {});
+            setConfig({ ...DEFAULT_CONFIG, ...(res?.data || res || {}) });
         } catch (err) {
-            console.error("Config load failed", err);
-            setToast({ type: 'error', text: 'Failed to synchronize configuration variables.' });
+            console.error('Config load failed', err);
+            setToast({ type: 'error', text: 'Failed to load runtime configuration.' });
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => { loadConfig(); }, []);
+    useEffect(() => {
+        loadConfig();
+    }, []);
+
+    const handleChange = (key, value) => {
+        setConfig((prev) => ({
+            ...prev,
+            [key]: key === 'batch_size' ? Number(value) : value
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
+
         try {
             await adminApi.saveConfig(config);
-            setToast({ type: 'success', text: 'Configuration securely committed to Edge Network.' });
+            setToast({ type: 'success', text: 'Runtime controls updated.' });
         } catch (err) {
             setToast({ type: 'error', text: `Save blocked: ${err.message}` });
         } finally {
@@ -37,22 +55,20 @@ export default function SettingsPage() {
         }
     };
 
-    const handleChange = (key, value) => {
-        setConfig(prev => ({ ...prev, [key]: value }));
-    };
-
-    if (loading) return (
-        <div className="flex items-center justify-center h-64 text-slate-500 font-medium">
-            <div className="w-6 h-6 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin mr-3"></div>
-            Decrypting Configuration Hashes...
-        </div>
-    );
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64 text-slate-500 font-medium">
+                <div className="w-6 h-6 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin mr-3"></div>
+                Loading runtime controls...
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6 animate-in fade-in duration-300 max-w-4xl">
             <div>
                 <h1 className="text-2xl font-bold text-slate-800">System Configuration</h1>
-                <p className="text-sm text-slate-500 mt-1">Mutate frontend behavior globally bypassing static source code deployments.</p>
+                <p className="text-sm text-slate-500 mt-1">These controls affect the live lead, AI, queue, and followup engine.</p>
             </div>
 
             {toast && (
@@ -62,77 +78,67 @@ export default function SettingsPage() {
             )}
 
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-8">
-                {/* APPLICATION Toggles */}
                 <div>
-                    <h3 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">Application Constraints</h3>
+                    <h3 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">Core Switches</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <label className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition">
                             <div>
-                                <span className="font-bold text-slate-700 block">Pause Admissions</span>
-                                <span className="text-xs text-slate-500">Temporarily block all new CRM inputs globally.</span>
+                                <span className="font-bold text-slate-700 block">AI Enabled</span>
+                                <span className="text-xs text-slate-500">Allows Gemini page generation and AI lead scoring.</span>
                             </div>
-                            <input type="checkbox" checked={config.isAppPaused || false} onChange={e => handleChange('isAppPaused', e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                            <input type="checkbox" checked={config.ai_enabled || false} onChange={(e) => handleChange('ai_enabled', e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
                         </label>
+
                         <label className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition">
                             <div>
-                                <span className="font-bold text-slate-700 block">Pause Redirects</span>
-                                <span className="text-xs text-slate-500">Stop smart routing post-conversion execution.</span>
+                                <span className="font-bold text-slate-700 block">Queue Paused</span>
+                                <span className="text-xs text-slate-500">Stops `generation_queue` processing without touching stored jobs.</span>
                             </div>
-                            <input type="checkbox" checked={config.isRedirectPaused || false} onChange={e => handleChange('isRedirectPaused', e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                            <input type="checkbox" checked={config.queue_paused || false} onChange={(e) => handleChange('queue_paused', e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                        </label>
+
+                        <label className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition">
+                            <div>
+                                <span className="font-bold text-slate-700 block">CRM Auto Routing</span>
+                                <span className="text-xs text-slate-500">Allows new leads to continue from DB storage into Zoho sync.</span>
+                            </div>
+                            <input type="checkbox" checked={config.crm_auto_routing || false} onChange={(e) => handleChange('crm_auto_routing', e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
+                        </label>
+
+                        <label className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition">
+                            <div>
+                                <span className="font-bold text-slate-700 block">Followup Enabled</span>
+                                <span className="text-xs text-slate-500">Allows post-routing followup delivery when a provider is configured.</span>
+                            </div>
+                            <input type="checkbox" checked={config.followup_enabled || false} onChange={(e) => handleChange('followup_enabled', e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
                         </label>
                     </div>
                 </div>
 
-                {/* COPYWRITING OVERRIDES */}
                 <div>
-                    <h3 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">Marketing Copywriting</h3>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1">Hero Title</label>
-                            <input type="text" value={config.heroTitle || ''} onChange={e => handleChange('heroTitle', e.target.value)} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1">Hero Subtitle</label>
-                            <input type="text" value={config.heroSubtitle || ''} onChange={e => handleChange('heroSubtitle', e.target.value)} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1">Button CTA Text</label>
-                            <input type="text" value={config.ctaText || ''} onChange={e => handleChange('ctaText', e.target.value)} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-1">Delhi Exclusivity Message</label>
-                            <input type="text" value={config.delhiOnlyMessage || ''} onChange={e => handleChange('delhiOnlyMessage', e.target.value)} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
-                        </div>
+                    <h3 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">Worker Throughput</h3>
+                    <div className="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                        <label className="block text-sm font-bold text-slate-700 mb-2">Batch Size</label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="50"
+                            value={config.batch_size || 5}
+                            onChange={(e) => handleChange('batch_size', e.target.value)}
+                            className="w-full md:w-48 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono text-sm"
+                        />
+                        <p className="text-xs text-slate-500 mt-2">Controls how many queue items `pagegen` processes in one execution.</p>
                     </div>
                 </div>
 
-                {/* ANALYTICS TAGS */}
-                <div>
-                    <h3 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-2 mb-4">Third-Party Analytics Tags</h3>
-                    <div className="space-y-4 bg-slate-50 p-6 rounded-lg border border-slate-200">
-                        <label className="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" checked={config.isAnalyticsEnabled || false} onChange={e => handleChange('isAnalyticsEnabled', e.target.checked)} className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500" />
-                            <span className="font-bold text-slate-700">Enable Analytics Telemetry</span>
-                        </label>
-                        {config.isAnalyticsEnabled && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 mb-1">Google Analytics ID</label>
-                                    <input type="text" placeholder="G-XXXXXXXXXX" value={config.gaMeasurementId || ''} onChange={e => handleChange('gaMeasurementId', e.target.value)} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono text-sm" />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-500 mb-1">Google Tag Manager Container</label>
-                                    <input type="text" placeholder="GTM-XXXXXXX" value={config.gtmContainerId || ''} onChange={e => handleChange('gtmContainerId', e.target.value)} className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono text-sm" />
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                    Public homepage copy and tag settings still live under `/api/config`. This page now controls only the production runtime engine.
                 </div>
 
                 <div className="pt-4 border-t border-slate-100 flex justify-end gap-4">
-                    <button type="button" onClick={() => loadConfig()} className="px-6 py-2 border border-slate-300 rounded-lg font-bold text-slate-600 hover:bg-slate-50 transition">Discard Changes</button>
+                    <button type="button" onClick={loadConfig} className="px-6 py-2 border border-slate-300 rounded-lg font-bold text-slate-600 hover:bg-slate-50 transition">Reload</button>
                     <button type="submit" disabled={saving} className="px-8 py-2 bg-indigo-600 disabled:opacity-50 text-white font-bold rounded-lg hover:bg-indigo-700 transition shadow-md shadow-indigo-600/20">
-                        {saving ? 'Synchronizing...' : 'Save Configuration'}
+                        {saving ? 'Saving...' : 'Save Configuration'}
                     </button>
                 </div>
             </form>

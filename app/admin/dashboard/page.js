@@ -1,5 +1,5 @@
-import DashboardContent from '@/features/admin/dashboard/DashboardContent';
+import { redirect } from 'next/navigation';
 
 export default function DashboardPage() {
-    return <DashboardContent />;
+    redirect('/admin');
 }

@@ -1,10 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
+import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
+import { sendFollowupMessage } from '@/lib/followup/sendFollowupMessage';
 
 export const maxDuration = 300;
 
 async function handler(request) {
+    const config = await getSystemConfig();
+    if (!config.followup_enabled) {
+        await logSystemAction('GUARD_BLOCKED', { guard: 'followup_enabled', route: '/api/jobs/followup-trigger' });
+        return NextResponse.json({ success: true, message: 'Follow-up disabled via control config.' });
+    }
+
     const startTime = Date.now();
     const upstashMessageId = request.headers.get('upstash-message-id') || `manual-${Date.now()}`;
     
@@ -73,8 +81,23 @@ async function handler(request) {
             .replace(/\{\{lead_name\}\}/g, lead.full_name)
             .replace(/\{\{agent_name\}\}/g, agentName);
 
-        // 6. "Send" Message (Mocking API call to WhatsApp/Email provider)
-        console.info(`[Follow-up] Sending ${template.template_type} to ${lead.mobile || lead.email}: ${message}`);
+        // 6. Send via provider abstraction
+        const recipient = lead.mobile || lead.email;
+        if (!recipient) {
+            throw new Error('Lead has no follow-up recipient');
+        }
+
+        await sendFollowupMessage({
+            leadId,
+            channel: template.template_type || (lead.mobile ? 'whatsapp' : 'email'),
+            recipient,
+            message,
+            metadata: {
+                template_id: template.id,
+                template_name: template.template_name,
+                agent_id: lead.agent_id || null
+            }
+        });
         
         // 7. Log Decision
         await supabase.from('ai_decision_logs').insert({

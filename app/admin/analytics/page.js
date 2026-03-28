@@ -10,6 +10,7 @@ export default function AnalyticsPage() {
 
     const fetchAnalytics = async () => {
         setLoading(true);
+        setError(null);
         try {
             const [sRes, mRes] = await Promise.all([
                 adminApi.getStats(),
@@ -38,6 +39,8 @@ export default function AnalyticsPage() {
 
     const sourcesData = metrics?.top_sources || [];
     const citiesData = metrics?.top_cities || [];
+    const convertedLeads = metrics?.converted_leads ?? metrics?.conversions ?? 0;
+    const conversionRate = Number(metrics?.conversion_rate || 0);
 
     return (
         <div className="space-y-8 animate-in fade-in duration-300">
@@ -59,8 +62,8 @@ export default function AnalyticsPage() {
                 <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white p-6 rounded-xl shadow-md border border-emerald-400">
                     <p className="font-bold text-emerald-100 text-sm tracking-wider uppercase mb-1">Closed Won Ratio</p>
                     <div className="flex items-baseline gap-2">
-                        <p className="text-4xl font-black">{metrics?.converted_leads || 0}</p>
-                        <span className="bg-white/20 px-2 py-0.5 rounded text-sm">{metrics?.conversion_rate || '0%'}</span>
+                        <p className="text-4xl font-black">{convertedLeads}</p>
+                        <span className="bg-white/20 px-2 py-0.5 rounded text-sm">{conversionRate.toFixed(1)}%</span>
                     </div>
                 </div>
                 <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-md border border-purple-400 md:col-span-2">
