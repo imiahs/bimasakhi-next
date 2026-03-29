@@ -19,11 +19,10 @@ export const POST = withAdminAuth(async (request, user) => {
             .from('leads')
             .update({
                 converted_at: new Date().toISOString(),
-                conversion_value: parsedValue,
-                status: 'converted'
+                conversion_value: parsedValue
             })
             .eq('id', lead_id)
-            .select('id, status, conversion_value, converted_at')
+            .select('id, conversion_value, converted_at')
             .single();
 
         if (error) {

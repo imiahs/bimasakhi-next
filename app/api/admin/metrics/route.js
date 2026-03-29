@@ -62,7 +62,7 @@ export const GET = withAdminAuth(async () => {
             supabase
                 .from('leads')
                 .select('id', { count: 'exact' })
-                .eq('status', 'converted')
+                .not('zoho_lead_id', 'is', null)
                 .limit(1)
         ));
 
