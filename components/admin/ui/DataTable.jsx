@@ -1,5 +1,5 @@
 'use client';
-import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 function DataTable({
     columns = [],
@@ -19,14 +19,12 @@ function DataTable({
     );
 
     const dataLength = data?.length || 0;
-    const previousLengthRef = useRef(dataLength);
 
-    if (dataLength !== previousLengthRef.current) {
-        previousLengthRef.current = dataLength;
+    useEffect(() => {
         if (currentPage > Math.max(1, Math.ceil(dataLength / pageSize))) {
             setCurrentPage(1);
         }
-    }
+    }, [currentPage, dataLength, pageSize]);
 
     const pageData = useMemo(() => {
         if (!data || data.length === 0) return [];
