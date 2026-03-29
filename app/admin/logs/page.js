@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { adminApi } from '@/lib/adminApi';
 
 export default function SystemLogsPage() {
@@ -11,8 +11,8 @@ export default function SystemLogsPage() {
     const fetchLogs = async (type = filter) => {
         setLoading(true);
         try {
-            const res = await adminApi.getLogs(type);
-            setLogs(res.logs || []);
+            const response = await adminApi.getLogs(type);
+            setLogs(response.logs || []);
             setError(null);
         } catch (err) {
             setError(err.message);
@@ -21,7 +21,6 @@ export default function SystemLogsPage() {
         }
     };
 
-    // Initial Load + Auto Refresh every 30s
     useEffect(() => {
         fetchLogs(filter);
         const interval = setInterval(() => fetchLogs(filter), 30000);
@@ -29,82 +28,99 @@ export default function SystemLogsPage() {
     }, [filter]);
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-800">System Diagnostics</h1>
-                    <p className="text-sm text-slate-500 mt-1">Real-time unhandled exception telemetry stream tracing.</p>
-                </div>
-                
-                <div className="flex items-center gap-3">
-                    <select 
-                        value={filter} 
-                        onChange={(e) => setFilter(e.target.value)}
-                        className="bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none font-medium shadow-sm"
-                    >
-                        <option value="">All Tiers</option>
-                        <option value="ERROR">SYSTEM ERRORS</option>
-                        <option value="CRM_ERROR">CRM_ERROR</option>
-                        <option value="AI_FAILURE">AI_FAILURE</option>
-                        <option value="ADMIN_ACCESS">ADMIN_ACCESS</option>
-                        <option value="CRON_TRIGGER">CRON_TRIGGER</option>
-                    </select>
-                    <button onClick={() => fetchLogs(filter)} disabled={loading} className="bg-indigo-600 border border-transparent text-white px-4 py-2 text-sm font-bold flex items-center gap-2 rounded-lg hover:bg-indigo-700 transition shadow-sm disabled:opacity-50">
-                        🔄 Sync Array
-                    </button>
-                </div>
-            </div>
+        <div className="space-y-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+                <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p className="admin-kicker">Runtime trail</p>
+                        <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">System diagnostics and live event telemetry.</h1>
+                        <p className="admin-copy mt-5 max-w-2xl text-base">
+                            Use this stream to confirm deployments, guard blocks, CRM events, and background worker behavior without leaving the control plane.
+                        </p>
+                    </div>
 
-            <div className="bg-slate-900 rounded-xl shadow-xl overflow-hidden border border-slate-700">
+                    <div className="flex flex-wrap gap-3">
+                        <select
+                            value={filter}
+                            onChange={(event) => setFilter(event.target.value)}
+                            className="admin-select min-w-[180px] px-4 py-3 text-sm"
+                        >
+                            <option value="">All tiers</option>
+                            <option value="ERROR">System errors</option>
+                            <option value="CRM_ERROR">CRM error</option>
+                            <option value="AI_FAILURE">AI failure</option>
+                            <option value="ADMIN_ACCESS">Admin access</option>
+                            <option value="CRON_TRIGGER">Cron trigger</option>
+                        </select>
+                        <button onClick={() => fetchLogs(filter)} disabled={loading} className="admin-button-secondary">
+                            {loading ? 'Syncing...' : 'Refresh logs'}
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section className="admin-panel-dark overflow-hidden rounded-[2rem]">
                 {loading && logs.length === 0 ? (
-                    <div className="p-12 text-center text-slate-400 flex flex-col items-center">
-                        <div className="w-8 h-8 border-4 border-slate-700 border-t-indigo-500 rounded-full animate-spin mb-3"></div>
-                        Establishing Secure Socket Link...
+                    <div className="flex flex-col items-center px-6 py-14 text-center text-slate-300">
+                        <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-teal-400" />
+                        <p className="admin-kicker mt-6 !text-slate-400">Log stream</p>
+                        <p className="mt-3 text-sm">Opening telemetry stream...</p>
                     </div>
                 ) : error ? (
-                    <div className="p-8 text-center text-rose-500 font-bold">Connection Failed: {error}</div>
+                    <div className="px-6 py-10 text-center text-sm font-medium text-rose-300">
+                        Connection failed: {error}
+                    </div>
                 ) : logs.length === 0 ? (
-                    <div className="p-12 text-center text-slate-500 font-mono text-sm">Waiting for incoming packets...</div>
+                    <div className="px-6 py-14 text-center text-sm text-slate-400">
+                        No runtime events available for the current filter.
+                    </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm whitespace-nowrap font-mono">
-                            <thead className="bg-slate-800 text-slate-400 border-b border-slate-700 text-xs">
+                        <table className="w-full whitespace-nowrap text-left text-sm font-mono">
+                            <thead className="border-b border-white/10 bg-slate-950/40 text-[11px] uppercase tracking-[0.18em] text-slate-400">
                                 <tr>
-                                    <th className="px-6 py-3 font-medium uppercase tracking-wider">Timestamp</th>
-                                    <th className="px-6 py-3 font-medium uppercase tracking-wider">Exception Thread</th>
-                                    <th className="px-6 py-3 font-medium uppercase tracking-wider w-full">Message Buffer</th>
+                                    <th className="px-6 py-3 font-semibold">Timestamp</th>
+                                    <th className="px-6 py-3 font-semibold">Type</th>
+                                    <th className="px-6 py-3 font-semibold">Message</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-800">
-                                {logs.map((log, idx) => {
-                                    const isErr = log.type?.includes('ERROR') || log.type?.includes('FAIL');
+                            <tbody className="divide-y divide-white/5">
+                                {logs.map((log, index) => {
+                                    const isError = log.type?.includes('ERROR') || log.type?.includes('FAIL');
                                     const isAuth = log.type?.includes('ADMIN');
+
                                     return (
-                                        <tr key={idx} className="hover:bg-slate-800/50 transition">
-                                            <td className="px-6 py-3 text-slate-500 text-xs">
+                                        <tr key={`${log.id || index}`} className="transition hover:bg-white/5">
+                                            <td className="px-6 py-3 text-xs text-slate-500">
                                                 {new Date(log.created_at).toLocaleString()}
                                             </td>
                                             <td className="px-6 py-3">
-                                                <span className={`px-2 py-1 rounded text-[10px] font-bold tracking-widest ${isErr ? 'bg-rose-950/50 text-rose-400 border border-rose-900/50' : isAuth ? 'bg-indigo-950/50 text-indigo-400 border border-indigo-900/50' : 'bg-slate-800 text-emerald-400 border border-slate-700'}`}>
+                                                <span className={`rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${
+                                                    isError
+                                                        ? 'border-rose-500/30 bg-rose-500/10 text-rose-300'
+                                                        : isAuth
+                                                            ? 'border-indigo-500/30 bg-indigo-500/10 text-indigo-300'
+                                                            : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300'
+                                                }`}>
                                                     {log.type}
                                                 </span>
                                             </td>
-                                            <td className={`px-6 py-3 font-medium ${isErr ? 'text-rose-200' : 'text-slate-300'}`}>
+                                            <td className={`px-6 py-3 ${isError ? 'text-rose-100' : 'text-slate-200'}`}>
                                                 {log.message}
                                                 {log.metadata && (
-                                                    <span className="block mt-1 text-slate-500 text-[10px] truncate max-w-2xl bg-slate-950 p-1.5 rounded border border-slate-800">
+                                                    <span className="mt-2 block max-w-3xl overflow-hidden text-ellipsis rounded-xl border border-white/6 bg-black/20 p-2 text-[10px] text-slate-400">
                                                         {JSON.stringify(log.metadata)}
                                                     </span>
                                                 )}
                                             </td>
                                         </tr>
-                                    )
+                                    );
                                 })}
                             </tbody>
                         </table>
                     </div>
                 )}
-            </div>
+            </section>
         </div>
     );
 }

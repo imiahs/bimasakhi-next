@@ -14,7 +14,7 @@ const SORT_OPTIONS = [
 
 function RuntimeFlag({ label, enabled, detail }) {
     return (
-        <div className="admin-subpanel rounded-[1.5rem] p-5">
+        <div className="admin-subpanel rounded-[1.4rem] p-4">
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="admin-kicker">{label}</p>
@@ -225,9 +225,9 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="space-y-8">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-7 lg:px-8 lg:py-8">
-                <div className="relative grid gap-8 lg:grid-cols-[1.4fr_0.7fr]">
+        <div className="space-y-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+                <div className="relative grid gap-6 lg:grid-cols-[1.35fr_0.72fr]">
                     <div>
                         <p className="admin-kicker">Admin reliability</p>
                         <h1 className="admin-heading-xl mt-4 max-w-4xl text-zinc-950">Production control panel for the real growth engine.</h1>
@@ -235,7 +235,7 @@ export default function DashboardPage() {
                             This board reads the live lead system, queue system, runtime switches, and recovery state. It is designed for active operations, not reporting theater.
                         </p>
 
-                        <div className="mt-6 flex flex-wrap gap-3">
+                        <div className="mt-5 flex flex-wrap gap-3">
                             <button
                                 onClick={() => fetchAll({ silent: true })}
                                 disabled={refreshing}
@@ -287,15 +287,15 @@ export default function DashboardPage() {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <MetricCard title="Total Leads" value={totalLeadsValue} subtitle="Live records available in the CRM pipeline" icon="LD" statusColor="success" />
                 <MetricCard title="Today Leads" value={todayLeadsValue} subtitle="Rows created since local midnight" icon="TD" />
                 <MetricCard title="Queue Pending" value={queuePendingValue} subtitle={`${queueTotalValue} total jobs in generation queue`} icon="QP" statusColor={Number(queuePendingValue) > 0 ? 'warning' : null} />
                 <MetricCard title="Active Pages" value={activePagesValue} subtitle="Published entries from page index" icon="PX" />
             </div>
 
-            <div className="grid grid-cols-1 gap-5 xl:grid-cols-4">
-                <section className="admin-panel rounded-[2rem] p-6 xl:col-span-2">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.2fr_1fr]">
+                <section className="admin-panel rounded-[2rem] p-5 xl:col-span-2">
                     <div className="mb-5 flex items-center justify-between gap-4">
                         <div>
                             <p className="admin-kicker">Runtime controls</p>
@@ -306,7 +306,7 @@ export default function DashboardPage() {
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                         <RuntimeFlag label="CRM Auto Routing" enabled={Boolean(config?.crm_auto_routing)} detail="Controls local save versus Zoho handoff." />
                         <RuntimeFlag label="Queue Running" enabled={!Boolean(config?.queue_paused)} detail="Queue worker execution state." />
                         <RuntimeFlag label="AI Enabled" enabled={Boolean(config?.ai_enabled)} detail="Gemini generation and lead scoring availability." />
@@ -314,7 +314,7 @@ export default function DashboardPage() {
                     </div>
                 </section>
 
-                <section className="admin-panel rounded-[2rem] p-6 xl:col-span-2">
+                <section className="admin-panel rounded-[2rem] p-5">
                     <div className="mb-5 flex items-center justify-between gap-4">
                         <div>
                             <p className="admin-kicker">System health</p>
@@ -325,7 +325,7 @@ export default function DashboardPage() {
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                         <div className="admin-subpanel rounded-[1.5rem] p-4">
                             <p className="admin-kicker">CRM</p>
                             <div className="mt-3 flex items-center justify-between">
@@ -342,17 +342,17 @@ export default function DashboardPage() {
                         </div>
                         <div className="admin-subpanel rounded-[1.5rem] p-4">
                             <p className="admin-kicker">Today</p>
-                            <p className="mt-3 text-3xl font-semibold tracking-[-0.06em] text-zinc-950">{health?.total_leads_today ?? 0}</p>
+                            <p className="mt-2 text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{health?.total_leads_today ?? 0}</p>
                             <p className="mt-2 text-sm text-zinc-500">Live leads created today</p>
                         </div>
                         <div className="admin-subpanel rounded-[1.5rem] p-4">
                             <p className="admin-kicker">Failed leads</p>
-                            <p className="mt-3 text-3xl font-semibold tracking-[-0.06em] text-zinc-950">{health?.failed_leads_count ?? 0}</p>
+                            <p className="mt-2 text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{health?.failed_leads_count ?? 0}</p>
                             <p className="mt-2 text-sm text-zinc-500">Records currently stuck in recovery</p>
                         </div>
                     </div>
 
-                    <div className="mt-5 rounded-[1.5rem] border border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.54)] p-4">
+                    <div className="mt-4 rounded-[1.5rem] border border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.66)] p-4">
                         <div className="mb-3 flex items-center justify-between">
                             <h3 className="text-sm font-semibold text-zinc-900">Recent errors</h3>
                             <span className="admin-kicker">{health?.last_10_errors?.length || 0} visible</span>
@@ -379,8 +379,8 @@ export default function DashboardPage() {
                 </section>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.45fr_0.95fr]">
-                <section className="admin-panel rounded-[2rem] p-6">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_0.9fr]">
+                <section className="admin-panel rounded-[2rem] p-5">
                     <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                         <div>
                             <p className="admin-kicker">Lead operations</p>
@@ -428,17 +428,17 @@ export default function DashboardPage() {
                         </select>
                     </div>
 
-                    <div className="mt-5 overflow-hidden rounded-[1.75rem] border border-[rgba(77,61,40,0.08)]">
+                    <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-[rgba(77,61,40,0.08)]">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
                                 <thead className="bg-[rgba(255,255,255,0.74)] text-xs uppercase tracking-[0.18em] text-zinc-500">
                                     <tr>
-                                        <th className="px-5 py-4 font-semibold">Lead</th>
-                                        <th className="px-5 py-4 font-semibold">City</th>
-                                        <th className="px-5 py-4 font-semibold">Source</th>
-                                        <th className="px-5 py-4 font-semibold">Score</th>
-                                        <th className="px-5 py-4 font-semibold">Zoho</th>
-                                        <th className="px-5 py-4 font-semibold">Status</th>
+                                        <th className="px-4 py-3.5 font-semibold">Lead</th>
+                                        <th className="px-4 py-3.5 font-semibold">City</th>
+                                        <th className="px-4 py-3.5 font-semibold">Source</th>
+                                        <th className="px-4 py-3.5 font-semibold">Score</th>
+                                        <th className="px-4 py-3.5 font-semibold">Zoho</th>
+                                        <th className="px-4 py-3.5 font-semibold">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-[rgba(77,61,40,0.06)] bg-[rgba(255,255,255,0.44)]">
@@ -452,30 +452,30 @@ export default function DashboardPage() {
 
                                         return (
                                             <tr key={lead.id} className="transition hover:bg-[rgba(255,255,255,0.58)]">
-                                                <td className="px-5 py-4">
+                                                <td className="px-4 py-3.5">
                                                     <div>
                                                         <p className="font-semibold text-zinc-950">{name}</p>
                                                         <p className="mt-1 text-xs text-zinc-500">{mobile}</p>
                                                     </div>
                                                 </td>
-                                                <td className="px-5 py-4 text-zinc-600">{city}</td>
-                                                <td className="px-5 py-4 text-zinc-600">{source}</td>
-                                                <td className="px-5 py-4">
+                                                <td className="px-4 py-3.5 text-zinc-600">{city}</td>
+                                                <td className="px-4 py-3.5 text-zinc-600">{source}</td>
+                                                <td className="px-4 py-3.5">
                                                     <span className="rounded-full bg-zinc-950/5 px-2.5 py-1 text-xs font-semibold text-zinc-700">
                                                         {Number(lead.lead_score || lead.score || 0)}
                                                     </span>
                                                 </td>
-                                                <td className="px-5 py-4">
+                                                <td className="px-4 py-3.5">
                                                     <StatusBadge status={zohoState} />
                                                 </td>
-                                                <td className="px-5 py-4">
+                                                <td className="px-4 py-3.5">
                                                     <StatusBadge status={leadStatus} />
                                                 </td>
                                             </tr>
                                         );
                                     }) : (
                                         <tr>
-                                            <td colSpan={6} className="px-5 py-12 text-center text-sm text-zinc-500">
+                                            <td colSpan={6} className="px-4 py-10 text-center text-sm text-zinc-500">
                                                 No leads match the current filters.
                                             </td>
                                         </tr>
@@ -487,7 +487,7 @@ export default function DashboardPage() {
                 </section>
 
                 <section className="space-y-5">
-                    <div className="admin-panel rounded-[2rem] p-6">
+                    <div className="admin-panel rounded-[2rem] p-5">
                         <div className="mb-5 flex items-center justify-between gap-4">
                             <div>
                                 <p className="admin-kicker">Queue status</p>
@@ -510,9 +510,9 @@ export default function DashboardPage() {
                                 { label: 'Completed', value: queue?.completed ?? 0 },
                                 { label: 'Failed', value: queue?.failed ?? 0 }
                             ].map((item) => (
-                                <div key={item.label} className="admin-subpanel rounded-[1.5rem] p-4">
+                                <div key={item.label} className="admin-subpanel rounded-[1.4rem] p-4">
                                     <p className="admin-kicker">{item.label}</p>
-                                    <p className="mt-3 text-3xl font-semibold tracking-[-0.06em] text-zinc-950">{item.value}</p>
+                                    <p className="mt-2 text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{item.value}</p>
                                 </div>
                             ))}
                         </div>
@@ -528,7 +528,7 @@ export default function DashboardPage() {
                         </div>
                     </div>
 
-                    <div className="admin-panel rounded-[2rem] p-6">
+                    <div className="admin-panel rounded-[2rem] p-5">
                         <div className="mb-4 flex items-center justify-between">
                             <div>
                                 <p className="admin-kicker">Quick actions</p>

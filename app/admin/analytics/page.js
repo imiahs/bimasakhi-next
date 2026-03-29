@@ -1,6 +1,37 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { adminApi } from '@/lib/adminApi';
+import MetricCard from '@/components/admin/ui/MetricCard';
+
+function DistributionList({ title, items = [], accentClass }) {
+    return (
+        <section className="admin-panel rounded-[2rem] p-5">
+            <div className="mb-5">
+                <p className="admin-kicker">{title}</p>
+                <h2 className="mt-3 text-xl font-semibold tracking-[-0.05em] text-zinc-950">Top live contributors</h2>
+            </div>
+
+            <div className="space-y-4">
+                {items.length > 0 ? items.map((item, index) => (
+                    <div key={`${item.name}-${index}`}>
+                        <div className="mb-2 flex items-center justify-between gap-3 text-sm font-medium">
+                            <span className="truncate text-zinc-800">{item.name}</span>
+                            <span className="text-zinc-500">{item.value}</span>
+                        </div>
+                        <div className="h-2.5 rounded-full bg-zinc-200/70">
+                            <div
+                                className={`h-2.5 rounded-full ${accentClass}`}
+                                style={{ width: `${Math.min(item.value * 8, 100)}%` }}
+                            />
+                        </div>
+                    </div>
+                )) : (
+                    <p className="text-sm text-zinc-500">No attribution data available yet.</p>
+                )}
+            </div>
+        </section>
+    );
+}
 
 export default function AnalyticsPage() {
     const [stats, setStats] = useState(null);
@@ -11,14 +42,15 @@ export default function AnalyticsPage() {
     const fetchAnalytics = async () => {
         setLoading(true);
         setError(null);
+
         try {
-            const [sRes, mRes] = await Promise.all([
+            const [statsResponse, metricsResponse] = await Promise.all([
                 adminApi.getStats(),
                 adminApi.getBusinessMetrics()
             ]);
-            // Disregarding wrapper formatting inconsistencies, standardizing fallback safely:
-            setStats(sRes.success !== undefined ? sRes.data : sRes);
-            setMetrics(mRes.success ? mRes.data : mRes);
+
+            setStats(statsResponse.success !== undefined ? statsResponse.data : statsResponse);
+            setMetrics(metricsResponse.success ? metricsResponse.data : metricsResponse);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -26,95 +58,81 @@ export default function AnalyticsPage() {
         }
     };
 
-    useEffect(() => { fetchAnalytics(); }, []);
+    useEffect(() => {
+        fetchAnalytics();
+    }, []);
 
-    if (loading) return (
-        <div className="flex flex-col items-center justify-center h-64 text-slate-500">
-            <div className="w-8 h-8 border-4 border-slate-300 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
-            Computing Revenue Arrays...
-        </div>
-    );
-
-    if (error) return <div className="p-6 bg-red-50 text-red-600 border border-red-200 rounded-xl">Failed to render charts: {error}</div>;
-
-    const sourcesData = metrics?.top_sources || [];
-    const citiesData = metrics?.top_cities || [];
-    const convertedLeads = metrics?.converted_leads ?? metrics?.conversions ?? 0;
-    const conversionRate = Number(metrics?.conversion_rate || 0);
+    if (loading) {
+        return (
+            <div className="flex min-h-[60vh] items-center justify-center">
+                <div className="admin-panel flex flex-col items-center rounded-[2rem] px-10 py-12 text-center">
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/70 border-t-teal-700" />
+                    <p className="admin-kicker mt-6">Analytics sync</p>
+                    <p className="mt-3 text-sm font-medium text-zinc-600">Loading live attribution signals...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-300">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-800">Analytics & Revenue Platform</h1>
-                    <p className="text-sm text-slate-500 mt-1">Granular breakdown tracking conversions natively against local CRM hashes.</p>
+        <div className="space-y-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+                <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p className="admin-kicker">Attribution</p>
+                        <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Read the operating economics behind your traffic and leads.</h1>
+                        <p className="admin-copy mt-5 max-w-2xl text-base">
+                            This board connects source attribution, geography, conversions, and top-of-funnel application volume so you can decide where to scale next.
+                        </p>
+                    </div>
+
+                    <button onClick={fetchAnalytics} className="admin-button-secondary">
+                        Refresh analytics
+                    </button>
                 </div>
-                <button onClick={fetchAnalytics} className="bg-white border text-sm font-medium border-slate-200 text-slate-600 px-4 py-2 rounded-lg hover:bg-slate-50 transition shadow-sm">
-                    ↻ Sync Arrays
-                </button>
+            </section>
+
+            {error && (
+                <div className="admin-toast-error rounded-[1.5rem] px-4 py-3 text-sm font-medium shadow-sm">
+                    Failed to render analytics: {error}
+                </div>
+            )}
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <MetricCard title="Total Leads" value={metrics?.total_leads || 0} subtitle="Total CRM pipeline volume" icon="TL" statusColor="success" />
+                <MetricCard title="Converted" value={metrics?.converted_leads ?? metrics?.conversions ?? 0} subtitle="Converted lead count" icon="CV" />
+                <MetricCard title="Conversion Rate" value={`${Number(metrics?.conversion_rate || 0).toFixed(1)}%`} subtitle="Closed pipeline ratio" icon="RT" />
+                <MetricCard title="Revenue" value={`Rs ${(metrics?.estimated_revenue || 0).toLocaleString()}`} subtitle="Tracked conversion value" icon="RV" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-xl shadow-md border border-indigo-400">
-                    <p className="font-bold text-indigo-100 text-sm tracking-wider uppercase mb-1">Total Pipeline Pipeline</p>
-                    <p className="text-4xl font-black">{metrics?.total_leads || 0}</p>
-                </div>
-                <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white p-6 rounded-xl shadow-md border border-emerald-400">
-                    <p className="font-bold text-emerald-100 text-sm tracking-wider uppercase mb-1">Closed Won Ratio</p>
-                    <div className="flex items-baseline gap-2">
-                        <p className="text-4xl font-black">{convertedLeads}</p>
-                        <span className="bg-white/20 px-2 py-0.5 rounded text-sm">{conversionRate.toFixed(1)}%</span>
-                    </div>
-                </div>
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-md border border-purple-400 md:col-span-2">
-                    <p className="font-bold text-purple-100 text-sm tracking-wider uppercase mb-1">Estimated Accrued Revenue</p>
-                    <div className="mt-1">
-                        <p className="text-4xl font-black drop-shadow-sm">₹{(metrics?.estimated_revenue || 0).toLocaleString()}</p>
-                    </div>
-                </div>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+                <DistributionList title="Top cities" items={metrics?.top_cities || []} accentClass="bg-indigo-500" />
+                <DistributionList title="Top sources" items={metrics?.top_sources || []} accentClass="bg-emerald-500" />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-                    <h3 className="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Geographic Distribution</h3>
-                    <div className="space-y-4">
-                        {citiesData.length > 0 ? citiesData.map((c, i) => {
-                            const percent = Math.min(((c.value / (metrics?.total_leads || 1)) * 100), 100).toFixed(1);
-                            return (
-                                <div key={i}>
-                                    <div className="flex justify-between text-sm mb-1 font-medium">
-                                        <span className="text-slate-700">{c.name}</span>
-                                        <span className="text-slate-500">{percent}% ({c.value})</span>
-                                    </div>
-                                    <div className="w-full bg-slate-100 rounded-full h-2">
-                                        <div className="bg-indigo-500 h-2 rounded-full" style={{ width: `${percent}%` }}></div>
-                                    </div>
-                                </div>
-                            );
-                        }) : <p className="text-slate-500 text-sm">Awaiting geo-location metrics.</p>}
-                    </div>
+            <section className="admin-panel rounded-[2rem] p-5">
+                <div className="mb-5">
+                    <p className="admin-kicker">Stats feed</p>
+                    <h2 className="mt-3 text-xl font-semibold tracking-[-0.05em] text-zinc-950">Current application funnel snapshot</h2>
                 </div>
 
-                <div className="bg-white p-6 border border-slate-200 rounded-xl shadow-sm">
-                    <h3 className="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Source Attribution</h3>
-                    <div className="space-y-4">
-                        {sourcesData.length > 0 ? sourcesData.map((s, i) => {
-                            const percent = Math.min(((s.value / (metrics?.total_leads || 1)) * 100), 100).toFixed(1);
-                            return (
-                                <div key={i}>
-                                    <div className="flex justify-between text-sm mb-1 font-medium">
-                                        <span className="text-slate-700 truncate max-w-[200px]">{s.name}</span>
-                                        <span className="text-slate-500">{percent}% ({s.value})</span>
-                                    </div>
-                                    <div className="w-full bg-slate-100 rounded-full h-2">
-                                        <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${percent}%` }}></div>
-                                    </div>
-                                </div>
-                            );
-                        }) : <p className="text-slate-500 text-sm">Awaiting referrer metrics.</p>}
+                {!stats ? (
+                    <p className="text-sm text-zinc-500">No stats payload available.</p>
+                ) : (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div className="admin-subpanel rounded-[1.4rem] p-4">
+                            <p className="admin-kicker">Applications</p>
+                            <p className="mt-2 text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{stats.totalApplications || 0}</p>
+                            <p className="mt-2 text-sm text-zinc-500">Application count from stats feed.</p>
+                        </div>
+                        <div className="admin-subpanel rounded-[1.4rem] p-4">
+                            <p className="admin-kicker">Attribution entries</p>
+                            <p className="mt-2 text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{stats.attribution?.length || 0}</p>
+                            <p className="mt-2 text-sm text-zinc-500">Distinct source groupings available for comparison.</p>
+                        </div>
                     </div>
-                </div>
-            </div>
+                )}
+            </section>
         </div>
     );
 }

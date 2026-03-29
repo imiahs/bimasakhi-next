@@ -18,7 +18,7 @@ function ToggleCard({ label, description, checked, onChange, accent }) {
             : 'from-teal-500/10 to-transparent';
 
     return (
-        <label className={`admin-panel cursor-pointer rounded-[1.75rem] bg-gradient-to-br ${accentClass} p-5 transition hover:-translate-y-0.5`}>
+        <label className={`admin-panel cursor-pointer rounded-[1.5rem] bg-gradient-to-br ${accentClass} p-4 transition hover:-translate-y-0.5`}>
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="admin-kicker">{label}</p>
@@ -103,8 +103,8 @@ export default function SettingsPage() {
     }
 
     return (
-        <div className="space-y-8">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-7 lg:px-8 lg:py-8">
+        <div className="space-y-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
                 <div className="relative grid gap-8 lg:grid-cols-[1.35fr_0.75fr]">
                     <div>
                         <p className="admin-kicker">System configuration</p>
@@ -145,8 +145,8 @@ export default function SettingsPage() {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-8">
-                <section className="admin-panel rounded-[2rem] p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <section className="admin-panel rounded-[2rem] p-5">
                     <div className="mb-5 flex items-center justify-between gap-4">
                         <div>
                             <p className="admin-kicker">Core switches</p>
@@ -184,14 +184,14 @@ export default function SettingsPage() {
                     </div>
                 </section>
 
-                <section className="admin-panel rounded-[2rem] p-6">
+                <section className="admin-panel rounded-[2rem] p-5">
                     <div className="mb-5">
                         <p className="admin-kicker">Worker throughput</p>
                         <h2 className="admin-heading-lg mt-3 text-zinc-950">Page generation batch size.</h2>
                         <p className="admin-copy mt-2 text-sm">Controls how many queue items the page generation worker processes in a single execution.</p>
                     </div>
 
-                    <div className="admin-subpanel rounded-[1.5rem] p-5">
+                    <div className="admin-subpanel rounded-[1.4rem] p-4">
                         <label className="admin-kicker block">Batch size</label>
                         <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-center">
                             <input

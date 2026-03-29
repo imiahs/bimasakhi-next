@@ -58,9 +58,9 @@ export default function FailedLeadsPage() {
     };
 
     return (
-        <div className="space-y-8">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-7 lg:px-8 lg:py-8">
-                <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+                <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p className="admin-kicker">Recovery lane</p>
                         <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Inspect failed CRM records and recover them from one screen.</h1>

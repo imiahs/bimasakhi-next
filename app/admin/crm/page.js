@@ -130,9 +130,9 @@ export default function CRMPage() {
     }
 
     return (
-        <div className="space-y-8">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-7 lg:px-8 lg:py-8">
-                <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+                <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p className="admin-kicker">Lead operations</p>
                         <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Work the real CRM pipeline, not a sample table.</h1>
@@ -153,14 +153,14 @@ export default function CRMPage() {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <MetricCard title="Total Leads" value={summary.total} subtitle="Visible in the CRM workbench" icon="TL" statusColor="success" />
                 <MetricCard title="Hot Leads" value={summary.hot} subtitle="Lead score 80 or higher" icon="HT" statusColor={summary.hot > 0 ? 'warning' : null} />
                 <MetricCard title="Zoho Synced" value={summary.zohoSynced} subtitle="Records with CRM sync ids" icon="ZH" />
                 <MetricCard title="Converted" value={summary.converted} subtitle="Revenue-attributed leads" icon="CV" />
             </div>
 
-            <section className="admin-panel rounded-[2rem] p-6">
+            <section className="admin-panel rounded-[2rem] p-5">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <input
                         value={searchTerm}

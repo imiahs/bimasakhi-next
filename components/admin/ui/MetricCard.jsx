@@ -29,21 +29,21 @@ function MetricCard({ title, value, subtitle, trend, trendLabel, icon, statusCol
     };
 
     return (
-        <div className={`admin-panel group relative flex flex-col overflow-hidden rounded-[1.75rem] p-6 transition duration-200 hover:-translate-y-0.5 ${accentClass.glow} before:absolute before:inset-x-6 before:top-0 before:h-1 before:rounded-full ${accentClass.ring}`}>
-            <div className="mb-5 flex items-start justify-between gap-4">
+        <div className={`admin-panel group relative flex flex-col overflow-hidden rounded-[1.5rem] p-5 transition duration-200 hover:-translate-y-0.5 ${accentClass.glow} before:absolute before:inset-x-5 before:top-0 before:h-1 before:rounded-full ${accentClass.ring}`}>
+            <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
                     <p className="admin-kicker">{title}</p>
-                    <p className="mt-2 text-sm font-medium leading-tight text-zinc-600">{subtitle || 'Live business signal'}</p>
+                    <p className="mt-2 text-[13px] font-medium leading-tight text-zinc-600">{subtitle || 'Live business signal'}</p>
                 </div>
                 {icon && (
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-sm font-semibold shadow-sm ${accentClass.icon}`}>
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-[1rem] text-[11px] font-semibold shadow-sm ${accentClass.icon}`}>
                         {icon}
                     </div>
                 )}
             </div>
 
             <div className="flex items-end gap-3">
-                <h3 className="text-4xl font-semibold tracking-[-0.06em] text-zinc-950">{value ?? '--'}</h3>
+                <h3 className="text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{value ?? '--'}</h3>
                 {trend && (
                     <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] whitespace-nowrap ${
                         isUp

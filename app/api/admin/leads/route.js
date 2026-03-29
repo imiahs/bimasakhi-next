@@ -23,7 +23,12 @@ export const GET = withAdminAuth(async () => {
             const name = lead.full_name || lead.name || 'Unknown';
             const source = lead.source || lead.Lead_Source || 'Website';
             const leadScore = Number(lead.lead_score || 0);
-            const isConverted = Boolean(lead.is_converted);
+            const isConverted = Boolean(
+                lead.is_converted === true ||
+                lead.status === 'converted' ||
+                lead.converted_at ||
+                Number(lead.conversion_value || 0) > 0
+            );
             const conversionValue = Number(lead.conversion_value || 0);
             const zohoSynced = Boolean(lead.zoho_lead_id);
             const status = lead.status || (isConverted ? 'converted' : (zohoSynced ? 'contacted' : 'new'));

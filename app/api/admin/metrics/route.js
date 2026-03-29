@@ -15,6 +15,15 @@ function serializeError(error) {
     };
 }
 
+function isConvertedLead(row) {
+    return Boolean(
+        row?.is_converted === true ||
+        row?.status === 'converted' ||
+        row?.converted_at ||
+        Number(row?.conversion_value || 0) > 0
+    );
+}
+
 async function runCountQuery(label, query) {
     const result = await query();
     const error = serializeError(result?.error);
@@ -53,7 +62,7 @@ export const GET = withAdminAuth(async () => {
             supabase
                 .from('leads')
                 .select('id', { count: 'exact' })
-                .eq('is_converted', true)
+                .eq('status', 'converted')
                 .limit(1)
         ));
 
@@ -119,7 +128,7 @@ export const GET = withAdminAuth(async () => {
         let distributionRows = [];
         const distributionRes = await supabase
             .from('leads')
-            .select('source, city, conversion_value, is_converted')
+            .select('source, city, status, converted_at, conversion_value')
             .order('created_at', { ascending: false })
             .limit(500);
 
@@ -144,7 +153,7 @@ export const GET = withAdminAuth(async () => {
         };
 
         const estimatedRevenue = distributionRows.reduce((sum, row) => {
-            if (!row.is_converted) return sum;
+            if (!isConvertedLead(row)) return sum;
             return sum + Number(row.conversion_value || 0);
         }, 0);
 

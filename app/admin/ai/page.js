@@ -75,9 +75,9 @@ export default function AIPanelPage() {
     ], []);
 
     return (
-        <div className="space-y-8">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-7 lg:px-8 lg:py-8">
-                <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+                <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p className="admin-kicker">Queue control</p>
                         <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Monitor generation workload and manually dispatch the worker.</h1>
@@ -104,7 +104,7 @@ export default function AIPanelPage() {
             )}
 
             {queue && (
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-5">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
                     <MetricCard title="Pending" value={queue.pending ?? 0} icon="PD" statusColor={queue.pending > 0 ? 'warning' : null} />
                     <MetricCard title="Processing" value={queue.processing ?? 0} icon="PR" statusColor="warning" />
                     <MetricCard title="Completed" value={queue.completed ?? 0} icon="OK" statusColor="success" />

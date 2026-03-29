@@ -1,9 +1,9 @@
 .admin-root {
-    --admin-bg: #f5ede1;
-    --admin-bg-soft: #fbf6ef;
-    --admin-bg-strong: #fffaf4;
-    --admin-panel: rgba(255, 251, 245, 0.82);
-    --admin-panel-strong: rgba(255, 255, 255, 0.92);
+    --admin-bg: #f4ede5;
+    --admin-bg-soft: #faf5ee;
+    --admin-bg-strong: #fffaf6;
+    --admin-panel: rgba(255, 253, 249, 0.985);
+    --admin-panel-strong: rgba(255, 255, 255, 0.99);
     --admin-panel-dark: rgba(15, 20, 25, 0.94);
     --admin-border: rgba(77, 61, 40, 0.12);
     --admin-border-strong: rgba(77, 61, 40, 0.18);
@@ -20,8 +20,8 @@
     min-height: 100vh;
     font-family: var(--font-admin-display), 'Segoe UI', sans-serif;
     background:
-        radial-gradient(circle at top left, rgba(15, 118, 110, 0.16), transparent 28%),
-        radial-gradient(circle at 84% 0%, rgba(183, 121, 31, 0.14), transparent 22%),
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.06), transparent 20%),
+        radial-gradient(circle at 84% 0%, rgba(183, 121, 31, 0.05), transparent 14%),
         linear-gradient(180deg, var(--admin-bg-soft) 0%, var(--admin-bg) 100%);
     color: var(--admin-ink);
 }
@@ -32,18 +32,18 @@
     inset: 0;
     pointer-events: none;
     background-image:
-        linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
-    background-size: 42px 42px;
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
     mask-image: radial-gradient(circle at center, black 18%, transparent 78%);
-    opacity: 0.28;
+    opacity: 0.08;
 }
 
 .admin-shell {
     position: relative;
     background:
-        linear-gradient(160deg, rgba(255, 255, 255, 0.16), transparent 42%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 30%);
+        linear-gradient(160deg, rgba(255, 255, 255, 0.1), transparent 42%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 30%);
 }
 
 .admin-sidebar {
@@ -67,11 +67,10 @@
 
 .admin-panel {
     background: linear-gradient(180deg, var(--admin-panel-strong) 0%, var(--admin-panel) 100%);
-    border: 1px solid var(--admin-border);
+    border: 1px solid rgba(77, 61, 40, 0.13);
     box-shadow:
-        0 20px 45px rgba(56, 41, 20, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.68);
-    backdrop-filter: blur(18px);
+        0 14px 30px rgba(56, 41, 20, 0.055),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82);
 }
 
 .admin-panel-dark {
@@ -82,23 +81,22 @@
 }
 
 .admin-subpanel {
-    background: rgba(255, 255, 255, 0.58);
-    border: 1px solid rgba(77, 61, 40, 0.1);
+    background: rgba(255, 252, 248, 0.985);
+    border: 1px solid rgba(77, 61, 40, 0.12);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52);
-    backdrop-filter: blur(10px);
 }
 
 .admin-kicker {
     font-family: var(--font-admin-mono), monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.28em;
+    font-size: 0.63rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--admin-soft);
 }
 
 .admin-copy {
     color: var(--admin-muted);
-    line-height: 1.7;
+    line-height: 1.55;
 }
 
 .admin-button-primary,
@@ -109,8 +107,8 @@
     justify-content: center;
     gap: 0.6rem;
     border-radius: 1rem;
-    padding: 0.78rem 1.15rem;
-    font-size: 0.92rem;
+    padding: 0.72rem 1rem;
+    font-size: 0.88rem;
     font-weight: 600;
     transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease, color 160ms ease;
 }
@@ -198,15 +196,15 @@
 }
 
 .admin-heading-xl {
-    font-size: clamp(2.2rem, 2.8vw, 3.5rem);
-    line-height: 0.98;
+    font-size: clamp(1.95rem, 2.35vw, 3rem);
+    line-height: 0.94;
     letter-spacing: -0.05em;
     font-weight: 700;
 }
 
 .admin-heading-lg {
-    font-size: clamp(1.45rem, 1.6vw, 2rem);
-    line-height: 1.04;
+    font-size: clamp(1.28rem, 1.45vw, 1.8rem);
+    line-height: 1;
     letter-spacing: -0.04em;
     font-weight: 700;
 }
@@ -219,10 +217,10 @@
 .admin-glow-ring::after {
     content: '';
     position: absolute;
-    inset: auto -25% -55% 38%;
-    height: 180px;
+    inset: auto -22% -58% 44%;
+    height: 140px;
     border-radius: 999px;
-    background: radial-gradient(circle, rgba(15, 118, 110, 0.22), transparent 65%);
+    background: radial-gradient(circle, rgba(15, 118, 110, 0.16), transparent 65%);
     pointer-events: none;
 }
 

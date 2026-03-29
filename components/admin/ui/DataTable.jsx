@@ -40,13 +40,13 @@ function DataTable({
     const endRow = Math.min(currentPage * pageSize, dataLength);
 
     return (
-        <div className="admin-panel overflow-hidden rounded-[1.75rem]">
+        <div className="admin-panel overflow-hidden rounded-[1.5rem]">
             <div className="overflow-x-auto">
                 <table className="w-full whitespace-nowrap text-left text-sm">
-                    <thead className="border-b border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.72)] text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+                    <thead className="border-b border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.78)] text-[10px] uppercase tracking-[0.18em] text-zinc-500">
                         <tr>
                             {columns.map((column, index) => (
-                                <th key={column.key || index} className="px-6 py-3 font-semibold">
+                                <th key={column.key || index} className="px-5 py-3 font-semibold">
                                     {column.label}
                                 </th>
                             ))}
@@ -58,7 +58,7 @@ function DataTable({
                             Array.from({ length: 5 }).map((_, rowIndex) => (
                                 <tr key={`skeleton-${rowIndex}`}>
                                     {columns.map((column, columnIndex) => (
-                                        <td key={column.key || columnIndex} className="px-6 py-4">
+                                        <td key={column.key || columnIndex} className="px-5 py-3.5">
                                             <div className="h-4 w-3/4 animate-pulse rounded-full bg-zinc-200/70" />
                                         </td>
                                     ))}
@@ -66,7 +66,7 @@ function DataTable({
                             ))
                         ) : error ? (
                             <tr>
-                                <td colSpan={columns.length} className="px-6 py-12 text-center">
+                                <td colSpan={columns.length} className="px-5 py-10 text-center">
                                     <div className="flex flex-col items-center gap-2">
                                         <span className="text-lg text-rose-500">!</span>
                                         <p className="text-sm font-medium text-rose-600">{error}</p>
@@ -81,7 +81,7 @@ function DataTable({
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
                                     {columns.map((column, columnIndex) => (
-                                        <td key={column.key || columnIndex} className="px-6 py-4">
+                                        <td key={column.key || columnIndex} className="px-5 py-3.5">
                                             {column.render ? column.render(row) : (row[column.key] ?? '--')}
                                         </td>
                                     ))}
@@ -89,7 +89,7 @@ function DataTable({
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={columns.length} className="px-6 py-12 text-center">
+                                <td colSpan={columns.length} className="px-5 py-10 text-center">
                                     <div className="flex flex-col items-center gap-2">
                                         <span className="text-2xl text-zinc-300">[]</span>
                                         <p className="text-sm text-zinc-500">{emptyMessage}</p>
@@ -102,7 +102,7 @@ function DataTable({
             </div>
 
             {!loading && !error && dataLength > pageSize && (
-                <div className="flex items-center justify-between border-t border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.58)] px-6 py-3">
+                <div className="flex items-center justify-between border-t border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.62)] px-5 py-3">
                     <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500">
                         Showing {startRow}-{endRow} of {dataLength}
                     </p>

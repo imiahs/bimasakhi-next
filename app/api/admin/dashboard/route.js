@@ -30,7 +30,7 @@ export const GET = withAdminAuth(async (request, user) => {
         const { count: convertedLeads } = await supabase
             .from('leads')
             .select('id', { count: 'exact', head: true })
-            .eq('is_converted', true);
+            .eq('status', 'converted');
 
         // --- NEW OBSERVABILITY METRICS (Phase 18) ---
         const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();

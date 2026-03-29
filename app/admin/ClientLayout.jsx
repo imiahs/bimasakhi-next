@@ -56,23 +56,23 @@ function InnerLayout({ children }) {
     return (
         <div className="admin-root">
             <div className="admin-shell flex h-screen overflow-hidden text-zinc-900 selection:bg-teal-700 selection:text-white">
-                <aside className={`admin-sidebar flex flex-col border-r border-white/10 text-white transition-all duration-300 ${collapsed ? 'w-24' : 'w-[22rem]'}`}>
-                    <div className="relative border-b border-white/10 px-5 py-5">
+                <aside className={`admin-sidebar flex flex-col border-r border-white/10 text-white transition-all duration-300 ${collapsed ? 'w-24' : 'w-[19rem]'}`}>
+                    <div className="relative border-b border-white/10 px-4 py-4">
                         <div className="flex items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-[1.35rem] border border-white/10 bg-white/10 text-sm font-semibold tracking-[0.22em] text-white shadow-[0_14px_30px_rgba(15,118,110,0.22)]">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-[1.2rem] border border-white/10 bg-white/10 text-sm font-semibold tracking-[0.22em] text-white shadow-[0_14px_30px_rgba(15,118,110,0.22)]">
                                 BS
                             </div>
                             {!collapsed && (
                                 <div>
                                     <p className="admin-kicker text-white/45">Bima Sakhi OS</p>
-                                    <h1 className="mt-1 text-xl font-semibold tracking-[-0.04em] text-white">Growth Engine</h1>
-                                    <p className="mt-1 text-sm text-white/55">Lead, queue, AI, and recovery</p>
+                                    <h1 className="mt-1 text-[1.65rem] font-semibold tracking-[-0.05em] text-white">Growth Engine</h1>
+                                    <p className="mt-1 text-[13px] text-white/55">Lead, queue, AI, and recovery</p>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <nav className="admin-scrollbar flex-1 space-y-2 overflow-y-auto px-4 py-6">
+                    <nav className="admin-scrollbar flex-1 space-y-2 overflow-y-auto px-3 py-5">
                         {NAV_LINKS.map((link, index) => {
                             const active = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
 
@@ -80,13 +80,13 @@ function InnerLayout({ children }) {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className={`group relative flex items-center gap-3 overflow-hidden rounded-[1.4rem] border px-3 py-3 transition-all ${
+                                    className={`group relative flex items-center gap-3 overflow-hidden rounded-[1.25rem] border px-3 py-2.5 transition-all ${
                                         active
                                             ? 'border-white/15 bg-white/12 text-white shadow-[0_18px_30px_rgba(0,0,0,0.18)]'
                                             : 'border-transparent text-white/68 hover:border-white/10 hover:bg-white/8 hover:text-white'
                                     }`}
                                 >
-                                    <span className={`inline-flex h-11 w-11 items-center justify-center rounded-[1rem] border text-[11px] font-semibold tracking-[0.22em] ${
+                                    <span className={`inline-flex h-10 w-10 items-center justify-center rounded-[0.95rem] border text-[11px] font-semibold tracking-[0.22em] ${
                                         active
                                             ? 'border-white/10 bg-white/10 text-white'
                                             : 'border-white/10 bg-black/10 text-white/78'
@@ -97,7 +97,7 @@ function InnerLayout({ children }) {
                                     {!collapsed && (
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm font-semibold">{link.label}</span>
+                                                <span className="text-[13px] font-semibold">{link.label}</span>
                                                 <span className="admin-kicker text-white/35">0{index + 1}</span>
                                             </div>
                                             <p className="mt-1 truncate text-xs text-white/45">{link.note}</p>
@@ -108,13 +108,13 @@ function InnerLayout({ children }) {
                         })}
                     </nav>
 
-                    <div className="border-t border-white/10 p-4">
+                    <div className="border-t border-white/10 p-3">
                         <button
                             onClick={handleLogout}
                             disabled={loggingOut}
-                            className="flex w-full items-center gap-3 rounded-[1.4rem] border border-white/10 bg-white/6 px-3 py-3 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:opacity-50"
+                            className="flex w-full items-center gap-3 rounded-[1.2rem] border border-white/10 bg-white/6 px-3 py-3 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:opacity-50"
                         >
-                            <span className="inline-flex h-11 w-11 items-center justify-center rounded-[1rem] border border-white/10 bg-black/10 text-[11px] font-semibold tracking-[0.22em] text-white/80">
+                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[0.95rem] border border-white/10 bg-black/10 text-[11px] font-semibold tracking-[0.22em] text-white/80">
                                 LO
                             </span>
                             {!collapsed && (
@@ -128,8 +128,8 @@ function InnerLayout({ children }) {
                 </aside>
 
                 <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                    <header className="border-b border-[rgba(77,61,40,0.08)] px-5 py-4 lg:px-8">
-                        <div className="admin-panel flex items-center justify-between rounded-[1.8rem] px-4 py-4 lg:px-6">
+                    <header className="border-b border-[rgba(77,61,40,0.08)] px-4 py-3 lg:px-6">
+                        <div className="admin-panel flex items-center justify-between rounded-[1.6rem] px-4 py-3 lg:px-5">
                             <div className="flex items-center gap-4">
                                 <button
                                     onClick={() => setCollapsed((value) => !value)}
@@ -140,10 +140,10 @@ function InnerLayout({ children }) {
 
                                 <div>
                                     <p className="admin-kicker">Admin flow</p>
-                                    <h2 className="mt-1 text-lg font-semibold tracking-[-0.04em] text-zinc-950">
+                                    <h2 className="mt-1 text-[1.1rem] font-semibold tracking-[-0.04em] text-zinc-950">
                                         {activeLink?.label || 'Dashboard'}
                                     </h2>
-                                    <p className="mt-1 text-sm text-zinc-500">{activeLink?.note || 'Live operator board'}</p>
+                                    <p className="mt-1 text-[13px] text-zinc-500">{activeLink?.note || 'Live operator board'}</p>
                                 </div>
                             </div>
 
@@ -169,14 +169,14 @@ function InnerLayout({ children }) {
                         </div>
                     </header>
 
-                    <main className="admin-scrollbar flex-1 overflow-y-auto px-4 py-5 lg:px-8 lg:py-8">
+                    <main className="admin-scrollbar flex-1 overflow-y-auto px-4 py-4 lg:px-6 lg:py-6">
                         {globalError && (
                             <div className="admin-toast-error mb-6 rounded-[1.4rem] px-4 py-3 text-sm font-medium shadow-sm">
                                 System Error: {globalError}
                             </div>
                         )}
 
-                        <div className="mx-auto max-w-[92rem]">
+                        <div className="mx-auto max-w-[80rem]">
                             {children}
                         </div>
                     </main>
