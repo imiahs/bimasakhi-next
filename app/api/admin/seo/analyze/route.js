@@ -18,28 +18,46 @@ export const POST = withAdminAuth(async (request, user) => {
         const prompt = `Analyze SEO for route: ${page_path}. Current Title: ${page_title}. Current Desc: ${page_description}.`;
         const aiResult = await generateAiContent(prompt, { action: 'page-seo-analysis' });
 
-        // Ensure result structure from local fallback or OpenAI
+        // Validate AI result — no random fallbacks
+        // If AI returns nothing meaningful, return honest insufficient-data state
+        if (!aiResult || typeof aiResult !== 'object') {
+            return NextResponse.json({
+                success: false,
+                error: 'AI analysis returned insufficient data',
+                analysis: {
+                    score: null,
+                    suggestions: [],
+                    generated_keywords: [],
+                    internal_links: [],
+                    status: 'ai_unavailable'
+                }
+            });
+        }
+
         const analysis = {
-            score: aiResult.score || Math.floor(Math.random() * 40) + 40,
-            suggestions: aiResult.suggestions || ['Add more content'],
-            generated_keywords: aiResult.generated_keywords || ['insurance'],
-            internal_links: aiResult.internal_links || []
+            score: typeof aiResult.score === 'number' ? aiResult.score : null,
+            suggestions: Array.isArray(aiResult.suggestions) ? aiResult.suggestions : [],
+            generated_keywords: Array.isArray(aiResult.generated_keywords) ? aiResult.generated_keywords : [],
+            internal_links: Array.isArray(aiResult.internal_links) ? aiResult.internal_links : [],
+            status: typeof aiResult.score === 'number' ? 'analyzed' : 'partial'
         };
 
-        // 2. Store in Supabase seo_analysis table
-        const supabase = getServiceSupabase();
+        // 2. Store in Supabase seo_analysis table (only if we have real data)
+        if (analysis.score !== null) {
+            const supabase = getServiceSupabase();
 
-        const { data, error } = await supabase.from('seo_analysis').insert({
-            page_route: page_path,
-            score: analysis.score,
-            suggestions: analysis.suggestions,
-            generated_keywords: analysis.generated_keywords,
-            internal_links: analysis.internal_links
-        }).select().single();
+            const { data, error } = await supabase.from('seo_analysis').insert({
+                page_route: page_path,
+                score: analysis.score,
+                suggestions: analysis.suggestions,
+                generated_keywords: analysis.generated_keywords,
+                internal_links: analysis.internal_links
+            }).select().single();
 
-        if (error) {
-            console.error('Failed to store SEO Analysis in Supabase:', error);
-            // We can still return the analysis even if DB storage fails softly
+            if (error) {
+                console.error('Failed to store SEO Analysis in Supabase:', error);
+                // We can still return the analysis even if DB storage fails softly
+            }
         }
 
         return NextResponse.json({ success: true, analysis });

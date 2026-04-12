@@ -323,51 +323,135 @@ async function handleCreateLead(req, res) {
                     }
 
                     // Phase 27: PIPELINE CONNECTION (CRM -> AI -> SEO)
-                    if (city) {
+                    // Phase 27: PIPELINE CONNECTION (CRM -> AI -> SEO)
+                    // UPDATED: Duplicate-safe slug generation
+                    // - City page: 1 page per city (lic-agent-in-delhi)
+                    // - Locality page: 1 page per locality (lic-agent-in-krishna-nagar-delhi)
+                    if (city && city !== 'Unknown') {
                         try {
                             // 1. Map string city to UUID
                             let targetCityId = null;
-                            const { data: cityMatch } = await supabase.from('cities').select('id').ilike('city_name', city.trim()).limit(1).maybeSingle();
+                            const { data: cityMatch } = await supabase
+                                .from('cities')
+                                .select('id, city_name')
+                                .ilike('city_name', city.trim())
+                                .limit(1)
+                                .maybeSingle();
 
                             if (cityMatch) {
                                 targetCityId = cityMatch.id;
-                            } else {
-                                const { data: defCity } = await supabase.from('cities').select('id').limit(1).maybeSingle();
-                                if (defCity) targetCityId = defCity.id;
                             }
+                            // Note: Removed default city fallback — unknown cities should NOT generate pages
 
-                            // 2. Insert into Queue
                             if (targetCityId) {
                                 const cleanCity = city.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                                const generatedSlug = `lic-agent-in-${cleanCity}-${Date.now()}`;
 
-                                await supabase.from('generation_queue').insert({
-                                    status: 'pending',
-                                    progress: 0,
-                                    priority: 1,
-                                    created_by: 'crm_auto',
-                                    payload: {
-                                        pages: [{
-                                            slug: generatedSlug,
-                                            keyword_text: `LIC Agent Job in ${city.trim()}`,
-                                            city_id: targetCityId,
-                                            page_type: 'city_page',
-                                            content_level: 'city'
-                                        }]
+                                // CITY PAGE — 1 per city, no timestamp
+                                const citySlug = `lic-bima-sakhi-career-agency-in-${cleanCity}`;
+
+                                // Check: page already exists in page_index?
+                                const { data: existingPage } = await supabase
+                                    .from('page_index')
+                                    .select('id')
+                                    .eq('page_slug', citySlug)
+                                    .maybeSingle();
+
+                                // Check: already in queue?
+                                const { data: existingQueue } = await supabase
+                                    .from('generation_queue')
+                                    .select('id')
+                                    .eq('task_type', 'pagegen')
+                                    .in('status', ['pending', 'processing'])
+                                    .filter('payload->>created_by', 'eq', 'crm_auto')
+                                    .filter('payload->pages->0->>slug', 'eq', citySlug)
+                                    .maybeSingle();
+
+                                if (!existingPage && !existingQueue) {
+                                    // Queue city page — only if not exists
+                                    await supabase.from('generation_queue').insert({
+                                        task_type: 'pagegen',
+                                        status: 'pending',
+                                        progress: 0,
+                                        total_items: 1,
+                                        payload: {
+                                            version: 1,
+                                            priority: 1,
+                                            created_by: 'crm_auto',
+                                            pages: [{
+                                                slug: citySlug,
+                                                city_name: city.trim(), // Pass city name explicitly
+                                                keyword_text: `LIC Agent Job in ${city.trim()}`,
+                                                city_id: targetCityId,
+                                                page_type: 'city_page',
+                                                content_level: 'city'
+                                            }]
+                                        }
+                                    });
+
+                                    console.log(`[Pipeline] Queued city page: ${citySlug}`);
+
+                                    // Trigger AI Flow (Non-blocking)
+                                    const qToken = process.env.QSTASH_TOKEN
+                                        ? process.env.QSTASH_TOKEN.replace(/"/g, '')
+                                        : '';
+
+                                    fetch(`https://bimasakhi.com/api/jobs/pagegen`, {
+                                        method: 'POST',
+                                        headers: { 'Authorization': `Bearer ${qToken}` }
+                                    }).catch(e => console.error("Auto trigger error:", e));
+
+                                } else {
+                                    console.log(`[Pipeline] Skipped — page already exists or queued: ${citySlug}`);
+                                }
+
+                                // LOCALITY PAGE — 1 per locality (if locality provided)
+                                if (locality && locality.trim()) {
+                                    const cleanLocality = locality.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                                    const localitySlug = `lic-agent-in-${cleanLocality}-${cleanCity}`;
+
+                                    const { data: existingLocalityPage } = await supabase
+                                        .from('page_index')
+                                        .select('id')
+                                        .eq('page_slug', localitySlug)
+                                        .maybeSingle();
+
+                                    const { data: existingLocalityQueue } = await supabase
+                                        .from('generation_queue')
+                                        .select('id')
+                                        .eq('task_type', 'pagegen')
+                                        .in('status', ['pending', 'processing'])
+                                        .filter('payload->>created_by', 'eq', 'crm_auto')
+                                        .filter('payload->pages->0->>slug', 'eq', localitySlug)
+                                        .maybeSingle();
+
+                                    if (!existingLocalityPage && !existingLocalityQueue) {
+                                        await supabase.from('generation_queue').insert({
+                                            task_type: 'pagegen',
+                                            status: 'pending',
+                                            progress: 0,
+                                            total_items: 1,
+                                            payload: {
+                                                version: 1,
+                                                priority: 2,
+                                                created_by: 'crm_auto',
+                                                pages: [{
+                                                    slug: localitySlug,
+                                                    city_name: city.trim(),
+                                                    keyword_text: `LIC Bima Sakhi Career Agency opportunity in ${locality.trim()} ${city.trim()}`,
+                                                    city_id: targetCityId,
+                                                    page_type: 'locality_page',
+                                                    content_level: 'locality'
+                                                }]
+                                            }
+                                        });
+
+                                        console.log(`[Pipeline] Queued locality page: ${localitySlug}`);
                                     }
-                                });
-
-                                // 3. Trigger AI Flow (Non-blocking)
-                                const qToken = process.env.QSTASH_TOKEN ? process.env.QSTASH_TOKEN.replace(/"/g, '') : '';
-                                const hookUrl = `https://bimasakhi.com/api/jobs/pagegen`;
-
-                                fetch(hookUrl, {
-                                    method: 'POST',
-                                    headers: { 'Authorization': `Bearer ${qToken}` }
-                                }).catch(e => console.error("Auto trigger edge fetch error:", e));
+                                }
                             }
                         } catch (pipelineErr) {
                             console.error('Pipeline Connection Error:', pipelineErr);
+                            // Non-blocking — lead is already saved, pipeline failure doesn't affect lead
                         }
                     }
 
@@ -631,8 +715,13 @@ async function handleCreateContact(req, res) {
             tag
         } = req.body;
 
+        const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+        const normalizedReason = typeof reason === 'string' && reason.trim()
+            ? reason.trim()
+            : 'Callback Request';
+
         // 1. Basic Validation
-        if (!name || !mobile || !email || !reason || !message) {
+        if (!name || !mobile || !normalizedEmail || !message) {
             return res.status(400).json({
                 success: false,
                 error: "All fields are required"
@@ -663,7 +752,7 @@ async function handleCreateContact(req, res) {
             const { data: existing } = await supabase
                 .from("contact_inquiries")
                 .select("*")
-                .or(`email.eq.${email},mobile.eq.${normalizedMobile}`)
+                .or(`email.eq.${normalizedEmail},mobile.eq.${normalizedMobile}`)
                 .limit(1);
 
             if (existing && existing.length > 0) {
@@ -687,8 +776,8 @@ async function handleCreateContact(req, res) {
                         contact_id: contactId,
                         name,
                         mobile: normalizedMobile,
-                        email,
-                        reason,
+                        email: normalizedEmail,
+                        reason: normalizedReason,
                         message,
                         source,
                         pipeline,
@@ -702,44 +791,54 @@ async function handleCreateContact(req, res) {
             }
         }
 
-        // 6. Push to Zoho CRM (Refresh Token Flow)
-        const accessToken = await getZohoAccessToken();
-        const apiDomain = getZohoApiDomain();
+        // 6. Push to Zoho CRM (Non-blocking — contact is already saved locally)
+        // CRM sync failure must NOT crash the user's submission
+        try {
+            const accessToken = await getZohoAccessToken();
+            const apiDomain = getZohoApiDomain();
 
-        const zohoResponse = await fetch(`${apiDomain}/crm/v2/Leads`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Zoho-oauthtoken ${accessToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                data: [
-                    {
-                        Last_Name: name,
-                        Email: email,
-                        Phone: normalizedMobile,
-                        Lead_Source: source || "Website",
-                        Description: message,
-                        Tag: tag || "Contact Inquiry",
-                        Lead_Status: "Contacted"
-                    }
-                ]
-            })
-        });
-
-        // Zoho Response Validation
-        if (!zohoResponse.ok) {
-            const zohoError = await zohoResponse.text().catch(() => 'Unknown');
-            console.error('create-contact: Zoho CRM Sync Failed', {
-                status: zohoResponse.status,
-                error: zohoError,
-                contact_id: contactId
+            const zohoResponse = await fetch(`${apiDomain}/crm/v2/Leads`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Zoho-oauthtoken ${accessToken}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    data: [
+                        {
+                            Last_Name: name,
+                            Email: normalizedEmail,
+                            Phone: normalizedMobile,
+                            Lead_Source: source || "Website",
+                            Description: message,
+                            Tag: tag || "Contact Inquiry",
+                            Lead_Status: "Contacted"
+                        }
+                    ]
+                })
             });
-        } else {
-            const zohoData = await zohoResponse.json().catch(() => null);
-            console.info('create-contact: Zoho CRM Sync Success', {
+
+            // Zoho Response Validation
+            if (!zohoResponse.ok) {
+                const zohoError = await zohoResponse.text().catch(() => 'Unknown');
+                console.error('create-contact: Zoho CRM Sync Failed', {
+                    status: zohoResponse.status,
+                    error: zohoError,
+                    contact_id: contactId
+                });
+            } else {
+                const zohoData = await zohoResponse.json().catch(() => null);
+                console.info('create-contact: Zoho CRM Sync Success', {
+                    contact_id: contactId,
+                    zoho: zohoData
+                });
+            }
+        } catch (zohoErr) {
+            // CRM sync failed — log but do NOT crash the request
+            // Contact is already saved in Supabase, user should get success
+            console.error('create-contact: Zoho CRM push failed (non-blocking)', {
                 contact_id: contactId,
-                zoho: zohoData
+                error: zohoErr.message || zohoErr
             });
         }
 
@@ -758,7 +857,7 @@ async function handleCreateContact(req, res) {
                 to: [
                     {
                         email_address: {
-                            address: email,
+                            address: normalizedEmail,
                             name: name
                         }
                     }
@@ -767,7 +866,7 @@ async function handleCreateContact(req, res) {
                 htmlbody: `
           <h3>Hello ${name},</h3>
           <p>Thank you for contacting Bima Sakhi.</p>
-          <p>Your inquiry regarding <strong>${reason}</strong> has been received.</p>
+          <p>Your inquiry regarding <strong>${normalizedReason}</strong> has been received.</p>
           <p>Our team will review and respond shortly.</p>
           <br/>
           <p>Regards,<br/>Team Bima Sakhi<br/>Empower Your True YOU</p>
@@ -775,7 +874,7 @@ async function handleCreateContact(req, res) {
             })
         }).catch(err => console.error('ZeptoMail Send Error:', err));
 
-        // 8. Return Response
+        // 8. Return Response — contact is saved regardless of CRM sync outcome
         return res.status(200).json({
             success: true,
             contact_id: contactId

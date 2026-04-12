@@ -6,8 +6,11 @@ export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/admin/config
- * Returns the singleton system_control_config row
- * Protected by middleware JWT (existing)
+ *
+ * Admin-only runtime control endpoint.
+ * This is the operational source of truth for system flags.
+ *
+ * It is intentionally separate from /api/config, which is public marketing/app config.
  */
 export async function GET() {
     try {
@@ -21,11 +24,16 @@ export async function GET() {
 
 /**
  * POST /api/admin/config
- * Atomic UPSERT of system_control_config
- * Logs every change to system_logs
- * Protected by middleware JWT (existing)
- * 
- * Payload: { ai_enabled?, queue_paused?, batch_size?, crm_auto_routing?, followup_enabled? }
+ *
+ * Admin-only runtime control mutation.
+ * Only operational flags may be changed here.
+ *
+ * Payload:
+ * { ai_enabled?, queue_paused?, batch_size?, crm_auto_routing?, followup_enabled? }
+ *
+ * Boolean flags express switch state only.
+ * Effective system state still depends on prerequisites outside this table
+ * such as schema readiness, provider credentials, and worker health.
  */
 export async function POST(request) {
     try {

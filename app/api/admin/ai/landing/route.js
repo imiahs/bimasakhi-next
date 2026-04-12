@@ -46,7 +46,7 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ success: true, message: 'No landing events to analyze.', analyses: [] });
         }
 
-        // Mock computation of bounce rate & scroll depth for AI Context
+        // Compute bounce rate from REAL data only — no simulated scroll depth
         const landingContext = pathStats.map(stat => {
             const bounceRate = stat.actions === 0 ? 100 : Math.max(0, 100 - ((stat.actions / stat.views) * 100));
             return {
@@ -54,7 +54,9 @@ export const POST = withAdminAuth(async (request, user) => {
                 views: stat.views,
                 actions: stat.actions,
                 bounce_rate: parseFloat(bounceRate.toFixed(2)),
-                scroll_depth: Math.floor(Math.random() * 40) + 40 // simulated average depth 40-80%
+                // scroll_depth removed — we have no real scroll tracking data
+                // Honest state: scroll depth is not measured yet
+                scroll_depth: null
             };
         });
 
@@ -86,6 +88,13 @@ export const POST = withAdminAuth(async (request, user) => {
             }
         } catch (aiErr) {
             console.error("Landing Analysis AI Error:", aiErr);
+            // Return honest empty state instead of fabricated data
+            return NextResponse.json({
+                success: true,
+                message: 'AI analysis unavailable. Returning raw telemetry only.',
+                analyses: [],
+                raw_telemetry: landingContext
+            });
         }
 
         return NextResponse.json({ success: true, analyses });

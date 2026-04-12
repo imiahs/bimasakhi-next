@@ -16,11 +16,11 @@ function serializeError(error) {
 }
 
 function isConvertedLead(row) {
+    // Conversion truth: explicit conversion fields only
+    // zoho_lead_id is CRM sync metadata, NOT conversion indicator
     return Boolean(
         row?.is_converted === true ||
-        row?.status === 'converted' ||
-        row?.converted_at ||
-        Number(row?.conversion_value || 0) > 0
+        row?.converted_at
     );
 }
 
@@ -62,7 +62,7 @@ export const GET = withAdminAuth(async () => {
             supabase
                 .from('leads')
                 .select('id', { count: 'exact' })
-                .not('zoho_lead_id', 'is', null)
+                .eq('is_converted', true)
                 .limit(1)
         ));
 
@@ -128,7 +128,7 @@ export const GET = withAdminAuth(async () => {
         let distributionRows = [];
         const distributionRes = await supabase
             .from('leads')
-            .select('source, city, status, converted_at, conversion_value')
+            .select('source, city, status, is_converted, converted_at, conversion_value')
             .order('created_at', { ascending: false })
             .limit(500);
 

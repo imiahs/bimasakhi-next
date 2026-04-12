@@ -5,8 +5,6 @@ import './CommandPalette.css';
 
 const CommandPalette = ({ isOpen, onClose }) => {
     const [searchQuery, setSearchQuery] = useState('');
-    const [isAiMode, setIsAiMode] = useState(false);
-    const [aiResponse, setAiResponse] = useState('');
 
     useEffect(() => {
         const handleKeyDown = (e) => {
@@ -18,32 +16,19 @@ const CommandPalette = ({ isOpen, onClose }) => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [onClose]);
 
-    useEffect(() => {
-        if (searchQuery.toLowerCase().startsWith('/ai') || searchQuery.toLowerCase().startsWith('ask')) {
-            setIsAiMode(true);
-            setAiResponse('Thinking... Parsing website data to answer your question.');
-
-            const timer = setTimeout(() => {
-                setAiResponse(`Here is a generated draft or insight based on your request: "${searchQuery.replace('/ai ', '').replace('ask ', '')}". Would you like me to create a blog post or send a WhatsApp message about this?`);
-            }, 1200);
-
-            return () => clearTimeout(timer);
-        } else {
-            setIsAiMode(false);
-            setAiResponse('');
-        }
-    }, [searchQuery]);
-
     if (!isOpen) return null;
+
+    // Detect AI intent but show honest "not available" state
+    const isAiQuery = searchQuery.toLowerCase().startsWith('/ai') || searchQuery.toLowerCase().startsWith('ask');
 
     return (
         <div className="command-palette-overlay" onClick={onClose}>
             <div className="command-palette-modal" onClick={(e) => e.stopPropagation()}>
                 <div className="command-search-bar">
-                    <span className="search-icon">✨</span>
+                    <span className="search-icon">🔍</span>
                     <input
                         type="text"
-                        placeholder="Type '/ai ...' to Ask AI Assistant, or search leads, posts..."
+                        placeholder="Search leads, posts, or pages..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         autoFocus
@@ -52,23 +37,15 @@ const CommandPalette = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="command-results-area">
-                    {isAiMode ? (
+                    {isAiQuery ? (
                         <div className="ai-response-box">
-                            <h4 className="ai-title">🤖 AI Assistant Active</h4>
-                            <p className="ai-text">{aiResponse}</p>
-                            <div className="ai-actions">
-                                <button className="ai-btn primary">Draft Blog Post</button>
-                                <button className="ai-btn secondary">Generate WhatsApp Reply</button>
-                            </div>
+                            <h4 className="ai-title">🤖 AI Assistant</h4>
+                            <p className="ai-text">AI assistant is not yet connected to a real provider. This feature will be activated once the AI pipeline is operational.</p>
                         </div>
                     ) : searchQuery ? (
                         <div className="search-results-box">
-                            <h4 className="actions-title">Search Results for "{searchQuery}"</h4>
-                            <ul>
-                                <li><span>📄</span> <strong>Page:</strong> /apply</li>
-                                <li><span>📝</span> <strong>Blog:</strong> LIC Agent Salary Details</li>
-                                <li><span>👥</span> <strong>Lead:</strong> Search in Contacts</li>
-                            </ul>
+                            <h4 className="actions-title">Search Results for &quot;{searchQuery}&quot;</h4>
+                            <p className="ai-text">Search functionality requires backend integration. Use the admin panels to browse leads and content.</p>
                         </div>
                     ) : (
                         <div className="quick-actions-grid">

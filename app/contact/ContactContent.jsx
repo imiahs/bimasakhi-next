@@ -15,8 +15,12 @@ const ContactContent = () => {
     const [formData, setFormData] = useState({
         name: "",
         mobile: "",
+        email: "",
         preferredTime: ""
     });
+
+    // Validate mobile: Indian 10-digit starting with 6-9
+    const isValidMobile = (mobile) => /^[6-9]\d{9}$/.test(mobile.replace(/\D/g, '').slice(-10));
 
     const [status, setStatus] = useState({
         loading: false,
@@ -50,25 +54,55 @@ const ContactContent = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (status.loading) return;
+
+        // Client-side validation before submit
+        if (!formData.name.trim() || !formData.mobile.trim() || !formData.email.trim()) {
+            setStatus({
+                loading: false,
+                error: language === 'hi'
+                    ? "कृपया सभी आवश्यक फ़ील्ड भरें।"
+                    : "Please fill all required fields.",
+                success: false
+            });
+            return;
+        }
+
+        if (!isValidMobile(formData.mobile)) {
+            setStatus({
+                loading: false,
+                error: language === 'hi'
+                    ? "कृपया एक मान्य 10-अंकीय मोबाइल नंबर दर्ज करें।"
+                    : "Please enter a valid 10-digit mobile number.",
+                success: false
+            });
+            return;
+        }
+
         setStatus({ loading: true, error: null, success: false });
 
         try {
+            // Payload contract: name, mobile, email, reason, message are required by backend
+            // source, pipeline, tag are optional metadata
+            const payload = {
+                name: formData.name.trim(),
+                mobile: formData.mobile.trim(),
+                email: formData.email.trim(),
+                reason: "Callback Request",
+                message: `Callback requested. Preferred time: ${formData.preferredTime || "Any time"}`,
+                source: "Contact Page - Callback",
+                pipeline: "Recruitment",
+                tag: "Callback Request"
+            };
+
             const response = await fetch("/api/crm/create-contact", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: formData.name,
-                    mobile: formData.mobile,
-                    message: `Callback requested. Preferred time: ${formData.preferredTime || "Any time"}`,
-                    source: "Contact Page - Callback",
-                    pipeline: "Recruitment",
-                    tag: "Callback Request"
-                })
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
 
-            if (!data.success) {
+            if (!response.ok || !data.success) {
                 throw new Error(data.error || "Submission failed");
             }
 
@@ -81,10 +115,10 @@ const ContactContent = () => {
             });
 
             setStatus({ loading: false, error: null, success: true });
-            setFormData({ name: "", mobile: "", preferredTime: "" });
+            setFormData({ name: "", mobile: "", email: "", preferredTime: "" });
 
         } catch (error) {
-            console.error(error);
+            console.error("Contact form submission error:", error);
             setStatus({
                 loading: false,
                 error: language === 'hi'
@@ -109,6 +143,7 @@ const ContactContent = () => {
             callbackTitle: "Request a Callback",
             formName: "Your Full Name",
             formMobile: "Mobile Number",
+            formEmail: "Email Address",
             formTime: "Preferred Call Time",
             formTimeOptions: ["Any Time", "Morning (10 AM – 12 PM)", "Afternoon (12 PM – 3 PM)", "Evening (3 PM – 6 PM)"],
             formBtn: "Request Callback",
@@ -160,6 +195,7 @@ const ContactContent = () => {
             callbackTitle: "कॉलबैक का अनुरोध करें",
             formName: "आपका पूरा नाम",
             formMobile: "मोबाइल नंबर",
+            formEmail: "ईमेल पता",
             formTime: "कॉल का पसंदीदा समय",
             formTimeOptions: ["कोई भी समय", "सुबह (10 AM – 12 PM)", "दोपहर (12 PM – 3 PM)", "शाम (3 PM – 6 PM)"],
             formBtn: "कॉलबैक का अनुरोध करें",
@@ -253,6 +289,14 @@ const ContactContent = () => {
                                 placeholder={c.formMobile}
                                 required
                                 value={formData.mobile}
+                                onChange={handleChange}
+                            />
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder={c.formEmail}
+                                required
+                                value={formData.email}
                                 onChange={handleChange}
                             />
                             <select

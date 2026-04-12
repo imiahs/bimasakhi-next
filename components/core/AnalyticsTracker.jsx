@@ -9,14 +9,16 @@ const AnalyticsTracker = () => {
     const pathname = usePathname();
     const { config } = useContext(ConfigContext);
 
+    // Initialize first-party telemetry immediately on mount
+    // GA4/GTM will be added when config loads with explicit analytics flags
     useEffect(() => {
-        if (config) {
-            analytics.initialize(config);
-        }
+        analytics.initialize(config || {});
     }, [config]);
 
     useEffect(() => {
-        analytics.pageView(pathname);
+        if (pathname) {
+            analytics.pageView(pathname);
+        }
     }, [pathname]);
 
     return null;

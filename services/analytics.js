@@ -9,36 +9,42 @@ import { getStorage, STORAGE_KEYS } from '@/utils/storage';
 class AnalyticsService {
     constructor() {
         this.initialized = false;
+        this.firstPartyReady = false;
         this.gaId = null;
         this.gtmId = null;
     }
 
     /**
-     * Initialize analytics with config from backend
-     * @param {Object} config - Global config object
+     * Initialize analytics with config from backend.
+     * First-party telemetry (/api/events) ALWAYS initializes regardless of config.
+     * GA4/GTM only inject when explicitly enabled via config flags.
+     * @param {Object} config - Global config object (optional)
      */
     initialize(config) {
-        if (this.initialized) return;
-        if (!config || !config.isAnalyticsEnabled) {
-            console.log('Analytics: Disabled or Config Missing');
-            return;
+        // First-party telemetry always starts — no config gate
+        if (!this.firstPartyReady) {
+            this.firstPartyReady = true;
+            console.log('Analytics: First-party telemetry initialized');
         }
 
-        this.gaId = config.gaMeasurementId;
-        this.gtmId = config.gtmContainerId;
-
-        // Inject GA4
-        if (this.gaId) {
-            this._injectGA4(this.gaId);
+        // Mark as initialized so pageView/track calls work
+        if (!this.initialized) {
+            this.initialized = true;
         }
 
-        // Inject GTM
-        if (this.gtmId) {
-            this._injectGTM(this.gtmId);
-        }
+        // GA4/GTM injection — only when config explicitly enables them
+        if (config && config.isAnalyticsEnabled) {
+            this.gaId = config.gaMeasurementId;
+            this.gtmId = config.gtmContainerId;
 
-        this.initialized = true;
-        console.log('Analytics: Initialized', { ga: this.gaId, gtm: this.gtmId });
+            if (this.gaId) {
+                this._injectGA4(this.gaId);
+            }
+            if (this.gtmId) {
+                this._injectGTM(this.gtmId);
+            }
+            console.log('Analytics: GA4/GTM initialized', { ga: this.gaId, gtm: this.gtmId });
+        }
     }
 
     _injectGA4(measurementId) {
@@ -105,17 +111,8 @@ class AnalyticsService {
                 });
             }
 
-            // Phase 19: Local Observability Integration
-            fetch('/api/events', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    event_type: 'page_view',
-                    session_id: sessionId,
-                    route_path: path,
-                    metadata: { source: userState?.source || 'direct' }
-                })
-            }).catch(console.error);
+            // First-party telemetry — always fires when initialized
+            this._sendFirstPartyEvent('page_view', sessionId, path, { source: 'direct' });
 
         } catch (e) {
             // Silent fail
@@ -149,20 +146,33 @@ class AnalyticsService {
                 });
             }
 
-            // Phase 19: Local Observability Integration
+            // First-party telemetry — always fires when initialized
+            this._sendFirstPartyEvent(eventName, sessionId, window.location.pathname, params);
+
+        } catch (e) {
+            // Silent fail
+        }
+    }
+
+    /**
+     * Send first-party telemetry event to /api/events.
+     * This is independent of GA4/GTM and always fires when analytics is initialized.
+     * @private
+     */
+    _sendFirstPartyEvent(eventType, sessionId, routePath, metadata = {}) {
+        try {
             fetch('/api/events', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    event_type: eventName,
+                    event_type: eventType,
                     session_id: sessionId,
-                    route_path: window.location.pathname,
-                    metadata: params
+                    route_path: routePath,
+                    metadata
                 })
-            }).catch(console.error);
-
+            }).catch(() => { /* silent — telemetry must not break UX */ });
         } catch (e) {
-            // Silent fail
+            // Silent fail — telemetry is non-blocking
         }
     }
 }

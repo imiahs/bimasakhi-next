@@ -72,13 +72,11 @@ export const GET = withAdminAuth(async (request, user) => {
                 countMap[path] = uniqueSessions[path].size;
             });
 
-            let previousValue = 0;
+            // Build funnel from REAL data only — no synthetic shaping
             funnelData = funnelSteps.map((step, idx) => {
-                let val = countMap[step.path] || 0;
-                // mock graceful degradation if direct linking
-                if (idx > 0 && val > funnelData[idx - 1].value) { val = funnelData[idx - 1].value - Math.floor(Math.random() * 5); }
+                const val = countMap[step.path] || 0;
+                const previousValue = idx > 0 ? funnelData[idx - 1].value : 0;
                 const dropoff = idx === 0 ? 0 : (previousValue > 0 ? ((previousValue - val) / previousValue * 100).toFixed(1) : 0);
-                previousValue = val;
 
                 return {
                     name: step.id.toUpperCase(),

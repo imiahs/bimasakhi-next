@@ -18,11 +18,14 @@ export const POST = withAdminAuth(async (request, user) => {
         const { data, error } = await supabase
             .from('leads')
             .update({
+                is_converted: true,
                 converted_at: new Date().toISOString(),
-                conversion_value: parsedValue
+                conversion_value: parsedValue,
+                conversion_source: 'admin_manual',
+                status: 'converted'
             })
             .eq('id', lead_id)
-            .select('id, conversion_value, converted_at')
+            .select('id, is_converted, conversion_value, converted_at, conversion_source')
             .single();
 
         if (error) {
