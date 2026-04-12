@@ -521,163 +521,45 @@ async function handleCreateLead(req, res) {
         });
     }
 
-    // --- ZOHO CRM LOGIC ---
-
-    const leadData = {
-        Last_Name: name,
-        Mobile: normalizedMobile,
-        Email: email,
-        City: city,
-        State: state,
-        Zip_Code: pincode,
-        Street: locality,
-        Designation: occupation,
-        Description: `Education: ${education}\nReason: ${reason || ''}\n\nVisited Pages: ${JSON.stringify(visitedPages || [])}\nLead Source Page: ${lead_source_page || 'Unknown'}\nUTM Source: ${source}\nUTM Medium: ${medium}\nUTM Campaign: ${campaign}`,
-        Lead_Source: 'Website'
-    };
+    // --- PHASE 3 ASYNC QUEUE PUBLISHING ---
+    const { enqueueLeadSync } = require('@/lib/queue/publisher.js');
 
     try {
-        if (process.env.SYSTEM_MODE === 'dry-run') {
-            safeLog('DRY_RUN', 'Bypassed Zoho POST', { payload: leadData });
-            return res.status(200).json({
-                success: true,
-                message: "Dry Run: Lead processed successfully",
-                lead_id: refId || supabaseLeadId || 'dry-run-zoho-id',
-                zoho_id: 'dry-run-zoho-id',
-                status: 'success',
-                action: 'insert',
-                duplicate: false
-            });
+        if (!supabaseLeadId) {
+            throw new Error("DB First Rule Failed: Lead ID missing.");
         }
 
-        const accessToken = await getZohoAccessToken();
-        const ZOHO_API_DOMAIN = getZohoApiDomain();
+        await enqueueLeadSync(supabaseLeadId);
+        
+        safeLog('QUEUE_PUBLISH_SUCCESS', 'Lead sync job queued safely', { lead_id: refId || supabaseLeadId });
 
-        // Upsert Lead
-        const crmUrl = `${ZOHO_API_DOMAIN}/crm/v2.1/Leads/upsert`;
-
-        const crmResponse = await axios.post(crmUrl, {
-            data: [leadData],
-            duplicate_check_fields: ['Mobile'],
-            trigger: ['approval', 'workflow', 'blueprint']
-        }, {
-            headers: {
-                'Authorization': `Zoho-oauthtoken ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
+        return res.status(200).json({
+            success: true,
+            message: "Lead processed successfully",
+            lead_id: refId || supabaseLeadId,
+            status: "success",
+            action: "async_queued",
+            duplicate: false
         });
-
-        // Handle CRM Response
-        const result = crmResponse.data.data ? crmResponse.data.data[0] : null;
-
-        if (result && (result.status === 'success' || result.status === 'duplicate')) {
-            const zohoId = result.details.id;
-            const action = result.action;
-
-            // --- UPDATE SUPABASE BACK-REF (awaited before response) ---
-            if (isSupabaseEnabled && supabaseLeadId && zohoId) {
-                const { error: updateErr } = await supabase.from('leads').update({
-                    zoho_lead_id: zohoId,
-                    status: 'contacted',
-                    updated_at: new Date()
-                }).eq('id', supabaseLeadId);
-
-                if (updateErr) console.error("Back-ref Update Error:", updateErr);
-
-                const { error: syncEventErr } = await supabase.from('lead_events').insert({
-                    lead_id: supabaseLeadId,
-                    event_type: 'zoho_synced',
-                    metadata: { zoho_id: zohoId, action: action }
-                });
-
-                if (syncEventErr) console.error("Sync Event Log Error:", syncEventErr);
-            }
-
-            // PHASE 5: Trigger Non-Blocking AI Lead Scoring & Routing
-            if (isSupabaseEnabled && supabaseLeadId) {
-                const qToken = process.env.QSTASH_TOKEN ? process.env.QSTASH_TOKEN.replace(/"/g, '') : '';
-                const qstashEndpoint = `https://qstash.upstash.io/v2/publish/https://bimasakhi.com/api/jobs/ai-scorer`;
-
-                fetch(qstashEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${qToken}`,
-                        'Content-Type': 'application/json',
-                        'Upstash-Delay': '5s' // minor cooling gap
-                    },
-                    body: JSON.stringify({ leadId: supabaseLeadId })
-                }).catch(e => console.error("AI Scorer QStash Auto-trigger error:", e));
-            }
-
-            // TASK 5: ADD SUCCESS LOGGING
-            safeLog('CRM_SUCCESS', 'Lead created', {
-                lead_id: refId || supabaseLeadId || zohoId,
-                city
-            });
-
-            return res.status(200).json({
-                success: true,
-                message: "Lead processed successfully",
-                lead_id: refId || supabaseLeadId || zohoId,
-                zoho_id: zohoId,
-                status: result.status,
-                action: action,
-                duplicate: false
-            });
-        } else {
-            console.error("Zoho CRM Data Error:", JSON.stringify(crmResponse.data));
-
-            // TASK 3: LOG CRM FAILURES
-            safeLog('CRM_ERROR', 'Zoho failure', {
-                error: "CRM Validation Failed",
-                payload: { name, mobile: normalizedMobile, city }
-            });
-
-            // TASK 4: ZERO LEAD LOSS MECHANISM
-            if (isSupabaseEnabled && supabase) {
-                await supabase.from('failed_leads').insert({
-                    name,
-                    mobile: normalizedMobile,
-                    email,
-                    city,
-                    payload: req.body,
-                    error: "CRM Validation Failed: " + JSON.stringify(crmResponse.data)
-                });
-            }
-
-            return res.status(400).json({
-                success: false,
-                error: "CRM Validation Failed",
-                details: "CRM validation failed"
-            });
-        }
 
     } catch (error) {
-        // Allow retry: clear idempotency lock on failure
         await redis.del(idempotencyKey).catch(() => { });
 
-        // TASK 3: LOG SYSTEM FAILURES
-        safeLog('CRM_ERROR', 'System failure', {
-            error: error.message,
-            payload: { name, mobile: normalizedMobile, city }
-        });
-
-        // TASK 4: ZERO LEAD LOSS MECHANISM
-        if (isSupabaseEnabled && supabase) {
-            await supabase.from('failed_leads').insert({
-                name,
-                mobile: normalizedMobile,
-                email,
-                city,
-                payload: req.body,
-                error: error.message
+        safeLog('QUEUE_ERROR', 'QStash failed', { error: error.message, lead_id: supabaseLeadId });
+        
+        if (isSupabaseEnabled && supabase && supabaseLeadId) {
+            await supabase.from('leads').update({ sync_status: 'failed_queue' }).eq('id', supabaseLeadId);
+            await supabase.from('observability_logs').insert({
+                level: 'ERROR',
+                message: `Lead QStash queue failed: ${error.message}`,
+                source: 'api_lead_sync',
+                created_at: new Date().toISOString()
             });
         }
-
-        console.error("System Error in Create-Lead:", error.response ? error.response.data : error.message);
+        
         return res.status(500).json({
             success: false,
-            error: "Internal Server Error"
+            error: "Queue publish failed"
         });
     }
 }
@@ -791,90 +673,26 @@ async function handleCreateContact(req, res) {
             }
         }
 
-        // 6. Push to Zoho CRM (Non-blocking — contact is already saved locally)
-        // CRM sync failure must NOT crash the user's submission
+        // 6. Push to QStash Queue (DB First rules applied)
         try {
-            const accessToken = await getZohoAccessToken();
-            const apiDomain = getZohoApiDomain();
-
-            const zohoResponse = await fetch(`${apiDomain}/crm/v2/Leads`, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Zoho-oauthtoken ${accessToken}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    data: [
-                        {
-                            Last_Name: name,
-                            Email: normalizedEmail,
-                            Phone: normalizedMobile,
-                            Lead_Source: source || "Website",
-                            Description: message,
-                            Tag: tag || "Contact Inquiry",
-                            Lead_Status: "Contacted"
-                        }
-                    ]
-                })
-            });
-
-            // Zoho Response Validation
-            if (!zohoResponse.ok) {
-                const zohoError = await zohoResponse.text().catch(() => 'Unknown');
-                console.error('create-contact: Zoho CRM Sync Failed', {
-                    status: zohoResponse.status,
-                    error: zohoError,
-                    contact_id: contactId
-                });
-            } else {
-                const zohoData = await zohoResponse.json().catch(() => null);
-                console.info('create-contact: Zoho CRM Sync Success', {
-                    contact_id: contactId,
-                    zoho: zohoData
+            const { enqueueContactSync } = require('@/lib/queue/publisher.js');
+            await enqueueContactSync(contactId);
+        } catch (error) {
+            console.error('create-contact: Queue Push failed', error);
+            if (supabase) {
+                await supabase.from('contact_inquiries').update({ sync_status: 'failed_queue' }).eq('contact_id', contactId);
+                await supabase.from('observability_logs').insert({
+                    level: 'ERROR',
+                    message: `Contact QStash queue failed: ${error.message}`,
+                    source: 'api_contact_sync',
+                    created_at: new Date().toISOString()
                 });
             }
-        } catch (zohoErr) {
-            // CRM sync failed — log but do NOT crash the request
-            // Contact is already saved in Supabase, user should get success
-            console.error('create-contact: Zoho CRM push failed (non-blocking)', {
-                contact_id: contactId,
-                error: zohoErr.message || zohoErr
-            });
+            // Release lock if queue failed so user can try again safely
+            await redis.del(idempotencyKey).catch(() => {});
+            return res.status(500).json({ success: false, error: "Queue publish failed" });
         }
 
-        // 7. Email Auto-Responder (fire-and-forget — don't block user response)
-        fetch("https://api.zeptomail.in/v1.1/email", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Zoho-enczapikey ${process.env.ZEPTO_API_KEY}`
-            },
-            body: JSON.stringify({
-                from: {
-                    address: "info@bimasakhi.com",
-                    name: "Bima Sakhi Team"
-                },
-                to: [
-                    {
-                        email_address: {
-                            address: normalizedEmail,
-                            name: name
-                        }
-                    }
-                ],
-                subject: "We Have Received Your Inquiry",
-                htmlbody: `
-          <h3>Hello ${name},</h3>
-          <p>Thank you for contacting Bima Sakhi.</p>
-          <p>Your inquiry regarding <strong>${normalizedReason}</strong> has been received.</p>
-          <p>Our team will review and respond shortly.</p>
-          <br/>
-          <p>Regards,<br/>Team Bima Sakhi<br/>Empower Your True YOU</p>
-        `
-            })
-        }).catch(err => console.error('ZeptoMail Send Error:', err));
-
-        // 8. Return Response — contact is saved regardless of CRM sync outcome
         return res.status(200).json({
             success: true,
             contact_id: contactId
