@@ -63,6 +63,74 @@ try {
 
 import { rateLimit } from '@/utils/rateLimiter.js';
 
+async function insertContactInquiryCompat(supabaseClient, record) {
+    const createdAt = new Date().toISOString();
+    const candidates = [
+        {
+            label: 'next',
+            payload: {
+                ...record,
+                sync_status: 'pending',
+                created_at: createdAt
+            }
+        },
+        {
+            label: 'phase1',
+            payload: {
+                contact_id: record.contact_id,
+                name: record.name,
+                mobile: record.mobile,
+                email: record.email,
+                reason: record.reason,
+                message: record.message,
+                source: record.source,
+                pipeline: record.pipeline,
+                tag: record.tag,
+                created_at: createdAt
+            }
+        },
+        {
+            label: 'legacy_minimal',
+            payload: {
+                contact_id: record.contact_id,
+                name: record.name,
+                mobile: record.mobile,
+                email: record.email,
+                reason: record.reason,
+                message: record.message,
+                created_at: createdAt
+            }
+        }
+    ];
+
+    let lastError = null;
+    for (const candidate of candidates) {
+        const { error } = await supabaseClient
+            .from('contact_inquiries')
+            .insert([candidate.payload]);
+
+        if (!error) {
+            return { inserted: true, mode: candidate.label };
+        }
+
+        lastError = error;
+        console.warn(`create-contact: contact_inquiries fallback failed (${candidate.label})`, error.message);
+    }
+
+    return { inserted: false, error: lastError };
+}
+
+async function updateContactSyncStatusCompat(supabaseClient, contactId, status) {
+    const { error } = await supabaseClient
+        .from('contact_inquiries')
+        .update({ sync_status: status })
+        .eq('contact_id', contactId);
+
+    if (error) {
+        console.warn(`create-contact: sync_status update skipped (${status})`, error.message);
+    }
+}
+
 // ============================================================
 // ACTION: create-lead
 // ============================================================
@@ -648,54 +716,63 @@ async function handleCreateContact(req, res) {
 
         // 4. Generate Contact ID
         const contactId = `CNT-${Date.now()}`;
+        let contactInserted = false;
 
         // 5. Insert into Supabase
         if (supabase) {
-            const { error: insertError } = await supabase
-                .from("contact_inquiries")
-                .insert([
-                    {
-                        contact_id: contactId,
-                        name,
-                        mobile: normalizedMobile,
-                        email: normalizedEmail,
-                        reason: normalizedReason,
-                        message,
-                        source,
-                        pipeline,
-                        tag,
-                        created_at: new Date()
-                    }
-                ]);
+            const insertResult = await insertContactInquiryCompat(supabase, {
+                contact_id: contactId,
+                name,
+                mobile: normalizedMobile,
+                email: normalizedEmail,
+                reason: normalizedReason,
+                message,
+                source,
+                pipeline,
+                tag
+            });
 
-            if (insertError) {
-                console.error('create-contact: Supabase Insert Error', insertError);
+            contactInserted = insertResult.inserted;
+
+            if (!insertResult.inserted) {
+                console.error('create-contact: Supabase Insert Error', insertResult.error);
+                await redis.del(idempotencyKey).catch(() => {});
+                return res.status(500).json({
+                    success: false,
+                    error: "Unable to save contact request"
+                });
             }
         }
 
         // 6. Push to QStash Queue (DB First rules applied)
+        let queuePublished = true;
         try {
             const { enqueueContactSync } = require('@/lib/queue/publisher.js');
-            await enqueueContactSync(contactId);
+            const queueResponse = await enqueueContactSync(contactId);
+            queuePublished = Boolean(queueResponse?.messageId);
         } catch (error) {
+            queuePublished = false;
             console.error('create-contact: Queue Push failed', error);
             if (supabase) {
-                await supabase.from('contact_inquiries').update({ sync_status: 'failed_queue' }).eq('contact_id', contactId);
+                await updateContactSyncStatusCompat(supabase, contactId, 'failed_queue');
                 await supabase.from('observability_logs').insert({
                     level: 'ERROR',
                     message: `Contact QStash queue failed: ${error.message}`,
                     source: 'api_contact_sync',
                     created_at: new Date().toISOString()
-                });
+                }).then(() => {}).catch(() => {});
             }
-            // Release lock if queue failed so user can try again safely
-            await redis.del(idempotencyKey).catch(() => {});
-            return res.status(500).json({ success: false, error: "Queue publish failed" });
+        }
+
+        if (!queuePublished && supabase) {
+            await updateContactSyncStatusCompat(supabase, contactId, 'failed_queue');
         }
 
         return res.status(200).json({
             success: true,
-            contact_id: contactId
+            contact_id: contactId,
+            queued: queuePublished,
+            stored: supabase ? contactInserted : true
         });
 
     } catch (error) {
