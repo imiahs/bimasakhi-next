@@ -1,81 +1,107 @@
 import { NextResponse } from 'next/server';
-import { getLocalDb } from '@/utils/localDb';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 
 export const dynamic = 'force-dynamic';
 
-// POST /api/events
+const ALLOWED_EVENT_TYPES = new Set([
+    'session_started',
+    'page_view',
+    'cta_clicked',
+    'form_submit_attempted',
+    'form_submit_succeeded',
+    'form_submit_failed'
+]);
+
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { event_type, session_id, route_path, metadata } = body;
+        const { session_id, event_type, event_name, payload } = body;
 
-        if (!event_type || !route_path) {
-            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        // 1. Validate contract
+        if (!session_id || !event_type || !event_name) {
+            return NextResponse.json({ error: 'Missing strict contract fields' }, { status: 400 });
         }
 
-        const supabaseUrl = process.env.SUPABASE_URL;
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-        if (!supabaseUrl || !supabaseKey || process.env.SUPABASE_ENABLED !== 'true') {
-            return NextResponse.json({ success: true, message: 'Event dropped (Telemetry Disabled)' });
+        if (!ALLOWED_EVENT_TYPES.has(event_type)) {
+            return NextResponse.json({ error: 'Invalid event_type' }, { status: 400 });
         }
 
         const supabase = getServiceSupabase();
+        
+        // 2. Extract context
+        const user_agent = request.headers.get('user-agent') || 'unknown';
+        const forwarded = request.headers.get('x-forwarded-for');
+        const ip_address = forwarded ? forwarded.split(',')[0].trim() : 'unknown';
+        const created_at = new Date().toISOString(); // Server-authoritative timestamp
 
-        const { error: eventErr } = await supabase.from('event_stream').insert({
-            event_type,
-            session_id: session_id || 'anonymous',
-            route_path,
-            metadata: metadata ? metadata : null
-        });
+        // 3. UPSERT Session 
+        // "Client proposes identity, server confirms identity"
+        const { error: sessionErr } = await supabase
+            .from('sessions')
+            .upsert(
+                {
+                    session_id,
+                    user_agent,
+                    ip_address,
+                    updated_at: created_at
+                },
+                { onConflict: 'session_id', ignoreDuplicates: false }
+            );
+
+        if (sessionErr) throw sessionErr;
+
+        // Prevent duplicate session_started
+        if (event_type === 'session_started') {
+            const { count } = await supabase
+                .from('event_stream')
+                .select('*', { count: 'exact', head: true })
+                .eq('session_id', session_id)
+                .eq('event_type', 'session_started');
+            
+            if (count > 0) {
+                return NextResponse.json({ success: true, accepted: true, note: 'Duplicate session_started ignored' });
+            }
+        }
+
+        // 4. INSERT Event Stream
+        // Server authoritative row maps
+        const { error: eventErr } = await supabase
+            .from('event_stream')
+            .insert({
+                session_id,
+                event_type,
+                event_name,
+                payload: payload || {},
+                ip_address,
+                user_agent,
+                created_at
+            });
 
         if (eventErr) throw eventErr;
 
-        // Phase 19: Asynchronous Supabase Metric Upserting (Fire & Forget)
-        if (event_type === 'page_view') {
-            const source = metadata?.source || 'direct';
+        return NextResponse.json({ success: true, accepted: true });
 
-            // Fire-and-forget RPC call (fallback to fetch/update)
-            supabase.from('content_metrics').select('views, id').eq('target_path', route_path).maybeSingle()
-                .then(({ data }) => {
-                    if (data) {
-                        supabase.from('content_metrics').update({ views: data.views + 1, updated_at: new Date() }).eq('id', data.id).then();
-                    } else {
-                        supabase.from('content_metrics').insert({ target_path: route_path, views: 1 }).then();
-                    }
-                });
-
-            supabase.from('traffic_sources').select('visits, id').eq('source', source).maybeSingle()
-                .then(({ data }) => {
-                    if (data) {
-                        supabase.from('traffic_sources').update({ visits: data.visits + 1, updated_at: new Date() }).eq('id', data.id).then();
-                    } else {
-                        supabase.from('traffic_sources').insert({ source, visits: 1 }).then();
-                    }
-                });
-        }
-
-        return NextResponse.json({ success: true, message: 'Event logged successfully' });
     } catch (error) {
-        console.error('Event logging error:', error);
-
-        // Log to observability_logs as fallback
+        // Logging mandatory
+        console.error('[Telemetry] Ingestion Failed:', error.message);
+        
+        // Try fallback log to observability_logs if possible (fire and forget)
         try {
-            const supabaseUrl = process.env.SUPABASE_URL;
-            const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-            if (supabaseUrl && supabaseKey) {
-                const supabase = getServiceSupabase();
-                await supabase.from('observability_logs').insert({
-                    level: 'ERROR',
-                    message: error.message,
-                    source: 'api_events'
-                });
-            }
+            const supabase = getServiceSupabase();
+            supabase.from('observability_logs').insert({
+                level: 'ERROR',
+                message: `Telemetry Ingestion Failed: ${error.message}`,
+                source: 'api_events_telemetry',
+                created_at: new Date().toISOString()
+            }).then();
         } catch (e) {
-            console.error('Critical Telemetry failure:', e);
+            // Drop silently
         }
 
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        // Return strictly 202 Accepted on failure (No silent invisible failures locally, but client UX protected)
+        return NextResponse.json(
+            { success: false, accepted: true, reason: "ingestion_failed" }, 
+            { status: 202 }
+        );
     }
 }

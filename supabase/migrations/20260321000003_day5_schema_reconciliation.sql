@@ -16,7 +16,6 @@ ALTER TABLE public.leads
     ADD COLUMN IF NOT EXISTS marketing_source TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_leads_agent_id ON public.leads(agent_id);
-CREATE INDEX IF NOT EXISTS idx_leads_is_converted ON public.leads(is_converted);
 
 -- failed_leads: retry job expects retry_count and retries by created_at order.
 ALTER TABLE public.failed_leads
@@ -76,6 +75,16 @@ CREATE INDEX IF NOT EXISTS idx_ai_decision_logs_lead_created
     ON public.ai_decision_logs(lead_id, created_at DESC);
 
 -- Routing log table: current router writes here directly.
+DO $$
+BEGIN
+  IF EXISTS(SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='lead_routing_logs' AND column_name='routed_at')
+  THEN
+      ALTER TABLE public.lead_routing_logs RENAME COLUMN routed_at TO created_at;
+  END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS public.lead_routing_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     lead_id UUID REFERENCES public.leads(id) ON DELETE CASCADE,

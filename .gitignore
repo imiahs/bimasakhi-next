@@ -48,3 +48,6 @@ scripts/
 *.txt   
 admin_audit_report.md   
 check-admin-files.js
+cto_master_plan.md
+SCHEMA_SOURCE_OF_TRUTH.md
+/docs

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useContext } from 'react';
+import { useEffect, useContext, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { ConfigContext } from '@/context/ConfigContext';
 import { analytics } from '@/services/analytics';
@@ -8,13 +8,22 @@ import { analytics } from '@/services/analytics';
 const AnalyticsTracker = () => {
     const pathname = usePathname();
     const { config } = useContext(ConfigContext);
+    const sessionStarted = useRef(false);
 
-    // Initialize first-party telemetry immediately on mount
-    // GA4/GTM will be added when config loads with explicit analytics flags
+    // Initialize analytics immediately on mount
     useEffect(() => {
         analytics.initialize(config || {});
+
+        // Fire session_started exactly once per app session (Strict Mode safe)
+        if (!sessionStarted.current) {
+            sessionStarted.current = true;
+            analytics.dispatch('session_started', 'App Init', { 
+                referrer: document.referrer || 'direct' 
+            });
+        }
     }, [config]);
 
+    // Track page views
     useEffect(() => {
         if (pathname) {
             analytics.pageView(pathname);
