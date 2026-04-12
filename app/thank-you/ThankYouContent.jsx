@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getWhatsAppUrl } from "@/utils/whatsapp";
+import { analytics } from "@/services/analytics";
 import "@/styles/ThankYou.css";
 
 function ThankYouInner() {
@@ -23,6 +24,12 @@ function ThankYouInner() {
             reference_id: referenceId || "direct_visit",
             category: waitlist ? "waitlist" : "direct",
             source: "thankyou_page"
+        });
+
+        analytics.track("thankyou_page_view", {
+            _event_type: "page_view",
+            reference_id: referenceId || "direct_visit",
+            category: waitlist ? "waitlist" : "direct"
         });
     }, [referenceId, waitlist]);
 
@@ -97,6 +104,11 @@ function ThankYouInner() {
                             event: "thankyou_whatsapp_click",
                             reference_id: referenceId || "no_id",
                             source: "thankyou_page"
+                        });
+                        analytics.track("thankyou_whatsapp_click", {
+                            _event_type: "cta_clicked",
+                            reference_id: referenceId || "no_id",
+                            action: "whatsapp_confirm"
                         });
                     }}
                 >

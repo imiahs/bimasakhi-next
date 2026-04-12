@@ -391,7 +391,8 @@ const ApplyForm = () => {
                     markSubmitted(formData.city, payload);
 
                     // 2️⃣ Analytics (keep existing tracking)
-                    analytics.track('form_submit', {
+                    analytics.track('form_submit_succeeded', {
+                        _event_type: 'form_submit_succeeded',
                         leadId: leadId,
                         city: formData.city,
                         source: userState.source
@@ -436,7 +437,8 @@ const ApplyForm = () => {
                     leadId: null
                 });
 
-                analytics.track('form_error', {
+                analytics.track('form_submit_failed', {
+                    _event_type: 'form_submit_failed',
                     error: error.message
                 });
             }

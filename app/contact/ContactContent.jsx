@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from "react";
 import { LanguageContext } from "@/context/LanguageContext";
 import { getWhatsAppUrl } from "@/utils/whatsapp";
 import { WHATSAPP_LINK, PHONE_LINK } from "@/utils/config";
+import { analytics } from "@/services/analytics";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import "@/styles/Contact.css";
@@ -112,6 +113,12 @@ const ContactContent = () => {
                 contact_id: data.contact_id || "unknown",
                 lead_source: "contact_page",
                 page: "/contact"
+            });
+
+            analytics.track("callback_request_success", {
+                _event_type: "form_submit_succeeded",
+                contact_id: data.contact_id || "unknown",
+                lead_source: "contact_page"
             });
 
             setStatus({ loading: false, error: null, success: true });

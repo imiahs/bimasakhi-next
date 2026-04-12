@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
+import crypto from 'crypto';
+import { TRIGGER_MAP } from '@/lib/events/triggerMap';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +35,8 @@ export async function POST(request) {
         const forwarded = request.headers.get('x-forwarded-for');
         const ip_address = forwarded ? forwarded.split(',')[0].trim() : 'unknown';
         const created_at = new Date().toISOString(); // Server-authoritative timestamp
+        const source = payload?.source || 'api_event';
+        const event_id = crypto.randomUUID();
 
         // 3. UPSERT Session 
         // "Client proposes identity, server confirms identity"
@@ -79,7 +83,44 @@ export async function POST(request) {
 
         if (eventErr) throw eventErr;
 
-        return NextResponse.json({ success: true, accepted: true });
+        // Phase 4 Event Storage
+        const { error: logErr } = await supabase
+            .from('events_log')
+            .insert({
+                id: event_id,
+                event_name,
+                event_type,
+                payload: payload || {},
+                source,
+                created_at
+            });
+            
+        if (logErr) {
+            console.error('[Telemetry] events_log Failed:', logErr.message);
+        }
+
+        // Phase 4 Event -> Queue Connector
+        const trigger = TRIGGER_MAP[event_type];
+        if (trigger && trigger.action === "queue_job") {
+            const { error: jobErr } = await supabase
+                .from('job_queue')
+                .insert({
+                    job_type: trigger.job_type,
+                    payload: { event_id, session_id, ...payload },
+                    status: 'pending',
+                    created_at,
+                    updated_at: created_at
+                });
+                
+            if (jobErr) {
+                console.error('[Queue] Enqueue Failed:', jobErr.message);
+                throw jobErr; // Ensure structural queue failure throws for failure logging
+            } else {
+                console.log(`[Queue] Job Enqueued: ${trigger.job_type} from ${event_type}`);
+            }
+        }
+
+        return NextResponse.json({ success: true, accepted: true, event_id });
 
     } catch (error) {
         // Logging mandatory
