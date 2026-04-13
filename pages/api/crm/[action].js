@@ -745,14 +745,15 @@ async function handleCreateContact(req, res) {
         }
 
         // 6. Push to QStash Queue (DB First rules applied)
-        let queuePublished = true;
+        let queue_status = 'pending';
         try {
             const { enqueueContactSync } = require('@/lib/queue/publisher.js');
-            const queueResponse = await enqueueContactSync(contactId);
-            queuePublished = Boolean(queueResponse?.messageId);
+            await enqueueContactSync(contactId);
+            queue_status = 'success';
         } catch (error) {
-            queuePublished = false;
-            console.error('create-contact: Queue Push failed', error);
+            queue_status = 'failed';
+            console.error(`[Contact Queue Failed] ${contactId} ${error.message}`);
+            // DO NOT throw
             if (supabase) {
                 await updateContactSyncStatusCompat(supabase, contactId, 'failed_queue');
                 await supabase.from('observability_logs').insert({
@@ -764,15 +765,10 @@ async function handleCreateContact(req, res) {
             }
         }
 
-        if (!queuePublished && supabase) {
-            await updateContactSyncStatusCompat(supabase, contactId, 'failed_queue');
-        }
-
         return res.status(200).json({
             success: true,
             contact_id: contactId,
-            queued: queuePublished,
-            stored: supabase ? contactInserted : true
+            queue_status: queue_status
         });
 
     } catch (error) {
