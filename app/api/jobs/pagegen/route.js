@@ -4,6 +4,8 @@ import { generateAiContent } from '@/lib/ai/generateContent';
 import { getSystemPrompt, buildPagePrompt } from '@/lib/ai/promptTemplates';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
 import crypto from 'crypto';
+import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
+import { enqueuePageGeneration } from '@/lib/queue/publisher';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -19,10 +21,7 @@ const REQUIRED_AI_KEYS = [
     'faq_data'
 ];
 
-function isAuthorizedRequest(request) {
-    const authHeader = request.headers.get('authorization');
-    return authHeader === `Bearer ${process.env.QSTASH_TOKEN}`;
-}
+
 
 function validatePageGenJob(queueJob) {
     const payload = queueJob?.payload;
@@ -175,9 +174,17 @@ async function cleanupPartialPage(supabase, pageId) {
     await supabase.from('page_index').delete().eq('id', pageId);
 }
 
-export async function POST(request) {
-    if (!isAuthorizedRequest(request)) {
-        return NextResponse.json({ error: 'Unauthorized QStash Hook' }, { status: 401 });
+async function handler(request) {
+    let body = {};
+    try {
+        body = await request.json();
+    } catch {
+        body = {};
+    }
+    const { queueId } = body;
+
+    if (!queueId) {
+        return NextResponse.json({ error: 'Missing queueId payload from QStash' }, { status: 400 });
     }
 
     const config = await getSystemConfig();
@@ -193,10 +200,7 @@ export async function POST(request) {
     try {
         const queueRes = await supabase.from('generation_queue')
             .select('*')
-            .in('task_type', [CANONICAL_TASK_TYPE, LEGACY_TASK_TYPE])
-            .in('status', ['pending', 'processing'])
-            .order('created_at', { ascending: true })
-            .limit(1)
+            .eq('id', queueId)
             .maybeSingle();
 
         if (queueRes.error) {
@@ -204,8 +208,8 @@ export async function POST(request) {
         }
 
         queueJob = queueRes.data;
-        if (!queueJob) {
-            return NextResponse.json({ success: true, message: 'No pending queue.' });
+        if (!queueJob || queueJob.status === 'completed') {
+            return NextResponse.json({ success: true, message: 'Queue job not found or already completed.' });
         }
 
         const validation = validatePageGenJob(queueJob);
@@ -231,7 +235,7 @@ export async function POST(request) {
         });
 
         const pagesToGenerate = validation.payload.pages;
-        const limit = Math.min(config.batch_size || 5, 50);
+        const limit = 1; // Process exactly one page per QStash event
         const currentProgress = queueJob.progress || 0;
         const batchList = pagesToGenerate.slice(currentProgress, currentProgress + limit);
 
@@ -376,6 +380,12 @@ export async function POST(request) {
         }).eq('id', queueJob.id);
 
         await finalizeJobRun(supabase, jobRunId, 'completed');
+
+        // CHAIN EXECUTION: If not complete, automatically dispatch the next QStash event!
+        if (!isComplete) {
+            await enqueuePageGeneration({ queueId: queueJob.id }).catch((e) => console.error("[PageGen] Chained enqueue error:", e));
+        }
+
         return NextResponse.json({ success: true, processed: processedCount, reviews: reviewCount });
     } catch (e) {
         console.error('[PageGen] Cron Error:', e);
@@ -384,3 +394,5 @@ export async function POST(request) {
         return NextResponse.json({ error: 'Internal Server Error', detail: e.message }, { status: 500 });
     }
 }
+
+export const POST = process.env.NODE_ENV === 'development' ? handler : verifySignatureAppRouter(handler);

@@ -415,7 +415,7 @@ async function handleCreateLead(req, res) {
 
                             if (targetCityId) {
                                 const cleanCity = city.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
-                                let pagegenDispatchNeeded = false;
+                                let queueIdsToDispatch = [];
 
                                 // CITY PAGE — 1 per city, no timestamp
                                 const citySlug = `lic-bima-sakhi-career-agency-in-${cleanCity}`;
@@ -439,7 +439,7 @@ async function handleCreateLead(req, res) {
 
                                 if (!existingPage && !existingQueue) {
                                     // Queue city page — only if not exists
-                                    await supabase.from('generation_queue').insert({
+                                    const { data: qCity } = await supabase.from('generation_queue').insert({
                                         task_type: 'pagegen',
                                         status: 'pending',
                                         progress: 0,
@@ -457,10 +457,11 @@ async function handleCreateLead(req, res) {
                                                 content_level: 'city'
                                             }]
                                         }
-                                    });
+                                    }).select('id').single();
+
+                                    if (qCity?.id) queueIdsToDispatch.push(qCity.id);
 
                                     console.log(`[Pipeline] Queued city page: ${citySlug}`);
-                                    pagegenDispatchNeeded = true;
 
                                 } else {
                                     console.log(`[Pipeline] Skipped — page already exists or queued: ${citySlug}`);
@@ -487,7 +488,7 @@ async function handleCreateLead(req, res) {
                                         .maybeSingle();
 
                                     if (!existingLocalityPage && !existingLocalityQueue) {
-                                        await supabase.from('generation_queue').insert({
+                                        const { data: qLoc } = await supabase.from('generation_queue').insert({
                                             task_type: 'pagegen',
                                             status: 'pending',
                                             progress: 0,
@@ -505,20 +506,18 @@ async function handleCreateLead(req, res) {
                                                     content_level: 'locality'
                                                 }]
                                             }
-                                        });
+                                        }).select('id').single();
+
+                                        if (qLoc?.id) queueIdsToDispatch.push(qLoc.id);
 
                                         console.log(`[Pipeline] Queued locality page: ${localitySlug}`);
-                                        pagegenDispatchNeeded = true;
                                     }
                                 }
 
-                                if (pagegenDispatchNeeded) {
-                                    enqueuePageGeneration({
-                                        source: 'crm_auto',
-                                        trigger_slug: locality && locality.trim()
-                                            ? `lic-agent-in-${locality.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${cleanCity}`
-                                            : citySlug
-                                    }).catch((e) => console.error("Auto trigger error:", e));
+                                if (queueIdsToDispatch.length > 0) {
+                                    for (const qId of queueIdsToDispatch) {
+                                        enqueuePageGeneration({ queueId: qId }).catch((e) => console.error("Auto trigger error:", e));
+                                    }
                                 }
                             }
                         } catch (pipelineErr) {
