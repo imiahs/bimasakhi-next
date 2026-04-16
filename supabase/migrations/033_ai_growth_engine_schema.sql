@@ -1,0 +1,21 @@
+-- ============================================
+-- Migration: 033_ai_growth_engine_schema.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-15T05:03:38.665321+00:00
+--
+-- Tables observed in live DB (confirmed 2026-04-16):
+--   - growth_reports (columns: id, report_date, top_source, top_content,
+--       worst_content, ai_summary, created_at)
+--   - growth_suggestions (columns: id, suggestion_type, title, description,
+--       potential_impact, status, created_at)
+--   - ai_decision_logs (columns: id, lead_id, decision_type,
+--       decision_reason, metadata, created_at)
+--   - seo_growth_recommendations (columns: id, recommendation_type,
+--       target_data, ai_rationale, status, created_at)
+--   - automation_rules (columns: id, name, description, trigger_event,
+--       conditions, actions, is_active, created_at, updated_at)
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify these tables, create a NEW migration.
+-- ============================================

@@ -1,0 +1,18 @@
+-- ============================================
+-- Migration: 028_error_monitoring.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-14T19:16:04.045063+00:00
+--
+-- This migration is a renumbered duplicate of
+-- 16_error_monitoring.sql which was applied earlier
+-- under a different naming convention.
+--
+-- Tables observed in live DB (confirmed 2026-04-16):
+--   - system_runtime_errors (columns: id, component, error_message,
+--       stack_trace, metadata, resolved, created_at, error_type, message)
+--   - Indexes: idx_system_runtime_errors_unresolved
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify these tables, create a NEW migration.
+-- ============================================

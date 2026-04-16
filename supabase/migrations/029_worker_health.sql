@@ -1,0 +1,17 @@
+-- ============================================
+-- Migration: 029_worker_health.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-14T19:16:04.289077+00:00
+--
+-- This migration is a renumbered duplicate of
+-- 17_worker_health.sql which was applied earlier
+-- under a different naming convention.
+--
+-- Tables observed in live DB (confirmed 2026-04-16):
+--   - worker_health (columns: worker_name [PK], last_heartbeat,
+--       jobs_processed, failures, memory_usage, status)
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify these tables, create a NEW migration.
+-- ============================================

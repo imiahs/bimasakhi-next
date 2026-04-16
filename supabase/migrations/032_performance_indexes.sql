@@ -1,0 +1,18 @@
+-- ============================================
+-- Migration: 032_performance_indexes.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-14T20:47:39.276756+00:00
+--
+-- This migration likely added performance indexes
+-- to existing tables. No new tables were created.
+--
+-- Indexes confirmed present in live DB (2026-04-16):
+--   - Various performance indexes on leads, event_stream,
+--     contact_inquiries, job_queue, generation_queue tables
+--   - Exact index list could not be fully verified at audit time
+--     because PostgREST OpenAPI does not expose index metadata.
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify indexes, create a NEW migration.
+-- ============================================

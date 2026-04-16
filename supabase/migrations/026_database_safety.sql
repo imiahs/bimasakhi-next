@@ -1,0 +1,22 @@
+-- ============================================
+-- Migration: 026_database_safety.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-14T19:16:03.370850+00:00
+--
+-- This migration is a renumbered duplicate of
+-- 11_database_safety.sql which was applied earlier
+-- under a different naming convention.
+--
+-- Tables observed in live DB (confirmed 2026-04-16):
+--   - contact_inquiries (columns: id, name, email, mobile, message, created_at,
+--       contact_id, reason, source, pipeline, tag, sync_status)
+--   - Indexes: idx_event_stream_path_time, idx_event_stream_type,
+--       idx_event_stream_session, idx_leads_mobile,
+--       idx_contact_inquiries_mobile_email, idx_content_metrics_target_path,
+--       idx_lead_queue_sync_status
+--   - pg_cron job: purge_stale_telemetry_logs
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify these tables, create a NEW migration.
+-- ============================================

@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai';
-import { getLocalDb } from '@/utils/localDb';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { getEventRoutePath } from '@/lib/events/routePath';
 
 export const dynamic = 'force-dynamic';
 
-export const POST = withAdminAuth(async (request, user) => {
+export const POST = withAdminAuth(async () => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -17,78 +17,74 @@ export const POST = withAdminAuth(async (request, user) => {
 
         const supabase = getServiceSupabase();
 
-        // Fetch Supabase event stream for bounce rate/cta clicks evaluation
         const { data: rawEvents } = await supabase
             .from('event_stream')
-            .select('route_path, event_type')
+            .select('event_name, payload, route_path, event_type')
             .order('created_at', { ascending: false })
             .limit(2000);
 
-        const events = rawEvents || [];
         const statsMap = {};
+        for (const event of rawEvents || []) {
+            const routePath = getEventRoutePath(event);
+            if (!routePath) continue;
 
-        events.forEach(e => {
-            if (!e.route_path) return;
-            if (!statsMap[e.route_path]) {
-                statsMap[e.route_path] = { route_path: e.route_path, views: 0, actions: 0 };
+            if (!statsMap[routePath]) {
+                statsMap[routePath] = { route_path: routePath, views: 0, actions: 0 };
             }
-            if (e.event_type === 'page_view') statsMap[e.route_path].views++;
-            if (['smart_cta_click', 'funnel_step', 'converted'].includes(e.event_type)) {
-                statsMap[e.route_path].actions++;
+
+            if (event.event_type === 'page_view') statsMap[routePath].views++;
+            if (['smart_cta_click', 'funnel_step', 'converted'].includes(event.event_type)) {
+                statsMap[routePath].actions++;
             }
-        });
+        }
 
         const pathStats = Object.values(statsMap)
             .sort((a, b) => b.views - a.views)
             .slice(0, 10);
 
-        if (!pathStats || pathStats.length === 0) {
+        if (pathStats.length === 0) {
             return NextResponse.json({ success: true, message: 'No landing events to analyze.', analyses: [] });
         }
 
-        // Compute bounce rate from REAL data only — no simulated scroll depth
-        const landingContext = pathStats.map(stat => {
-            const bounceRate = stat.actions === 0 ? 100 : Math.max(0, 100 - ((stat.actions / stat.views) * 100));
-            return {
-                page_path: stat.route_path,
-                views: stat.views,
-                actions: stat.actions,
-                bounce_rate: parseFloat(bounceRate.toFixed(2)),
-                // scroll_depth removed — we have no real scroll tracking data
-                // Honest state: scroll depth is not measured yet
-                scroll_depth: null
-            };
-        });
+        const landingContext = pathStats.map((stat) => ({
+            page_path: stat.route_path,
+            views: stat.views,
+            actions: stat.actions,
+            interaction_gap: stat.views > 0
+                ? parseFloat((100 - ((stat.actions / stat.views) * 100)).toFixed(2))
+                : null,
+            scroll_depth: null
+        }));
 
-        // Send to AI for deep analysis
-        const systemPrompt = "You are the Bima Sakhi Landing Page Optimization AI. Analyze the event funnel context. Evaluate bounce rates and interaction rates. Output exactly 3 analytical insights mapping to specific poor performing pages. Output ONLY a valid JSON array of objects exactly matching this schema: [ { \"page_path\": \"string\", \"ai_optimization_report\": \"Detailed reasoning to improve scroll depth or CTA visibility\", \"bounce_rate_analyzed\": number, \"scroll_depth_analyzed\": number } ]. Do not include markdown or conversational context.";
+        const systemPrompt = 'You are the Bima Sakhi Landing Page Optimization AI. Analyze the event funnel context using interaction gaps, not fabricated bounce rates. Output exactly 3 analytical insights mapping to specific low-performing pages. Output ONLY a valid JSON array of objects exactly matching this schema: [ { "page_path": "string", "ai_optimization_report": "Detailed reasoning to improve CTA visibility or message clarity", "interaction_gap_analyzed": number, "scroll_depth_analyzed": null } ]. Do not include markdown or conversational context.';
         const userPrompt = `Landing Page Telemetry:\n${JSON.stringify(landingContext, null, 2)}`;
-
-        const analyses = [];
 
         try {
             const aiResponse = await generateAiContent(systemPrompt, userPrompt);
-
             let cleanJsonStr = aiResponse.trim();
             if (cleanJsonStr.startsWith('```json')) cleanJsonStr = cleanJsonStr.substring(7, cleanJsonStr.length - 3).trim();
             else if (cleanJsonStr.startsWith('```')) cleanJsonStr = cleanJsonStr.substring(3, cleanJsonStr.length - 3).trim();
 
             const parsed = JSON.parse(cleanJsonStr);
+            const analyses = [];
 
-            for (const rep of parsed) {
+            for (const report of parsed) {
                 const { data: inserted, error: insertErr } = await supabase.from('landing_page_analysis').insert({
-                    page_path: rep.page_path,
-                    bounce_rate: rep.bounce_rate_analyzed,
-                    scroll_depth: rep.scroll_depth_analyzed,
-                    cta_clicks: landingContext.find(l => l.page_path === rep.page_path)?.actions || 0,
-                    ai_optimization_report: rep.ai_optimization_report
+                    page_path: report.page_path,
+                    bounce_rate: report.interaction_gap_analyzed,
+                    scroll_depth: null,
+                    cta_clicks: landingContext.find((entry) => entry.page_path === report.page_path)?.actions || 0,
+                    ai_optimization_report: report.ai_optimization_report
                 }).select().single();
 
-                if (!insertErr && inserted) analyses.push(inserted);
+                if (!insertErr && inserted) {
+                    analyses.push(inserted);
+                }
             }
+
+            return NextResponse.json({ success: true, analyses, raw_telemetry: landingContext });
         } catch (aiErr) {
-            console.error("Landing Analysis AI Error:", aiErr);
-            // Return honest empty state instead of fabricated data
+            console.error('Landing Analysis AI Error:', aiErr);
             return NextResponse.json({
                 success: true,
                 message: 'AI analysis unavailable. Returning raw telemetry only.',
@@ -96,16 +92,13 @@ export const POST = withAdminAuth(async (request, user) => {
                 raw_telemetry: landingContext
             });
         }
-
-        return NextResponse.json({ success: true, analyses });
-
     } catch (error) {
         console.error('AI Landing Engine Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 });
 
-export const GET = withAdminAuth(async (request, user) => {
+export const GET = withAdminAuth(async () => {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -115,7 +108,6 @@ export const GET = withAdminAuth(async (request, user) => {
         }
 
         const supabase = getServiceSupabase();
-
         const { data, error } = await supabase
             .from('landing_page_analysis')
             .select('*')
@@ -126,7 +118,7 @@ export const GET = withAdminAuth(async (request, user) => {
 
         return NextResponse.json({ analyses: data });
     } catch (err) {
-        console.error("Error fetching landing analyses:", err);
-        return NextResponse.json({ error: "Failed to fetch landing logic" }, { status: 500 });
+        console.error('Error fetching landing analyses:', err);
+        return NextResponse.json({ error: 'Failed to fetch landing logic' }, { status: 500 });
     }
 });

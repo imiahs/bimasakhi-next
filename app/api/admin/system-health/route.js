@@ -17,7 +17,10 @@ export const GET = withAdminAuth(async (request, user) => {
             failedRes,
             retryPendingRes,
             queueRes,
-            errorsRes
+            errorsRes,
+            deadLettersRes,
+            leadSyncLagRes,
+            contactErrorsRes
         ] = await Promise.all([
             supabase
                 .from('leads')
@@ -37,7 +40,20 @@ export const GET = withAdminAuth(async (request, user) => {
                 .from('system_runtime_errors')
                 .select('component, error_message, created_at, resolved')
                 .order('created_at', { ascending: false })
-                .limit(10)
+                .limit(10),
+            supabase
+                .from('job_dead_letters')
+                .select('id', { count: 'exact', head: true }),
+            supabase
+                .from('leads')
+                .select('id', { count: 'exact', head: true })
+                .eq('sync_status', 'pending'),
+            supabase
+                .from('observability_logs')
+                .select('id, message, created_at, source')
+                .in('source', ['api_contact_sync', 'worker_contact_sync'])
+                .order('created_at', { ascending: false })
+                .limit(5)
         ]);
 
         const firstError =
@@ -45,7 +61,10 @@ export const GET = withAdminAuth(async (request, user) => {
             failedRes.error ||
             retryPendingRes.error ||
             queueRes.error ||
-            errorsRes.error;
+            errorsRes.error ||
+            deadLettersRes.error ||
+            leadSyncLagRes.error ||
+            contactErrorsRes.error;
 
         if (firstError) {
             throw firstError;
@@ -69,9 +88,14 @@ export const GET = withAdminAuth(async (request, user) => {
             data: {
                 crm_status: crmStatus,
                 ai_status: aiStatus,
+                queue_paused: config.queue_paused,
                 total_leads_today: todayRes.count || 0,
                 failed_leads_count: failedLeadsCount,
                 retry_pending: retryPendingRes.count || 0,
+                generation_backlog: queueRows.filter((job) => ['pending', 'processing'].includes(job.status)).length,
+                dead_letters: deadLettersRes.count || 0,
+                lead_sync_lag: leadSyncLagRes.count || 0,
+                recent_contact_failures: contactErrorsRes.data || [],
                 last_10_errors: (errorsRes.data || []).map((row) => ({
                     component: row.component,
                     message: row.error_message,

@@ -67,23 +67,7 @@ export async function POST(request) {
             }
         }
 
-        // 4. INSERT Event Stream
-        // Server authoritative row maps
-        const { error: eventErr } = await supabase
-            .from('event_stream')
-            .insert({
-                session_id,
-                event_type,
-                event_name,
-                payload: payload || {},
-                ip_address,
-                user_agent,
-                created_at
-            });
-
-        if (eventErr) throw eventErr;
-
-        // Phase 4 Event Storage
+        // 4. PRIMARY: INSERT events_log
         const { error: logErr } = await supabase
             .from('events_log')
             .insert({
@@ -97,6 +81,24 @@ export async function POST(request) {
             
         if (logErr) {
             console.error('[Telemetry] events_log Failed:', logErr.message);
+            throw logErr;
+        }
+
+        // 5. PASSIVE: INSERT event_stream using the canonical telemetry contract.
+        const { error: eventErr } = await supabase
+            .from('event_stream')
+            .insert({
+                session_id,
+                event_type,
+                event_name,
+                payload: payload || {},
+                ip_address,
+                user_agent,
+                created_at
+            });
+            
+        if (eventErr) {
+             console.warn('[Telemetry] Passive event_stream failed:', eventErr.message);
         }
 
         // Phase 4 Event -> Queue Connector

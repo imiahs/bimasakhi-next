@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/utils/supabase';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -31,9 +31,29 @@ export const GET = withAdminAuth(async (request, user) => {
 
         // 3. Fetch telemetry snapshot
         const supabaseService = getServiceSupabase();
-        const { data: snapshot } = await supabaseService.from('system_metrics_snapshot').select('*').limit(1).single();
+        const [queueRes, workersRes, deadLettersRes] = await Promise.all([
+            supabaseService.from('generation_queue').select('status'),
+            supabaseService.from('worker_health').select('status, last_run').limit(20),
+            supabaseService.from('job_dead_letters').select('id', { count: 'exact', head: true })
+        ]);
 
-        return NextResponse.json({ success: true, statuses, overall, metrics: snapshot });
+        const workerErrors = (workersRes.data || []).filter((row) => row.status === 'error').length;
+        const deadLetters = deadLettersRes.count || 0;
+        const generationBacklog = (queueRes.data || []).filter((row) => ['pending', 'processing'].includes(row.status)).length;
+
+        if (workerErrors === 0 && deadLetters === 0) {
+            statuses.background_workers = 'green';
+        } else if (workerErrors > 0 || deadLetters > 0) {
+            statuses.background_workers = 'red';
+        }
+
+        const metrics = {
+            generation_backlog: generationBacklog,
+            worker_errors: workerErrors,
+            dead_letters: deadLetters
+        };
+
+        return NextResponse.json({ success: true, statuses, overall, metrics });
     } catch (error) {
         console.error('API /admin/system GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch system health' }, { status: 500 });

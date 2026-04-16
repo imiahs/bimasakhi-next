@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { enqueuePageGeneration } from '@/lib/queue/publisher';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,26 +55,21 @@ export const POST = withAdminAuth(async (request) => {
             }, { status: 500 });
         }
 
-        const origin = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
-        const response = await fetch(`${origin}/api/jobs/pagegen`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${process.env.QSTASH_TOKEN}`
-            }
+        const dispatch = await enqueuePageGeneration({
+            source: 'admin_manual',
+            triggered_by: request.headers.get('x-admin-user') || 'unknown'
         });
 
-        const data = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
+        if (!dispatch?.messageId) {
             return NextResponse.json({
                 success: false,
-                error: data.error || 'Queue trigger failed'
-            }, { status: response.status });
+                error: 'Queue trigger failed'
+            }, { status: 500 });
         }
 
         return NextResponse.json({
             success: true,
-            data
+            data: dispatch
         });
     } catch (error) {
         console.error('Queue API POST error:', error);

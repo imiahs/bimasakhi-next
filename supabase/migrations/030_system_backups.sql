@@ -1,0 +1,18 @@
+-- ============================================
+-- Migration: 030_system_backups.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-14T19:16:04.511637+00:00
+--
+-- This migration is a renumbered duplicate of
+-- 19_system_backups.sql which was applied earlier
+-- under a different naming convention.
+--
+-- Tables observed in live DB (confirmed 2026-04-16):
+--   - system_backups (columns: id, backup_type, status, file_path,
+--       tables_backed_up, file_size_bytes, error, created_at)
+--   - Indexes: idx_system_backups_status
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify these tables, create a NEW migration.
+-- ============================================

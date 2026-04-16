@@ -1,0 +1,21 @@
+-- ============================================
+-- Migration: 20260412202841_phase_4_automation.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-04-12T20:40:00.183898+00:00
+--
+-- This migration was part of Phase 4 automation work.
+-- It was applied directly to the live database before
+-- repo tracking was established for this file.
+--
+-- Note: Two other Phase 4 migrations ARE tracked in repo:
+--   - 20260412202550_phase_4_automation.sql (different timestamp)
+--   - 20260412203825_phase_4_hardening.sql
+-- This file (20260412202841) was a separate intermediate run.
+--
+-- Tables/changes could not be fully verified at audit time
+-- because the exact SQL content was not preserved.
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify schema, create a NEW migration.
+-- ============================================

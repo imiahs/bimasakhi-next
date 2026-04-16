@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getZohoAccessToken, getZohoApiDomain } from '@/pages/api/_middleware/zoho.js';
 import axios from 'axios';
-import { verifySignatureAppRouter } from '@upstash/qstash/dist/nextjs'; 
+import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
 
 async function handler(req) {
     const body = await req.json();
@@ -85,6 +85,7 @@ async function handler(req) {
                 level: 'ERROR',
                 message: `Contact sync failed permanently after retries: ${errorMsg}`,
                 source: 'worker_contact_sync',
+                metadata: { contact_id: contactId, retry_count: retryCount },
                 created_at: new Date().toISOString()
             });
         } else {

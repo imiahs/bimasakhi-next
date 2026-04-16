@@ -1,0 +1,22 @@
+-- ============================================
+-- Migration: 034_ai_growth_fix.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-15T09:17:45.317701+00:00
+--
+-- This migration was a fix/patch for 033_ai_growth_engine_schema.sql.
+-- It likely added ALTER TABLE statements to fix columns or constraints
+-- on the tables created by 033.
+--
+-- Tables likely affected (confirmed present in live DB 2026-04-16):
+--   - growth_reports
+--   - growth_suggestions
+--   - ai_decision_logs
+--   - seo_growth_recommendations
+--   - automation_rules
+--
+-- Exact ALTER statements could not be verified at audit time.
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify these tables, create a NEW migration.
+-- ============================================

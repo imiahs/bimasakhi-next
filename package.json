@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "worker": "echo 'Workers Disabled. Run Vercel Cron'",
-    "db:migrate": "node scripts/runSupabaseMigrations.js"
+    "db:migrate": "node scripts/runSupabaseMigrations.js",
+    "db:check-drift": "node scripts/checkMigrationDrift.js",
+    "predeploy:check": "node scripts/preDeployCheck.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -25,7 +27,7 @@
     "ioredis": "^5.10.0",
     "jose": "^6.2.0",
     "jsonwebtoken": "^9.0.3",
-    "next": "^15.2.3",
+    "next": "15.5.12",
     "node-cron": "^4.2.1",
     "pg": "^8.20.0",
     "react": "19.2.3",

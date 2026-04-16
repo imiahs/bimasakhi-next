@@ -1,0 +1,19 @@
+-- ============================================
+-- Migration: 027_admin_audit_logging.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-14T19:16:03.823318+00:00
+--
+-- This migration is a renumbered duplicate of
+-- 15_admin_audit_logging.sql which was applied earlier
+-- under a different naming convention.
+--
+-- Tables observed in live DB (confirmed 2026-04-16):
+--   - admin_audit_logs (columns: id, admin_id, admin_email, action,
+--       target_resource, metadata, ip_address, created_at)
+--   - Indexes: idx_admin_audit_logs_email, idx_admin_audit_logs_time,
+--       idx_admin_audit_logs_action
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify these tables, create a NEW migration.
+-- ============================================

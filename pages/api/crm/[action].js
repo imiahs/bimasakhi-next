@@ -10,6 +10,8 @@ import { calculateLeadScore } from '@/lib/ai/leadScorer';
 import { routeLeadToAgent } from '@/lib/ai/leadRouter';
 import { safeLog } from '@/lib/safeLogger.js';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
+import { enqueueContactSync, enqueueLeadSync, enqueuePageGeneration } from '@/lib/queue/publisher.js';
+import { getEventRoutePath } from '@/lib/events/routePath';
 
 let systemBootLogged = false;
 
@@ -325,7 +327,7 @@ async function handleCreateLead(req, res) {
                             // 1. Fetch Journey Events from Supabase
                             const { data: eventsData, error: eventErr } = await supabase
                                 .from('event_stream')
-                                .select('event_type, route_path, metadata, created_at')
+                                .select('event_type, event_name, payload, route_path, metadata, created_at')
                                 .eq('session_id', session_id)
                                 .order('created_at', { ascending: true });
 
@@ -335,7 +337,7 @@ async function handleCreateLead(req, res) {
                             let leadScore = 20; // Base score for form submission
                             let journeySteps = events.map(e => ({
                                 action: e.event_type,
-                                path: e.route_path,
+                                path: getEventRoutePath(e),
                                 time: e.created_at
                             }));
 
@@ -413,6 +415,7 @@ async function handleCreateLead(req, res) {
 
                             if (targetCityId) {
                                 const cleanCity = city.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                                let pagegenDispatchNeeded = false;
 
                                 // CITY PAGE — 1 per city, no timestamp
                                 const citySlug = `lic-bima-sakhi-career-agency-in-${cleanCity}`;
@@ -457,16 +460,7 @@ async function handleCreateLead(req, res) {
                                     });
 
                                     console.log(`[Pipeline] Queued city page: ${citySlug}`);
-
-                                    // Trigger AI Flow (Non-blocking)
-                                    const qToken = process.env.QSTASH_TOKEN
-                                        ? process.env.QSTASH_TOKEN.replace(/"/g, '')
-                                        : '';
-
-                                    fetch(`https://bimasakhi.com/api/jobs/pagegen`, {
-                                        method: 'POST',
-                                        headers: { 'Authorization': `Bearer ${qToken}` }
-                                    }).catch(e => console.error("Auto trigger error:", e));
+                                    pagegenDispatchNeeded = true;
 
                                 } else {
                                     console.log(`[Pipeline] Skipped — page already exists or queued: ${citySlug}`);
@@ -514,7 +508,17 @@ async function handleCreateLead(req, res) {
                                         });
 
                                         console.log(`[Pipeline] Queued locality page: ${localitySlug}`);
+                                        pagegenDispatchNeeded = true;
                                     }
+                                }
+
+                                if (pagegenDispatchNeeded) {
+                                    enqueuePageGeneration({
+                                        source: 'crm_auto',
+                                        trigger_slug: locality && locality.trim()
+                                            ? `lic-agent-in-${locality.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${cleanCity}`
+                                            : citySlug
+                                    }).catch((e) => console.error("Auto trigger error:", e));
                                 }
                             }
                         } catch (pipelineErr) {
@@ -590,8 +594,6 @@ async function handleCreateLead(req, res) {
     }
 
     // --- PHASE 3 ASYNC QUEUE PUBLISHING ---
-    const { enqueueLeadSync } = require('@/lib/queue/publisher.js');
-
     try {
         if (!supabaseLeadId) {
             throw new Error("DB First Rule Failed: Lead ID missing.");
@@ -747,7 +749,6 @@ async function handleCreateContact(req, res) {
         // 6. Push to QStash Queue (DB First rules applied)
         let queue_status = 'pending';
         try {
-            const { enqueueContactSync } = require('@/lib/queue/publisher.js');
             await enqueueContactSync(contactId);
             queue_status = 'success';
         } catch (error) {

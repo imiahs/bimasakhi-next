@@ -14,7 +14,9 @@ async function createJobRun(supabase, leadId) {
             payload: { leadId },
             status: 'processing',
             started_at: new Date().toISOString(),
-            worker_id: 'ai-scorer'
+            worker_id: 'ai-scorer',
+            completed_at: null,
+            error: null
         }).select('id').single();
 
         return data?.id || null;
@@ -28,10 +30,13 @@ async function finalizeJobRun(supabase, jobRunId, leadId, status, failureReason 
     if (!jobRunId) return;
 
     try {
+        const finishedAt = new Date().toISOString();
         await supabase.from('job_runs').update({
             status,
             failure_reason: failureReason,
-            finished_at: new Date().toISOString()
+            finished_at: finishedAt,
+            completed_at: finishedAt,
+            error: failureReason
         }).eq('id', jobRunId);
 
         if (status === 'failed') {
@@ -39,7 +44,9 @@ async function finalizeJobRun(supabase, jobRunId, leadId, status, failureReason 
                 job_run_id: jobRunId,
                 job_class: 'ai-scorer',
                 payload: { leadId },
-                failure_reason: failureReason
+                failure_reason: failureReason,
+                error: failureReason,
+                failed_at: finishedAt
             });
         }
     } catch (e) {

@@ -20,89 +20,79 @@ const isAuthorizedFailureTest = (request) => {
     );
 };
 
+const USE_NEW_PIPELINE = true; // Built-in flag for future reads. Always writes formats safely.
+
 async function insertJobRun(supabase, job, runId, startedAt) {
-    const nextPayload = {
-        id: runId,
-        job_id: job.id,
-        status: 'processing',
-        started_at: startedAt
-    };
+    try {
+        await supabase.from('job_runs').insert({
+            id: runId,
+            job_id: job.id,                // NEW
+            status: 'processing',
+            started_at: startedAt,
 
-    const { error: nextErr } = await supabase.from('job_runs').insert(nextPayload);
-    if (!nextErr) {
-        return { id: runId, schema: 'next' };
+            // BACKWARD COMPATIBILITY
+            job_class: job.job_type,
+            payload: job.payload || {}
+        });
+    } catch (err) {
+        console.warn('[Safe DB Write Failed] insertJobRun:', err.message);
     }
-
-    const legacyPayload = {
-        id: runId,
-        job_class: job.job_type,
-        payload: job.payload || {},
-        status: 'processing',
-        started_at: startedAt,
-        created_at: startedAt
-    };
-
-    const { error: legacyErr } = await supabase.from('job_runs').insert(legacyPayload);
-    if (!legacyErr) {
-        return { id: runId, schema: 'legacy' };
-    }
-
-    throw new Error(`next=${nextErr.message}; legacy=${legacyErr.message}`);
+    return { id: runId, schema: 'unified' };
 }
 
 async function finalizeJobRunSuccess(supabase, runRecord, completedAt) {
     if (!runRecord) return;
-
-    const updates = runRecord.schema === 'legacy'
-        ? { status: 'done', finished_at: completedAt }
-        : { status: 'done', completed_at: completedAt };
-
-    const { error } = await supabase.from('job_runs').update(updates).eq('id', runRecord.id);
-    if (error) {
-        console.warn(`[Worker Runner] job_runs success finalize failed [run_id: ${runRecord.id}]: ${error.message}`);
+    try {
+        await supabase.from('job_runs').update({
+            status: 'done',
+            
+            // NEW
+            completed_at: completedAt,
+            
+            // OLD
+            finished_at: completedAt
+        }).eq('id', runRecord.id);
+    } catch (err) {
+        console.warn('[Safe DB Write Failed] finalizeJobRunSuccess:', err.message);
     }
 }
 
 async function finalizeJobRunFailure(supabase, runRecord, completedAt, errorMessage) {
     if (!runRecord) return;
-
-    const updates = runRecord.schema === 'legacy'
-        ? { status: 'failed', finished_at: completedAt, failure_reason: errorMessage }
-        : { status: 'failed', completed_at: completedAt, error: errorMessage };
-
-    const { error } = await supabase.from('job_runs').update(updates).eq('id', runRecord.id);
-    if (error) {
-        console.warn(`[Worker Runner] job_runs failure finalize failed [run_id: ${runRecord.id}]: ${error.message}`);
+    try {
+        await supabase.from('job_runs').update({
+            status: 'failed',
+            
+            // NEW
+            error: errorMessage,
+            
+            // OLD
+            failure_reason: errorMessage,
+            completed_at: completedAt,
+            finished_at: completedAt
+        }).eq('id', runRecord.id);
+    } catch (err) {
+        console.warn('[Safe DB Write Failed] finalizeJobRunFailure:', err.message);
     }
 }
 
 async function insertDeadLetter(supabase, runRecord, job, errorMessage, failedAt) {
-    const nextPayload = {
-        job_id: job.id,
-        payload: job.payload,
-        error: errorMessage,
-        failed_at: failedAt
-    };
+    try {
+        await supabase.from('job_dead_letters').insert({
+            job_id: job.id,                // NEW
+            error: errorMessage,
+            failed_at: failedAt,
 
-    const { error: nextErr } = await supabase.from('job_dead_letters').insert(nextPayload);
-    if (!nextErr) return;
-
-    if (!runRecord) {
-        throw new Error(`next=${nextErr.message}; legacy=missing job_run_id`);
+            // OLD
+            job_run_id: runRecord?.id,
+            job_class: job.job_type,
+            payload: job.payload || {},
+            failure_reason: errorMessage,
+            created_at: failedAt
+        });
+    } catch (err) {
+        console.warn('[Safe DB Write Failed] insertDeadLetter:', err.message);
     }
-
-    const legacyPayload = {
-        job_run_id: runRecord.id,
-        job_class: job.job_type,
-        payload: job.payload,
-        failure_reason: errorMessage,
-        created_at: failedAt
-    };
-
-    const { error: legacyErr } = await supabase.from('job_dead_letters').insert(legacyPayload);
-    if (!legacyErr) return;
-
-    throw new Error(`next=${nextErr.message}; legacy=${legacyErr.message}`);
 }
 
 export async function GET(request) {

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { buildEventPathCounts } from '@/lib/events/routePath';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,17 +34,12 @@ export const GET = withAdminAuth(async (request, user) => {
             smart_cta_click: 0
         };
 
-        const pathCounts = {};
+        const pathCounts = buildEventPathCounts(events);
 
         events.forEach(row => {
             // Count by event type
             if (row.event_type in eventStats) eventStats[row.event_type]++;
             else eventStats[row.event_type] = 1;
-
-            // Count by path
-            if (row.route_path) {
-                pathCounts[row.route_path] = (pathCounts[row.route_path] || 0) + 1;
-            }
         });
 
         const topPathsRow = Object.keys(pathCounts)

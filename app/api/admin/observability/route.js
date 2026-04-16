@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getServiceSupabase } from '@/utils/supabase';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -8,27 +8,21 @@ export const GET = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
 
-        // Read directly from the snapshot as requested
-        const { data, error } = await supabase
-            .from('system_metrics_snapshot')
-            .select('*')
-            .limit(1)
-            .single();
-
-        if (error && error.code !== 'PGRST116') { // Ignore 0 rows error
-            throw error;
-        }
+        const [queueRes, workersRes, deadLettersRes, runsRes] = await Promise.all([
+            supabase.from('generation_queue').select('status'),
+            supabase.from('worker_health').select('status, last_run'),
+            supabase.from('job_dead_letters').select('id', { count: 'exact', head: true }),
+            supabase.from('job_runs').select('status')
+        ]);
 
         return NextResponse.json({
             success: true,
-            snapshot: data || {
-                jobs_processed: 0,
-                jobs_failed: 0,
-                redis_latency_ms: 0,
-                supabase_latency_ms: 0,
-                queue_depth: 0,
-                worker_uptime: 0,
-                error_rate: 0
+            snapshot: {
+                jobs_processed: (runsRes.data || []).filter((row) => ['done', 'completed'].includes(row.status)).length,
+                jobs_failed: (runsRes.data || []).filter((row) => row.status === 'failed').length,
+                queue_depth: (queueRes.data || []).filter((row) => ['pending', 'processing'].includes(row.status)).length,
+                dead_letters: deadLettersRes.count || 0,
+                stale_workers: (workersRes.data || []).filter((row) => row.status === 'error').length
             }
         });
     } catch (error) {

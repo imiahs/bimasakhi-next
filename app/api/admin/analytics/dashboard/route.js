@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getLocalDb } from '@/utils/localDb';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { getEventRoutePath } from '@/lib/events/routePath';
 
 export const dynamic = 'force-dynamic';
 
@@ -51,20 +52,25 @@ export const GET = withAdminAuth(async (request, user) => {
             if (supabase) {
                 const { data } = await supabase
                     .from('event_stream')
-                    .select('route_path, session_id')
+                    .select('event_name, payload, route_path, session_id')
                     .eq('event_type', 'page_view')
                     .order('created_at', { ascending: false })
                     .limit(5000);
                 countsData = data || [];
             }
 
-            // Group by route_path and unique session_id
+            // Group by canonical route path and unique session_id
             const uniqueSessions = {};
             countsData.forEach(row => {
-                if (!uniqueSessions[row.route_path]) {
-                    uniqueSessions[row.route_path] = new Set();
+                const routePath = getEventRoutePath(row);
+                if (!routePath) {
+                    return;
                 }
-                uniqueSessions[row.route_path].add(row.session_id);
+
+                if (!uniqueSessions[routePath]) {
+                    uniqueSessions[routePath] = new Set();
+                }
+                uniqueSessions[routePath].add(row.session_id);
             });
 
             const countMap = {};

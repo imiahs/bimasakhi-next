@@ -35,10 +35,8 @@ async function runMigrations() {
             );
         `);
 
-        // 2. Discover Migration Files (From /supabase/migrations + root custom numbered ones natively)
+        // 2. Discover migration files from the canonical Supabase migrations directory only.
         const migrationsDir = path.join(__dirname, '..', 'supabase', 'migrations');
-        const rootDir = path.join(__dirname, '..');
-
         let allFiles = [];
 
         if (fs.existsSync(migrationsDir)) {
@@ -48,18 +46,8 @@ async function runMigrations() {
             allFiles.push(...files);
         }
 
-        const rootSqlFiles = fs.readdirSync(rootDir)
-            .filter(f => f.endsWith('.sql') && f.match(/^\d+_/))
-            .map(f => ({ name: f, fullPath: path.join(rootDir, f) }));
-
-        allFiles.push(...rootSqlFiles);
-
-        // Sort files numerically by prefix (e.g. 001_..., 025_, 11_...)
-        allFiles.sort((a, b) => {
-            const numA = parseInt(a.name.match(/^0*(\d+)/)?.[1] || "0");
-            const numB = parseInt(b.name.match(/^0*(\d+)/)?.[1] || "0");
-            return numA - numB;
-        });
+        // Lexicographic sort keeps timestamped and numbered migrations deterministic.
+        allFiles.sort((a, b) => a.name.localeCompare(b.name));
 
         console.log(`Discovered ${allFiles.length} migration files. Starting execution...`);
 
@@ -90,6 +78,7 @@ async function runMigrations() {
             }
         }
 
+        await client.query(`NOTIFY pgrst, 'reload schema';`);
         console.log("All migrations executed successfully.");
 
     } finally {

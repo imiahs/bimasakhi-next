@@ -10,7 +10,7 @@ export const GET = withAdminAuth(async (request, user) => {
         const type = searchParams.get('type');
         const supabase = getServiceSupabase();
 
-        const [observabilityRes, runtimeRes] = await Promise.all([
+        const [observabilityRes, runtimeRes, deadLettersRes, workerHealthRes] = await Promise.all([
             supabase
                 .from('observability_logs')
                 .select('id, level, message, metadata, source, created_at')
@@ -20,11 +20,21 @@ export const GET = withAdminAuth(async (request, user) => {
                 .from('system_runtime_errors')
                 .select('id, component, error_message, metadata, created_at')
                 .order('created_at', { ascending: false })
-                .limit(100)
+                .limit(100),
+            supabase
+                .from('job_dead_letters')
+                .select('id, job_class, error, failure_reason, failed_at, created_at')
+                .order('failed_at', { ascending: false })
+                .limit(25),
+            supabase
+                .from('worker_health')
+                .select('id, worker_name, status, message, metrics, last_run')
+                .order('last_run', { ascending: false })
+                .limit(25)
         ]);
 
-        if (observabilityRes.error || runtimeRes.error) {
-            throw observabilityRes.error || runtimeRes.error;
+        if (observabilityRes.error || runtimeRes.error || deadLettersRes.error || workerHealthRes.error) {
+            throw observabilityRes.error || runtimeRes.error || deadLettersRes.error || workerHealthRes.error;
         }
 
         const logs = [
@@ -44,6 +54,20 @@ export const GET = withAdminAuth(async (request, user) => {
                 message: `${log.component}: ${log.error_message}`,
                 metadata: log.metadata || {},
                 created_at: log.created_at
+            }))),
+            ...((deadLettersRes.data || []).map((log) => ({
+                id: `dead_${log.id}`,
+                type: 'DEAD_LETTER',
+                message: `${log.job_class || 'unknown-job'}: ${log.error || log.failure_reason || 'No failure reason recorded'}`,
+                metadata: {},
+                created_at: log.failed_at || log.created_at
+            }))),
+            ...((workerHealthRes.data || []).map((log) => ({
+                id: `worker_${log.id}`,
+                type: log.status === 'error' ? 'ERROR' : 'INFO',
+                message: `${log.worker_name}: ${log.message || 'No worker message'}`,
+                metadata: log.metrics || {},
+                created_at: log.last_run
             })))
         ]
             .filter((log) => {

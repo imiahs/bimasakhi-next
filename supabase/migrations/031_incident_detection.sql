@@ -1,0 +1,18 @@
+-- ============================================
+-- Migration: 031_incident_detection.sql
+-- Status: Applied to live DB, source SQL lost
+-- Applied on: 2026-03-14T19:16:04.731151+00:00
+--
+-- This migration is a renumbered duplicate of
+-- 20_incident_detection.sql which was applied earlier
+-- under a different naming convention.
+--
+-- Tables observed in live DB (confirmed 2026-04-16):
+--   - system_alerts (columns: id, alert_type, severity, message,
+--       metadata, resolved, created_at)
+--   - Indexes: idx_system_alerts_unresolved
+--
+-- THIS IS A DOCUMENTATION-ONLY MIGRATION
+-- DO NOT EXECUTE ANY SQL FROM THIS FILE
+-- To modify these tables, create a NEW migration.
+-- ============================================

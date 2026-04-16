@@ -40,14 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# runtime logs
+.logs/
 
-# Project Tree
-project_bima_sakhi_tree.txt
-scripts/
-*.txt   
-admin_audit_report.md   
-check-admin-files.js
-cto_master_plan.md
-SCHEMA_SOURCE_OF_TRUTH.md
-/docs
+# build artifacts
+next-build.log
