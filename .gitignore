@@ -45,3 +45,24 @@ next-env.d.ts
 
 # build artifacts
 next-build.log
+
+# ── SECURITY: debug / test / audit scripts (NEVER commit these) ──
+step*.js
+step*.mjs
+step*.log
+step*.txt
+verify_*.js
+verify_*.mjs
+debug_*.js
+debug_*.mjs
+
+# ── CI / Vercel inspection dumps (local only) ──
+vercel-*.log
+vercel-*.txt
+vercel-inspect.json
+vercel-error.log
+vercel-lead-sync.log
+vercel-worker-hit.log
+
+# ── Temp tracking / scratch files ──
+_all_tracked.txt

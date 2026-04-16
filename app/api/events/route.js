@@ -16,8 +16,17 @@ const ALLOWED_EVENT_TYPES = new Set([
 
 export async function POST(request) {
     try {
+        console.log('[Telemetry] ENDPOINT REACHED /api/events');
         const body = await request.json();
+        console.log('[Telemetry] EVENT API HIT', body);
         const { session_id, event_type, event_name, payload } = body;
+
+        if (!event_type) {
+            return NextResponse.json(
+                { error: 'event_type is required for telemetry ingestion' },
+                { status: 400 }
+            );
+        }
 
         // 1. Validate contract
         if (!session_id || !event_type || !event_name) {
@@ -68,7 +77,15 @@ export async function POST(request) {
         }
 
         // 4. PRIMARY: INSERT events_log
-        const { error: logErr } = await supabase
+        console.log('[Telemetry] INSERTING INTO events_log', {
+            event_id,
+            event_name,
+            event_type,
+            payload: payload || {},
+            source,
+            created_at
+        });
+        const { data: eventsLogInsertResult, error: logErr } = await supabase
             .from('events_log')
             .insert({
                 id: event_id,
@@ -77,15 +94,27 @@ export async function POST(request) {
                 payload: payload || {},
                 source,
                 created_at
-            });
+            })
+            .select('*')
+            .single();
             
         if (logErr) {
             console.error('[Telemetry] events_log Failed:', logErr.message);
             throw logErr;
         }
+        console.log('[Telemetry] INSERT RESULT events_log', eventsLogInsertResult);
 
         // 5. PASSIVE: INSERT event_stream using the canonical telemetry contract.
-        const { error: eventErr } = await supabase
+        console.log('[Telemetry] INSERTING INTO event_stream', {
+            session_id,
+            event_type,
+            event_name,
+            payload: payload || {},
+            ip_address,
+            user_agent,
+            created_at
+        });
+        const { data: eventStreamInsertResult, error: eventErr } = await supabase
             .from('event_stream')
             .insert({
                 session_id,
@@ -95,11 +124,15 @@ export async function POST(request) {
                 ip_address,
                 user_agent,
                 created_at
-            });
+            })
+            .select('*')
+            .single();
             
         if (eventErr) {
-             console.warn('[Telemetry] Passive event_stream failed:', eventErr.message);
+            console.error('[Telemetry] event_stream Failed:', eventErr.message);
+            throw eventErr;
         }
+        console.log('[Telemetry] INSERT RESULT event_stream', eventStreamInsertResult);
 
         // Phase 4 Event -> Queue Connector
         const trigger = TRIGGER_MAP[event_type];

@@ -1,6 +1,7 @@
 // api/crm/[action].js
 // Consolidated CRM handler: create-lead + create-contact
 import axios from 'axios';
+import crypto from 'crypto';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { redis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
@@ -28,25 +29,58 @@ const normalizeMobile = (mobile = '') => {
     return cleaned.length >= 10 ? cleaned.slice(-10) : cleaned;
 };
 
-// Generate user-friendly Reference ID: BS-TU/YYYYMMDD/XXXX
-async function generateRefId() {
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const dd = String(now.getDate()).padStart(2, '0');
-    const dateStr = `${yyyy}${mm}${dd}`;
+function generateRefId(now = new Date()) {
+    const timestamp = now.toISOString().replace(/\D/g, '').slice(0, 17);
+    const randomPart = crypto.randomUUID().replace(/-/g, '').slice(0, 8).toUpperCase();
+    return `LEAD-${timestamp}-${randomPart}`;
+}
 
-    // Atomic daily counter via Redis
-    const counterKey = `ref_id_counter:${dateStr}`;
-    const serial = await redis.incr(counterKey);
+async function selectLeadByMobileCompat(supabaseClient, normalizedMobile) {
+    const fieldsWithRefId = 'id, ref_id, city, created_at, zoho_lead_id, full_name';
+    const fieldsWithoutRefId = 'id, city, created_at, zoho_lead_id, full_name';
 
-    // Auto-expire counter key after 48 hours
-    if (serial === 1) {
-        await redis.expire(counterKey, 172800);
+    const result = await supabaseClient
+        .from('leads')
+        .select(fieldsWithRefId)
+        .eq('mobile', normalizedMobile)
+        .maybeSingle();
+
+    if (!result.error || !result.error.message?.includes('ref_id')) {
+        return result;
     }
 
-    const serialStr = String(serial).padStart(4, '0');
-    return `BS-TU/${dateStr}/${serialStr}`;
+    return supabaseClient
+        .from('leads')
+        .select(fieldsWithoutRefId)
+        .eq('mobile', normalizedMobile)
+        .maybeSingle();
+}
+
+async function insertLeadWithRefId(supabaseClient, payload) {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+        const refId = generateRefId();
+        const { data, error } = await supabaseClient
+            .from('leads')
+            .insert({
+                ...payload,
+                ref_id: refId
+            })
+            .select()
+            .single();
+
+        if (!error) {
+            return { data, refId };
+        }
+
+        const errorText = [error.message, error.details, error.hint].filter(Boolean).join(' ');
+        const isRefIdConflict = error.code === '23505' && /ref_id/i.test(errorText);
+
+        if (!isRefIdConflict) {
+            throw error;
+        }
+    }
+
+    throw new Error('Unable to generate a unique ref_id after 5 attempts');
 }
 
 // --- Safe Supabase Initialization ---
@@ -174,11 +208,17 @@ async function handleCreateLead(req, res) {
         name, mobile, email,
         pincode, city, state, locality,
         education, occupation, reason,
+        conversion_source: requestedConversionSource,
         source, medium, campaign, visitedPages,
         session_id,
         // Tasks 2 & 3: Lead Attribution
         lead_source_page, lead_source_type
     } = req.body;
+
+    const conversionSource =
+        (typeof requestedConversionSource === 'string' && requestedConversionSource.trim()) ||
+        (typeof source === 'string' && source.trim()) ||
+        'website_form';
 
     // Normalize Mobile BEFORE Validation
     const normalizedMobile = normalizeMobile(mobile);
@@ -245,11 +285,7 @@ async function handleCreateLead(req, res) {
     if (isSupabaseEnabled) {
         try {
             // A. Check for Duplicate (Optimistic Check)
-            const { data: existingLead, error: checkError } = await supabase
-                .from('leads')
-                .select('id, city, created_at, zoho_lead_id, full_name') // Removed ref_id as it causes 42703 (Missing Column)
-                .eq('mobile', normalizedMobile)
-                .maybeSingle();
+            const { data: existingLead, error: checkError } = await selectLeadByMobileCompat(supabase, normalizedMobile);
 
             if (checkError) {
                 console.error("Supabase Check Error:", checkError);
@@ -269,9 +305,7 @@ async function handleCreateLead(req, res) {
             // B. Insert New Lead (If Not Duplicate)
             if (!isDuplicate) {
                 try {
-                    const { data: newLead, error: insertError } = await supabase
-                        .from('leads')
-                        .insert({
+                    const { data: newLead, refId: insertedRefId } = await insertLeadWithRefId(supabase, {
                             full_name: name,
                             mobile: normalizedMobile,
                             email,
@@ -282,26 +316,15 @@ async function handleCreateLead(req, res) {
                             education,
                             occupation,
                             source,
+                            conversion_source: conversionSource,
                             medium,
                             campaign,
                             status: 'new'
                             // Removed is_city_missing to prevent PGRST204 (Missing Column) cache failures
-                        })
-                        .select()
-                        .single();
-
-                    if (insertError) throw insertError;
+                        });
 
                     supabaseLeadId = newLead.id;
-
-                    // Generate user-friendly Reference ID
-                    refId = await generateRefId();
-
-                    // Store refId in leads table (Non-Blocking / Graceful degradation)
-                    const { error: refIdErr } = await supabase.from('leads').update({
-                        ref_id: refId
-                    }).eq('id', supabaseLeadId);
-                    if (refIdErr) console.warn("Graceful DB Skip: 'ref_id' column missing in schema, continuing with generator...", refIdErr.message);
+                    refId = newLead.ref_id || insertedRefId;
 
                     // Log Metadata
                     const { error: metaLogErr } = await supabase.from('lead_metadata').insert({
@@ -515,8 +538,15 @@ async function handleCreateLead(req, res) {
                                 }
 
                                 if (queueIdsToDispatch.length > 0) {
-                                    for (const qId of queueIdsToDispatch) {
-                                        enqueuePageGeneration({ queueId: qId }).catch((e) => console.error("Auto trigger error:", e));
+                                    // STEP 1 GUARD: Do NOT dispatch to QStash if queue is paused
+                                    const pipelineConfig = await getSystemConfig();
+                                    if (pipelineConfig.queue_paused) {
+                                        console.log('[Pipeline] Queue paused — skipping QStash dispatch for', queueIdsToDispatch.length, 'job(s). Jobs remain pending in DB.');
+                                        await safeLog('GUARD_BLOCKED', 'Queue paused — pagegen dispatch skipped by CRM guard', { queueIds: queueIdsToDispatch });
+                                    } else {
+                                        for (const qId of queueIdsToDispatch) {
+                                            enqueuePageGeneration({ queueId: qId }).catch((e) => console.error("Auto trigger error:", e));
+                                        }
                                     }
                                 }
                             }
@@ -532,11 +562,7 @@ async function handleCreateLead(req, res) {
                         console.warn("Race Condition Detected: Duplicate Insert Attempt");
 
                         // Fetch the existing record that caused the conflict
-                        const { data: raceLead } = await supabase
-                            .from('leads')
-                            .select('id, city, created_at')
-                            .eq('mobile', normalizedMobile)
-                            .maybeSingle();
+                        const { data: raceLead } = await selectLeadByMobileCompat(supabase, normalizedMobile);
 
                         if (raceLead) {
                             isDuplicate = true;
@@ -598,9 +624,11 @@ async function handleCreateLead(req, res) {
             throw new Error("DB First Rule Failed: Lead ID missing.");
         }
 
-        await enqueueLeadSync(supabaseLeadId);
+        const queueResponse = await enqueueLeadSync(supabaseLeadId);
         
-        safeLog('QUEUE_PUBLISH_SUCCESS', 'Lead sync job queued safely', { lead_id: refId || supabaseLeadId });
+        console.log('[STEP7A DEBUG] QStash response for leadId:', supabaseLeadId, '→', queueResponse);
+        
+        safeLog('QUEUE_PUBLISH_SUCCESS', 'Lead sync job queued safely', { lead_id: refId || supabaseLeadId, qstash_response: queueResponse });
 
         return res.status(200).json({
             success: true,

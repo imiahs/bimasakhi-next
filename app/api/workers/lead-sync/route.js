@@ -4,21 +4,44 @@ import { getZohoAccessToken, getZohoApiDomain } from '@/pages/api/_middleware/zo
 import axios from 'axios';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
 
+async function loadLeadForSync(supabase, leadId) {
+    const fieldsWithRefId = 'sync_status, zoho_lead_id, full_name, mobile, email, city, state, pincode, locality, occupation, education, source, medium, campaign, ref_id';
+    const fieldsWithoutRefId = 'sync_status, zoho_lead_id, full_name, mobile, email, city, state, pincode, locality, occupation, education, source, medium, campaign';
+
+    const result = await supabase
+        .from('leads')
+        .update({ sync_status: 'processing' })
+        .eq('id', leadId)
+        .neq('sync_status', 'completed')
+        .select(fieldsWithRefId)
+        .single();
+
+    if (!result.error || !result.error.message?.includes('ref_id')) {
+        return result;
+    }
+
+    console.warn('[Lead Sync] ref_id column unavailable; retrying without it');
+
+    return supabase
+        .from('leads')
+        .update({ sync_status: 'processing' })
+        .eq('id', leadId)
+        .neq('sync_status', 'completed')
+        .select(fieldsWithoutRefId)
+        .single();
+}
+
 async function handler(req) {
     const body = await req.json();
     const { leadId } = body;
     if (!leadId) return NextResponse.json({ error: 'Missing leadId' }, { status: 400 });
 
+    console.log('WORKER HIT', leadId);
+
     const supabase = getServiceSupabase();
 
     // Atomic Status Transition & Idempotency Check (Worker Optimization)
-    const { data: checkData, error: updateErr } = await supabase
-        .from('leads')
-        .update({ sync_status: 'processing' })
-        .eq('id', leadId)
-        .neq('sync_status', 'completed')
-        .select('sync_status, zoho_lead_id, full_name, mobile, email, city, state, pincode, locality, occupation, education, source, medium, campaign, ref_id')
-        .single();
+    const { data: checkData, error: updateErr } = await loadLeadForSync(supabase, leadId);
 
     if (updateErr || !checkData) {
         // If it fails, we assume it's already completed or not found

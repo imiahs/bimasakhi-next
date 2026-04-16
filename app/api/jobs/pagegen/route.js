@@ -183,6 +183,9 @@ async function handler(request) {
     }
     const { queueId } = body;
 
+    // STEP 5: Worker entry verification log
+    console.log('[PAGEGEN WORKER EXECUTED]', { queueId, timestamp: new Date().toISOString() });
+
     if (!queueId) {
         return NextResponse.json({ error: 'Missing queueId payload from QStash' }, { status: 400 });
     }
