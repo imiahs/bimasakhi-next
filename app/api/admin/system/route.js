@@ -33,7 +33,7 @@ export const GET = withAdminAuth(async (request, user) => {
         const supabaseService = getServiceSupabase();
         const [queueRes, workersRes, deadLettersRes] = await Promise.all([
             supabaseService.from('generation_queue').select('status'),
-            supabaseService.from('worker_health').select('status, last_run').limit(20),
+            supabaseService.from('worker_health').select('status, last_heartbeat').limit(20),
             supabaseService.from('job_dead_letters').select('id', { count: 'exact', head: true })
         ]);
 
