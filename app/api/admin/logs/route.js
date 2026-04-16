@@ -28,7 +28,7 @@ export const GET = withAdminAuth(async (request, user) => {
                 .limit(25),
             supabase
                 .from('worker_health')
-                .select('id, worker_name, status, message, metrics, last_run')
+                .select('worker_name, status, message, metrics, last_run')
                 .order('last_run', { ascending: false })
                 .limit(25)
         ]);
@@ -62,8 +62,8 @@ export const GET = withAdminAuth(async (request, user) => {
                 metadata: {},
                 created_at: log.failed_at || log.created_at
             }))),
-            ...((workerHealthRes.data || []).map((log) => ({
-                id: `worker_${log.id}`,
+            ...((workerHealthRes.data || []).map((log, i) => ({
+                id: `worker_${log.worker_name}_${i}`,
                 type: log.status === 'error' ? 'ERROR' : 'INFO',
                 message: `${log.worker_name}: ${log.message || 'No worker message'}`,
                 metadata: log.metrics || {},
