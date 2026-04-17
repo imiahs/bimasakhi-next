@@ -10,7 +10,8 @@ export const GET = withAdminAuth(async (request, user) => {
         const type = searchParams.get('type');
         const supabase = getServiceSupabase();
 
-        const [observabilityRes, runtimeRes, deadLettersRes, workerHealthRes] = await Promise.all([
+        // QStash-native log aggregation — no BullMQ/worker_health
+        const [observabilityRes, runtimeRes, deadLettersRes, jobRunsRes] = await Promise.all([
             supabase
                 .from('observability_logs')
                 .select('id, level, message, metadata, source, created_at')
@@ -27,14 +28,14 @@ export const GET = withAdminAuth(async (request, user) => {
                 .order('failed_at', { ascending: false })
                 .limit(25),
             supabase
-                .from('worker_health')
-                .select('worker_name, status, jobs_processed, failures, last_heartbeat')
-                .order('last_heartbeat', { ascending: false })
+                .from('job_runs')
+                .select('id, worker_id, status, started_at, finished_at, error_message')
+                .order('started_at', { ascending: false })
                 .limit(25)
         ]);
 
-        if (observabilityRes.error || runtimeRes.error || deadLettersRes.error || workerHealthRes.error) {
-            throw observabilityRes.error || runtimeRes.error || deadLettersRes.error || workerHealthRes.error;
+        if (observabilityRes.error || runtimeRes.error || deadLettersRes.error || jobRunsRes.error) {
+            throw observabilityRes.error || runtimeRes.error || deadLettersRes.error || jobRunsRes.error;
         }
 
         const logs = [
@@ -62,12 +63,12 @@ export const GET = withAdminAuth(async (request, user) => {
                 metadata: {},
                 created_at: log.failed_at || log.created_at
             }))),
-            ...((workerHealthRes.data || []).map((log, i) => ({
-                id: `worker_${log.worker_name}_${i}`,
-                type: log.status === 'error' ? 'ERROR' : 'INFO',
-                message: `${log.worker_name}: Status ${log.status}, Jobs: ${log.jobs_processed}, Failures: ${log.failures}`,
-                metadata: { jobs_processed: log.jobs_processed, failures: log.failures },
-                created_at: log.last_heartbeat
+            ...((jobRunsRes.data || []).map((run) => ({
+                id: `run_${run.id}`,
+                type: run.status === 'failed' ? 'ERROR' : 'INFO',
+                message: `job_run [${run.worker_id || 'worker'}]: ${run.status}${run.error_message ? ' — ' + run.error_message : ''}`,
+                metadata: { worker_id: run.worker_id, status: run.status, finished_at: run.finished_at },
+                created_at: run.started_at
             })))
         ]
             .filter((log) => {

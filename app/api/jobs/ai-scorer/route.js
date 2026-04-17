@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
-import { calculateLeadScore } from '@/lib/ai/leadScorer';
-import { routeLeadToAgent } from '@/lib/ai/leadRouter';
+import '@/lib/tools/scoreLead';
+import '@/lib/tools/routeLead';
+import { executeTool } from '@/lib/tools/index';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
+import { handleEvent } from '@/lib/events/bus';
+import { markCompleted, markFailed } from '@/lib/events/eventStore';
 
 export const maxDuration = 300;
 
@@ -78,28 +81,29 @@ async function handler(request) {
 
     const supabase = getServiceSupabase();
     const jobRunId = await createJobRun(supabase, leadId);
+    const eventStoreId = body._event_store_id || null;
+    const executionContext = body._execution_context || {};
+    const correlationId = executionContext.correlation_id || null;
     let successStatus = false;
     let errorMessage = null;
     let finalScore = null;
     let routingRes = null;
 
     try {
-        finalScore = await calculateLeadScore(leadId);
-        routingRes = await routeLeadToAgent(leadId);
+        const scoreResult = await executeTool('score_lead', { leadId }, executionContext);
+        finalScore = scoreResult.success ? scoreResult.result : null;
 
+        const routeResult = await executeTool('route_lead', { leadId }, executionContext);
+        routingRes = routeResult.success ? routeResult.result : { reason: routeResult.error };
+
+        // Dispatch followup via event bus (single path — Rule 3)
         try {
-            const { getQStashClient, getBaseUrl } = await import('@/lib/queue/qstash.js');
-            const qstash = getQStashClient();
-            const baseUrl = getBaseUrl();
-
-            if (qstash) {
-                await qstash.publishJSON({
-                    url: `${baseUrl}/api/jobs/followup-trigger`,
-                    body: { leadId }
-                });
+            const eventResult = await handleEvent('lead_hot', { leadId }, 'ai_scorer');
+            if (!eventResult.success) {
+                console.warn('[AI-Scorer] lead_hot event not dispatched:', eventResult.reason);
             }
         } catch (dispatchErr) {
-            console.error('[AI-Scorer] Follow-up dispatch failed:', dispatchErr);
+            console.error('[AI-Scorer] lead_hot event bus failed:', dispatchErr.message);
         }
 
         successStatus = true;
@@ -117,21 +121,38 @@ async function handler(request) {
             !successStatus ? (errorMessage instanceof Error ? errorMessage.message : errorMessage) : null
         );
 
-        await supabase.from('worker_health').insert({
-            worker_name: 'ai-scorer',
-            status: successStatus ? 'healthy' : 'error',
-            last_run: new Date().toISOString(),
+        // QStash-native: log to observability_logs instead of worker_health
+        await supabase.from('observability_logs').insert({
+            level: successStatus ? 'AI_SCORER_SUCCESS' : 'AI_SCORER_FAILURE',
             message: successStatus
                 ? `Scored: ${finalScore || 'Skipped'}. Routed: ${routingRes?.agent_id || routingRes?.reason || 'None'}`
-                : (errorMessage instanceof Error ? errorMessage.message : errorMessage),
-            metrics: {
+                : (errorMessage instanceof Error ? errorMessage.message : String(errorMessage)),
+            source: 'ai-scorer',
+            metadata: {
                 job_id: upstashMessageId,
                 execution_time_ms: executionTime,
-                success: successStatus,
                 lead_id: leadId,
-                error_stack: !successStatus ? (errorMessage instanceof Error ? errorMessage.stack : errorMessage) : null
+                correlation_id: correlationId,
+                success: successStatus
             }
-        }).catch((e) => console.warn('[AI-Scorer] worker_health warning:', e.message));
+        }).catch((e) => console.warn('[AI-Scorer] observability log warning:', e.message));
+
+        // COMPLETION ACK — mark event_store (Rule 2)
+        if (successStatus) {
+            await markCompleted(eventStoreId, {
+                lead_id: leadId,
+                score: finalScore,
+                routing: routingRes,
+                correlation_id: correlationId,
+                execution_time_ms: executionTime,
+            });
+        } else {
+            await markFailed(
+                eventStoreId,
+                errorMessage instanceof Error ? errorMessage.message : String(errorMessage),
+                { lead_id: leadId, score: finalScore, routing: routingRes }
+            );
+        }
     }
 
     if (!successStatus) {

@@ -5,6 +5,12 @@ import { rateLimit } from '@/utils/rateLimiter.js';
 import axios from 'axios';
 
 export default async function handler(req, res) {
+    // Auth: require CRON_SECRET bearer token
+    const authHeader = req.headers.authorization;
+    if (!authHeader || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
     const requiredEnvs = ['ZOHO_CLIENT_ID', 'ZOHO_CLIENT_SECRET', 'ZOHO_REFRESH_TOKEN'];
     for (const envStr of requiredEnvs) {
         if (!process.env[envStr]) {

@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
-import { sendFollowupMessage } from '@/lib/followup/sendFollowupMessage';
+import { handleLeadHot } from '@/lib/executives/cso';
+import { markCompleted, markFailed } from '@/lib/events/eventStore';
 
 export const maxDuration = 300;
 
@@ -25,115 +26,67 @@ async function handler(request) {
     }
 
     const supabase = getServiceSupabase();
-    let successStatus = false;
-    let errorMessage = null;
-    let auditLog = null;
+    const execCtx = body._execution_context || { event_id: upstashMessageId };
+    const eventStoreId = body._event_store_id || null;
+    const correlationId = execCtx.correlation_id || null;
 
+    // CSO EXECUTIVE: Single authority for follow-up (Rule 3)
     try {
-        // 1. Fetch Lead and Template
-        const { data: lead } = await supabase.from('leads').select('full_name, mobile, email, followup_status, agent_id').eq('id', leadId).single();
-        if (!lead) throw new Error('Lead not found');
-
-        if (lead.followup_status === 'completed') {
-            auditLog = 'Follow-up already completed. Skipping.';
-            successStatus = true;
-            return NextResponse.json({ success: true, message: auditLog });
-        }
-
-        // 2. Cooldown Protection
-        const { data: recentLogs } = await supabase
-            .from('ai_decision_logs')
-            .select('created_at')
-            .eq('lead_id', leadId)
-            .eq('decision_type', 'followup')
-            .order('created_at', { ascending: false })
-            .limit(1);
-
-        if (recentLogs?.length > 0) {
-            const lastSent = new Date(recentLogs[0].created_at).getTime();
-            const now = Date.now();
-            if (now - lastSent < 24 * 60 * 60 * 1000) { // 24h cooldown
-                auditLog = 'Cooldown active (last sent within 24h). Skipping.';
-                successStatus = true;
-                return NextResponse.json({ success: true, message: auditLog });
-            }
-        }
-
-        // 3. Fetch Template
-        const { data: templates } = await supabase
-            .from('communication_templates')
-            .select('*')
-            .eq('is_active', true)
-            .limit(1);
-
-        if (!templates?.length) throw new Error('No active communication templates found');
-        const template = templates[0];
-
-        // 4. Fetch Agent Name (for template variables)
-        let agentName = 'Our Bima Sakhi Expert';
-        if (lead.agent_id) {
-            const { data: agent } = await supabase.from('agents').select('name').eq('agent_id', lead.agent_id).single();
-            if (agent) agentName = agent.name;
-        }
-
-        // 5. Replace Template Variables
-        const message = template.content
-            .replace(/\{\{lead_name\}\}/g, lead.full_name)
-            .replace(/\{\{agent_name\}\}/g, agentName);
-
-        // 6. Send via provider abstraction
-        const recipient = lead.mobile || lead.email;
-        if (!recipient) {
-            throw new Error('Lead has no follow-up recipient');
-        }
-
-        await sendFollowupMessage({
-            leadId,
-            channel: template.template_type || (lead.mobile ? 'whatsapp' : 'email'),
-            recipient,
-            message,
-            metadata: {
-                template_id: template.id,
-                template_name: template.template_name,
-                agent_id: lead.agent_id || null
-            }
-        });
-        
-        // 7. Log Decision
-        await supabase.from('ai_decision_logs').insert({
-            lead_id: leadId,
-            decision_type: 'followup',
-            decision_reason: `Sent ${template.template_name} (${template.template_type})`,
-            metadata: { template_id: template.id, type: template.template_type, message_preview: message.substring(0, 100) }
-        });
-
-        // 8. Update Lead Status
-        await supabase.from('leads').update({ followup_status: 'completed' }).eq('id', leadId);
-
-        successStatus = true;
-        auditLog = `Successfully triggered ${template.template_type} follow-up.`;
-    } catch (e) {
-        errorMessage = e;
-        console.error('[Follow-up Trigger Worker]', e);
-    } finally {
+        const csoResult = await handleLeadHot(leadId, execCtx);
+        const success = !csoResult.error;
         const executionTime = Date.now() - startTime;
-        await supabase.from('worker_health').insert({
-            worker_name: 'followup-trigger',
-            status: successStatus ? 'healthy' : 'error',
-            last_run: new Date().toISOString(),
-            message: successStatus ? auditLog : (errorMessage instanceof Error ? errorMessage.message : errorMessage),
-            metrics: {
+
+        await supabase.from('observability_logs').insert({
+            level: success ? 'FOLLOWUP_SUCCESS' : 'FOLLOWUP_FAILURE',
+            message: `CSO executive: ${success ? 'completed' : csoResult.error || csoResult.skipped || 'failed'}`,
+            source: 'followup-trigger',
+            metadata: {
                 job_id: upstashMessageId,
                 execution_time_ms: executionTime,
-                success: successStatus,
                 lead_id: leadId,
-                error_stack: !successStatus ? (errorMessage instanceof Error ? errorMessage.stack : errorMessage) : null
-            }
-        });
-    }
+                correlation_id: correlationId,
+                ...csoResult,
+                event_id: execCtx.event_id,
+            },
+        }).catch(() => {});
 
-    if (!successStatus) return NextResponse.json({ error: errorMessage instanceof Error ? errorMessage.message : errorMessage }, { status: 500 });
-    return NextResponse.json({ success: true, message: auditLog });
+        if (!success && csoResult.error) {
+            // FAILURE ACK — mark event_store as failed (Rule 2)
+            await markFailed(eventStoreId, csoResult.error, { lead_id: leadId, partial: csoResult });
+            return NextResponse.json({ error: csoResult.error }, { status: 500 });
+        }
+
+        // COMPLETION ACK — mark event_store as completed (Rule 2)
+        await markCompleted(eventStoreId, {
+            lead_id: leadId,
+            correlation_id: correlationId,
+            execution_time_ms: executionTime,
+            ...csoResult,
+        });
+
+        return NextResponse.json({ success: true, ...csoResult });
+    } catch (csoErr) {
+        const executionTime = Date.now() - startTime;
+        console.error('[CSO Executive] Failed:', csoErr.message);
+
+        await supabase.from('observability_logs').insert({
+            level: 'FOLLOWUP_FAILURE',
+            message: `CSO executive crashed: ${csoErr.message}`,
+            source: 'followup-trigger',
+            metadata: {
+                job_id: upstashMessageId,
+                execution_time_ms: executionTime,
+                lead_id: leadId,
+                correlation_id: correlationId,
+                error: csoErr.message,
+            },
+        }).catch(() => {});
+
+        // FAILURE ACK — mark event_store as failed on crash (Rule 2)
+        await markFailed(eventStoreId, csoErr.message, { lead_id: leadId });
+
+        return NextResponse.json({ error: csoErr.message }, { status: 500 });
+    }
 }
 
 export const POST = verifySignatureAppRouter(handler);

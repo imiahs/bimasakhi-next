@@ -6,13 +6,11 @@ import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { redis } from '../_middleware/auth.js';
 import { withLogger } from '../_middleware/logger.js';
 import { getZohoAccessToken, getZohoApiDomain } from '../_middleware/zoho.js';
-import { getLocalDb } from '@/utils/localDb.js';
-import { calculateLeadScore } from '@/lib/ai/leadScorer';
-import { routeLeadToAgent } from '@/lib/ai/leadRouter';
 import { safeLog } from '@/lib/safeLogger.js';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
-import { enqueueContactSync, enqueueLeadSync, enqueuePageGeneration } from '@/lib/queue/publisher.js';
+import { enqueuePageGeneration } from '@/lib/queue/publisher.js';
 import { getEventRoutePath } from '@/lib/events/routePath';
+import { handleEvent } from '@/lib/events/bus';
 
 let systemBootLogged = false;
 
@@ -344,10 +342,10 @@ async function handleCreateLead(req, res) {
                     });
                     if (eventLogErr) console.error("Event Log Error:", eventLogErr);
 
-                    // Phase 19: Lead Intelligence & Scoring System
+                    // Phase 19: Lead Intelligence — Journey tracking (scoring delegated to CMO executive)
                     if (session_id) {
                         if (isSupabaseEnabled && supabase) {
-                            // 1. Fetch Journey Events from Supabase
+                            // Fetch Journey Events from Supabase
                             const { data: eventsData, error: eventErr } = await supabase
                                 .from('event_stream')
                                 .select('event_type, event_name, payload, route_path, metadata, created_at')
@@ -356,29 +354,13 @@ async function handleCreateLead(req, res) {
 
                             const events = eventsData || [];
 
-                            // 2. Compute Score
-                            let leadScore = 20; // Base score for form submission
                             let journeySteps = events.map(e => ({
                                 action: e.event_type,
                                 path: getEventRoutePath(e),
                                 time: e.created_at
                             }));
 
-                            events.forEach(evt => {
-                                if (evt.event_type === 'page_view') leadScore += 2;
-                                if (evt.event_type === 'calculator_used') leadScore += 10;
-                                if (evt.event_type === 'resource_download') leadScore += 5;
-                                if (evt.event_type.startsWith('apply_step_')) leadScore += 2;
-                            });
-
-                            // 3. Save Score
-                            await supabase.from('lead_scores').insert({
-                                lead_id: newLead.id,
-                                score: leadScore,
-                                score_reason: 'Form submission + session engagement'
-                            });
-
-                            // 4. Save Journey
+                            // Save Journey (scoring is done by CMO executive via tool system)
                             await supabase.from('lead_journeys').insert({
                                 lead_id: newLead.id,
                                 session_id: session_id,
@@ -618,24 +600,57 @@ async function handleCreateLead(req, res) {
         });
     }
 
-    // --- PHASE 3 ASYNC QUEUE PUBLISHING ---
+    // --- EVENT BUS PIPELINE (SINGLE SOURCE OF TRUTH) ---
     try {
         if (!supabaseLeadId) {
             throw new Error("DB First Rule Failed: Lead ID missing.");
         }
 
-        const queueResponse = await enqueueLeadSync(supabaseLeadId);
-        
-        console.log('[STEP7A DEBUG] QStash response for leadId:', supabaseLeadId, '→', queueResponse);
-        
-        safeLog('QUEUE_PUBLISH_SUCCESS', 'Lead sync job queued safely', { lead_id: refId || supabaseLeadId, qstash_response: queueResponse });
+        // EVENT BUS: Mandatory path. No fallback. If this fails, the request fails.
+        const eventResult = await handleEvent('lead_created', {
+            leadId: supabaseLeadId,
+            session_id,
+        }, 'crm_handler');
+
+        if (!eventResult.success) {
+            // Event bus rejected — log and fail the request
+            const reason = eventResult.reason || 'unknown';
+            console.error('[EventBus] lead_created REJECTED:', reason, eventResult.details || '');
+            safeLog('EVENT_BUS_REJECTED', 'Lead event rejected by bus', {
+                lead_id: refId || supabaseLeadId,
+                reason,
+                details: eventResult.details,
+            });
+
+            // Lead is saved in DB — mark sync_status so admin can re-trigger
+            if (supabase) {
+                await supabase.from('leads').update({ sync_status: 'bus_rejected' }).eq('id', supabaseLeadId);
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Lead saved. Event bus dispatch pending.',
+                lead_id: refId || supabaseLeadId,
+                status: 'saved',
+                action: 'bus_rejected',
+                reason,
+                duplicate: false,
+            });
+        }
+
+        console.log('[EventBus] lead_created dispatched:', eventResult.message_id);
+        safeLog('EVENT_BUS_DISPATCH', 'Lead dispatched via event bus', {
+            lead_id: refId || supabaseLeadId,
+            message_id: eventResult.message_id,
+            executive: eventResult.executive,
+        });
 
         return res.status(200).json({
             success: true,
             message: "Lead processed successfully",
             lead_id: refId || supabaseLeadId,
             status: "success",
-            action: "async_queued",
+            action: "event_bus_dispatched",
             duplicate: false
         });
 
@@ -773,20 +788,31 @@ async function handleCreateContact(req, res) {
             }
         }
 
-        // 6. Push to QStash Queue (DB First rules applied)
+        // 6. Push via Event Bus (Single source of truth)
         let queue_status = 'pending';
         try {
-            await enqueueContactSync(contactId);
-            queue_status = 'success';
+            const eventResult = await handleEvent('contact_created', {
+                contactId,
+                session_id: req.body.session_id,
+            }, 'crm_handler');
+
+            if (eventResult.success && eventResult.action === 'dispatched') {
+                queue_status = 'success';
+            } else {
+                queue_status = 'bus_rejected';
+                console.warn('[EventBus] contact_created rejected:', eventResult.reason || eventResult.action);
+                if (supabase) {
+                    await updateContactSyncStatusCompat(supabase, contactId, 'bus_rejected');
+                }
+            }
         } catch (error) {
             queue_status = 'failed';
-            console.error(`[Contact Queue Failed] ${contactId} ${error.message}`);
-            // DO NOT throw
+            console.error(`[Contact EventBus Failed] ${contactId} ${error.message}`);
             if (supabase) {
                 await updateContactSyncStatusCompat(supabase, contactId, 'failed_queue');
                 await supabase.from('observability_logs').insert({
                     level: 'ERROR',
-                    message: `Contact QStash queue failed: ${error.message}`,
+                    message: `Contact event bus failed: ${error.message}`,
                     source: 'api_contact_sync',
                     created_at: new Date().toISOString()
                 }).then(() => {}).catch(() => {});

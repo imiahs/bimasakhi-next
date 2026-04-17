@@ -57,12 +57,12 @@ export const GET = withAdminAuth(async (request, user) => {
         // Total Active Agents
         const { count: activeAgents } = await supabase
             .from('agents')
-            .select('id', { count: 'exact', head: true });
+            .select('agent_id', { count: 'exact', head: true });
 
         // Recruitment Pipeline Size
         const { count: pipelineSize } = await supabase
             .from('recruitment_pipeline')
-            .select('id', { count: 'exact', head: true });
+            .select('candidate_id', { count: 'exact', head: true });
 
         // SEO Indexed Pages
         const { count: publishedPages } = await supabase

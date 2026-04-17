@@ -8,7 +8,7 @@ export const GET = withAdminAuth(async (request, user) => {
     try {
         const statuses = {
             supabase: 'red',
-            redis: 'red',
+            qstash: 'green',
             zoho_api: 'yellow',
             background_workers: 'yellow',
             media_pipeline: 'green'
@@ -21,35 +21,34 @@ export const GET = withAdminAuth(async (request, user) => {
             if (!error) statuses.supabase = 'green';
         } catch { }
 
-        // 2. Redis Check Removed (BullMQ deprecated)
-        statuses.redis = 'green';
+        // 2. QStash is stateless — assumed green (Upstash managed)
 
         // Aggregate system health
         const allGreen = Object.values(statuses).every(s => s === 'green');
         const anyRed = Object.values(statuses).some(s => s === 'red');
         const overall = anyRed ? 'red' : (allGreen ? 'green' : 'yellow');
 
-        // 3. Fetch telemetry snapshot
+        // 3. Fetch telemetry snapshot (QStash-native — no BullMQ/worker_health)
         const supabaseService = getServiceSupabase();
-        const [queueRes, workersRes, deadLettersRes] = await Promise.all([
+        const [queueRes, deadLettersRes, recentRunsRes] = await Promise.all([
             supabaseService.from('generation_queue').select('status'),
-            supabaseService.from('worker_health').select('status, last_heartbeat').limit(20),
-            supabaseService.from('job_dead_letters').select('id', { count: 'exact', head: true })
+            supabaseService.from('job_dead_letters').select('id', { count: 'exact', head: true }),
+            supabaseService.from('job_runs').select('status').order('started_at', { ascending: false }).limit(50)
         ]);
 
-        const workerErrors = (workersRes.data || []).filter((row) => row.status === 'error').length;
         const deadLetters = deadLettersRes.count || 0;
         const generationBacklog = (queueRes.data || []).filter((row) => ['pending', 'processing'].includes(row.status)).length;
+        const recentJobsFailed = (recentRunsRes.data || []).filter((row) => row.status === 'failed').length;
 
-        if (workerErrors === 0 && deadLetters === 0) {
+        if (deadLetters === 0 && recentJobsFailed === 0) {
             statuses.background_workers = 'green';
-        } else if (workerErrors > 0 || deadLetters > 0) {
+        } else if (deadLetters > 0 || recentJobsFailed > 0) {
             statuses.background_workers = 'red';
         }
 
         const metrics = {
             generation_backlog: generationBacklog,
-            worker_errors: workerErrors,
+            recent_job_failures: recentJobsFailed,
             dead_letters: deadLetters
         };
 

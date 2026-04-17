@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai';
-import { getLocalDb } from '@/utils/localDb';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';

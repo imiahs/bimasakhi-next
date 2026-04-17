@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import crypto from 'crypto';
-import { TRIGGER_MAP } from '@/lib/events/triggerMap';
+import { getTrigger } from '@/lib/events/triggerMap';
 
 export const dynamic = 'force-dynamic';
 
@@ -135,7 +135,7 @@ export async function POST(request) {
         console.log('[Telemetry] INSERT RESULT event_stream', eventStreamInsertResult);
 
         // Phase 4 Event -> Queue Connector
-        const trigger = TRIGGER_MAP[event_type];
+        const trigger = getTrigger(event_type);
         if (trigger && trigger.action === "queue_job") {
             const { error: jobErr } = await supabase
                 .from('job_queue')

@@ -3,6 +3,8 @@ import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getZohoAccessToken, getZohoApiDomain } from '@/pages/api/_middleware/zoho.js';
 import axios from 'axios';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
+import { markCompleted, markFailed } from '@/lib/events/eventStore';
+import { verifyConsistency } from '@/lib/system/transaction';
 
 async function handler(req) {
     const body = await req.json();
@@ -10,6 +12,9 @@ async function handler(req) {
     if (!contactId) return NextResponse.json({ error: 'Missing contactId' }, { status: 400 });
 
     const supabase = getServiceSupabase();
+    const executionContext = body._execution_context || {};
+    const eventStoreId = body._event_store_id || null;
+    const correlationId = executionContext.correlation_id || null;
 
     // Atomic Status Transition & Idempotency Check (Worker Optimization)
     const { data: checkData, error: updateErr } = await supabase
@@ -64,6 +69,36 @@ async function handler(req) {
                 metadata: { zoho_id: zohoId, action: result.action }
             });
 
+            // POST-EXECUTION CONSISTENCY CHECK (Rule 4)
+            const consistency = await verifyConsistency([
+                {
+                    name: 'sync_status_completed',
+                    check: async () => {
+                        const { data } = await supabase.from('contact_inquiries').select('sync_status').eq('contact_id', contactId).single();
+                        return { valid: data?.sync_status === 'completed', actual: data?.sync_status, expected: 'completed' };
+                    },
+                },
+            ]);
+
+            if (!consistency.consistent) {
+                console.error(`[ContactSync] Post-execution consistency FAILED for contact ${contactId}`);
+                await supabase.from('observability_logs').insert({
+                    level: 'CONSISTENCY_VIOLATION',
+                    message: `Contact ${contactId} post-sync consistency check failed`,
+                    source: 'worker_contact_sync',
+                    metadata: { contact_id: contactId, checks: consistency.checks, correlation_id: correlationId },
+                }).catch(() => {});
+            }
+
+            // COMPLETION ACK — mark event_store as completed (Rule 2)
+            await markCompleted(eventStoreId, {
+                zoho_id: zohoId,
+                sync_action: result.action,
+                contact_id: contactId,
+                correlation_id: correlationId,
+                consistency: consistency.consistent,
+            });
+
             return NextResponse.json({ success: true, zohoId });
         } else {
             throw new Error('CRM Contact Details: ' + JSON.stringify(crmResponse.data));
@@ -85,9 +120,12 @@ async function handler(req) {
                 level: 'ERROR',
                 message: `Contact sync failed permanently after retries: ${errorMsg}`,
                 source: 'worker_contact_sync',
-                metadata: { contact_id: contactId, retry_count: retryCount },
+                metadata: { contact_id: contactId, retry_count: retryCount, correlation_id: correlationId },
                 created_at: new Date().toISOString()
             });
+
+            // FAILURE ACK — mark event_store as failed (Rule 2)
+            await markFailed(eventStoreId, errorMsg, { contact_id: contactId, retry_count: retryCount });
         } else {
             console.warn(`Contact sync transient failure (Retry ${retryCount}):`, errorMsg);
         }

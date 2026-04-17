@@ -3,6 +3,11 @@ import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getZohoAccessToken, getZohoApiDomain } from '@/pages/api/_middleware/zoho.js';
 import axios from 'axios';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
+import { handleLeadCreated } from '@/lib/executives/cmo';
+import { handleEvent } from '@/lib/events/bus';
+import { transitionLead, LeadStates } from '@/lib/state/leadState';
+import { markCompleted, markFailed } from '@/lib/events/eventStore';
+import { verifyConsistency } from '@/lib/system/transaction';
 
 async function loadLeadForSync(supabase, leadId) {
     const fieldsWithRefId = 'sync_status, zoho_lead_id, full_name, mobile, email, city, state, pincode, locality, occupation, education, source, medium, campaign, ref_id';
@@ -39,6 +44,31 @@ async function handler(req) {
     console.log('WORKER HIT', leadId);
 
     const supabase = getServiceSupabase();
+    const executionContext = body._execution_context || {};
+    const eventStoreId = body._event_store_id || null;
+    const correlationId = executionContext.correlation_id || null;
+
+    // --- CMO EXECUTIVE: Score + Route (MANDATORY — single authority for scoring/routing) ---
+    try {
+        const cmoResult = await handleLeadCreated(leadId, executionContext);
+        console.log('[CMO]', JSON.stringify({ leadId, hot: cmoResult.hot_lead, steps: cmoResult.steps.length }));
+
+        // If CMO found a hot lead, emit lead_hot event for CSO
+        if (cmoResult.hot_lead) {
+            handleEvent('lead_hot', { leadId, session_id: body.session_id }, 'executive_cmo')
+                .then(r => console.log('[CMO → CSO] lead_hot dispatched:', r.success))
+                .catch(e => console.warn('[CMO → CSO] lead_hot failed:', e.message));
+        }
+    } catch (cmoErr) {
+        // CMO failure = log + stop (Rule 6). Non-blocking for Zoho sync.
+        console.error('[CMO] Executive failed:', cmoErr.message);
+        await supabase.from('observability_logs').insert({
+            level: 'EXECUTIVE_FAILED',
+            message: `CMO failed for lead ${leadId}: ${cmoErr.message}`,
+            source: 'worker_lead_sync',
+            metadata: { lead_id: leadId, error: cmoErr.message, event_id: executionContext.event_id, correlation_id: correlationId },
+        }).catch(() => {});
+    }
 
     // Atomic Status Transition & Idempotency Check (Worker Optimization)
     const { data: checkData, error: updateErr } = await loadLeadForSync(supabase, leadId);
@@ -87,15 +117,60 @@ async function handler(req) {
             await supabase.from('leads').update({
                 zoho_lead_id: zohoId,
                 sync_status: 'completed',
-                status: 'contacted',
                 updated_at: new Date()
             }).eq('id', leadId);
+
+            // State machine: transition to 'contacted' via validated path
+            const transition = await transitionLead(leadId, LeadStates.CONTACTED, {
+                trigger: 'zoho_sync',
+                zoho_id: zohoId,
+            });
+            if (!transition.success) {
+                console.warn(`[StateMachine] Lead ${leadId} transition failed: ${transition.error}`);
+            }
 
             // Emit success event for phase 2 telemetry/observability cleanly
             await supabase.from('lead_events').insert({
                 lead_id: leadId,
                 event_type: 'zoho_synced',
                 metadata: { zoho_id: zohoId, action: result.action }
+            });
+
+            // POST-EXECUTION CONSISTENCY CHECK (Rule 4)
+            const consistency = await verifyConsistency([
+                {
+                    name: 'sync_status_completed',
+                    check: async () => {
+                        const { data } = await supabase.from('leads').select('sync_status').eq('id', leadId).single();
+                        return { valid: data?.sync_status === 'completed', actual: data?.sync_status, expected: 'completed' };
+                    },
+                },
+                {
+                    name: 'zoho_id_set',
+                    check: async () => {
+                        const { data } = await supabase.from('leads').select('zoho_lead_id').eq('id', leadId).single();
+                        return { valid: !!data?.zoho_lead_id, actual: data?.zoho_lead_id, expected: 'non-null zoho_lead_id' };
+                    },
+                },
+            ]);
+
+            if (!consistency.consistent) {
+                console.error(`[LeadSync] Post-execution consistency FAILED for lead ${leadId}:`, JSON.stringify(consistency.checks));
+                await supabase.from('observability_logs').insert({
+                    level: 'CONSISTENCY_VIOLATION',
+                    message: `Lead ${leadId} post-sync consistency check failed`,
+                    source: 'worker_lead_sync',
+                    metadata: { lead_id: leadId, checks: consistency.checks, correlation_id: correlationId },
+                }).catch(() => {});
+            }
+
+            // COMPLETION ACK — mark event_store as completed (Rule 2)
+            await markCompleted(eventStoreId, {
+                zoho_id: zohoId,
+                sync_action: result.action,
+                lead_id: leadId,
+                correlation_id: correlationId,
+                consistency: consistency.consistent,
             });
 
             return NextResponse.json({ success: true, zohoId });
@@ -119,9 +194,12 @@ async function handler(req) {
                 level: 'ERROR',
                 message: `Lead sync failed permanently after retries: ${errorMsg}`,
                 source: 'worker_lead_sync',
-                metadata: { lead_id: leadId, retry_count: retryCount },
+                metadata: { lead_id: leadId, retry_count: retryCount, correlation_id: correlationId },
                 created_at: new Date().toISOString()
             });
+
+            // FAILURE ACK — mark event_store as failed (Rule 2)
+            await markFailed(eventStoreId, errorMsg, { lead_id: leadId, retry_count: retryCount });
         } else {
             console.warn(`Lead sync transient failure (Retry ${retryCount}):`, errorMsg);
         }

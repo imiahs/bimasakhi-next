@@ -6,15 +6,14 @@ export const dynamic = 'force-dynamic';
 export default async function SystemWorkers() {
     const supabase = getServiceSupabase();
 
-    const [queueRes, workerRes, deadLettersRes, jobRunsRes] = await Promise.all([
+    // QStash-native: use job_runs instead of worker_health
+    const [queueRes, deadLettersRes, jobRunsRes] = await Promise.all([
         supabase.from('generation_queue').select('status, retry_count'),
-        supabase.from('worker_health').select('*').order('last_run', { ascending: false }).limit(20),
         supabase.from('job_dead_letters').select('*').order('failed_at', { ascending: false }).limit(20),
-        supabase.from('job_runs').select('status').order('created_at', { ascending: false }).limit(200)
+        supabase.from('job_runs').select('id, worker_id, status, started_at, finished_at, error_message').order('started_at', { ascending: false }).limit(50)
     ]);
 
     const queueRows = queueRes.data || [];
-    const workerRows = workerRes.data || [];
     const deadLetters = deadLettersRes.data || [];
     const jobRuns = jobRunsRes.data || [];
 
@@ -50,26 +49,27 @@ export default async function SystemWorkers() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="bg-white rounded shadow p-6">
-                    <h2 className="text-xl font-bold mb-4 border-b pb-2">Worker Health</h2>
+                    <h2 className="text-xl font-bold mb-4 border-b pb-2">Recent Job Runs (QStash)</h2>
                     <ul className="space-y-3">
-                        {workerRows.map((worker) => {
-                            const lastRun = worker.last_run ? new Date(worker.last_run) : null;
-                            const isStale = !lastRun || lastRun < new Date(Date.now() - 10 * 60000);
-
-                            return (
-                                <li key={worker.id} className="flex justify-between items-center p-3 border rounded bg-gray-50">
-                                    <div>
-                                        <span className="font-mono text-sm block">{worker.worker_name}</span>
-                                        <span className="text-xs text-gray-500">{worker.message || 'No status message'}</span>
-                                    </div>
-                                    <span className={`text-xs px-2 py-1 rounded text-white ${isStale || worker.status === 'error' ? 'bg-red-500' : 'bg-green-500'}`}>
-                                        {isStale || worker.status === 'error' ? 'Needs Attention' : 'Healthy'}
+                        {jobRuns.slice(0, 20).map((run) => (
+                            <li key={run.id} className="flex justify-between items-center p-3 border rounded bg-gray-50">
+                                <div>
+                                    <span className="font-mono text-sm block">{run.worker_id || 'worker'}</span>
+                                    <span className="text-xs text-gray-500">
+                                        {run.started_at ? new Date(run.started_at).toLocaleString() : 'N/A'}
+                                        {run.error_message ? ` — ${run.error_message}` : ''}
                                     </span>
-                                </li>
-                            );
-                        })}
-                        {workerRows.length === 0 && (
-                            <li className="text-sm text-gray-500">No worker health reports yet.</li>
+                                </div>
+                                <span className={`text-xs px-2 py-1 rounded text-white ${
+                                    run.status === 'failed' ? 'bg-red-500' :
+                                    ['done', 'completed'].includes(run.status) ? 'bg-green-500' : 'bg-yellow-500'
+                                }`}>
+                                    {run.status}
+                                </span>
+                            </li>
+                        ))}
+                        {jobRuns.length === 0 && (
+                            <li className="text-sm text-gray-500">No QStash job runs recorded yet.</li>
                         )}
                     </ul>
                 </div>

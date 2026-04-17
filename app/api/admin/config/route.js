@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { getSystemMode, setSystemMode, getModeDescription } from '@/lib/system/systemModes';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,15 +14,23 @@ export const dynamic = 'force-dynamic';
  *
  * It is intentionally separate from /api/config, which is public marketing/app config.
  */
-export async function GET() {
+export const GET = withAdminAuth(async (request, user) => {
     try {
         const config = await getSystemConfig();
-        return NextResponse.json({ success: true, data: config });
+        const mode = await getSystemMode();
+        return NextResponse.json({
+            success: true,
+            data: {
+                ...config,
+                system_mode: mode,
+                system_mode_description: getModeDescription(mode),
+            },
+        });
     } catch (err) {
         console.error('[Config API] GET failed:', err.message);
         return NextResponse.json({ success: false, error: 'Failed to load config' }, { status: 500 });
     }
-}
+});
 
 /**
  * POST /api/admin/config
@@ -35,12 +45,12 @@ export async function GET() {
  * Effective system state still depends on prerequisites outside this table
  * such as schema readiness, provider credentials, and worker health.
  */
-export async function POST(request) {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const body = await request.json();
 
         // Whitelist allowed fields only — reject anything else
-        const allowedKeys = ['ai_enabled', 'queue_paused', 'batch_size', 'crm_auto_routing', 'followup_enabled'];
+        const allowedKeys = ['ai_enabled', 'queue_paused', 'batch_size', 'crm_auto_routing', 'followup_enabled', 'system_mode'];
         const updatePayload = {};
 
         for (const key of allowedKeys) {
@@ -52,6 +62,12 @@ export async function POST(request) {
                         return NextResponse.json({ error: `batch_size must be 1-50` }, { status: 400 });
                     }
                     updatePayload[key] = val;
+                } else if (key === 'system_mode') {
+                    const validModes = ['normal', 'degraded', 'emergency'];
+                    if (!validModes.includes(body[key])) {
+                        return NextResponse.json({ error: `system_mode must be one of: ${validModes.join(', ')}` }, { status: 400 });
+                    }
+                    updatePayload[key] = body[key];
                 } else {
                     updatePayload[key] = Boolean(body[key]);
                 }
@@ -93,4 +109,4 @@ export async function POST(request) {
         console.error('[Config API] POST error:', err.message);
         return NextResponse.json({ success: false, error: 'Internal error' }, { status: 500 });
     }
-}
+});

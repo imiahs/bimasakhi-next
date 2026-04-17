@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
-import { getLocalDb } from '@/utils/localDb';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 import { getEventRoutePath } from '@/lib/events/routePath';
 
