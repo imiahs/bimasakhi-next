@@ -14,6 +14,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import '@/styles/reset.css';
 import '@/styles/variables.css';
 import '@/styles/global.css';
+import '@/styles/generated-page.css';
 
 export const metadata = {
   title: {
