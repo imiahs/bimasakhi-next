@@ -36,7 +36,7 @@ async function handler(request) {
         const success = !csoResult.error;
         const executionTime = Date.now() - startTime;
 
-        await supabase.from('observability_logs').insert({
+        try { await supabase.from('observability_logs').insert({
             level: success ? 'FOLLOWUP_SUCCESS' : 'FOLLOWUP_FAILURE',
             message: `CSO executive: ${success ? 'completed' : csoResult.error || csoResult.skipped || 'failed'}`,
             source: 'followup-trigger',
@@ -48,7 +48,7 @@ async function handler(request) {
                 ...csoResult,
                 event_id: execCtx.event_id,
             },
-        }).catch(() => {});
+        }); } catch (_) {}
 
         if (!success && csoResult.error) {
             // FAILURE ACK — mark event_store as failed (Rule 2)
@@ -69,7 +69,7 @@ async function handler(request) {
         const executionTime = Date.now() - startTime;
         console.error('[CSO Executive] Failed:', csoErr.message);
 
-        await supabase.from('observability_logs').insert({
+        try { await supabase.from('observability_logs').insert({
             level: 'FOLLOWUP_FAILURE',
             message: `CSO executive crashed: ${csoErr.message}`,
             source: 'followup-trigger',
@@ -80,7 +80,7 @@ async function handler(request) {
                 correlation_id: correlationId,
                 error: csoErr.message,
             },
-        }).catch(() => {});
+        }); } catch (_) {}
 
         // FAILURE ACK — mark event_store as failed on crash (Rule 2)
         await markFailed(eventStoreId, csoErr.message, { lead_id: leadId });

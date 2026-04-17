@@ -122,7 +122,7 @@ async function handler(request) {
         );
 
         // QStash-native: log to observability_logs instead of worker_health
-        await supabase.from('observability_logs').insert({
+        try { await supabase.from('observability_logs').insert({
             level: successStatus ? 'AI_SCORER_SUCCESS' : 'AI_SCORER_FAILURE',
             message: successStatus
                 ? `Scored: ${finalScore || 'Skipped'}. Routed: ${routingRes?.agent_id || routingRes?.reason || 'None'}`
@@ -135,7 +135,7 @@ async function handler(request) {
                 correlation_id: correlationId,
                 success: successStatus
             }
-        }).catch((e) => console.warn('[AI-Scorer] observability log warning:', e.message));
+        }); } catch (e) { console.warn('[AI-Scorer] observability log warning:', e.message); }
 
         // COMPLETION ACK — mark event_store (Rule 2)
         if (successStatus) {

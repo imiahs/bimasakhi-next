@@ -99,7 +99,7 @@ async function handler(request) {
             results.retried++;
 
             // Log retry success
-            await supabase.from('observability_logs').insert({
+            try { await supabase.from('observability_logs').insert({
                 level: 'RETRY_DISPATCHED',
                 message: `Retry: ${event.event_name} (attempt ${(event.retry_count || 0) + 1})`,
                 source: 'retry_daemon',
@@ -109,7 +109,7 @@ async function handler(request) {
                     retry_count: (event.retry_count || 0) + 1,
                     message_id: result.messageId,
                 },
-            }).catch(() => {});
+            }); } catch (_) {}
 
         } catch (err) {
             results.failed++;
@@ -119,7 +119,7 @@ async function handler(request) {
 
             // If max retries exceeded, dead-letter it
             if ((event.retry_count || 0) + 1 >= event.max_retries) {
-                await supabase.from('job_dead_letters').insert({
+                try { await supabase.from('job_dead_letters').insert({
                     job_class: `event:${event.event_name}`,
                     payload: event.payload,
                     failure_reason: `max_retries_exhausted (${event.max_retries})`,
@@ -130,14 +130,14 @@ async function handler(request) {
                         retry_count: (event.retry_count || 0) + 1,
                         priority: event.priority,
                     },
-                }).catch(() => {});
+                }); } catch (_) {}
 
-                await supabase.from('observability_logs').insert({
+                try { await supabase.from('observability_logs').insert({
                     level: event.priority === 'critical' ? 'CRITICAL_EVENT_DEAD_LETTERED' : 'EVENT_DEAD_LETTERED',
                     message: `Event ${event.event_name} exhausted all ${event.max_retries} retries — dead-lettered`,
                     source: 'retry_daemon',
                     metadata: { event_store_id: event.id, priority: event.priority },
-                }).catch(() => {});
+                }); } catch (_) {}
             }
         }
     }
@@ -145,12 +145,12 @@ async function handler(request) {
     const duration = Date.now() - startTime;
 
     // Log daemon run
-    await supabase.from('observability_logs').insert({
+    try { await supabase.from('observability_logs').insert({
         level: 'RETRY_DAEMON_RUN',
         message: `Retry daemon: ${results.retried} retried, ${results.failed} failed, ${results.skipped} skipped, ${results.stuck_detected} stuck detected`,
         source: 'retry_daemon',
         metadata: { ...results, duration_ms: duration, mode },
-    }).catch(() => {});
+    }); } catch (_) {}
 
     return NextResponse.json({
         success: true,

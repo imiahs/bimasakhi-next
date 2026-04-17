@@ -62,12 +62,12 @@ async function handler(req) {
     } catch (cmoErr) {
         // CMO failure = log + stop (Rule 6). Non-blocking for Zoho sync.
         console.error('[CMO] Executive failed:', cmoErr.message);
-        await supabase.from('observability_logs').insert({
+        try { await supabase.from('observability_logs').insert({
             level: 'EXECUTIVE_FAILED',
             message: `CMO failed for lead ${leadId}: ${cmoErr.message}`,
             source: 'worker_lead_sync',
             metadata: { lead_id: leadId, error: cmoErr.message, event_id: executionContext.event_id, correlation_id: correlationId },
-        }).catch(() => {});
+        }); } catch (_) {}
     }
 
     // Atomic Status Transition & Idempotency Check (Worker Optimization)
@@ -156,12 +156,12 @@ async function handler(req) {
 
             if (!consistency.consistent) {
                 console.error(`[LeadSync] Post-execution consistency FAILED for lead ${leadId}:`, JSON.stringify(consistency.checks));
-                await supabase.from('observability_logs').insert({
+                try { await supabase.from('observability_logs').insert({
                     level: 'CONSISTENCY_VIOLATION',
                     message: `Lead ${leadId} post-sync consistency check failed`,
                     source: 'worker_lead_sync',
                     metadata: { lead_id: leadId, checks: consistency.checks, correlation_id: correlationId },
-                }).catch(() => {});
+                }); } catch (_) {}
             }
 
             // COMPLETION ACK — mark event_store as completed (Rule 2)

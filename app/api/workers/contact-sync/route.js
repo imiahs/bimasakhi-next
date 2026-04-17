@@ -82,12 +82,12 @@ async function handler(req) {
 
             if (!consistency.consistent) {
                 console.error(`[ContactSync] Post-execution consistency FAILED for contact ${contactId}`);
-                await supabase.from('observability_logs').insert({
+                try { await supabase.from('observability_logs').insert({
                     level: 'CONSISTENCY_VIOLATION',
                     message: `Contact ${contactId} post-sync consistency check failed`,
                     source: 'worker_contact_sync',
                     metadata: { contact_id: contactId, checks: consistency.checks, correlation_id: correlationId },
-                }).catch(() => {});
+                }); } catch (_) {}
             }
 
             // COMPLETION ACK — mark event_store as completed (Rule 2)

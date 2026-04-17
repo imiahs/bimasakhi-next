@@ -137,7 +137,7 @@ async function handler(request) {
 
     // Log reconciliation run
     const level = issues.length > 0 ? 'RECONCILIATION_ISSUES_FOUND' : 'RECONCILIATION_CLEAN';
-    await supabase.from('observability_logs').insert({
+    try { await supabase.from('observability_logs').insert({
         level,
         message: `Reconciliation: ${issues.length} issues found, ${repairs.length} auto-repaired`,
         source: 'reconciliation_job',
@@ -148,7 +148,7 @@ async function handler(request) {
             repairs: repairs.slice(0, 20),
             duration_ms: duration,
         },
-    }).catch(() => {});
+    }); } catch (_) {}
 
     return NextResponse.json({
         success: true,
