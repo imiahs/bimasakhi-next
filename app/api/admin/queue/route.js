@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 import { enqueuePageGeneration } from '@/lib/queue/publisher';
+import { safeLog } from '@/lib/safeLogger.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,9 +56,42 @@ export const POST = withAdminAuth(async (request) => {
             }, { status: 500 });
         }
 
-        const dispatch = await enqueuePageGeneration({
-            source: 'admin_manual',
-            triggered_by: request.headers.get('x-admin-user') || 'unknown'
+        const supabase = getServiceSupabase();
+
+        // Find the next pending queue job to dispatch
+        const { data: pendingJob, error: fetchErr } = await supabase
+            .from('generation_queue')
+            .select('id')
+            .eq('status', 'pending')
+            .eq('task_type', 'pagegen')
+            .order('created_at', { ascending: true })
+            .limit(1)
+            .maybeSingle();
+
+        if (fetchErr) {
+            console.error('Queue fetch error:', fetchErr);
+            return NextResponse.json({
+                success: false,
+                error: 'Failed to query generation queue'
+            }, { status: 500 });
+        }
+
+        if (!pendingJob) {
+            return NextResponse.json({
+                success: false,
+                error: 'No pending pagegen jobs in queue'
+            }, { status: 404 });
+        }
+
+        const triggeredBy = request.headers.get('x-admin-user') || 'unknown';
+        console.log('[ADMIN QUEUE] Dispatching pending job:', { queueId: pendingJob.id, triggeredBy });
+
+        const dispatch = await enqueuePageGeneration({ queueId: pendingJob.id });
+
+        await safeLog('ADMIN_QUEUE_DISPATCH', 'Manual pagegen dispatch', {
+            queueId: pendingJob.id,
+            triggeredBy,
+            messageId: dispatch?.messageId
         });
 
         if (!dispatch?.messageId) {
@@ -69,7 +103,7 @@ export const POST = withAdminAuth(async (request) => {
 
         return NextResponse.json({
             success: true,
-            data: dispatch
+            data: { ...dispatch, queueId: pendingJob.id }
         });
     } catch (error) {
         console.error('Queue API POST error:', error);
