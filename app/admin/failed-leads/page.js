@@ -59,12 +59,12 @@ export default function FailedLeadsPage() {
 
     return (
         <div className="space-y-6">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-2xl px-6 py-5 lg:px-7 lg:py-6">
                 <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p className="admin-kicker">Recovery lane</p>
-                        <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Inspect failed CRM records and recover them from one screen.</h1>
-                        <p className="admin-copy mt-5 max-w-2xl text-base">
+                        <h1 className="admin-heading-xl mt-4 max-w-3xl">Inspect failed CRM records and recover them from one screen.</h1>
+                        <p className="admin-copy mt-4 max-w-2xl text-sm">
                             This buffer is your zero-lead-loss layer. Review payload failures, retry synchronization, or clear noise after confirmation.
                         </p>
                     </div>
@@ -89,12 +89,12 @@ export default function FailedLeadsPage() {
                 </div>
             )}
 
-            <section className="admin-panel overflow-hidden rounded-[2rem]">
+            <section className="admin-panel overflow-hidden rounded-2xl">
                 {loading ? (
                     <div className="flex flex-col items-center px-6 py-14 text-center">
-                        <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/70 border-t-teal-700" />
+                        <div className="h-10 w-10 animate-spin rounded-full border-2 border-emerald-500/20 border-t-emerald-500" />
                         <p className="admin-kicker mt-6">Recovery sync</p>
-                        <p className="mt-3 text-sm text-zinc-500">Scanning failed lead buffer...</p>
+                        <p className="mt-2 text-sm text-slate-500">Scanning failed lead buffer...</p>
                     </div>
                 ) : error ? (
                     <div className="px-6 py-10 text-center text-sm font-medium text-rose-600">
@@ -102,16 +102,16 @@ export default function FailedLeadsPage() {
                     </div>
                 ) : failedLeads.length === 0 ? (
                     <div className="px-6 py-14 text-center">
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-2xl text-emerald-600">
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-2xl text-emerald-400">
                             OK
                         </div>
-                        <h3 className="mt-5 text-xl font-semibold tracking-[-0.04em] text-zinc-900">Recovery buffer is clean.</h3>
-                        <p className="mt-2 text-sm text-zinc-500">No failed leads are waiting for manual recovery.</p>
+                        <h3 className="mt-5 text-xl font-semibold tracking-[-0.04em] text-white">Recovery buffer is clean.</h3>
+                        <p className="mt-2 text-sm text-slate-500">No failed leads are waiting for manual recovery.</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full whitespace-nowrap text-left text-sm">
-                            <thead className="border-b border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.72)] text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+                            <thead className="border-b border-white/[0.06] bg-white/[0.03] text-[11px] uppercase tracking-wider text-slate-500">
                                 <tr>
                                     <th className="px-6 py-4 font-semibold">Lead</th>
                                     <th className="px-6 py-4 font-semibold">Mobile</th>
@@ -119,7 +119,7 @@ export default function FailedLeadsPage() {
                                     <th className="px-6 py-4 font-semibold text-right">Created</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[rgba(77,61,40,0.06)]">
+                            <tbody className="divide-y divide-white/[0.04]">
                                 {failedLeads.map((lead, index) => {
                                     let identity = 'Unknown';
                                     let mobile = 'N/A';
@@ -135,15 +135,15 @@ export default function FailedLeadsPage() {
                                     }
 
                                     return (
-                                        <tr key={`${lead.id || index}`} className="transition hover:bg-[rgba(255,255,255,0.52)]">
-                                            <td className="px-6 py-4 font-semibold text-zinc-900">{identity}</td>
-                                            <td className="px-6 py-4 text-zinc-600">{mobile}</td>
+                                        <tr key={`${lead.id || index}`} className="transition hover:bg-white/[0.03]">
+                                            <td className="px-6 py-4 font-semibold text-slate-200">{identity}</td>
+                                            <td className="px-6 py-4 text-slate-400">{mobile}</td>
                                             <td className="px-6 py-4">
-                                                <div className="inline-block max-w-md rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700">
+                                                <div className="inline-block max-w-md rounded-xl border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs font-medium text-rose-400">
                                                     {lead.error_message || lead.error || 'Unspecified runtime exception'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 text-right text-zinc-500">
+                                            <td className="px-6 py-4 text-right text-slate-500">
                                                 {new Date(lead.created_at).toLocaleString()}
                                                 <br />
                                                 <span className="mt-1 inline-block text-xs font-semibold uppercase tracking-[0.16em] text-amber-600">

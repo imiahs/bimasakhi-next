@@ -14,12 +14,12 @@ const SORT_OPTIONS = [
 
 function RuntimeFlag({ label, enabled, detail }) {
     return (
-        <div className="admin-subpanel rounded-[1.4rem] p-4">
+        <div className="admin-subpanel rounded-xl p-4">
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="admin-kicker">{label}</p>
-                    <p className="mt-3 text-sm font-semibold text-zinc-900">{enabled ? 'Enabled' : 'Disabled'}</p>
-                    <p className="mt-2 text-sm leading-relaxed text-zinc-500">{detail}</p>
+                    <p className="mt-2 text-sm font-semibold text-slate-200">{enabled ? 'Enabled' : 'Disabled'}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-500">{detail}</p>
                 </div>
                 <StatusBadge status={enabled ? 'ON' : 'OFF'} size="md" />
             </div>
@@ -197,10 +197,10 @@ export default function DashboardPage() {
     if (loading) {
         return (
             <div className="flex min-h-[60vh] items-center justify-center">
-                <div className="admin-panel flex flex-col items-center rounded-[2rem] px-10 py-12 text-center">
-                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/70 border-t-teal-700" />
+                <div className="flex flex-col items-center text-center">
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-emerald-500/20 border-t-emerald-500" />
                     <p className="admin-kicker mt-6">Dashboard sync</p>
-                    <p className="mt-3 text-sm font-medium text-zinc-600">Loading live command center...</p>
+                    <p className="mt-2 text-sm text-slate-500">Loading mission control...</p>
                 </div>
             </div>
         );
@@ -211,8 +211,8 @@ export default function DashboardPage() {
             <div className="flex min-h-[60vh] items-center justify-center">
                 <div className="admin-panel max-w-xl rounded-[2rem] px-8 py-10 text-center">
                     <p className="admin-kicker">Dashboard offline</p>
-                    <h1 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-rose-700">{error}</h1>
-                    <p className="mt-3 text-sm text-zinc-500">The control plane did not return any usable live data.</p>
+                    <h1 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-rose-400">{error}</h1>
+                    <p className="mt-3 text-sm text-slate-500">The control plane did not return any usable live data.</p>
                     <button
                         onClick={() => fetchAll()}
                         className="admin-button-secondary mt-6"
@@ -226,12 +226,12 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-2xl px-6 py-5 lg:px-7 lg:py-6">
                 <div className="relative grid gap-6 lg:grid-cols-[1.35fr_0.72fr]">
                     <div>
-                        <p className="admin-kicker">Admin reliability</p>
-                        <h1 className="admin-heading-xl mt-4 max-w-4xl text-zinc-950">Production control panel for the real growth engine.</h1>
-                        <p className="admin-copy mt-5 max-w-2xl text-base">
+                        <p className="admin-kicker">Mission control</p>
+                        <h1 className="admin-heading-xl mt-4 max-w-4xl">Production control panel for the real growth engine.</h1>
+                        <p className="admin-copy mt-4 max-w-2xl text-sm">
                             This board reads the live lead system, queue system, runtime switches, and recovery state. It is designed for active operations, not reporting theater.
                         </p>
 
@@ -250,24 +250,24 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                        <div className="admin-subpanel rounded-[1.5rem] p-4">
+                        <div className="admin-subpanel rounded-xl p-4">
                             <p className="admin-kicker">CRM route</p>
-                            <div className="mt-3 flex items-center justify-between">
-                                <span className="text-sm font-semibold text-zinc-900">Zoho sync path</span>
+                            <div className="mt-2 flex items-center justify-between">
+                                <span className="text-sm font-semibold text-slate-200">Zoho sync path</span>
                                 <StatusBadge status={config?.crm_auto_routing ? 'Operational' : 'Paused'} size="md" />
                             </div>
                         </div>
-                        <div className="admin-subpanel rounded-[1.5rem] p-4">
+                        <div className="admin-subpanel rounded-xl p-4">
                             <p className="admin-kicker">Queue state</p>
-                            <div className="mt-3 flex items-center justify-between">
-                                <span className="text-sm font-semibold text-zinc-900">Worker dispatch</span>
+                            <div className="mt-2 flex items-center justify-between">
+                                <span className="text-sm font-semibold text-slate-200">Worker dispatch</span>
                                 <StatusBadge status={config?.queue_paused ? 'Paused' : 'Operational'} size="md" />
                             </div>
                         </div>
-                        <div className="admin-subpanel rounded-[1.5rem] p-4">
+                        <div className="admin-subpanel rounded-xl p-4">
                             <p className="admin-kicker">AI state</p>
-                            <div className="mt-3 flex items-center justify-between">
-                                <span className="text-sm font-semibold text-zinc-900">Generation and scoring</span>
+                            <div className="mt-2 flex items-center justify-between">
+                                <span className="text-sm font-semibold text-slate-200">Generation and scoring</span>
                                 <StatusBadge status={config?.ai_enabled ? 'Operational' : 'Paused'} size="md" />
                             </div>
                         </div>
@@ -295,13 +295,13 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.2fr_1fr]">
-                <section className="admin-panel rounded-[2rem] p-5 xl:col-span-2">
+                <section className="admin-panel rounded-2xl p-5 xl:col-span-2">
                     <div className="mb-5 flex items-center justify-between gap-4">
                         <div>
                             <p className="admin-kicker">Runtime controls</p>
-                            <h2 className="admin-heading-lg mt-3 text-zinc-950">Live switches controlling business behavior.</h2>
+                            <h2 className="admin-heading-lg mt-3">Live switches controlling business behavior.</h2>
                         </div>
-                        <Link href="/admin/settings" className="text-sm font-semibold text-zinc-700 underline-offset-4 hover:text-black hover:underline">
+                        <Link href="/admin/settings" className="text-sm font-semibold text-emerald-400 underline-offset-4 hover:text-emerald-300 hover:underline">
                             Manage
                         </Link>
                     </div>
@@ -314,65 +314,65 @@ export default function DashboardPage() {
                     </div>
                 </section>
 
-                <section className="admin-panel rounded-[2rem] p-5">
+                <section className="admin-panel rounded-2xl p-5">
                     <div className="mb-5 flex items-center justify-between gap-4">
                         <div>
                             <p className="admin-kicker">System health</p>
-                            <h2 className="admin-heading-lg mt-3 text-zinc-950">Runtime health and recovery visibility.</h2>
+                            <h2 className="admin-heading-lg mt-3">Runtime health and recovery visibility.</h2>
                         </div>
-                        <Link href="/admin/logs" className="text-sm font-semibold text-zinc-700 underline-offset-4 hover:text-black hover:underline">
+                        <Link href="/admin/logs" className="text-sm font-semibold text-emerald-400 underline-offset-4 hover:text-emerald-300 hover:underline">
                             View logs
                         </Link>
                     </div>
 
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                        <div className="admin-subpanel rounded-[1.5rem] p-4">
+                        <div className="admin-subpanel rounded-xl p-4">
                             <p className="admin-kicker">CRM</p>
-                            <div className="mt-3 flex items-center justify-between">
-                                <span className="text-sm font-semibold text-zinc-900">Zoho routing state</span>
+                            <div className="mt-2 flex items-center justify-between">
+                                <span className="text-sm font-semibold text-slate-200">Zoho routing state</span>
                                 <StatusBadge status={health?.crm_status || 'Unknown'} size="md" />
                             </div>
                         </div>
-                        <div className="admin-subpanel rounded-[1.5rem] p-4">
+                        <div className="admin-subpanel rounded-xl p-4">
                             <p className="admin-kicker">AI</p>
-                            <div className="mt-3 flex items-center justify-between">
-                                <span className="text-sm font-semibold text-zinc-900">Worker state</span>
+                            <div className="mt-2 flex items-center justify-between">
+                                <span className="text-sm font-semibold text-slate-200">Worker state</span>
                                 <StatusBadge status={health?.ai_status || 'Unknown'} size="md" />
                             </div>
                         </div>
-                        <div className="admin-subpanel rounded-[1.5rem] p-4">
+                        <div className="admin-subpanel rounded-xl p-4">
                             <p className="admin-kicker">Today</p>
-                            <p className="mt-2 text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{health?.total_leads_today ?? 0}</p>
-                            <p className="mt-2 text-sm text-zinc-500">Live leads created today</p>
+                            <p className="mt-2 text-[1.75rem] font-bold tracking-[-0.04em] text-white">{health?.total_leads_today ?? 0}</p>
+                            <p className="mt-1 text-xs text-slate-500">Live leads created today</p>
                         </div>
-                        <div className="admin-subpanel rounded-[1.5rem] p-4">
+                        <div className="admin-subpanel rounded-xl p-4">
                             <p className="admin-kicker">Failed leads</p>
-                            <p className="mt-2 text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{health?.failed_leads_count ?? 0}</p>
-                            <p className="mt-2 text-sm text-zinc-500">Records currently stuck in recovery</p>
+                            <p className="mt-2 text-[1.75rem] font-bold tracking-[-0.04em] text-white">{health?.failed_leads_count ?? 0}</p>
+                            <p className="mt-1 text-xs text-slate-500">Records currently stuck in recovery</p>
                         </div>
                     </div>
 
-                    <div className="mt-4 rounded-[1.5rem] border border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.66)] p-4">
+                    <div className="mt-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
                         <div className="mb-3 flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-zinc-900">Recent errors</h3>
+                            <h3 className="text-sm font-semibold text-slate-200">Recent errors</h3>
                             <span className="admin-kicker">{health?.last_10_errors?.length || 0} visible</span>
                         </div>
 
                         <div className="space-y-3">
                             {(health?.last_10_errors || []).length > 0 ? (
                                 health.last_10_errors.slice(0, 3).map((item, index) => (
-                                    <div key={`${item.created_at}-${index}`} className="admin-subpanel rounded-[1.2rem] p-3">
+                                    <div key={`${item.created_at}-${index}`} className="admin-subpanel rounded-xl p-3">
                                         <div className="flex items-start justify-between gap-3">
                                             <div>
-                                                <p className="text-sm font-semibold text-zinc-900">{item.component || 'Unknown component'}</p>
-                                                <p className="mt-1 text-xs leading-relaxed text-zinc-500">{item.message}</p>
+                                                <p className="text-sm font-semibold text-slate-200">{item.component || 'Unknown component'}</p>
+                                                <p className="mt-1 text-xs leading-relaxed text-slate-500">{item.message}</p>
                                             </div>
                                             <StatusBadge status={item.resolved ? 'Resolved' : 'Open'} />
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-sm text-zinc-500">No recent runtime errors reported.</p>
+                                <p className="text-sm text-slate-500">No recent runtime errors reported.</p>
                             )}
                         </div>
                     </div>
@@ -380,14 +380,14 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_0.9fr]">
-                <section className="admin-panel rounded-[2rem] p-5">
+                <section className="admin-panel rounded-2xl p-5">
                     <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                         <div>
                             <p className="admin-kicker">Lead operations</p>
-                            <h2 className="admin-heading-lg mt-3 text-zinc-950">CRM lead table</h2>
+                            <h2 className="admin-heading-lg mt-3">CRM lead table</h2>
                             <p className="admin-copy mt-2 text-sm">Search, filter, and triage the live leads feeding the recruitment engine.</p>
                         </div>
-                        <Link href="/admin/crm" className="text-sm font-semibold text-zinc-700 underline-offset-4 hover:text-black hover:underline">
+                        <Link href="/admin/crm" className="text-sm font-semibold text-emerald-400 underline-offset-4 hover:text-emerald-300 hover:underline">
                             Open full CRM
                         </Link>
                     </div>
@@ -428,10 +428,10 @@ export default function DashboardPage() {
                         </select>
                     </div>
 
-                    <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-[rgba(77,61,40,0.08)]">
+                    <div className="mt-4 overflow-hidden rounded-xl border border-white/[0.06]">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-[rgba(255,255,255,0.74)] text-xs uppercase tracking-[0.18em] text-zinc-500">
+                                <thead className="border-b border-white/[0.06] bg-white/[0.03] text-xs uppercase tracking-wider text-slate-500">
                                     <tr>
                                         <th className="px-4 py-3.5 font-semibold">Lead</th>
                                         <th className="px-4 py-3.5 font-semibold">City</th>
@@ -441,7 +441,7 @@ export default function DashboardPage() {
                                         <th className="px-4 py-3.5 font-semibold">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-[rgba(77,61,40,0.06)] bg-[rgba(255,255,255,0.44)]">
+                                <tbody className="divide-y divide-white/[0.04]">
                                     {topLeads.length > 0 ? topLeads.map((lead) => {
                                         const name = lead.Last_Name || lead.name || 'Unknown';
                                         const mobile = lead.Mobile || lead.mobile || 'N/A';
@@ -451,31 +451,31 @@ export default function DashboardPage() {
                                         const leadStatus = lead.is_converted ? 'Converted' : (lead.status || lead.Lead_Status || 'new');
 
                                         return (
-                                            <tr key={lead.id} className="transition hover:bg-[rgba(255,255,255,0.58)]">
-                                                <td className="px-4 py-3.5">
+                                            <tr key={lead.id} className="transition hover:bg-white/[0.03]">
+                                                <td className="px-4 py-3">
                                                     <div>
-                                                        <p className="font-semibold text-zinc-950">{name}</p>
-                                                        <p className="mt-1 text-xs text-zinc-500">{mobile}</p>
+                                                        <p className="font-semibold text-slate-200">{name}</p>
+                                                        <p className="mt-0.5 text-xs text-slate-500">{mobile}</p>
                                                     </div>
                                                 </td>
-                                                <td className="px-4 py-3.5 text-zinc-600">{city}</td>
-                                                <td className="px-4 py-3.5 text-zinc-600">{source}</td>
-                                                <td className="px-4 py-3.5">
-                                                    <span className="rounded-full bg-zinc-950/5 px-2.5 py-1 text-xs font-semibold text-zinc-700">
+                                                <td className="px-4 py-3 text-slate-400">{city}</td>
+                                                <td className="px-4 py-3 text-slate-400">{source}</td>
+                                                <td className="px-4 py-3">
+                                                    <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-xs font-semibold text-slate-300">
                                                         {Number(lead.lead_score || lead.score || 0)}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-3.5">
+                                                <td className="px-4 py-3">
                                                     <StatusBadge status={zohoState} />
                                                 </td>
-                                                <td className="px-4 py-3.5">
+                                                <td className="px-4 py-3">
                                                     <StatusBadge status={leadStatus} />
                                                 </td>
                                             </tr>
                                         );
                                     }) : (
                                         <tr>
-                                            <td colSpan={6} className="px-4 py-10 text-center text-sm text-zinc-500">
+                                            <td colSpan={6} className="px-4 py-10 text-center text-sm text-slate-500">
                                                 No leads match the current filters.
                                             </td>
                                         </tr>
@@ -487,11 +487,11 @@ export default function DashboardPage() {
                 </section>
 
                 <section className="space-y-5">
-                    <div className="admin-panel rounded-[2rem] p-5">
+                    <div className="admin-panel rounded-2xl p-5">
                         <div className="mb-5 flex items-center justify-between gap-4">
                             <div>
                                 <p className="admin-kicker">Queue status</p>
-                                <h2 className="admin-heading-lg mt-3 text-zinc-950">Generation pipeline</h2>
+                                <h2 className="admin-heading-lg mt-3">Generation pipeline</h2>
                                 <p className="admin-copy mt-2 text-sm">Live job states from generation queue with direct worker trigger.</p>
                             </div>
                             <button
@@ -510,40 +510,40 @@ export default function DashboardPage() {
                                 { label: 'Completed', value: queue?.completed ?? 0 },
                                 { label: 'Failed', value: queue?.failed ?? 0 }
                             ].map((item) => (
-                                <div key={item.label} className="admin-subpanel rounded-[1.4rem] p-4">
+                                <div key={item.label} className="admin-subpanel rounded-xl p-4">
                                     <p className="admin-kicker">{item.label}</p>
-                                    <p className="mt-2 text-[2rem] font-semibold tracking-[-0.06em] text-zinc-950">{item.value}</p>
+                                    <p className="mt-2 text-[1.75rem] font-bold tracking-[-0.04em] text-white">{item.value}</p>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="mt-5 rounded-[1.5rem] border border-[rgba(77,61,40,0.08)] bg-[linear-gradient(135deg,rgba(15,118,110,0.08),rgba(255,255,255,0.6))] p-4">
+                        <div className="mt-5 rounded-xl border border-white/[0.06] bg-gradient-to-br from-emerald-500/[0.06] to-transparent p-4">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="admin-kicker">Queue total</p>
-                                    <p className="mt-2 text-sm font-semibold text-zinc-900">All known jobs in the current generation pipeline.</p>
+                                    <p className="mt-2 text-sm font-semibold text-slate-300">All known jobs in the current generation pipeline.</p>
                                 </div>
-                                <span className="text-3xl font-semibold tracking-[-0.06em] text-zinc-950">{queue?.total ?? 0}</span>
+                                <span className="text-3xl font-bold tracking-[-0.04em] text-white">{queue?.total ?? 0}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="admin-panel rounded-[2rem] p-5">
+                    <div className="admin-panel rounded-2xl p-5">
                         <div className="mb-4 flex items-center justify-between">
                             <div>
                                 <p className="admin-kicker">Quick actions</p>
-                                <h2 className="mt-3 text-xl font-semibold tracking-[-0.05em] text-zinc-950">Operator shortcuts</h2>
+                                <h2 className="mt-3 text-lg font-semibold tracking-[-0.03em] text-white">Operator shortcuts</h2>
                             </div>
                             <span className="admin-kicker">Ops</span>
                         </div>
                         <div className="grid grid-cols-1 gap-3">
-                            <Link href="/admin/crm" className="admin-subpanel rounded-[1.3rem] px-4 py-4 text-sm font-semibold text-zinc-900 transition hover:bg-white/70">
+                            <Link href="/admin/crm" className="admin-subpanel rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-200 transition hover:bg-white/[0.06]">
                                 Open CRM lead operations
                             </Link>
-                            <Link href="/admin/failed-leads" className="admin-subpanel rounded-[1.3rem] px-4 py-4 text-sm font-semibold text-zinc-900 transition hover:bg-white/70">
+                            <Link href="/admin/failed-leads" className="admin-subpanel rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-200 transition hover:bg-white/[0.06]">
                                 Review failed lead recovery
                             </Link>
-                            <Link href="/admin/analytics" className="admin-subpanel rounded-[1.3rem] px-4 py-4 text-sm font-semibold text-zinc-900 transition hover:bg-white/70">
+                            <Link href="/admin/analytics" className="admin-subpanel rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-200 transition hover:bg-white/[0.06]">
                                 Open analytics and attribution
                             </Link>
                         </div>

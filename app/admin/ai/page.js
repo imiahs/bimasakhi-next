@@ -62,7 +62,7 @@ export default function AIPanelPage() {
             key: 'count',
             label: 'Item count',
             render: (row) => (
-                <span className="font-semibold tabular-nums text-zinc-900">
+                <span className="font-semibold tabular-nums text-slate-200">
                     {row.count} items
                 </span>
             )
@@ -76,12 +76,12 @@ export default function AIPanelPage() {
 
     return (
         <div className="space-y-6">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-2xl px-6 py-5 lg:px-7 lg:py-6">
                 <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p className="admin-kicker">Queue control</p>
-                        <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Monitor generation workload and manually dispatch the worker.</h1>
-                        <p className="admin-copy mt-5 max-w-2xl text-base">
+                        <h1 className="admin-heading-xl mt-4 max-w-3xl">Monitor generation workload and manually dispatch the worker.</h1>
+                        <p className="admin-copy mt-4 max-w-2xl text-sm">
                             This panel reflects the real generation queue backing page creation. Use it to watch backlog, live execution, and failures before enabling wider automation.
                         </p>
                     </div>

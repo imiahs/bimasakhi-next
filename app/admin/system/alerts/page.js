@@ -9,37 +9,37 @@ export default async function SystemAlerts() {
         .limit(30);
 
     return (
-        <div className="p-8">
-            <h1 className="text-3xl font-bold mb-6 text-red-800">Platform System Alerts</h1>
-            <p className="text-gray-600 mb-6">Aggregated tracking of uncaught background worker exceptions or unhandled orchestration closures natively avoiding Vercel payload constraints.</p>
+        <div className="p-6 space-y-6">
+            <h1 className="text-2xl font-bold text-rose-400">Platform System Alerts</h1>
+            <p className="text-slate-400 text-sm">Aggregated tracking of uncaught background worker exceptions or unhandled orchestration closures.</p>
 
-            <div className="bg-white rounded shadow border border-red-200">
+            <div className="admin-panel rounded-2xl border border-rose-500/20">
                 {errors?.length > 0 ? (
-                    <table className="w-full text-left bg-white">
-                        <thead className="bg-red-50 text-red-900 border-b">
+                    <table className="w-full text-left">
+                        <thead className="border-b border-white/[0.06] bg-rose-500/5">
                             <tr>
-                                <th className="p-4 text-sm">Component</th>
-                                <th className="p-4 text-sm">Error Type</th>
-                                <th className="p-4 text-sm">Message</th>
-                                <th className="p-4 text-sm">Timestamp</th>
+                                <th className="p-4 text-xs text-slate-400 uppercase">Component</th>
+                                <th className="p-4 text-xs text-slate-400 uppercase">Error Type</th>
+                                <th className="p-4 text-xs text-slate-400 uppercase">Message</th>
+                                <th className="p-4 text-xs text-slate-400 uppercase">Timestamp</th>
                             </tr>
                         </thead>
                         <tbody>
                             {errors.map(err => (
-                                <tr key={err.id} className="border-b hover:bg-gray-50">
-                                    <td className="p-4 font-mono text-xs text-gray-700">{err.component}</td>
-                                    <td className="p-4 font-bold text-xs text-red-600 uppercase">{err.error_type}</td>
-                                    <td className="p-4 text-sm">{err.message}</td>
-                                    <td className="p-4 text-xs text-gray-500">{new Date(err.created_at).toLocaleString()}</td>
+                                <tr key={err.id} className="border-b border-white/[0.04] hover:bg-white/[0.03]">
+                                    <td className="p-4 font-mono text-xs text-slate-300">{err.component}</td>
+                                    <td className="p-4 font-bold text-xs text-rose-400 uppercase">{err.error_type}</td>
+                                    <td className="p-4 text-sm text-slate-300">{err.message}</td>
+                                    <td className="p-4 text-xs text-slate-500">{new Date(err.created_at).toLocaleString()}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 ) : (
                     <div className="p-12 text-center">
-                        <div className="text-green-500 text-4xl mb-2">✓</div>
-                        <h2 className="text-xl font-bold text-gray-700">Zero System Errors</h2>
-                        <p className="text-gray-500">The platform is operating flawlessly mapping variables gracefully.</p>
+                        <div className="text-emerald-400 text-4xl mb-2">✓</div>
+                        <h2 className="text-xl font-bold text-white">Zero System Errors</h2>
+                        <p className="text-slate-500">The platform is operating flawlessly.</p>
                     </div>
                 )}
             </div>

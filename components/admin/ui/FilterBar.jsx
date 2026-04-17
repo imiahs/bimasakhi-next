@@ -18,11 +18,11 @@ function FilterBar({
     actions
 }) {
     return (
-        <div className="bg-white p-4 rounded-xl border border-zinc-200 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
             {/* Search Input */}
             {onSearchChange && (
                 <div className="flex-1 relative min-w-0">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm pointer-events-none">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm pointer-events-none">
                         🔎
                     </span>
                     <input
@@ -30,7 +30,7 @@ function FilterBar({
                         placeholder={searchPlaceholder}
                         value={searchValue}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 bg-zinc-50/50 border border-zinc-200 rounded-md text-sm focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-colors text-zinc-800 placeholder:text-zinc-400"
+                        className="w-full pl-9 pr-4 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-colors text-slate-200 placeholder:text-slate-500"
                     />
                 </div>
             )}
@@ -39,7 +39,7 @@ function FilterBar({
             {filters.map((filter) => (
                 <select 
                     key={filter.key}
-                    className="bg-zinc-50/50 border border-zinc-200 text-zinc-800 text-sm rounded-md px-4 py-2 focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400 transition-colors min-w-[140px]"
+                    className="bg-white/[0.04] border border-white/[0.08] text-slate-200 text-sm rounded-lg px-4 py-2 focus:outline-none focus:border-emerald-500/40 focus:ring-1 focus:ring-emerald-500/20 transition-colors min-w-[140px]"
                     value={filter.value} 
                     onChange={(e) => filter.onChange(e.target.value)}
                     aria-label={filter.label}

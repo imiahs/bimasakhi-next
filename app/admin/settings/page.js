@@ -10,37 +10,52 @@ const DEFAULT_CONFIG = {
     followup_enabled: false
 };
 
-function ToggleCard({ label, description, checked, onChange, accent }) {
-    const accentClass = accent === 'danger'
-        ? 'from-rose-500/10 to-transparent'
-        : accent === 'warning'
-            ? 'from-amber-500/10 to-transparent'
-            : 'from-teal-500/10 to-transparent';
-
+/* ── Premium Toggle Switch ── */
+function MSwitch({ checked, onChange }) {
     return (
-        <label className={`admin-panel cursor-pointer rounded-[1.5rem] bg-gradient-to-br ${accentClass} p-4 transition hover:-translate-y-0.5`}>
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <p className="admin-kicker">{label}</p>
-                    <p className="mt-3 text-sm font-semibold text-zinc-950">{checked ? 'Enabled' : 'Disabled'}</p>
-                    <p className="mt-2 text-sm leading-relaxed text-zinc-500">{description}</p>
-                </div>
+        <button
+            type="button"
+            role="switch"
+            aria-checked={checked}
+            onClick={() => onChange(!checked)}
+            className="mc-switch"
+            data-state={checked ? 'on' : 'off'}
+        >
+            <span className="mc-switch-thumb" />
+        </button>
+    );
+}
 
-                <span className={`relative mt-1 inline-flex h-7 w-12 items-center rounded-full border transition ${
-                    checked
-                        ? 'border-teal-700 bg-teal-700'
-                        : 'border-zinc-300 bg-zinc-200'
-                }`}>
-                    <span className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition ${checked ? 'translate-x-6' : 'translate-x-1'}`} />
-                </span>
+/* ── Toggle Row ── */
+function ToggleRow({ label, description, checked, onChange }) {
+    return (
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5 transition hover:bg-white/[0.04]">
+            <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-200">{label}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{description}</p>
             </div>
-            <input
-                type="checkbox"
-                checked={checked || false}
-                onChange={(event) => onChange(event.target.checked)}
-                className="sr-only"
-            />
-        </label>
+            <MSwitch checked={checked || false} onChange={onChange} />
+        </div>
+    );
+}
+
+/* ── Section Card ── */
+function SectionCard({ icon, title, subtitle, children }) {
+    return (
+        <section className="admin-panel mc-card-hover rounded-2xl p-5 lg:p-6">
+            <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
+                    {icon}
+                </div>
+                <div>
+                    <h3 className="text-base font-semibold text-white">{title}</h3>
+                    <p className="text-xs text-slate-500">{subtitle}</p>
+                </div>
+            </div>
+            <div className="space-y-2">
+                {children}
+            </div>
+        </section>
     );
 }
 
@@ -93,10 +108,10 @@ export default function SettingsPage() {
     if (loading) {
         return (
             <div className="flex min-h-[60vh] items-center justify-center">
-                <div className="admin-panel flex flex-col items-center rounded-[2rem] px-10 py-12 text-center">
-                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/70 border-t-teal-700" />
+                <div className="flex flex-col items-center text-center">
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-emerald-500/20 border-t-emerald-500" />
                     <p className="admin-kicker mt-6">Config sync</p>
-                    <p className="mt-3 text-sm font-medium text-zinc-600">Loading live runtime controls...</p>
+                    <p className="mt-2 text-sm text-slate-500">Loading runtime controls...</p>
                 </div>
             </div>
         );
@@ -104,119 +119,130 @@ export default function SettingsPage() {
 
     return (
         <div className="space-y-6">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
-                <div className="relative grid gap-8 lg:grid-cols-[1.35fr_0.75fr]">
-                    <div>
-                        <p className="admin-kicker">System configuration</p>
-                        <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Control the live engine without touching code.</h1>
-                        <p className="admin-copy mt-5 max-w-2xl text-base">
-                            These switches decide whether new leads move into CRM, whether the queue dispatches jobs, whether Gemini runs, and whether followups are allowed to fire.
-                        </p>
-                    </div>
+            {/* Header */}
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-2xl px-6 py-6 lg:px-8 lg:py-7">
+                <div className="relative">
+                    <p className="admin-kicker">System configuration</p>
+                    <h1 className="admin-heading-xl mt-3 max-w-2xl">Control the live engine without touching code.</h1>
+                    <p className="admin-copy mt-4 max-w-xl text-sm">
+                        These switches control CRM routing, queue dispatch, AI scoring, and followup triggers in real-time.
+                    </p>
 
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                    {/* Quick status pills */}
+                    <div className="mt-6 flex flex-wrap gap-2">
                         {[
-                            { label: 'CRM Auto Routing', enabled: config.crm_auto_routing },
-                            { label: 'Queue Running', enabled: !config.queue_paused },
-                            { label: 'AI Enabled', enabled: config.ai_enabled },
-                            { label: 'Followup Enabled', enabled: config.followup_enabled }
+                            { label: 'AI', on: config.ai_enabled },
+                            { label: 'Queue', on: !config.queue_paused },
+                            { label: 'CRM Routing', on: config.crm_auto_routing },
+                            { label: 'Followup', on: config.followup_enabled }
                         ].map((item) => (
-                            <div key={item.label} className="admin-subpanel rounded-[1.5rem] p-4">
-                                <p className="admin-kicker">{item.label}</p>
-                                <div className="mt-3 flex items-center justify-between">
-                                    <span className="text-sm font-semibold text-zinc-900">{item.enabled ? 'Operational' : 'Paused'}</span>
-                                    <span className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${
-                                        item.enabled
-                                            ? 'bg-emerald-50 text-emerald-700'
-                                            : 'bg-zinc-200/70 text-zinc-600'
-                                    }`}>
-                                        {item.enabled ? 'On' : 'Off'}
-                                    </span>
-                                </div>
-                            </div>
+                            <span
+                                key={item.label}
+                                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide ${
+                                    item.on
+                                        ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
+                                        : 'border-white/[0.06] bg-white/[0.03] text-slate-500'
+                                }`}
+                            >
+                                <span className={`h-1.5 w-1.5 rounded-full ${item.on ? 'bg-emerald-500' : 'bg-slate-600'}`} />
+                                {item.label}
+                            </span>
                         ))}
                     </div>
                 </div>
             </section>
 
             {toast && (
-                <div className={`rounded-[1.5rem] px-4 py-3 text-sm font-medium shadow-sm ${toast.type === 'success' ? 'admin-toast-success' : 'admin-toast-error'}`}>
+                <div className={`rounded-xl px-4 py-3 text-sm font-medium ${toast.type === 'success' ? 'admin-toast-success' : 'admin-toast-error'}`}>
                     {toast.text}
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <section className="admin-panel rounded-[2rem] p-5">
-                    <div className="mb-5 flex items-center justify-between gap-4">
-                        <div>
-                            <p className="admin-kicker">Core switches</p>
-                            <h2 className="admin-heading-lg mt-3 text-zinc-950">Runtime switches for the production pipeline.</h2>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <ToggleCard
+            <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid gap-5 lg:grid-cols-2">
+                    {/* Section 1: System Control */}
+                    <SectionCard
+                        title="System Control"
+                        subtitle="Core engine switches"
+                        icon={
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+                                <path d="M10 2v3M10 15v3M2 10h3M15 10h3" /><circle cx="10" cy="10" r="3" />
+                            </svg>
+                        }
+                    >
+                        <ToggleRow
                             label="AI Enabled"
-                            description="Allows Gemini page generation and AI lead scoring."
+                            description="Gemini scoring and page generation"
                             checked={config.ai_enabled}
-                            onChange={(value) => handleChange('ai_enabled', value)}
+                            onChange={(v) => handleChange('ai_enabled', v)}
                         />
-                        <ToggleCard
+                        <ToggleRow
                             label="Queue Paused"
-                            description="Stops generation_queue processing without deleting pending jobs."
+                            description="Stops queue dispatch without deleting jobs"
                             checked={config.queue_paused}
-                            onChange={(value) => handleChange('queue_paused', value)}
-                            accent="warning"
+                            onChange={(v) => handleChange('queue_paused', v)}
                         />
-                        <ToggleCard
-                            label="CRM Auto Routing"
-                            description="Allows newly stored leads to continue into Zoho sync."
+                    </SectionCard>
+
+                    {/* Section 2: CRM Pipeline */}
+                    <SectionCard
+                        title="CRM Pipeline"
+                        subtitle="Lead routing and followup"
+                        icon={
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+                                <circle cx="10" cy="7" r="3.5" /><path d="M3.5 17c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" />
+                            </svg>
+                        }
+                    >
+                        <ToggleRow
+                            label="Auto Routing"
+                            description="Route new leads into Zoho CRM automatically"
                             checked={config.crm_auto_routing}
-                            onChange={(value) => handleChange('crm_auto_routing', value)}
+                            onChange={(v) => handleChange('crm_auto_routing', v)}
                         />
-                        <ToggleCard
+                        <ToggleRow
                             label="Followup Enabled"
-                            description="Allows post-routing followup delivery when a provider is configured."
+                            description="Post-routing followup when provider is configured"
                             checked={config.followup_enabled}
-                            onChange={(value) => handleChange('followup_enabled', value)}
-                            accent="danger"
+                            onChange={(v) => handleChange('followup_enabled', v)}
                         />
-                    </div>
-                </section>
-
-                <section className="admin-panel rounded-[2rem] p-5">
-                    <div className="mb-5">
-                        <p className="admin-kicker">Worker throughput</p>
-                        <h2 className="admin-heading-lg mt-3 text-zinc-950">Page generation batch size.</h2>
-                        <p className="admin-copy mt-2 text-sm">Controls how many queue items the page generation worker processes in a single execution.</p>
-                    </div>
-
-                    <div className="admin-subpanel rounded-[1.4rem] p-4">
-                        <label className="admin-kicker block">Batch size</label>
-                        <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-center">
-                            <input
-                                type="number"
-                                min="1"
-                                max="50"
-                                value={config.batch_size || 5}
-                                onChange={(event) => handleChange('batch_size', event.target.value)}
-                                className="admin-input w-full max-w-xs px-4 py-3 text-sm font-semibold"
-                            />
-                            <p className="text-sm text-zinc-500">Recommended for steady generation on production: 3 to 8 items per run.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <div className="admin-warning rounded-[1.5rem] px-5 py-4 text-sm font-medium shadow-sm">
-                    Public homepage copy and marketing tags still live under <code>/api/config</code>. This panel is now reserved for runtime engine control only.
+                    </SectionCard>
                 </div>
 
-                <div className="flex flex-wrap justify-end gap-3">
+                {/* Section 3: Worker Config */}
+                <SectionCard
+                    title="Worker Config"
+                    subtitle="Page generation throughput"
+                    icon={
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+                            <rect x="3" y="5" width="14" height="10" rx="2" /><line x1="7" y1="9" x2="13" y2="9" /><line x1="7" y1="12" x2="11" y2="12" />
+                        </svg>
+                    }
+                >
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-4">
+                        <label className="block text-sm font-semibold text-slate-200">Batch Size</label>
+                        <p className="mt-0.5 text-xs text-slate-500">Items per worker run. Recommended: 3-8</p>
+                        <input
+                            type="number"
+                            min="1"
+                            max="50"
+                            value={config.batch_size || 5}
+                            onChange={(event) => handleChange('batch_size', event.target.value)}
+                            className="admin-input mt-3 w-full max-w-[160px] px-3 py-2.5 text-sm font-semibold"
+                        />
+                    </div>
+                </SectionCard>
+
+                <div className="admin-warning rounded-xl px-4 py-3 text-xs font-medium">
+                    Marketing config lives under <code className="rounded bg-white/10 px-1.5 py-0.5 text-emerald-400">/api/config</code>. This panel is runtime engine control only.
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-3 pt-1">
                     <button type="button" onClick={loadConfig} className="admin-button-secondary">
-                        Reload from live config
+                        Reload config
                     </button>
                     <button type="submit" disabled={saving} className="admin-button-primary">
-                        {saving ? 'Saving...' : 'Save runtime controls'}
+                        {saving ? 'Saving...' : 'Save controls'}
                     </button>
                 </div>
             </form>

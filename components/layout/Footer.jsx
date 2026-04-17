@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import VisitorCounter from '../ui/VisitorCounter';
 
 const Footer = () => {
@@ -15,7 +16,16 @@ const Footer = () => {
 
                 {/* Column 1 - About */}
                 <div>
-                    <h4>Bima Sakhi</h4>
+                    <div className="flex items-center gap-3 mb-4">
+                        <Image
+                            src="/images/home/logo1.png"
+                            alt="Bima Sakhi Logo"
+                            width={40}
+                            height={40}
+                            className="w-10 h-10"
+                        />
+                        <h4 className="m-0">Bima Sakhi</h4>
+                    </div>
                     <p>
                         A structured LIC agency opportunity platform focused on
                         empowering women through financial independence.

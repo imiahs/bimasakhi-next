@@ -87,17 +87,17 @@ export default function GrowthDashboard() {
         }
     };
 
-    if (loading) return <div className="p-8 text-center">Loading Growth Insights...</div>;
-    if (!supabase) return <div className="p-8 text-center text-red-600 font-semibold">Database configuration missing. Please check your environment variables.</div>;
+    if (loading) return <div className="p-8 text-center text-slate-400">Loading Growth Insights...</div>;
+    if (!supabase) return <div className="p-8 text-center text-rose-400 font-semibold">Database configuration missing. Please check your environment variables.</div>;
 
     return (
-        <div className="p-8 bg-gray-50 min-h-screen">
-            <h1 className="text-3xl font-bold mb-8 text-gray-800">AI Growth Dashboard</h1>
+        <div className="p-6 space-y-6">
+            <h1 className="text-2xl font-bold text-white">AI Growth Dashboard</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Score Distribution */}
-                <div className="bg-white p-6 rounded-xl shadow-sm">
-                    <h2 className="text-lg font-semibold mb-4">Lead Score Distribution</h2>
+                <div className="admin-panel rounded-2xl p-5">
+                    <h2 className="text-base font-semibold text-slate-200 mb-4">Lead Score Distribution</h2>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.scoreDistribution}>
@@ -112,8 +112,8 @@ export default function GrowthDashboard() {
                 </div>
 
                 {/* Marketing Sources */}
-                <div className="bg-white p-6 rounded-xl shadow-sm">
-                    <h2 className="text-lg font-semibold mb-4">Top Lead Sources</h2>
+                <div className="admin-panel rounded-2xl p-5">
+                    <h2 className="text-base font-semibold text-slate-200 mb-4">Top Lead Sources</h2>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
@@ -138,10 +138,10 @@ export default function GrowthDashboard() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Agent Performance */}
-                <div className="bg-white p-6 rounded-xl shadow-sm">
-                    <h2 className="text-lg font-semibold mb-4">Agent Performance (Leads Assigned vs Converted)</h2>
+                <div className="admin-panel rounded-2xl p-5">
+                    <h2 className="text-base font-semibold text-slate-200 mb-4">Agent Performance (Leads Assigned vs Converted)</h2>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={data.agentPerformance} layout="vertical">
@@ -158,23 +158,23 @@ export default function GrowthDashboard() {
                 </div>
 
                 {/* AI Automation Logs */}
-                <div className="bg-white p-6 rounded-xl shadow-sm overflow-hidden">
-                    <h2 className="text-lg font-semibold mb-4">Recent AI Events</h2>
+                <div className="admin-panel rounded-2xl p-5 overflow-hidden">
+                    <h2 className="text-base font-semibold text-slate-200 mb-4">Recent AI Events</h2>
                     <div className="overflow-x-auto">
                         <table className="min-w-full text-sm">
-                            <thead className="bg-gray-50 border-b">
+                            <thead className="border-b border-white/[0.06] bg-white/[0.03]">
                                 <tr>
-                                    <th className="px-4 py-2 text-left font-medium">Type</th>
-                                    <th className="px-4 py-2 text-left font-medium">Reason</th>
-                                    <th className="px-4 py-2 text-left font-medium">Time</th>
+                                    <th className="px-4 py-2 text-left font-medium text-slate-400">Type</th>
+                                    <th className="px-4 py-2 text-left font-medium text-slate-400">Reason</th>
+                                    <th className="px-4 py-2 text-left font-medium text-slate-400">Time</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y">
+                            <tbody className="divide-y divide-white/[0.04]">
                                 {data.recentLogs.map(log => (
-                                    <tr key={log.id} className="hover:bg-gray-50">
-                                        <td className="px-4 py-2 capitalize font-semibold text-indigo-600">{log.decision_type}</td>
-                                        <td className="px-4 py-2 text-gray-600 truncate max-w-xs">{log.decision_reason}</td>
-                                        <td className="px-4 py-2 text-gray-400">{new Date(log.created_at).toLocaleTimeString()}</td>
+                                    <tr key={log.id} className="hover:bg-white/[0.03]">
+                                        <td className="px-4 py-2 capitalize font-semibold text-emerald-400">{log.decision_type}</td>
+                                        <td className="px-4 py-2 text-slate-400 truncate max-w-xs">{log.decision_reason}</td>
+                                        <td className="px-4 py-2 text-slate-500">{new Date(log.created_at).toLocaleTimeString()}</td>
                                     </tr>
                                 ))}
                             </tbody>

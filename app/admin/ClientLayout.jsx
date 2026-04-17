@@ -1,9 +1,64 @@
 'use client';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AdminProvider, useAdmin } from '@/context/AdminContext';
 import { adminApi } from '@/lib/adminApi';
+
+/* ── SVG Icons ── */
+const icons = {
+    HQ: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <rect x="3" y="3" width="6" height="6" rx="1.5" />
+            <rect x="11" y="3" width="6" height="6" rx="1.5" />
+            <rect x="3" y="11" width="6" height="6" rx="1.5" />
+            <rect x="11" y="11" width="6" height="6" rx="1.5" />
+        </svg>
+    ),
+    CR: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <circle cx="10" cy="7" r="3.5" />
+            <path d="M3.5 17c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" />
+        </svg>
+    ),
+    AI: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M10 2v3M10 15v3M2 10h3M15 10h3M4.93 4.93l2.12 2.12M12.95 12.95l2.12 2.12M4.93 15.07l2.12-2.12M12.95 7.05l2.12-2.12" />
+            <circle cx="10" cy="10" r="2.5" />
+        </svg>
+    ),
+    RX: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M10 2L3 7v6l7 5 7-5V7l-7-5z" />
+            <path d="M7.5 10l2 2 3.5-4" />
+        </svg>
+    ),
+    AN: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M3 16V8l3.5-3 3 3 3.5-5L17 8v8" />
+            <line x1="3" y1="16" x2="17" y2="16" />
+        </svg>
+    ),
+    LG: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <rect x="3" y="3" width="14" height="14" rx="2" />
+            <line x1="6" y1="7" x2="14" y2="7" />
+            <line x1="6" y1="10" x2="12" y2="10" />
+            <line x1="6" y1="13" x2="10" y2="13" />
+        </svg>
+    ),
+    CN: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <circle cx="10" cy="10" r="3" />
+            <path d="M10 2a1.5 1.5 0 010 3M10 15a1.5 1.5 0 010 3M2 10a1.5 1.5 0 013 0M15 10a1.5 1.5 0 013 0M4.22 4.22a1.5 1.5 0 012.12 2.12M13.66 13.66a1.5 1.5 0 012.12 2.12M15.78 4.22a1.5 1.5 0 01-2.12 2.12M6.34 13.66a1.5 1.5 0 01-2.12 2.12" />
+        </svg>
+    ),
+    LO: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M7 17H4a1 1 0 01-1-1V4a1 1 0 011-1h3M13 6l4 4-4 4M8 10h9" />
+        </svg>
+    ),
+};
 
 const NAV_LINKS = [
     { label: 'Dashboard', href: '/admin', icon: 'HQ', note: 'Mission control' },
@@ -14,6 +69,45 @@ const NAV_LINKS = [
     { label: 'Logs', href: '/admin/logs', icon: 'LG', note: 'Runtime trail' },
     { label: 'Settings', href: '/admin/settings', icon: 'CN', note: 'Live switches' }
 ];
+
+/* ── System Health Badge ── */
+function HealthBadge() {
+    const [health, setHealth] = useState(null);
+
+    useEffect(() => {
+        const fetchHealth = async () => {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                setHealth(data);
+            } catch { setHealth(null); }
+        };
+        fetchHealth();
+        const interval = setInterval(fetchHealth, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    if (!health) return null;
+
+    const mode = health.checks?.system_mode || 'unknown';
+    const status = health.status || 'unknown';
+
+    const config = {
+        ok: { label: 'LIVE', color: 'bg-emerald-500', glow: 'shadow-[0_0_12px_rgba(16,185,129,0.5)]', text: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
+        degraded: { label: 'DEGRADED', color: 'bg-amber-500', glow: 'shadow-[0_0_12px_rgba(245,158,11,0.5)]', text: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/10' },
+    };
+    const c = config[status] || { label: 'DOWN', color: 'bg-red-500', glow: 'shadow-[0_0_12px_rgba(244,63,94,0.5)]', text: 'text-red-400', border: 'border-red-500/20', bg: 'bg-red-500/10' };
+
+    return (
+        <div className={`flex items-center gap-2.5 rounded-full border ${c.border} ${c.bg} px-3.5 py-1.5`}>
+            <span className={`mc-pulse h-2 w-2 rounded-full ${c.color} ${c.glow}`} />
+            <span className={`text-xs font-bold tracking-wider ${c.text}`}>{c.label}</span>
+            {mode !== 'normal' && (
+                <span className="text-[10px] font-mono text-white/40 uppercase">{mode}</span>
+            )}
+        </div>
+    );
+}
 
 function InnerLayout({ children }) {
     const pathname = usePathname();
@@ -32,10 +126,10 @@ function InnerLayout({ children }) {
     if (isLoading) {
         return (
             <div className="admin-root flex min-h-screen flex-col items-center justify-center p-6">
-                <div className="admin-panel flex min-w-[280px] flex-col items-center rounded-[2rem] px-10 py-12 text-center">
-                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/70 border-t-teal-700" />
-                    <p className="admin-kicker mt-6">Admin boot</p>
-                    <p className="mt-3 text-sm font-medium text-zinc-600">Initializing the live control room...</p>
+                <div className="flex flex-col items-center text-center">
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-emerald-500/20 border-t-emerald-500" />
+                    <p className="admin-kicker mt-6">Initializing</p>
+                    <p className="mt-2 text-sm text-slate-500">Loading mission control...</p>
                 </div>
             </div>
         );
@@ -55,123 +149,102 @@ function InnerLayout({ children }) {
 
     return (
         <div className="admin-root">
-            <div className="admin-shell flex h-screen overflow-hidden text-zinc-900 selection:bg-teal-700 selection:text-white">
-                <aside className={`admin-sidebar flex flex-col border-r border-white/10 text-white transition-all duration-300 ${collapsed ? 'w-24' : 'w-[19rem]'}`}>
-                    <div className="relative border-b border-white/10 px-4 py-4">
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-[1.2rem] border border-white/10 bg-white/10 text-sm font-semibold tracking-[0.22em] text-white shadow-[0_14px_30px_rgba(15,118,110,0.22)]">
-                                BS
-                            </div>
-                            {!collapsed && (
-                                <div>
-                                    <p className="admin-kicker text-white/45">Bima Sakhi OS</p>
-                                    <h1 className="mt-1 text-[1.65rem] font-semibold tracking-[-0.05em] text-white">Growth Engine</h1>
-                                    <p className="mt-1 text-[13px] text-white/55">Lead, queue, AI, and recovery</p>
-                                </div>
-                            )}
+            <div className="admin-shell flex h-screen overflow-hidden">
+                {/* ── Slim Sidebar ── */}
+                <aside className={`admin-sidebar flex flex-col transition-all duration-300 ${collapsed ? 'w-[72px]' : 'w-60'}`}>
+                    {/* Brand */}
+                    <div className="relative flex items-center gap-3 border-b border-white/[0.06] px-4 py-4">
+                        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-xs font-bold text-white shadow-lg shadow-emerald-500/20">
+                            BS
                         </div>
+                        {!collapsed && (
+                            <div className="min-w-0">
+                                <h1 className="text-sm font-semibold text-white tracking-tight">Bima Sakhi</h1>
+                                <p className="text-[10px] font-mono text-slate-500 tracking-wider">MISSION CONTROL</p>
+                            </div>
+                        )}
                     </div>
 
-                    <nav className="admin-scrollbar flex-1 space-y-2 overflow-y-auto px-3 py-5">
-                        {NAV_LINKS.map((link, index) => {
+                    {/* Navigation */}
+                    <nav className="admin-scrollbar flex-1 space-y-0.5 overflow-y-auto px-2 py-4">
+                        {NAV_LINKS.map((link) => {
                             const active = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
 
                             return (
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className={`group relative flex items-center gap-3 overflow-hidden rounded-[1.25rem] border px-3 py-2.5 transition-all ${
+                                    className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${
                                         active
-                                            ? 'border-white/15 bg-white/12 text-white shadow-[0_18px_30px_rgba(0,0,0,0.18)]'
-                                            : 'border-transparent text-white/68 hover:border-white/10 hover:bg-white/8 hover:text-white'
+                                            ? 'mc-nav-active text-emerald-400'
+                                            : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
                                     }`}
                                 >
-                                    <span className={`inline-flex h-10 w-10 items-center justify-center rounded-[0.95rem] border text-[11px] font-semibold tracking-[0.22em] ${
-                                        active
-                                            ? 'border-white/10 bg-white/10 text-white'
-                                            : 'border-white/10 bg-black/10 text-white/78'
-                                    }`}>
-                                        {link.icon}
+                                    <span className={`flex-shrink-0 ${active ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                                        {icons[link.icon]}
                                     </span>
 
                                     {!collapsed && (
-                                        <div className="min-w-0">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-[13px] font-semibold">{link.label}</span>
-                                                <span className="admin-kicker text-white/35">0{index + 1}</span>
-                                            </div>
-                                            <p className="mt-1 truncate text-xs text-white/45">{link.note}</p>
-                                        </div>
+                                        <span className="text-[13px] font-medium">{link.label}</span>
                                     )}
                                 </Link>
                             );
                         })}
                     </nav>
 
-                    <div className="border-t border-white/10 p-3">
+                    {/* Logout */}
+                    <div className="border-t border-white/[0.06] p-2">
                         <button
                             onClick={handleLogout}
                             disabled={loggingOut}
-                            className="flex w-full items-center gap-3 rounded-[1.2rem] border border-white/10 bg-white/6 px-3 py-3 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:opacity-50"
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-slate-500 transition-all hover:bg-white/[0.04] hover:text-slate-300 disabled:opacity-40"
                         >
-                            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[0.95rem] border border-white/10 bg-black/10 text-[11px] font-semibold tracking-[0.22em] text-white/80">
-                                LO
-                            </span>
+                            <span className="flex-shrink-0">{icons.LO}</span>
                             {!collapsed && (
-                                <div className="text-left">
-                                    <p className="font-semibold">{loggingOut ? 'Closing...' : 'Logout'}</p>
-                                    <p className="text-xs text-white/45">End secure session</p>
-                                </div>
+                                <span className="text-[13px] font-medium">{loggingOut ? 'Closing...' : 'Logout'}</span>
                             )}
                         </button>
                     </div>
                 </aside>
 
+                {/* ── Main Area ── */}
                 <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                    <header className="border-b border-[rgba(77,61,40,0.08)] px-4 py-3 lg:px-6">
-                        <div className="admin-panel flex items-center justify-between rounded-[1.6rem] px-4 py-3 lg:px-5">
-                            <div className="flex items-center gap-4">
+                    {/* Top Bar */}
+                    <header className="mc-topbar px-4 py-2.5 lg:px-6">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
                                 <button
-                                    onClick={() => setCollapsed((value) => !value)}
-                                    className="admin-button-secondary px-4 py-3 text-sm"
+                                    onClick={() => setCollapsed((v) => !v)}
+                                    className="rounded-lg border border-white/[0.06] p-2 text-slate-500 transition hover:bg-white/[0.04] hover:text-slate-300"
+                                    aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                                 >
-                                    {collapsed ? 'Expand' : 'Collapse'}
+                                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+                                        <line x1="3" y1="5" x2="17" y2="5" /><line x1="3" y1="10" x2="17" y2="10" /><line x1="3" y1="15" x2="17" y2="15" />
+                                    </svg>
                                 </button>
 
                                 <div>
-                                    <p className="admin-kicker">Admin flow</p>
-                                    <h2 className="mt-1 text-[1.1rem] font-semibold tracking-[-0.04em] text-zinc-950">
+                                    <h2 className="text-sm font-semibold text-white">
                                         {activeLink?.label || 'Dashboard'}
                                     </h2>
-                                    <p className="mt-1 text-[13px] text-zinc-500">{activeLink?.note || 'Live operator board'}</p>
+                                    <p className="text-[11px] text-slate-500">{activeLink?.note || 'Live operator board'}</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-4">
-                                <div className="hidden items-center gap-3 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 md:flex">
-                                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_14px_rgba(16,185,129,0.6)]" />
-                                    <div>
-                                        <p className="admin-kicker !text-emerald-700">System pulse</p>
-                                        <p className="text-sm font-semibold text-emerald-800">Live operator access</p>
-                                    </div>
-                                </div>
+                            <div className="flex items-center gap-3">
+                                <HealthBadge />
 
-                                <div className="flex items-center gap-3 rounded-full border border-[rgba(77,61,40,0.08)] bg-white/65 px-3 py-2">
-                                    <div className="hidden text-right md:block">
-                                        <p className="text-sm font-semibold text-zinc-950">Admin</p>
-                                        <p className="text-xs text-zinc-500">Runtime access</p>
-                                    </div>
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-950 text-xs font-semibold text-white shadow-sm">
-                                        A
-                                    </div>
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-xs font-bold text-white shadow-lg shadow-emerald-500/15">
+                                    A
                                 </div>
                             </div>
                         </div>
                     </header>
 
-                    <main className="admin-scrollbar flex-1 overflow-y-auto px-4 py-4 lg:px-6 lg:py-6">
+                    {/* Content */}
+                    <main className="admin-scrollbar flex-1 overflow-y-auto px-4 py-5 lg:px-6 lg:py-6">
                         {globalError && (
-                            <div className="admin-toast-error mb-6 rounded-[1.4rem] px-4 py-3 text-sm font-medium shadow-sm">
+                            <div className="admin-toast-error mb-5 rounded-xl px-4 py-3 text-sm font-medium">
                                 System Error: {globalError}
                             </div>
                         )}

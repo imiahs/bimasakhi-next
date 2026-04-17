@@ -121,9 +121,9 @@ export default function CRMPage() {
         return (
             <div className="flex min-h-[60vh] items-center justify-center">
                 <div className="admin-panel flex flex-col items-center rounded-[2rem] px-10 py-12 text-center">
-                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/70 border-t-teal-700" />
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-emerald-500/20 border-t-emerald-500" />
                     <p className="admin-kicker mt-6">CRM sync</p>
-                    <p className="mt-3 text-sm font-medium text-zinc-600">Loading live CRM leads...</p>
+                    <p className="mt-2 text-sm text-slate-500">Loading live CRM leads...</p>
                 </div>
             </div>
         );
@@ -131,12 +131,12 @@ export default function CRMPage() {
 
     return (
         <div className="space-y-6">
-            <section className="admin-panel admin-glow-ring overflow-hidden rounded-[2rem] px-6 py-5 lg:px-7 lg:py-6">
+            <section className="admin-panel admin-glow-ring overflow-hidden rounded-2xl px-6 py-5 lg:px-7 lg:py-6">
                 <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p className="admin-kicker">Lead operations</p>
-                        <h1 className="admin-heading-xl mt-4 max-w-3xl text-zinc-950">Work the real CRM pipeline, not a sample table.</h1>
-                        <p className="admin-copy mt-5 max-w-2xl text-base">
+                        <h1 className="admin-heading-xl mt-4 max-w-3xl">Work the real CRM pipeline, not a sample table.</h1>
+                        <p className="admin-copy mt-4 max-w-2xl text-sm">
                             This board shows actual lead records, score visibility, Zoho sync state, and conversion actions for the production pipeline.
                         </p>
                     </div>
@@ -160,7 +160,7 @@ export default function CRMPage() {
                 <MetricCard title="Converted" value={summary.converted} subtitle="Revenue-attributed leads" icon="CV" />
             </div>
 
-            <section className="admin-panel rounded-[2rem] p-5">
+            <section className="admin-panel rounded-2xl p-5">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
                     <input
                         value={searchTerm}
@@ -198,19 +198,19 @@ export default function CRMPage() {
                 </div>
             </section>
 
-            <section className="admin-panel overflow-hidden rounded-[2rem]">
+            <section className="admin-panel overflow-hidden rounded-2xl">
                 {error ? (
-                    <div className="px-6 py-10 text-center text-sm font-medium text-rose-600">
+                    <div className="px-6 py-10 text-center text-sm font-medium text-rose-400">
                         Failed to load leads: {error}
                     </div>
                 ) : filteredLeads.length === 0 ? (
-                    <div className="px-6 py-14 text-center text-sm text-zinc-500">
+                    <div className="px-6 py-14 text-center text-sm text-slate-500">
                         No leads match the current filters.
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="bg-[rgba(255,255,255,0.72)] text-xs uppercase tracking-[0.18em] text-zinc-500">
+                            <thead className="border-b border-white/[0.06] bg-white/[0.03] text-xs uppercase tracking-wider text-slate-500">
                                 <tr>
                                     <th className="px-5 py-4 font-semibold">Lead</th>
                                     <th className="px-5 py-4 font-semibold">City</th>
@@ -221,7 +221,7 @@ export default function CRMPage() {
                                     <th className="px-5 py-4 font-semibold text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[rgba(77,61,40,0.06)]">
+                            <tbody className="divide-y divide-white/[0.04]">
                                 {filteredLeads.map((lead) => {
                                     const name = lead.Last_Name || lead.name || 'Unknown';
                                     const city = lead.City || lead.city || 'Unknown';
@@ -231,23 +231,23 @@ export default function CRMPage() {
                                     const status = lead.is_converted ? 'Converted' : (lead.status || lead.Lead_Status || 'new');
 
                                     return (
-                                        <tr key={lead.id} className={`transition hover:bg-[rgba(255,255,255,0.52)] ${lead.is_converted ? 'opacity-70' : ''}`}>
+                                        <tr key={lead.id} className={`transition hover:bg-white/[0.03] ${lead.is_converted ? 'opacity-70' : ''}`}>
                                             <td className="px-5 py-4">
                                                 <div>
-                                                    <p className="font-semibold text-zinc-950">{name}</p>
-                                                    <p className="mt-1 text-xs text-zinc-500">{lead.Mobile || lead.mobile || 'N/A'}</p>
-                                                    {lead.email && <p className="mt-1 text-xs text-zinc-400">{lead.email}</p>}
+                                                    <p className="font-semibold text-slate-200">{name}</p>
+                                                    <p className="mt-1 text-xs text-slate-500">{lead.Mobile || lead.mobile || 'N/A'}</p>
+                                                    {lead.email && <p className="mt-1 text-xs text-slate-600">{lead.email}</p>}
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-4 text-zinc-600">{city}</td>
-                                            <td className="px-5 py-4 text-zinc-600">{source}</td>
+                                            <td className="px-5 py-4 text-slate-400">{city}</td>
+                                            <td className="px-5 py-4 text-slate-400">{source}</td>
                                             <td className="px-5 py-4">
                                                 <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
                                                     score >= 80
-                                                        ? 'bg-rose-100 text-rose-700'
+                                                        ? 'bg-rose-500/10 text-rose-400'
                                                         : score >= 50
-                                                            ? 'bg-amber-100 text-amber-700'
-                                                            : 'bg-zinc-100 text-zinc-700'
+                                                            ? 'bg-amber-500/10 text-amber-400'
+                                                            : 'bg-white/[0.06] text-slate-400'
                                                 }`}>
                                                     {score}
                                                 </span>
@@ -282,12 +282,12 @@ export default function CRMPage() {
             </section>
 
             {convertingId && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/55 p-4 backdrop-blur-sm">
-                    <div className="admin-panel w-full max-w-md overflow-hidden rounded-[2rem] shadow-2xl">
-                        <div className="border-b border-[rgba(77,61,40,0.08)] bg-[rgba(255,255,255,0.48)] px-6 py-5">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+                    <div className="admin-panel w-full max-w-md overflow-hidden rounded-2xl shadow-2xl">
+                        <div className="border-b border-white/[0.06] bg-white/[0.03] px-6 py-5">
                             <p className="admin-kicker">Conversion record</p>
-                            <h2 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-zinc-950">Mark lead as converted</h2>
-                            <p className="mt-2 text-sm text-zinc-500">Store the conversion value against the real lead record.</p>
+                            <h2 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-white">Mark lead as converted</h2>
+                            <p className="mt-2 text-sm text-slate-500">Store the conversion value against the real lead record.</p>
                         </div>
 
                         <form onSubmit={handleConvert} className="space-y-5 p-6">
