@@ -66,3 +66,4 @@ vercel-worker-hit.log
 
 # ── Temp tracking / scratch files ──
 _all_tracked.txt
+/docs/
