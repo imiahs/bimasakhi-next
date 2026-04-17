@@ -29,7 +29,7 @@ export const GET = withAdminAuth(async (request, user) => {
                 .limit(25),
             supabase
                 .from('job_runs')
-                .select('id, worker_id, status, started_at, finished_at, error_message')
+                .select('id, worker_id, status, started_at, finished_at, error, failure_reason')
                 .order('started_at', { ascending: false })
                 .limit(25)
         ]);
@@ -66,7 +66,7 @@ export const GET = withAdminAuth(async (request, user) => {
             ...((jobRunsRes.data || []).map((run) => ({
                 id: `run_${run.id}`,
                 type: run.status === 'failed' ? 'ERROR' : 'INFO',
-                message: `job_run [${run.worker_id || 'worker'}]: ${run.status}${run.error_message ? ' — ' + run.error_message : ''}`,
+                message: `job_run [${run.worker_id || 'worker'}]: ${run.status}${run.error || run.failure_reason ? ' — ' + (run.error || run.failure_reason) : ''}`,
                 metadata: { worker_id: run.worker_id, status: run.status, finished_at: run.finished_at },
                 created_at: run.started_at
             })))
