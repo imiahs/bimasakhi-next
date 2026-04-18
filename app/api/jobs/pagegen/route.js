@@ -4,6 +4,7 @@ import { generateAiContent } from '@/lib/ai/generateContent';
 import { getSystemPrompt, buildPagePrompt } from '@/lib/ai/promptTemplates';
 import { generateImagePrompts } from '@/lib/ai/imagePrompts';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
+import { isSystemEnabled } from '@/lib/featureFlags';
 import crypto from 'crypto';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
 import { enqueuePageGeneration } from '@/lib/queue/publisher';
@@ -225,6 +226,13 @@ async function handler(request) {
     if (config.queue_paused) {
         await logSystemAction('GUARD_BLOCKED', { guard: 'queue_paused', route: '/api/jobs/pagegen' });
         return NextResponse.json({ success: true, message: 'System paused via control config.' });
+    }
+
+    // Phase 14: Feature flag + Safe Mode check
+    const pagegenEnabled = await isSystemEnabled('pagegen_enabled');
+    if (!pagegenEnabled) {
+        await logSystemAction('GUARD_BLOCKED', { guard: 'pagegen_enabled or safe_mode', route: '/api/jobs/pagegen' });
+        return NextResponse.json({ success: true, message: 'Page generation disabled via feature flag or Safe Mode.' });
     }
 
     const supabase = getServiceSupabase();

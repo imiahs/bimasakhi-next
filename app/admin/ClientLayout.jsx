@@ -74,8 +74,42 @@ const NAV_LINKS = [
     { label: 'Failed', href: '/admin/failed-leads', icon: 'RX', note: 'Recovery lane' },
     { label: 'Analytics', href: '/admin/analytics', icon: 'AN', note: 'Attribution' },
     { label: 'Logs', href: '/admin/logs', icon: 'LG', note: 'Runtime trail' },
-    { label: 'Settings', href: '/admin/settings', icon: 'CN', note: 'Live switches' }
+    { label: 'Features', href: '/admin/control/features', icon: 'CN', note: 'Toggle controls' },
+    { label: 'Workflow', href: '/admin/control/workflow', icon: 'CN', note: 'Thresholds & caps' },
+    { label: 'Audit', href: '/admin/system/audit', icon: 'LG', note: 'Action history' },
+    { label: 'Settings', href: '/admin/settings', icon: 'CN', note: 'Legacy switches' }
 ];
+
+/* ── Safe Mode Banner ── */
+function SafeModeBanner() {
+    const [safeMode, setSafeMode] = useState(false);
+
+    useEffect(() => {
+        const check = async () => {
+            try {
+                const res = await fetch('/api/admin/feature-flags', { credentials: 'include' });
+                const json = await res.json();
+                if (json.success) {
+                    const flag = json.data?.find(f => f.key === 'safe_mode');
+                    setSafeMode(flag?.value === true);
+                }
+            } catch { /* ignore */ }
+        };
+        check();
+        const interval = setInterval(check, 15000);
+        return () => clearInterval(interval);
+    }, []);
+
+    if (!safeMode) return null;
+
+    return (
+        <div className="border-b-2 border-red-500/50 bg-red-500/10 px-4 py-2 text-center">
+            <span className="text-sm font-semibold text-red-400">
+                🔴 SAFE MODE ACTIVE — All automated operations are paused
+            </span>
+        </div>
+    );
+}
 
 /* ── System Health Badge ── */
 function HealthBadge() {
@@ -247,6 +281,9 @@ function InnerLayout({ children }) {
                             </div>
                         </div>
                     </header>
+
+                    {/* Safe Mode Banner */}
+                    <SafeModeBanner />
 
                     {/* Content */}
                     <main className="admin-scrollbar flex-1 overflow-y-auto px-4 py-5 lg:px-6 lg:py-6">
