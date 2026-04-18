@@ -77,6 +77,8 @@ const NAV_LINKS = [
     { label: 'Features', href: '/admin/control/features', icon: 'CN', note: 'Toggle controls' },
     { label: 'Workflow', href: '/admin/control/workflow', icon: 'CN', note: 'Thresholds & caps' },
     { label: 'Audit', href: '/admin/system/audit', icon: 'LG', note: 'Action history' },
+    { label: 'Health', href: '/admin/system/health', icon: 'HB', note: 'Vendor resilience' },
+    { label: 'DLQ', href: '/admin/system/dlq', icon: 'DL', note: 'Dead letters' },
     { label: 'Settings', href: '/admin/settings', icon: 'CN', note: 'Legacy switches' }
 ];
 
