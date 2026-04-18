@@ -14,14 +14,33 @@
  */
 import { NextResponse } from 'next/server';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
-import { sendTelegramAlert } from '@/lib/monitoring/alertSystem';
+import { sendTelegramAlert } from '@/lib/monitoring/alertSystem.js';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 
 export const dynamic = 'force-dynamic';
 
+async function logObservability(supabase, level, message, userId) {
+    try {
+        await supabase.from('observability_logs').insert({
+            level,
+            message,
+            user_id: userId,
+            created_at: new Date().toISOString(),
+        });
+    } catch (e) {
+        // Ignore logging errors
+    }
+}
+
 export const POST = withAdminAuth(async (request) => {
+    const supabase = getServiceSupabase();
+    await logObservability(supabase, 'INFO', 'Alert test endpoint called', null);
+
     try {
         const body = await request.json().catch(() => ({}));
         const channel = body.channel || 'all';
+
+        await logObservability(supabase, 'INFO', `Alert test channel: ${channel}`, null);
 
         const testRule = {
             id: 'manual_test',
@@ -37,15 +56,20 @@ export const POST = withAdminAuth(async (request) => {
 
         // Telegram test
         if (channel === 'all' || channel === 'telegram') {
+            await logObservability(supabase, 'INFO', `Checking telegram env: ${!!(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID)}`, null);
             if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
                 try {
+                    await logObservability(supabase, 'INFO', 'Sending telegram alert', null);
                     await sendTelegramAlert(testRule, testResult);
                     results.telegram = 'delivered';
+                    await logObservability(supabase, 'INFO', 'Telegram alert delivered', null);
                 } catch (e) {
                     results.telegram = `failed: ${e.message}`;
+                    await logObservability(supabase, 'ERROR', `Telegram alert failed: ${e.message}`, null);
                 }
             } else {
                 results.telegram = 'not configured (missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID)';
+                await logObservability(supabase, 'WARN', 'Telegram not configured', null);
             }
         }
 
@@ -90,6 +114,8 @@ export const POST = withAdminAuth(async (request) => {
 
         const anyDelivered = Object.values(results).some(r => r === 'delivered');
 
+        await logObservability(supabase, 'INFO', `Alert test completed: ${JSON.stringify(results)}`, null);
+
         return NextResponse.json({
             success: true,
             message: anyDelivered
@@ -106,6 +132,7 @@ export const POST = withAdminAuth(async (request) => {
         });
 
     } catch (err) {
+        await logObservability(supabase, 'ERROR', `Alert test internal error: ${err.message}`, null);
         return NextResponse.json({ success: false, error: err.message }, { status: 500 });
     }
 }, ['super_admin']);
