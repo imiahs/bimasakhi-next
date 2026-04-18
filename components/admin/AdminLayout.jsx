@@ -1,21 +1,25 @@
 'use client';
+/**
+ * ⚠️ DEPRECATED — Stage 2b fix, Phase 0 Priority R
+ *
+ * This file is the OLD admin navigation system. It is NO LONGER the active nav.
+ * The active nav is: app/admin/ClientLayout.jsx (NAV_LINKS array).
+ *
+ * This file is retained only as a fallback shell for pages/ router legacy pages.
+ * DO NOT add nav links here. All navigation changes go in ClientLayout.jsx ONLY.
+ * Bible: Section 45 (Navigation Management), Rule 29 (Geo Control).
+ */
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import CommandPalette from './CommandPalette';
 
-const ADMIN_LINKS = [
-    { label: 'Dashboard', href: '/admin', icon: '📊' },
-    { label: 'Leads', href: '/admin/leads', icon: '👥' },
-    { label: 'CRM', href: '/admin/crm', icon: '🔗' },
-    { label: 'Failed Leads', href: '/admin/failed', icon: '🚨' },
-    { label: 'AI Queue', href: '/admin/ai', icon: '⚡' },
-    { label: 'Pages', href: '/admin/pages', icon: '📄' },
-    { label: 'Analytics', href: '/admin/analytics', icon: '📈' },
-    { label: 'System', href: '/admin/system', icon: '🛡️' },
-    { label: 'Logs', href: '/admin/logs', icon: '📋' },
-    { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
-];
+/**
+ * DEPRECATED: Navigation links moved to app/admin/ClientLayout.jsx
+ * Kept as empty array — this component no longer renders its own nav.
+ * @deprecated Use ClientLayout.jsx NAV_LINKS instead.
+ */
+const ADMIN_LINKS = [];
 
 const AdminLayout = ({ children }) => {
     const pathname = usePathname();

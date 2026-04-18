@@ -53,9 +53,16 @@ const icons = {
             <path d="M10 2a1.5 1.5 0 010 3M10 15a1.5 1.5 0 010 3M2 10a1.5 1.5 0 013 0M15 10a1.5 1.5 0 013 0M4.22 4.22a1.5 1.5 0 012.12 2.12M13.66 13.66a1.5 1.5 0 012.12 2.12M15.78 4.22a1.5 1.5 0 01-2.12 2.12M6.34 13.66a1.5 1.5 0 01-2.12 2.12" />
         </svg>
     ),
-    LO: (
+    PG: (
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-            <path d="M7 17H4a1 1 0 01-1-1V4a1 1 0 011-1h3M13 6l4 4-4 4M8 10h9" />
+            <rect x="3" y="2" width="14" height="16" rx="2" />
+            <path d="M6 6h8M6 9h8M6 12h5" />
+        </svg>
+    ),
+    GL: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <circle cx="10" cy="10" r="7" />
+            <path d="M10 3v14M3 10h14M4.5 6A10.5 10.5 0 0115.5 6M4.5 14A10.5 10.5 0 0115.5 14" />
         </svg>
     ),
     CC: (
@@ -70,8 +77,9 @@ const NAV_LINKS = [
     { label: 'Dashboard', href: '/admin', icon: 'HQ', note: 'Mission control' },
     { label: 'CRM', href: '/admin/crm', icon: 'CR', note: 'Lead operations' },
     { label: 'Content', href: '/admin/ccc', icon: 'CC', note: 'Draft review' },
+    { label: 'Pages', href: '/admin/pages', icon: 'PG', note: 'CMS page builder' },
     { label: 'Bulk', href: '/admin/ccc/bulk', icon: 'BK', note: 'Job planner' },
-    { label: 'Geo', href: '/admin/locations/geo', icon: 'AN', note: 'Coverage intel' },
+    { label: 'Geo', href: '/admin/locations/geo', icon: 'GL', note: 'Coverage intel' },
     { label: 'Queue', href: '/admin/ai', icon: 'AI', note: 'Worker engine' },
     { label: 'Failed', href: '/admin/failed-leads', icon: 'RX', note: 'Recovery lane' },
     { label: 'Analytics', href: '/admin/analytics', icon: 'AN', note: 'Attribution' },

@@ -11,6 +11,18 @@ export default function GeoIntelligencePage() {
     const [localityLoading, setLocalityLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    // Stage 5 (C12): Add City form state
+    const [showAddCity, setShowAddCity] = useState(false);
+    const [cityForm, setCityForm] = useState({ city_name: '', state: '', population: '' });
+    const [cityFormError, setCityFormError] = useState(null);
+    const [cityFormSaving, setCityFormSaving] = useState(false);
+
+    // Stage 5 (C12): Add Locality form state
+    const [showAddLocality, setShowAddLocality] = useState(false);
+    const [localityForm, setLocalityForm] = useState({ locality_name: '', priority: 3 });
+    const [localityFormError, setLocalityFormError] = useState(null);
+    const [localityFormSaving, setLocalityFormSaving] = useState(false);
+
     const fetchCoverage = useCallback(async () => {
         try {
             const res = await fetch('/api/admin/locations/coverage');
@@ -47,7 +59,56 @@ export default function GeoIntelligencePage() {
 
     const selectCity = (city) => {
         setSelectedCity(city);
+        setShowAddLocality(false);
+        setLocalityFormError(null);
         fetchLocalities(city.id);
+    };
+
+    // Stage 5 (C12): Add City handler
+    const handleAddCity = async (e) => {
+        e.preventDefault();
+        setCityFormError(null);
+        setCityFormSaving(true);
+        try {
+            const res = await fetch('/api/admin/locations/cities', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(cityForm),
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            setCityForm({ city_name: '', state: '', population: '' });
+            setShowAddCity(false);
+            await fetchCoverage(); // Refresh city list
+        } catch (err) {
+            setCityFormError(err.message);
+        } finally {
+            setCityFormSaving(false);
+        }
+    };
+
+    // Stage 5 (C12): Add Locality handler
+    const handleAddLocality = async (e) => {
+        e.preventDefault();
+        if (!selectedCity) return;
+        setLocalityFormError(null);
+        setLocalityFormSaving(true);
+        try {
+            const res = await fetch('/api/admin/locations/localities', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...localityForm, city_id: selectedCity.id }),
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+            setLocalityForm({ locality_name: '', priority: 3 });
+            setShowAddLocality(false);
+            await fetchLocalities(selectedCity.id); // Refresh locality list
+        } catch (err) {
+            setLocalityFormError(err.message);
+        } finally {
+            setLocalityFormSaving(false);
+        }
     };
 
     const toggleLocality = async (localityId, currentActive) => {
@@ -116,11 +177,71 @@ export default function GeoIntelligencePage() {
                     <h1 className="text-2xl font-bold text-white">Geo Intelligence Dashboard</h1>
                     <p className="text-slate-400 text-sm mt-1">Bible Section 13 — Multi-City + Pincode Micro-Local Engine</p>
                 </div>
-                <div className="text-right">
-                    <div className="text-3xl font-bold text-white">{s.overall_coverage_pct || 0}%</div>
-                    <div className="text-xs text-slate-500 uppercase tracking-wider">Overall Coverage</div>
+                <div className="flex items-center gap-4">
+                    {/* Stage 5 (C12): Add City button — CEO can now add cities from admin */}
+                    <button
+                        onClick={() => setShowAddCity(v => !v)}
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-lg transition-colors"
+                    >
+                        + Add City
+                    </button>
+                    <div className="text-right">
+                        <div className="text-3xl font-bold text-white">{s.overall_coverage_pct || 0}%</div>
+                        <div className="text-xs text-slate-500 uppercase tracking-wider">Overall Coverage</div>
+                    </div>
                 </div>
             </div>
+
+            {/* Add City Form */}
+            {showAddCity && (
+                <div className="admin-panel rounded-2xl p-5 border border-emerald-500/30">
+                    <h3 className="text-white font-semibold mb-4">Add New City</h3>
+                    <form onSubmit={handleAddCity} className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                        <input
+                            type="text"
+                            placeholder="City name (e.g. New Delhi)"
+                            value={cityForm.city_name}
+                            onChange={e => setCityForm(f => ({ ...f, city_name: e.target.value }))}
+                            required
+                            className="admin-input col-span-1"
+                        />
+                        <input
+                            type="text"
+                            placeholder="State (e.g. Delhi)"
+                            value={cityForm.state}
+                            onChange={e => setCityForm(f => ({ ...f, state: e.target.value }))}
+                            required
+                            className="admin-input col-span-1"
+                        />
+                        <input
+                            type="number"
+                            placeholder="Population (optional)"
+                            value={cityForm.population}
+                            onChange={e => setCityForm(f => ({ ...f, population: e.target.value }))}
+                            className="admin-input col-span-1"
+                        />
+                        <div className="flex gap-2">
+                            <button
+                                type="submit"
+                                disabled={cityFormSaving}
+                                className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold py-2 px-4 rounded-lg disabled:opacity-50"
+                            >
+                                {cityFormSaving ? 'Saving...' : 'Save City'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => { setShowAddCity(false); setCityFormError(null); }}
+                                className="px-3 py-2 text-slate-400 hover:text-white text-sm rounded-lg"
+                            >
+                                ✕
+                            </button>
+                        </div>
+                    </form>
+                    {cityFormError && (
+                        <p className="text-red-400 text-sm mt-2">{cityFormError}</p>
+                    )}
+                </div>
+            )}
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -196,13 +317,66 @@ export default function GeoIntelligencePage() {
                                 </p>
                             )}
                         </div>
-                        <button
-                            onClick={() => { setSelectedCity(null); setLocalities([]); }}
-                            className="text-slate-400 hover:text-white text-sm"
-                        >
-                            ✕ Close
-                        </button>
+                        <div className="flex items-center gap-3">
+                            {/* Stage 5 (C12): Add Locality button */}
+                            <button
+                                onClick={() => setShowAddLocality(v => !v)}
+                                className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-lg transition-colors"
+                            >
+                                + Add Locality
+                            </button>
+                            <button
+                                onClick={() => { setSelectedCity(null); setLocalities([]); setShowAddLocality(false); }}
+                                className="text-slate-400 hover:text-white text-sm"
+                            >
+                                ✕ Close
+                            </button>
+                        </div>
                     </div>
+
+                    {/* Add Locality Form */}
+                    {showAddLocality && (
+                        <div className="mb-4 p-4 rounded-xl border border-blue-500/30 bg-blue-500/5">
+                            <form onSubmit={handleAddLocality} className="flex gap-3 flex-wrap">
+                                <input
+                                    type="text"
+                                    placeholder="Locality name (e.g. Karol Bagh)"
+                                    value={localityForm.locality_name}
+                                    onChange={e => setLocalityForm(f => ({ ...f, locality_name: e.target.value }))}
+                                    required
+                                    className="admin-input flex-1 min-w-[200px]"
+                                />
+                                <select
+                                    value={localityForm.priority}
+                                    onChange={e => setLocalityForm(f => ({ ...f, priority: parseInt(e.target.value) }))}
+                                    className="admin-input w-40"
+                                >
+                                    <option value={1}>P1 — Critical</option>
+                                    <option value={2}>P2 — High</option>
+                                    <option value={3}>P3 — Medium</option>
+                                    <option value={4}>P4 — Low</option>
+                                    <option value={5}>P5 — Expansion</option>
+                                </select>
+                                <button
+                                    type="submit"
+                                    disabled={localityFormSaving}
+                                    className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50"
+                                >
+                                    {localityFormSaving ? 'Saving...' : 'Save Locality'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => { setShowAddLocality(false); setLocalityFormError(null); }}
+                                    className="text-slate-400 hover:text-white text-sm px-2"
+                                >
+                                    ✕
+                                </button>
+                            </form>
+                            {localityFormError && (
+                                <p className="text-red-400 text-sm mt-2">{localityFormError}</p>
+                            )}
+                        </div>
+                    )}
 
                     {localityLoading ? (
                         <div className="text-slate-400 py-4">Loading localities...</div>

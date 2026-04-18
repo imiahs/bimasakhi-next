@@ -60,11 +60,14 @@ export default function CCCDraftEditor() {
             const res = await fetch('/api/admin/media/upload', { method: 'POST', body: formData });
             const data = await res.json();
             if (!data.success) throw new Error(data.error || 'Upload failed');
+            // Stage 1a fix (C5): data.file.file_url is the correct field from upload API response
+            const imageUrl = data.file?.file_url;
+            if (!imageUrl) throw new Error('Upload succeeded but no URL returned from server');
             // Save featured_image_url to draft
             const saveRes = await fetch(`/api/admin/ccc/drafts/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ featured_image_url: data.url })
+                body: JSON.stringify({ featured_image_url: imageUrl })
             });
             const saveData = await saveRes.json();
             if (!saveData.success) throw new Error(saveData.error);
