@@ -69,6 +69,36 @@ function parseAiJson(responseText) {
     return JSON.parse(clean.trim());
 }
 
+function calculateQualityScore(aiContent, wordCount) {
+    let score = 0;
+
+    // Word count scoring (max 3.0)
+    if (wordCount >= 1200) score += 3.0;
+    else if (wordCount >= 1000) score += 2.5;
+    else if (wordCount >= 800) score += 2.0;
+    else if (wordCount >= 600) score += 1.5;
+    else score += 1.0;
+
+    // FAQ quality (max 2.0)
+    const faqCount = Array.isArray(aiContent.faq_data) ? aiContent.faq_data.length : 0;
+    if (faqCount >= 5) score += 2.0;
+    else if (faqCount >= 3) score += 1.5;
+    else if (faqCount >= 1) score += 1.0;
+
+    // Field completeness (max 3.0)
+    const fields = ['hero_headline', 'meta_title', 'meta_description', 'cta_text', 'local_opportunity_description'];
+    const filledCount = fields.filter(f => aiContent[f] && aiContent[f].length > 10).length;
+    score += (filledCount / fields.length) * 3.0;
+
+    // Meta quality bonus (max 2.0)
+    const metaTitle = aiContent.meta_title || '';
+    const metaDesc = aiContent.meta_description || '';
+    if (metaTitle.length >= 30 && metaTitle.length <= 60) score += 1.0;
+    if (metaDesc.length >= 100 && metaDesc.length <= 160) score += 1.0;
+
+    return Math.min(Math.round(score * 10) / 10, 10.0);
+}
+
 function validateGeneratedContent(slug, aiContent, wordCount) {
     for (const key of REQUIRED_AI_KEYS) {
         if (!(key in aiContent)) {
@@ -282,6 +312,7 @@ async function handler(request) {
                 slug.replace(/lic-agent-in-/, '').replace(/-\d+$/, '').replace(/-/g, ' ') ||
                 'your city';
 
+            const aiStartTime = Date.now();
             const responseText = await generateAiContent(
                 getSystemPrompt(),
                 buildPagePrompt({
@@ -291,6 +322,7 @@ async function handler(request) {
                     audience: 'women aged 25-45 from middle-class families looking for financial independence'
                 })
             );
+            const generationTimeMs = Date.now() - aiStartTime;
 
             if (!responseText) {
                 throw new Error(`AI returned no content for ${slug}`);
@@ -348,6 +380,35 @@ async function handler(request) {
 
                 if (contentInsertRes.error) {
                     throw new Error(`location_content insert failed for ${slug}: ${contentInsertRes.error.message}`);
+                }
+
+                // Write draft for admin review (CCC Phase 2)
+                const qualityScore = calculateQualityScore(aiContent, realWordCount);
+                const { data: draftData, error: draftErr } = await supabase.from('content_drafts').insert({
+                    generation_queue_id: queueJob.id,
+                    page_index_id: newPage.id,
+                    city_id,
+                    locality_id,
+                    slug,
+                    page_title: aiContent.hero_headline || '',
+                    meta_title: aiContent.meta_title || '',
+                    meta_description: aiContent.meta_description || '',
+                    hero_headline: aiContent.hero_headline || '',
+                    body_content: mainContent,
+                    faq_data: aiContent.faq_data,
+                    cta_text: aiContent.cta_text || 'Apply Now',
+                    word_count: realWordCount,
+                    quality_score: qualityScore,
+                    generation_time_ms: generationTimeMs,
+                    ai_model: 'gemini-2.0-flash',
+                    status: 'draft'
+                }).select('id').single();
+
+                if (draftErr) {
+                    console.error(`[PageGen] content_drafts insert FAILED for ${slug}: ${draftErr.message} (code: ${draftErr.code})`);
+                    await writeGenerationLog(supabase, queueJob.id, 'draft_insert_failed', `Draft insert failed for ${slug}: ${draftErr.message}`);
+                } else {
+                    console.log(`[PAGEGEN SUCCESS] slug=${slug} draftId=${draftData?.id} words=${realWordCount} quality=${qualityScore} duration=${generationTimeMs}ms`);
                 }
 
                 if (realWordCount < 800) {

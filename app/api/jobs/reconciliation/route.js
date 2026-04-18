@@ -133,6 +133,26 @@ async function handler(request) {
         issues.push({ type: 'check_error', check: 'stuck_processing_contacts', error: e.message });
     }
 
+    // CHECK 6: Leads stuck in 'pending' for > 24 hours (no event dispatched or event lost)
+    try {
+        const pendingCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const { data: staleLeads } = await supabase
+            .from('leads')
+            .select('id, full_name, source, sync_status, created_at')
+            .eq('sync_status', 'pending')
+            .lt('created_at', pendingCutoff)
+            .limit(50);
+
+        if (staleLeads?.length) {
+            for (const lead of staleLeads) {
+                issues.push({ type: 'stale_pending', table: 'leads', id: lead.id, detail: `pending since ${lead.created_at}, source=${lead.source}` });
+                // FLAG ONLY — stale pending leads need manual investigation or event re-dispatch
+            }
+        }
+    } catch (e) {
+        issues.push({ type: 'check_error', check: 'stale_pending_leads', error: e.message });
+    }
+
     const duration = Date.now() - startTime;
 
     // Log reconciliation run
