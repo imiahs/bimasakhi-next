@@ -70,6 +70,7 @@ const NAV_LINKS = [
     { label: 'Dashboard', href: '/admin', icon: 'HQ', note: 'Mission control' },
     { label: 'CRM', href: '/admin/crm', icon: 'CR', note: 'Lead operations' },
     { label: 'Content', href: '/admin/ccc', icon: 'CC', note: 'Draft review' },
+    { label: 'Bulk', href: '/admin/ccc/bulk', icon: 'BK', note: 'Job planner' },
     { label: 'Queue', href: '/admin/ai', icon: 'AI', note: 'Worker engine' },
     { label: 'Failed', href: '/admin/failed-leads', icon: 'RX', note: 'Recovery lane' },
     { label: 'Analytics', href: '/admin/analytics', icon: 'AN', note: 'Attribution' },
