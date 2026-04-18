@@ -139,7 +139,7 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
             return NextResponse.json({ success: false, error: `Cannot edit a draft with status '${existing.status}'` }, { status: 400 });
         }
 
-        const allowedFields = ['page_title', 'meta_title', 'meta_description', 'hero_headline', 'body_content', 'faq_data', 'cta_text', 'review_notes', 'status'];
+        const allowedFields = ['page_title', 'meta_title', 'meta_description', 'hero_headline', 'body_content', 'faq_data', 'cta_text', 'review_notes', 'status', 'image_prompts', 'featured_image_url'];
         const updates = { updated_at: now };
 
         for (const key of allowedFields) {

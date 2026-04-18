@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai/generateContent';
 import { getSystemPrompt, buildPagePrompt } from '@/lib/ai/promptTemplates';
+import { generateImagePrompts } from '@/lib/ai/imagePrompts';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
 import crypto from 'crypto';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
@@ -384,6 +385,13 @@ async function handler(request) {
 
                 // Write draft for admin review (CCC Phase 2)
                 const qualityScore = calculateQualityScore(aiContent, realWordCount);
+
+                // Phase 3: Generate image prompts for the draft
+                const imagePrompts = generateImagePrompts(
+                    { city: cityName, locality: pageReq.locality_name || '', slug, content_type: content_level || 'local_service' },
+                    { hero_headline: aiContent.hero_headline || '', meta_title: aiContent.meta_title || '' }
+                );
+
                 const { data: draftData, error: draftErr } = await supabase.from('content_drafts').insert({
                     generation_queue_id: queueJob.id,
                     page_index_id: newPage.id,
@@ -401,6 +409,7 @@ async function handler(request) {
                     quality_score: qualityScore,
                     generation_time_ms: generationTimeMs,
                     ai_model: 'gemini-2.0-flash',
+                    image_prompts: imagePrompts,
                     status: 'draft'
                 }).select('id').single();
 

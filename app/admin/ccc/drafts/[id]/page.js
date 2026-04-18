@@ -14,6 +14,8 @@ export default function CCCDraftEditor() {
     const [success, setSuccess] = useState(null);
     const [rejectNotes, setRejectNotes] = useState('');
     const [showRejectModal, setShowRejectModal] = useState(false);
+    const [copiedPrompt, setCopiedPrompt] = useState(null);
+    const [uploading, setUploading] = useState(false);
 
     // Editable fields
     const [edits, setEdits] = useState({});
@@ -38,6 +40,42 @@ export default function CCCDraftEditor() {
     const getField = (field) => edits[field] !== undefined ? edits[field] : (draft?.[field] || '');
     const setField = (field, value) => setEdits(prev => ({ ...prev, [field]: value }));
     const hasEdits = Object.keys(edits).length > 0;
+
+    const copyToClipboard = async (text, key) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopiedPrompt(key);
+            setTimeout(() => setCopiedPrompt(null), 2000);
+        } catch { /* clipboard not available */ }
+    };
+
+    const handleImageUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setUploading(true);
+        setError(null);
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const res = await fetch('/api/admin/media/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Upload failed');
+            // Save featured_image_url to draft
+            const saveRes = await fetch(`/api/admin/ccc/drafts/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ featured_image_url: data.url })
+            });
+            const saveData = await saveRes.json();
+            if (!saveData.success) throw new Error(saveData.error);
+            setSuccess('Image uploaded and saved');
+            await fetchDraft();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const saveEdits = async () => {
         if (!hasEdits) return;
@@ -287,6 +325,73 @@ export default function CCCDraftEditor() {
                             View Live Page ↗
                         </a>
                     )}
+
+                    {/* Phase 3: Image Intelligence */}
+                    {draft.image_prompts && Object.keys(draft.image_prompts).length > 0 && (
+                        <div className="admin-panel rounded-2xl p-5">
+                            <h3 className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">🎨 Image Intelligence</h3>
+                            <div className="space-y-4 max-h-[500px] overflow-y-auto">
+                                {['hero', 'thumbnail', 'og'].map((imageType) => {
+                                    const prompts = draft.image_prompts[imageType];
+                                    if (!prompts) return null;
+                                    const typeLabels = { hero: 'Hero (1200×500)', thumbnail: 'Thumbnail (400×400)', og: 'OG Image (1200×630)' };
+                                    return (
+                                        <div key={imageType}>
+                                            <p className="text-[10px] uppercase tracking-wider text-emerald-400 font-semibold mb-2">{typeLabels[imageType]}</p>
+                                            <div className="space-y-2">
+                                                {['canva', 'adobe', 'imagen'].map((platform) => {
+                                                    const prompt = prompts[platform];
+                                                    if (!prompt) return null;
+                                                    const key = `${imageType}-${platform}`;
+                                                    const platformLabels = { canva: 'Canva', adobe: 'Adobe Firefly', imagen: 'Google Imagen' };
+                                                    return (
+                                                        <div key={key} className="bg-white/[0.02] border border-white/[0.06] rounded-lg p-2">
+                                                            <div className="flex items-center justify-between mb-1">
+                                                                <span className="text-[10px] font-medium text-slate-400">{platformLabels[platform]}</span>
+                                                                <button
+                                                                    onClick={() => copyToClipboard(prompt, key)}
+                                                                    className="text-[10px] px-2 py-0.5 rounded bg-white/[0.06] text-slate-400 hover:text-white hover:bg-white/[0.1] transition-colors"
+                                                                >
+                                                                    {copiedPrompt === key ? '✓ Copied' : 'Copy'}
+                                                                </button>
+                                                            </div>
+                                                            <p className="text-[10px] text-slate-500 leading-relaxed line-clamp-3">{prompt}</p>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Phase 3: Featured Image Upload */}
+                    <div className="admin-panel rounded-2xl p-5">
+                        <h3 className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">Featured Image</h3>
+                        {draft.featured_image_url ? (
+                            <div className="space-y-2">
+                                <img src={draft.featured_image_url} alt="Featured" className="w-full rounded-lg border border-white/[0.08]" />
+                                <p className="text-[10px] text-slate-500 font-mono truncate">{draft.featured_image_url}</p>
+                            </div>
+                        ) : (
+                            <p className="text-[11px] text-slate-500 mb-2">No image uploaded yet</p>
+                        )}
+                        {isEditable && (
+                            <label className="mt-2 block">
+                                <span className="sr-only">Upload featured image</span>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    disabled={uploading}
+                                    className="block w-full text-[11px] text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:font-medium file:bg-white/[0.06] file:text-slate-300 hover:file:bg-white/[0.1] disabled:opacity-50 mt-2"
+                                />
+                                {uploading && <p className="text-[10px] text-amber-400 mt-1">Uploading...</p>}
+                            </label>
+                        )}
+                    </div>
                 </div>
             </div>
 
