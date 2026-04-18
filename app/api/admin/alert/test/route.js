@@ -13,14 +13,15 @@
  * Response includes which channels were attempted and which delivered.
  */
 import { NextResponse } from 'next/server';
+import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export const POST = async (request) => {
+export const POST = withAdminAuth(async (request) => {
     return NextResponse.json({
         test: 'endpoint_hit',
         timestamp: new Date().toISOString(),
-        method: 'POST',
+        method: request.method,
         url: request.url
     });
-};
+});
