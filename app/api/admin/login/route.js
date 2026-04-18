@@ -23,7 +23,7 @@ export async function POST(request) {
         const baseTarget = crypto.randomUUID();
         const secret = new TextEncoder().encode(process.env.JWT_SECRET);
         
-        const token = await new SignJWT({ role: 'admin', sub: baseTarget })
+        const token = await new SignJWT({ role: 'super_admin', sub: baseTarget })
             .setProtectedHeader({ alg: 'HS256' })
             .setIssuedAt()
             .setExpirationTime('24h')

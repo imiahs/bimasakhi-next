@@ -29,10 +29,16 @@ export default function VendorHealthPage() {
         try {
             const res = await fetch('/api/admin/vendor-health', { credentials: 'include' });
             const json = await res.json();
-            setData(json);
+            if (res.ok && !json.error) {
+                setData(json);
+            } else {
+                setData(null);
+                console.error('Vendor health error:', json.error || `HTTP ${res.status}`);
+            }
             setLastRefresh(new Date());
         } catch (err) {
             console.error('Health fetch failed:', err);
+            setData(null);
         } finally {
             setLoading(false);
         }
