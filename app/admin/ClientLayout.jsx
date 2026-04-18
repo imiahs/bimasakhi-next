@@ -58,11 +58,18 @@ const icons = {
             <path d="M7 17H4a1 1 0 01-1-1V4a1 1 0 011-1h3M13 6l4 4-4 4M8 10h9" />
         </svg>
     ),
+    CC: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M4 4h12a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" />
+            <path d="M7 8h6M7 11h4" />
+        </svg>
+    ),
 };
 
 const NAV_LINKS = [
     { label: 'Dashboard', href: '/admin', icon: 'HQ', note: 'Mission control' },
     { label: 'CRM', href: '/admin/crm', icon: 'CR', note: 'Lead operations' },
+    { label: 'Content', href: '/admin/ccc', icon: 'CC', note: 'Draft review' },
     { label: 'Queue', href: '/admin/ai', icon: 'AI', note: 'Worker engine' },
     { label: 'Failed', href: '/admin/failed-leads', icon: 'RX', note: 'Recovery lane' },
     { label: 'Analytics', href: '/admin/analytics', icon: 'AN', note: 'Attribution' },
