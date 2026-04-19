@@ -33,6 +33,40 @@ export default function AuditLogPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
+    const [exporting, setExporting] = useState(false);
+
+    const handleExportCSV = async () => {
+        setExporting(true);
+        try {
+            const params = new URLSearchParams({ page: '1', limit: '10000' });
+            if (actionFilter) params.set('action', actionFilter);
+            if (searchTerm) params.set('search', searchTerm);
+            if (dateFrom) params.set('from', dateFrom);
+            if (dateTo) params.set('to', dateTo);
+            const res = await fetch(`/api/admin/audit-log?${params}`, { credentials: 'include' });
+            const json = await res.json();
+            if (!json.success || !json.data?.length) { alert('No data to export'); return; }
+            const headers = ['Date', 'Action', 'Resource', 'Admin', 'IP', 'Metadata'];
+            const escape = (v) => `"${String(v || '').replace(/"/g, '""')}"`;
+            const rows = json.data.map(l => [
+                new Date(l.created_at).toISOString(),
+                l.action, l.target_resource,
+                l.admin_email || l.admin_id || 'system',
+                l.ip_address || '',
+                JSON.stringify(l.metadata || {}),
+            ].map(escape).join(','));
+            const csv = [headers.join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `audit-log-${new Date().toISOString().slice(0,10)}.csv`;
+            a.click(); URL.revokeObjectURL(url);
+        } catch (err) {
+            alert('Export failed: ' + err.message);
+        } finally {
+            setExporting(false);
+        }
+    };
 
     const fetchLogs = useCallback(async () => {
         setLoading(true);
@@ -71,11 +105,20 @@ export default function AuditLogPage() {
                         Every admin action recorded — append-only, immutable
                     </p>
                 </div>
-                {pagination && (
-                    <span className="text-xs text-slate-500">
-                        {pagination.total} total entries
-                    </span>
-                )}
+                <div className="flex items-center gap-3">
+                    {pagination && (
+                        <span className="text-xs text-slate-500">
+                            {pagination.total} total entries
+                        </span>
+                    )}
+                    <button
+                        onClick={handleExportCSV}
+                        disabled={exporting}
+                        className="rounded-lg border border-emerald-500/30 bg-emerald-500/20 px-3 py-1.5 text-xs font-medium text-emerald-400 hover:bg-emerald-500/30 transition-colors disabled:opacity-50"
+                    >
+                        {exporting ? 'Exporting...' : '↓ Export CSV'}
+                    </button>
+                </div>
             </div>
 
             {error && (

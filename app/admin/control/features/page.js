@@ -42,13 +42,30 @@ function ToggleSwitch({ checked, onChange, restricted, disabled }) {
 
 function FlagRow({ flag, onToggle, updating }) {
     const isSafeMode = flag.key === 'safe_mode';
+    const [showHistory, setShowHistory] = useState(false);
+    const [history, setHistory] = useState([]);
+    const [historyLoading, setHistoryLoading] = useState(false);
+
+    const loadHistory = async () => {
+        if (showHistory) { setShowHistory(false); return; }
+        setShowHistory(true);
+        setHistoryLoading(true);
+        try {
+            const params = new URLSearchParams({ search: flag.key, limit: '10' });
+            const res = await fetch(`/api/admin/audit-log?${params}`, { credentials: 'include' });
+            const json = await res.json();
+            setHistory(json.success ? (json.data || []) : []);
+        } catch { setHistory([]); }
+        finally { setHistoryLoading(false); }
+    };
 
     return (
-        <div className={`flex items-center justify-between rounded-lg border px-4 py-3 transition-all ${
+        <div className={`rounded-lg border transition-all ${
             isSafeMode && flag.value
                 ? 'border-red-500/40 bg-red-500/10'
                 : 'border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04]'
         }`}>
+            <div className="flex items-center justify-between px-4 py-3">
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                     <span className={`text-sm font-medium ${isSafeMode && flag.value ? 'text-red-400' : 'text-white'}`}>
@@ -66,11 +83,16 @@ function FlagRow({ flag, onToggle, updating }) {
                     )}
                 </div>
                 <p className="mt-0.5 text-xs text-slate-500">{flag.description}</p>
-                {flag.last_changed_by && (
-                    <p className="mt-1 text-[10px] text-slate-600">
-                        Last changed by {flag.last_changed_by} at {new Date(flag.last_changed_at).toLocaleString()}
-                    </p>
-                )}
+                <div className="mt-1 flex items-center gap-3">
+                    {flag.last_changed_by && (
+                        <span className="text-[10px] text-slate-600">
+                            Last changed by {flag.last_changed_by} at {new Date(flag.last_changed_at).toLocaleString()}
+                        </span>
+                    )}
+                    <button onClick={loadHistory} className="text-[10px] text-blue-400 hover:text-blue-300">
+                        {showHistory ? 'Hide History' : 'History'}
+                    </button>
+                </div>
             </div>
             <div className="ml-4 flex items-center gap-3">
                 <span className={`text-xs font-mono ${flag.value ? 'text-emerald-400' : 'text-slate-500'}`}>
@@ -83,6 +105,26 @@ function FlagRow({ flag, onToggle, updating }) {
                     disabled={updating === flag.key}
                 />
             </div>
+            </div>
+            {showHistory && (
+                <div className="border-t border-white/[0.04] px-4 py-2">
+                    {historyLoading ? (
+                        <p className="text-[10px] text-slate-500">Loading...</p>
+                    ) : history.length === 0 ? (
+                        <p className="text-[10px] text-slate-500">No change history found</p>
+                    ) : (
+                        <div className="space-y-1 max-h-32 overflow-y-auto">
+                            {history.map((h, i) => (
+                                <div key={i} className="flex items-center gap-3 text-[10px]">
+                                    <span className="text-slate-600 font-mono w-32">{new Date(h.created_at).toLocaleString()}</span>
+                                    <span className="text-slate-400">{h.action}</span>
+                                    <span className="text-slate-500">{h.admin_email || h.admin_id || 'system'}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
