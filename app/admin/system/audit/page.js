@@ -30,12 +30,18 @@ export default function AuditLogPage() {
     const [pagination, setPagination] = useState(null);
     const [actionFilter, setActionFilter] = useState('');
     const [expanded, setExpanded] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [dateFrom, setDateFrom] = useState('');
+    const [dateTo, setDateTo] = useState('');
 
     const fetchLogs = useCallback(async () => {
         setLoading(true);
         try {
             const params = new URLSearchParams({ page: String(page), limit: '30' });
             if (actionFilter) params.set('action', actionFilter);
+            if (searchTerm) params.set('search', searchTerm);
+            if (dateFrom) params.set('from', dateFrom);
+            if (dateTo) params.set('to', dateTo);
 
             const res = await fetch(`/api/admin/audit-log?${params}`, { credentials: 'include' });
             const json = await res.json();
@@ -50,7 +56,7 @@ export default function AuditLogPage() {
         } finally {
             setLoading(false);
         }
-    }, [page, actionFilter]);
+    }, [page, actionFilter, searchTerm, dateFrom, dateTo]);
 
     useEffect(() => { fetchLogs(); }, [fetchLogs]);
 
@@ -79,7 +85,46 @@ export default function AuditLogPage() {
             )}
 
             {/* Filters */}
-            <div className="flex gap-2 flex-wrap">
+            <div className="space-y-3">
+                {/* Search + Date Range */}
+                <div className="flex gap-3 flex-wrap items-end">
+                    <div className="flex-1 min-w-[200px]">
+                        <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">Search</label>
+                        <input
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
+                            placeholder="Search by resource, email..."
+                            className="w-full px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-emerald-500/40"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">From</label>
+                        <input
+                            type="date"
+                            value={dateFrom}
+                            onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+                            className="px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-emerald-500/40"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">To</label>
+                        <input
+                            type="date"
+                            value={dateTo}
+                            onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+                            className="px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-emerald-500/40"
+                        />
+                    </div>
+                    {(searchTerm || dateFrom || dateTo) && (
+                        <button onClick={() => { setSearchTerm(''); setDateFrom(''); setDateTo(''); setPage(1); }} className="px-3 py-1.5 text-xs text-slate-400 hover:text-white">
+                            Clear
+                        </button>
+                    )}
+                </div>
+
+                {/* Action filters */}
+                <div className="flex gap-2 flex-wrap">
                 <button
                     onClick={() => { setActionFilter(''); setPage(1); }}
                     className={`rounded-full px-3 py-1 text-xs transition ${
@@ -99,6 +144,7 @@ export default function AuditLogPage() {
                         {a}
                     </button>
                 ))}
+                </div>
             </div>
 
             {/* Log List */}

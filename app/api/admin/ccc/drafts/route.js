@@ -55,3 +55,42 @@ export const GET = withAdminAuth(async (request) => {
         return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
     }
 });
+
+// POST /api/admin/ccc/drafts — Create a blank draft (Fix 2c)
+export const POST = withAdminAuth(async (request) => {
+    try {
+        const supabase = getServiceSupabase();
+        const body = await request.json();
+
+        if (body.action !== 'create_blank') {
+            return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
+        }
+
+        const slug = `new-page-${Date.now()}`;
+        const { data, error } = await supabase
+            .from('content_drafts')
+            .insert({
+                slug,
+                page_title: 'New Page',
+                hero_headline: 'New Page',
+                meta_title: '',
+                meta_description: '',
+                body_content: '',
+                status: 'draft',
+                word_count: 0,
+                ai_model: 'manual',
+            })
+            .select('id, slug')
+            .single();
+
+        if (error) {
+            console.error('[CCC Drafts] Create error:', error);
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ success: true, draft: data });
+    } catch (err) {
+        console.error('[CCC Drafts] POST error:', err);
+        return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+    }
+});

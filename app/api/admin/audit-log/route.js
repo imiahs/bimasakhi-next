@@ -16,6 +16,9 @@ export const GET = withAdminAuth(async (request) => {
         const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10)));
         const actionFilter = searchParams.get('action');
         const emailFilter = searchParams.get('email');
+        const searchFilter = searchParams.get('search');
+        const dateFrom = searchParams.get('from');
+        const dateTo = searchParams.get('to');
         const offset = (page - 1) * limit;
 
         const supabase = getServiceSupabase();
@@ -31,6 +34,15 @@ export const GET = withAdminAuth(async (request) => {
         }
         if (emailFilter) {
             query = query.eq('admin_email', emailFilter);
+        }
+        if (searchFilter) {
+            query = query.or(`target_resource.ilike.%${searchFilter}%,admin_email.ilike.%${searchFilter}%`);
+        }
+        if (dateFrom) {
+            query = query.gte('created_at', `${dateFrom}T00:00:00.000Z`);
+        }
+        if (dateTo) {
+            query = query.lte('created_at', `${dateTo}T23:59:59.999Z`);
         }
 
         const { data, error, count } = await query;

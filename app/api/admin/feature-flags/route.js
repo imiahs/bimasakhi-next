@@ -52,3 +52,57 @@ export const POST = withAdminAuth(async (request, user) => {
         return NextResponse.json({ success: false, error: err.message }, { status: 500 });
     }
 }, ['super_admin', 'editor']);
+
+/**
+ * PUT /api/admin/feature-flags
+ * Fix 6a: Create a new feature flag. Super_admin only.
+ * Body: { key, label, description, category, value, restricted }
+ */
+export const PUT = withAdminAuth(async (request, user) => {
+    try {
+        const body = await request.json();
+        const { key, label, description, category, value, restricted } = body;
+
+        if (!key || !label) {
+            return NextResponse.json({ error: 'key and label are required' }, { status: 400 });
+        }
+
+        if (!/^[a-z0-9_]+$/.test(key)) {
+            return NextResponse.json({ error: 'key must be lowercase alphanumeric with underscores only' }, { status: 400 });
+        }
+
+        const validCategories = ['generation', 'publishing', 'leads', 'automation', 'system'];
+        if (category && !validCategories.includes(category)) {
+            return NextResponse.json({ error: `Invalid category. Must be one of: ${validCategories.join(', ')}` }, { status: 400 });
+        }
+
+        const { getServiceSupabase } = await import('@/utils/supabaseClientSingleton');
+        const supabase = getServiceSupabase();
+
+        const { data, error } = await supabase
+            .from('feature_flags')
+            .insert({
+                key,
+                label,
+                description: description || '',
+                category: category || 'system',
+                value: Boolean(value),
+                restricted: Boolean(restricted),
+                last_changed_by: user.email || user.id,
+                last_changed_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+
+        if (error) {
+            if (error.code === '23505') {
+                return NextResponse.json({ error: `Flag with key "${key}" already exists` }, { status: 409 });
+            }
+            throw error;
+        }
+
+        return NextResponse.json({ success: true, data });
+    } catch (err) {
+        return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    }
+}, ['super_admin']);

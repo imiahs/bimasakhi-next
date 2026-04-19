@@ -21,7 +21,7 @@ export const GET = withAdminAuth(async (request, user) => {
     }
 });
 
-// DELETE: Remove a media file (Database record)
+// DELETE: Remove a media file (Storage file + Database record)
 export const DELETE = withAdminAuth(async (request, user) => {
     try {
         const supabase = getServiceSupabase();
@@ -30,9 +30,32 @@ export const DELETE = withAdminAuth(async (request, user) => {
 
         if (!id) return NextResponse.json({ error: 'Missing media ID' }, { status: 400 });
 
-        // Note: Ideally, we would also delete the file from the local filesystem / S3 here
-        // using fs.unlink for local files inside /public/uploads/
+        // Fix 1e: Fetch the record first to get the storage path
+        const { data: record, error: fetchError } = await supabase
+            .from('media_files')
+            .select('file_url')
+            .eq('id', id)
+            .single();
 
+        if (fetchError || !record) {
+            return NextResponse.json({ error: 'Media record not found' }, { status: 404 });
+        }
+
+        // Delete from Supabase Storage if URL contains the storage bucket path
+        if (record.file_url) {
+            try {
+                // Extract storage path from full URL: .../storage/v1/object/public/media/filename.webp
+                const url = new URL(record.file_url);
+                const pathMatch = url.pathname.match(/\/storage\/v1\/object\/public\/media\/(.+)/);
+                if (pathMatch) {
+                    await supabase.storage.from('media').remove([pathMatch[1]]);
+                }
+            } catch (storageErr) {
+                console.warn('Storage file delete warning (non-blocking):', storageErr.message);
+            }
+        }
+
+        // Delete the database record
         const { error } = await supabase
             .from('media_files')
             .delete()
@@ -40,7 +63,7 @@ export const DELETE = withAdminAuth(async (request, user) => {
 
         if (error) throw error;
 
-        return NextResponse.json({ success: true, message: 'Media record deleted' });
+        return NextResponse.json({ success: true, message: 'Media file and record deleted' });
     } catch (error) {
         console.error('API /admin/media DELETE error:', error);
         return NextResponse.json({ error: 'Failed to delete media' }, { status: 500 });

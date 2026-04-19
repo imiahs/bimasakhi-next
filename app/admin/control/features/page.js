@@ -94,6 +94,9 @@ export default function FeatureControlPage() {
     const [error, setError] = useState(null);
     const [confirmSafe, setConfirmSafe] = useState(false);
     const [pendingSafeValue, setPendingSafeValue] = useState(null);
+    const [showCreate, setShowCreate] = useState(false);
+    const [creating, setCreating] = useState(false);
+    const [newFlag, setNewFlag] = useState({ key: '', label: '', description: '', category: 'system', value: false, restricted: false });
 
     const fetchFlags = useCallback(async () => {
         try {
@@ -154,6 +157,33 @@ export default function FeatureControlPage() {
         }
     };
 
+    const handleCreateFlag = async (e) => {
+        e.preventDefault();
+        if (!newFlag.key || !newFlag.label) return;
+        setCreating(true);
+        setError(null);
+        try {
+            const res = await fetch('/api/admin/feature-flags', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(newFlag),
+            });
+            const json = await res.json();
+            if (json.success) {
+                setShowCreate(false);
+                setNewFlag({ key: '', label: '', description: '', category: 'system', value: false, restricted: false });
+                await fetchFlags();
+            } else {
+                setError(json.error || 'Failed to create flag');
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setCreating(false);
+        }
+    };
+
     // Group by category
     const grouped = flags.reduce((acc, flag) => {
         const cat = flag.category || 'other';
@@ -188,6 +218,12 @@ export default function FeatureControlPage() {
                     <span className="rounded-full border border-white/[0.06] bg-white/[0.03] px-3 py-1.5 text-xs text-slate-400">
                         {onCount}/{totalCount} active
                     </span>
+                    <button
+                        onClick={() => setShowCreate(!showCreate)}
+                        className="rounded-lg border border-blue-500/30 bg-blue-500/20 px-3 py-1.5 text-xs font-medium text-blue-400 hover:bg-blue-500/30 transition-colors"
+                    >
+                        + New Flag
+                    </button>
                 </div>
             </div>
 
@@ -244,6 +280,40 @@ export default function FeatureControlPage() {
             )}
 
             {/* Feature Flag Categories */}
+            {showCreate && (
+                <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-5 space-y-4">
+                    <h3 className="text-sm font-semibold text-white">Create New Feature Flag</h3>
+                    <form onSubmit={handleCreateFlag} className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">Key *</label>
+                            <input type="text" required value={newFlag.key} onChange={(e) => setNewFlag(f => ({ ...f, key: e.target.value.replace(/[^a-z0-9_]/g, '') }))} placeholder="my_feature_enabled" className="w-full px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-blue-500/40" />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">Label *</label>
+                            <input type="text" required value={newFlag.label} onChange={(e) => setNewFlag(f => ({ ...f, label: e.target.value }))} placeholder="My Feature" className="w-full px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-blue-500/40" />
+                        </div>
+                        <div className="col-span-2">
+                            <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">Description</label>
+                            <input type="text" value={newFlag.description} onChange={(e) => setNewFlag(f => ({ ...f, description: e.target.value }))} placeholder="What this flag controls" className="w-full px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-blue-500/40" />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] uppercase tracking-wider text-slate-500 mb-1">Category</label>
+                            <select value={newFlag.category} onChange={(e) => setNewFlag(f => ({ ...f, category: e.target.value }))} className="w-full px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-blue-500/40">
+                                {Object.entries(CATEGORY_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                            </select>
+                        </div>
+                        <div className="flex items-end gap-4">
+                            <label className="flex items-center gap-2 text-xs text-slate-400">
+                                <input type="checkbox" checked={newFlag.restricted} onChange={(e) => setNewFlag(f => ({ ...f, restricted: e.target.checked }))} /> Restricted
+                            </label>
+                            <button type="submit" disabled={creating} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                                {creating ? 'Creating...' : 'Create Flag'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
             {Object.entries(CATEGORY_LABELS).map(([cat, label]) => {
                 const catFlags = grouped[cat];
                 if (!catFlags || catFlags.length === 0) return null;

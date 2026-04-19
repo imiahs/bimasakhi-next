@@ -36,7 +36,11 @@ function result(name, ok, detail) {
 async function authFetch(path, opts = {}) {
   return fetch(`${BASE}${path}`, {
     ...opts,
-    headers: { ...(opts.headers || {}), ...(cookie ? { Cookie: cookie } : {}) },
+    headers: { 
+      ...(opts.headers || {}), 
+      ...(cookie ? { Cookie: cookie } : {}),
+      'Origin': BASE,
+    },
     redirect: opts.redirect || 'follow',
   });
 }

@@ -375,12 +375,24 @@ export default function CCCDraftEditor() {
                         <h3 className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">Featured Image</h3>
                         {draft.featured_image_url ? (
                             <div className="space-y-2">
-                                <img src={draft.featured_image_url} alt="Featured" className="w-full rounded-lg border border-white/[0.08]" />
+                                <img src={draft.featured_image_url} alt={getField('featured_image_alt') || draft.hero_headline || 'Featured image'} className="w-full rounded-lg border border-white/[0.08]" />
                                 <p className="text-[10px] text-slate-500 font-mono truncate">{draft.featured_image_url}</p>
                             </div>
                         ) : (
                             <p className="text-[11px] text-slate-500 mb-2">No image uploaded yet</p>
                         )}
+                        {/* Fix 1c: Alt text field for SEO and accessibility */}
+                        <label className="block mt-2">
+                            <span className="text-[10px] uppercase tracking-wider text-slate-500">Alt Text (SEO)</span>
+                            <input
+                                type="text"
+                                value={getField('featured_image_alt')}
+                                onChange={(e) => setField('featured_image_alt', e.target.value)}
+                                disabled={!isEditable}
+                                placeholder="Describe the image for SEO and accessibility"
+                                className="w-full mt-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-emerald-500/40 disabled:opacity-50"
+                            />
+                        </label>
                         {isEditable && (
                             <label className="mt-2 block">
                                 <span className="sr-only">Upload featured image</span>

@@ -24,7 +24,7 @@ async function logObservability(supabase, level, message, userId) {
         await supabase.from('observability_logs').insert({
             level,
             message,
-            user_id: userId,
+            source: userId || 'alert_test_endpoint',
             created_at: new Date().toISOString(),
         });
     } catch (e) {

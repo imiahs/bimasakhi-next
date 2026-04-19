@@ -7,6 +7,7 @@ const MediaContent = () => {
     const [mediaItems, setMediaItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchMedia();
@@ -89,7 +90,7 @@ const MediaContent = () => {
 
             <div className="blog-toolbar">
                 <div className="leads-search">
-                    <input type="text" placeholder="Search media..." />
+                    <input type="text" placeholder="Search media..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
                 <div style={{ position: 'relative' }}>
                     <button className="btn-upload" disabled={uploading}>
@@ -109,7 +110,9 @@ const MediaContent = () => {
                 <p>Loading media library...</p>
             ) : (
                 <div className="media-grid">
-                    {mediaItems.map(item => (
+                    {mediaItems
+                        .filter(item => !searchTerm || item.file_name?.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .map(item => (
                         <div key={item.id} className="media-card">
                             <div className="media-thumbnail">
                                 <img src={item.file_url} alt={item.file_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
