@@ -10,6 +10,7 @@ import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 import { enqueuePageGeneration } from '@/lib/queue/publisher';
 import { checkSafeMode, isSystemEnabled } from '@/lib/featureFlags';
+import { isValidUUID } from '@/lib/observability';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +18,9 @@ export const dynamic = 'force-dynamic';
 export const GET = withAdminAuth(async (request, user, { params }) => {
     try {
         const { id } = await params;
+        if (!isValidUUID(id)) {
+            return NextResponse.json({ success: false, error: 'Invalid job ID format' }, { status: 400 });
+        }
         const supabase = getServiceSupabase();
 
         const { data, error } = await supabase
@@ -52,6 +56,9 @@ export const GET = withAdminAuth(async (request, user, { params }) => {
 export const PATCH = withAdminAuth(async (request, user, { params }) => {
     try {
         const { id } = await params;
+        if (!isValidUUID(id)) {
+            return NextResponse.json({ success: false, error: 'Invalid job ID format' }, { status: 400 });
+        }
         const supabase = getServiceSupabase();
         const { action } = await request.json();
 

@@ -30,7 +30,17 @@ export const POST = withAdminAuth(async (request, user) => {
         let skippedCount = 0;
 
         for (const row of dataset) {
-            if (!row.city_name || !row.locality_name || !row.pincode) continue;
+            if (!row.city_name || !row.locality_name || !row.pincode) {
+                skippedCount++;
+                continue;
+            }
+
+            // Validate pincode format (Indian pincode: 6 digits)
+            const pincodeStr = String(row.pincode).trim();
+            if (!/^\d{6}$/.test(pincodeStr)) {
+                skippedCount++;
+                continue;
+            }
 
             const citySlug = generateSlug(row.city_name);
             const localitySlug = generateSlug(row.locality_name);

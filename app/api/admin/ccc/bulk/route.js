@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { validateUUIDArray } from '@/lib/observability';
 
 export const dynamic = 'force-dynamic';
 
@@ -69,10 +70,32 @@ export const POST = withAdminAuth(async (request, user) => {
             );
         }
 
-        // Calculate total pages based on targeting
-        let totalPages = 0;
+        // Validate UUID arrays before DB queries (Stabilization: 400 not 500)
         const selectedCityIds = Array.isArray(city_ids) ? city_ids : [];
         const selectedLocalityIds = Array.isArray(locality_ids) ? locality_ids : [];
+
+        if (selectedCityIds.length > 0) {
+            const cityValidation = validateUUIDArray(selectedCityIds);
+            if (!cityValidation.valid) {
+                return NextResponse.json(
+                    { success: false, error: `Invalid city_ids: ${cityValidation.invalid.join(', ')}` },
+                    { status: 400 }
+                );
+            }
+        }
+
+        if (selectedLocalityIds.length > 0) {
+            const localityValidation = validateUUIDArray(selectedLocalityIds);
+            if (!localityValidation.valid) {
+                return NextResponse.json(
+                    { success: false, error: `Invalid locality_ids: ${localityValidation.invalid.join(', ')}` },
+                    { status: 400 }
+                );
+            }
+        }
+
+        // Calculate total pages based on targeting
+        let totalPages = 0;
 
         if (selectedLocalityIds.length > 0) {
             // Specific localities selected — count those
