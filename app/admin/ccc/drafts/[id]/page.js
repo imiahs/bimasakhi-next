@@ -14,6 +14,8 @@ export default function CCCDraftEditor() {
     const [success, setSuccess] = useState(null);
     const [rejectNotes, setRejectNotes] = useState('');
     const [showRejectModal, setShowRejectModal] = useState(false);
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [scheduleDate, setScheduleDate] = useState('');
     const [copiedPrompt, setCopiedPrompt] = useState(null);
     const [uploading, setUploading] = useState(false);
 
@@ -147,6 +149,9 @@ export default function CCCDraftEditor() {
     const isEditable = draft.status === 'draft' || draft.status === 'review';
     const canApprove = draft.status === 'draft' || draft.status === 'review';
     const canReject = draft.status === 'draft' || draft.status === 'review';
+    const canUnpublish = draft.status === 'published' || draft.status === 'approved';
+    const canArchive = draft.status !== 'archived';
+    const canSchedule = draft.status === 'draft' || draft.status === 'review';
 
     return (
         <div className="space-y-6">
@@ -159,6 +164,11 @@ export default function CCCDraftEditor() {
                         <p className="text-xs text-slate-500 font-mono mt-1">/{draft.slug}</p>
                     </div>
                     <StatusBadge status={draft.status} size="md" />
+                    {draft.scheduled_publish_at && (
+                        <span className="text-[10px] px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">
+                            Scheduled: {new Date(draft.scheduled_publish_at).toLocaleString('en-IN')}
+                        </span>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -171,6 +181,15 @@ export default function CCCDraftEditor() {
                             {saving ? 'Saving...' : 'Save Changes'}
                         </button>
                     )}
+                    {canSchedule && (
+                        <button
+                            onClick={() => setShowScheduleModal(true)}
+                            disabled={!!actionLoading}
+                            className="px-4 py-2 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-sm font-medium hover:bg-amber-500/30 transition-colors disabled:opacity-50"
+                        >
+                            ⏰ Schedule
+                        </button>
+                    )}
                     {canReject && (
                         <button
                             onClick={() => setShowRejectModal(true)}
@@ -180,13 +199,31 @@ export default function CCCDraftEditor() {
                             Reject
                         </button>
                     )}
+                    {canUnpublish && (
+                        <button
+                            onClick={() => handleAction('unpublish')}
+                            disabled={!!actionLoading}
+                            className="px-4 py-2 bg-orange-500/20 text-orange-400 border border-orange-500/30 rounded-lg text-sm font-medium hover:bg-orange-500/30 transition-colors disabled:opacity-50"
+                        >
+                            {actionLoading === 'unpublish' ? 'Unpublishing...' : '⏸ Unpublish'}
+                        </button>
+                    )}
+                    {canArchive && (
+                        <button
+                            onClick={() => handleAction('archive')}
+                            disabled={!!actionLoading}
+                            className="px-4 py-2 bg-slate-500/20 text-slate-400 border border-slate-500/30 rounded-lg text-sm font-medium hover:bg-slate-500/30 transition-colors disabled:opacity-50"
+                        >
+                            {actionLoading === 'archive' ? 'Archiving...' : '📦 Archive'}
+                        </button>
+                    )}
                     {canApprove && (
                         <button
                             onClick={() => handleAction('approve')}
                             disabled={!!actionLoading}
                             className="px-4 py-2 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-sm font-medium hover:bg-emerald-500/30 transition-colors disabled:opacity-50"
                         >
-                            {actionLoading === 'approve' ? 'Approving...' : '✓ Approve & Publish'}
+                            {actionLoading === 'approve' ? 'Publishing...' : '✓ Approve & Publish'}
                         </button>
                     )}
                 </div>
@@ -318,7 +355,7 @@ export default function CCCDraftEditor() {
                         </div>
                     )}
 
-                    {draft.status === 'approved' && (
+                    {(draft.status === 'approved' || draft.status === 'published') && (
                         <a
                             href={`/${draft.slug}`}
                             target="_blank"
@@ -436,6 +473,48 @@ export default function CCCDraftEditor() {
                                 className="px-4 py-2 bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-sm font-medium hover:bg-rose-500/30 disabled:opacity-50"
                             >
                                 {actionLoading === 'reject' ? 'Rejecting...' : 'Confirm Reject'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Schedule Publish Modal */}
+            {showScheduleModal && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="admin-panel rounded-2xl p-6 w-full max-w-md space-y-4">
+                        <h3 className="text-lg font-semibold text-white">Schedule Publishing</h3>
+                        <p className="text-sm text-slate-400">Choose when this draft should go live automatically.</p>
+                        <input
+                            type="datetime-local"
+                            value={scheduleDate}
+                            onChange={(e) => setScheduleDate(e.target.value)}
+                            min={new Date().toISOString().slice(0, 16)}
+                            className="w-full px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-amber-500/40"
+                        />
+                        {draft.scheduled_publish_at && (
+                            <p className="text-[11px] text-amber-400">
+                                Currently scheduled: {new Date(draft.scheduled_publish_at).toLocaleString('en-IN')}
+                            </p>
+                        )}
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => { setShowScheduleModal(false); setScheduleDate(''); }}
+                                className="px-4 py-2 text-sm text-slate-400 hover:text-white"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (!scheduleDate) return;
+                                    handleAction('schedule', { scheduled_publish_at: new Date(scheduleDate).toISOString() });
+                                    setShowScheduleModal(false);
+                                    setScheduleDate('');
+                                }}
+                                disabled={!scheduleDate || !!actionLoading}
+                                className="px-4 py-2 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-sm font-medium hover:bg-amber-500/30 disabled:opacity-50"
+                            >
+                                {actionLoading === 'schedule' ? 'Scheduling...' : 'Confirm Schedule'}
                             </button>
                         </div>
                     </div>
