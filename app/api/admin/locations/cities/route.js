@@ -14,7 +14,7 @@ export const GET = withAdminAuth(async () => {
         const supabase = getServiceSupabase();
         const { data, error } = await supabase
             .from('cities')
-            .select('id, city_name, slug, population, active, state, country')
+            .select('id, city_name, slug, population, active, state')
             .order('city_name', { ascending: true });
 
         if (error) {
@@ -66,7 +66,6 @@ export const POST = withAdminAuth(async (request, user) => {
                 city_name: city_name.trim(),
                 slug,
                 state: state.trim(),
-                country: 'India',
                 population: population ? parseInt(population) : null,
                 active,
             })

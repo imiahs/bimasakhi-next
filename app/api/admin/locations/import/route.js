@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 // Helper to generate a basic slug
@@ -18,13 +18,14 @@ export const POST = withAdminAuth(async (request, user) => {
     }
 
     try {
-        const body = await req.json();
+        const body = await request.json();
         const { dataset } = body; // Expecting an array of objects: { city_name, state, locality_name, pincode }
 
         if (!dataset || !Array.isArray(dataset)) {
             return NextResponse.json({ error: 'Invalid payload. Expected JSON array of locations.' }, { status: 400 });
         }
 
+        const supabase = getServiceSupabase();
         let importedCount = 0;
         let skippedCount = 0;
 

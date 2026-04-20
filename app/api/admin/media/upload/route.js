@@ -18,12 +18,22 @@ const STORAGE_BUCKET = 'media';
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_MIME_PREFIXES = ['image/'];
 
+async function ensureBucketExists(supabase) {
+    const { data: buckets } = await supabase.storage.listBuckets();
+    if (buckets && !buckets.find(b => b.name === STORAGE_BUCKET)) {
+        await supabase.storage.createBucket(STORAGE_BUCKET, { public: true });
+    }
+}
+
 export const POST = withAdminAuth(async (request, user) => {
     const supabase = getServiceSupabase();
     let webpName = null;
     let thumbName = null;
 
     try {
+        // Auto-create storage bucket if it doesn't exist
+        await ensureBucketExists(supabase);
+
         const formData = await request.formData();
         const file = formData.get('file');
 

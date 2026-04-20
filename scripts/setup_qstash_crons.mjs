@@ -30,6 +30,12 @@ const CRONS = [
         cron: '*/5 * * * *',
         description: 'Alert and runbook evaluation every 5 minutes',
     },
+    {
+        name: 'scheduled-publish',
+        url: `${BASE_URL}/api/jobs/scheduled-publish`,
+        cron: '0 * * * *',
+        description: 'Publish scheduled content drafts every hour',
+    },
 ];
 
 async function listSchedules() {

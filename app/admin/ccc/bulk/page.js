@@ -13,6 +13,8 @@ const STATUS_COLORS = {
 export default function BulkPlannerPage() {
     const [jobs, setJobs] = useState([]);
     const [cities, setCities] = useState([]);
+    const [availableLocalities, setAvailableLocalities] = useState([]);
+    const [localitiesLoading, setLocalitiesLoading] = useState(false);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [acting, setActing] = useState(null);
@@ -24,6 +26,7 @@ export default function BulkPlannerPage() {
         intent_type: 'local_service',
         scope: 'locality',
         city_ids: [],
+        locality_ids: [],
         base_keyword: 'LIC agent',
         keyword_variations: '',
         content_type: 'local_service',
@@ -61,6 +64,28 @@ export default function BulkPlannerPage() {
         fetchCities();
     }, [fetchJobs, fetchCities]);
 
+    // Fetch localities when selected cities change
+    useEffect(() => {
+        if (form.city_ids.length === 0 || form.scope !== 'locality') {
+            setAvailableLocalities([]);
+            return;
+        }
+        const fetchLocalities = async () => {
+            setLocalitiesLoading(true);
+            try {
+                const allLocalities = [];
+                for (const cityId of form.city_ids) {
+                    const res = await fetch(`/api/admin/locations/localities?city_id=${cityId}`, { credentials: 'include' });
+                    const json = await res.json();
+                    if (json.success) allLocalities.push(...(json.data || []));
+                }
+                setAvailableLocalities(allLocalities);
+            } catch { }
+            setLocalitiesLoading(false);
+        };
+        fetchLocalities();
+    }, [form.city_ids, form.scope]);
+
     const handleCreateJob = async () => {
         setActing('create');
         try {
@@ -80,7 +105,7 @@ export default function BulkPlannerPage() {
                 setShowForm(false);
                 setForm({
                     name: '', description: '', intent_type: 'local_service', scope: 'locality',
-                    city_ids: [], base_keyword: 'LIC agent', keyword_variations: '',
+                    city_ids: [], locality_ids: [], base_keyword: 'LIC agent', keyword_variations: '',
                     content_type: 'local_service', auto_approve_threshold: 8.0,
                     require_review_below: 6.0, daily_publish_limit: 20, generation_per_hour_cap: 50,
                 });
@@ -121,12 +146,30 @@ export default function BulkPlannerPage() {
     };
 
     const toggleCity = (cityId) => {
+        setForm(prev => {
+            const newCityIds = prev.city_ids.includes(cityId)
+                ? prev.city_ids.filter(id => id !== cityId)
+                : [...prev.city_ids, cityId];
+            // Clear locality selections when cities change
+            return { ...prev, city_ids: newCityIds, locality_ids: [] };
+        });
+    };
+
+    const toggleLocality = (localityId) => {
         setForm(prev => ({
             ...prev,
-            city_ids: prev.city_ids.includes(cityId)
-                ? prev.city_ids.filter(id => id !== cityId)
-                : [...prev.city_ids, cityId],
+            locality_ids: prev.locality_ids.includes(localityId)
+                ? prev.locality_ids.filter(id => id !== localityId)
+                : [...prev.locality_ids, localityId],
         }));
+    };
+
+    const selectAllLocalities = () => {
+        setForm(prev => ({ ...prev, locality_ids: availableLocalities.map(l => l.id) }));
+    };
+
+    const clearAllLocalities = () => {
+        setForm(prev => ({ ...prev, locality_ids: [] }));
     };
 
     if (loading) {
@@ -198,6 +241,19 @@ export default function BulkPlannerPage() {
                             </select>
                         </div>
 
+                        {/* Scope */}
+                        <div>
+                            <label style={{ fontSize: 12, color: '#9ca3af', display: 'block', marginBottom: 4 }}>Scope *</label>
+                            <select
+                                value={form.scope}
+                                onChange={e => setForm(p => ({ ...p, scope: e.target.value, locality_ids: [] }))}
+                                style={{ width: '100%', padding: '8px 12px', background: '#0f172a', border: '1px solid #334155', borderRadius: 6, color: '#e2e8f0', fontSize: 14 }}
+                            >
+                                <option value="city">City-level pages</option>
+                                <option value="locality">Locality-level pages</option>
+                            </select>
+                        </div>
+
                         {/* Base Keyword */}
                         <div>
                             <label style={{ fontSize: 12, color: '#9ca3af', display: 'block', marginBottom: 4 }}>Base Keyword *</label>
@@ -244,6 +300,50 @@ export default function BulkPlannerPage() {
                                         </button>
                                     ))}
                                 </div>
+                            </div>
+                        )}
+
+                        {/* Locality Selector — appears when scope=locality and cities are selected */}
+                        {form.scope === 'locality' && form.city_ids.length > 0 && (
+                            <div style={{ gridColumn: '1 / -1' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                                    <label style={{ fontSize: 12, color: '#9ca3af' }}>
+                                        Target Localities (leave empty for all in selected cities)
+                                    </label>
+                                    {availableLocalities.length > 0 && (
+                                        <div style={{ display: 'flex', gap: 8 }}>
+                                            <button onClick={selectAllLocalities} style={{ fontSize: 11, color: '#60a5fa', background: 'none', border: 'none', cursor: 'pointer' }}>Select All</button>
+                                            <button onClick={clearAllLocalities} style={{ fontSize: 11, color: '#9ca3af', background: 'none', border: 'none', cursor: 'pointer' }}>Clear</button>
+                                        </div>
+                                    )}
+                                </div>
+                                {localitiesLoading ? (
+                                    <div style={{ fontSize: 12, color: '#6b7280', padding: 8 }}>Loading localities...</div>
+                                ) : availableLocalities.length === 0 ? (
+                                    <div style={{ fontSize: 12, color: '#6b7280', padding: 8 }}>No localities found for selected cities.</div>
+                                ) : (
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, maxHeight: 200, overflowY: 'auto', padding: 4 }}>
+                                        {availableLocalities.map(l => (
+                                            <button
+                                                key={l.id}
+                                                onClick={() => toggleLocality(l.id)}
+                                                style={{
+                                                    padding: '3px 10px', borderRadius: 4, fontSize: 12, cursor: 'pointer',
+                                                    border: form.locality_ids.includes(l.id) ? '1px solid #22c55e' : '1px solid #334155',
+                                                    background: form.locality_ids.includes(l.id) ? '#22c55e22' : '#0f172a',
+                                                    color: form.locality_ids.includes(l.id) ? '#4ade80' : '#6b7280',
+                                                }}
+                                            >
+                                                {l.locality_name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                                {form.locality_ids.length > 0 && (
+                                    <div style={{ fontSize: 11, color: '#60a5fa', marginTop: 4 }}>
+                                        {form.locality_ids.length} of {availableLocalities.length} localities selected
+                                    </div>
+                                )}
                             </div>
                         )}
 

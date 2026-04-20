@@ -23,6 +23,12 @@ export default function GeoIntelligencePage() {
     const [localityFormError, setLocalityFormError] = useState(null);
     const [localityFormSaving, setLocalityFormSaving] = useState(false);
 
+    // Pincode import state
+    const [showPincodeImport, setShowPincodeImport] = useState(false);
+    const [pincodeCSV, setPincodeCSV] = useState('');
+    const [pincodeImporting, setPincodeImporting] = useState(false);
+    const [pincodeImportResult, setPincodeImportResult] = useState(null);
+
     const fetchCoverage = useCallback(async () => {
         try {
             const res = await fetch('/api/admin/locations/coverage');
@@ -148,6 +154,70 @@ export default function GeoIntelligencePage() {
         }
     };
 
+    // Pincode CSV import handler
+    const handlePincodeImport = async () => {
+        if (!pincodeCSV.trim()) return;
+        setPincodeImporting(true);
+        setPincodeImportResult(null);
+        try {
+            const lines = pincodeCSV.trim().split('\n').map(l => l.trim()).filter(Boolean);
+            const dataset = [];
+            for (const line of lines) {
+                const parts = line.split(',').map(p => p.trim());
+                if (parts.length >= 3) {
+                    dataset.push({
+                        city_name: parts[0],
+                        state: parts.length >= 4 ? parts[1] : '',
+                        locality_name: parts.length >= 4 ? parts[2] : parts[1],
+                        pincode: parts.length >= 4 ? parts[3] : parts[2],
+                    });
+                }
+            }
+            if (dataset.length === 0) {
+                setPincodeImportResult({ success: false, message: 'No valid rows found. Use format: city_name,state,locality_name,pincode' });
+                return;
+            }
+            const res = await fetch('/api/admin/locations/import', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dataset }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setPincodeImportResult({ success: true, message: data.message });
+                setPincodeCSV('');
+                await fetchCoverage();
+            } else {
+                setPincodeImportResult({ success: false, message: data.error });
+            }
+        } catch (err) {
+            setPincodeImportResult({ success: false, message: err.message });
+        } finally {
+            setPincodeImporting(false);
+        }
+    };
+
+    // CSV file upload handler
+    const handleCSVFileUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const text = ev.target?.result;
+            if (typeof text === 'string') {
+                // Skip header row if it looks like a header
+                const lines = text.split('\n');
+                const firstLine = lines[0]?.toLowerCase() || '';
+                if (firstLine.includes('city') || firstLine.includes('pincode') || firstLine.includes('locality')) {
+                    setPincodeCSV(lines.slice(1).join('\n'));
+                } else {
+                    setPincodeCSV(text);
+                }
+            }
+        };
+        reader.readAsText(file);
+    };
+
     if (loading) {
         return (
             <div className="p-6">
@@ -184,6 +254,12 @@ export default function GeoIntelligencePage() {
                         className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-lg transition-colors"
                     >
                         + Add City
+                    </button>
+                    <button
+                        onClick={() => setShowPincodeImport(v => !v)}
+                        className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold rounded-lg transition-colors"
+                    >
+                        📦 Import Pincodes
                     </button>
                     <div className="text-right">
                         <div className="text-3xl font-bold text-white">{s.overall_coverage_pct || 0}%</div>
@@ -240,6 +316,51 @@ export default function GeoIntelligencePage() {
                     {cityFormError && (
                         <p className="text-red-400 text-sm mt-2">{cityFormError}</p>
                     )}
+                </div>
+            )}
+
+            {/* Import Pincodes Form */}
+            {showPincodeImport && (
+                <div className="admin-panel rounded-2xl p-5 border border-purple-500/30">
+                    <h3 className="text-white font-semibold mb-2">Import Pincodes</h3>
+                    <p className="text-slate-400 text-xs mb-3">
+                        CSV format: <code className="text-purple-400">city_name,state,locality_name,pincode</code> (one per line). Upload a CSV file or paste data below.
+                    </p>
+                    <div className="mb-3">
+                        <input
+                            type="file"
+                            accept=".csv,.txt"
+                            onChange={handleCSVFileUpload}
+                            className="text-sm text-slate-400 file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-500"
+                        />
+                    </div>
+                    <textarea
+                        value={pincodeCSV}
+                        onChange={e => setPincodeCSV(e.target.value)}
+                        placeholder="Delhi,Delhi,Karol Bagh,110005&#10;Delhi,Delhi,Lajpat Nagar,110024&#10;Mumbai,Maharashtra,Andheri,400058"
+                        rows={6}
+                        className="admin-input w-full font-mono text-xs"
+                    />
+                    <div className="flex items-center gap-3 mt-3">
+                        <button
+                            onClick={handlePincodeImport}
+                            disabled={pincodeImporting || !pincodeCSV.trim()}
+                            className="bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold px-5 py-2 rounded-lg disabled:opacity-50"
+                        >
+                            {pincodeImporting ? 'Importing...' : `Import ${pincodeCSV.trim() ? pincodeCSV.trim().split('\n').filter(Boolean).length : 0} rows`}
+                        </button>
+                        <button
+                            onClick={() => { setShowPincodeImport(false); setPincodeImportResult(null); }}
+                            className="text-slate-400 hover:text-white text-sm"
+                        >
+                            ✕ Close
+                        </button>
+                        {pincodeImportResult && (
+                            <span className={`text-sm ${pincodeImportResult.success ? 'text-green-400' : 'text-red-400'}`}>
+                                {pincodeImportResult.message}
+                            </span>
+                        )}
+                    </div>
                 </div>
             )}
 

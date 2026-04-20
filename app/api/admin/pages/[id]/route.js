@@ -4,7 +4,7 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
-export const GET = withAdminAuth(async (request, user) => {
+export const GET = withAdminAuth(async (request, user, { params }) => {
     try {
         const { id } = await params;
         const supabaseUrl = process.env.SUPABASE_URL;
@@ -31,7 +31,7 @@ export const GET = withAdminAuth(async (request, user) => {
     }
 });
 
-export const PUT = withAdminAuth(async (request, user) => {
+export const PUT = withAdminAuth(async (request, user, { params }) => {
     try {
         const { id } = await params;
         const reqData = await request.json();
