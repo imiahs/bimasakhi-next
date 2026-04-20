@@ -51,6 +51,7 @@ export const POST = withAdminAuth(async (request, user) => {
             intent_type,
             scope,
             city_ids,
+            locality_ids,
             base_keyword,
             keyword_variations,
             content_type,
@@ -71,8 +72,12 @@ export const POST = withAdminAuth(async (request, user) => {
         // Calculate total pages based on targeting
         let totalPages = 0;
         const selectedCityIds = Array.isArray(city_ids) ? city_ids : [];
+        const selectedLocalityIds = Array.isArray(locality_ids) ? locality_ids : [];
 
-        if (selectedCityIds.length > 0) {
+        if (selectedLocalityIds.length > 0) {
+            // Specific localities selected — count those
+            totalPages = selectedLocalityIds.length;
+        } else if (selectedCityIds.length > 0) {
             // Count localities in selected cities
             const { count } = await supabase
                 .from('localities')
@@ -97,6 +102,7 @@ export const POST = withAdminAuth(async (request, user) => {
                 intent_type,
                 scope: scope || 'locality',
                 city_ids: selectedCityIds,
+                locality_ids: selectedLocalityIds,
                 base_keyword,
                 keyword_variations: keyword_variations || [],
                 content_type: content_type || 'local_service',
@@ -115,13 +121,13 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ success: false, error: error.message }, { status: 500 });
         }
 
-        // Audit log
-        await supabase.from('observability_logs').insert({
+        // Audit log (fire-and-forget)
+        supabase.from('observability_logs').insert({
             level: 'INFO',
             message: `Bulk job created: "${name}" — ${totalPages} pages`,
             source: 'bulk_planner',
             metadata: { job_id: data.id, total_pages: totalPages, created_by: user?.email },
-        }).catch(() => {});
+        }).then(() => {}).catch(() => {});
 
         return NextResponse.json({ success: true, data });
     } catch (err) {

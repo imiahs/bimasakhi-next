@@ -36,6 +36,12 @@ const CRONS = [
         cron: '0 * * * *',
         description: 'Publish scheduled content drafts every hour',
     },
+    {
+        name: 'morning-brief',
+        url: `${BASE_URL}/api/jobs/morning-brief`,
+        cron: '0 2 * * *',
+        description: 'CEO Morning Brief at 7:30 AM IST (2:00 AM UTC)',
+    },
 ];
 
 async function listSchedules() {
