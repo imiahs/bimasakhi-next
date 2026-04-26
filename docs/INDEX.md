@@ -10,17 +10,17 @@
 
 | Metric | Value |
 |---|---|
-| **System Score** | 64/100 (targeted C21 live proof added; full-system score not re-scored) |
+| **System Score** | 64/100 (targeted Rule 16 and C33 live proof added; full-system score not re-scored) |
 | **Build Status** | PASS - local production build rerun succeeded on 2026-04-26 |
-| **System Mode** | NORMAL from /api/status; DEGRADED from /api/admin/system/health; control-plane truth still split |
+| **System Mode** | NORMAL control mode; HEALTHY on /api/status, /api/admin/system/health, and /api/admin/vendor-health after cron recovery |
 | **Open Critical Issues** | 0 |
-| **Open High Issues** | 3 (C24, C25, C32) |
-| **Open Medium Issues** | 6 (C26-C30, C33) |
+| **Open High Issues** | 0 |
+| **Open Medium Issues** | 3 (C26, C29, C30) |
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
-| **Last Audit** | 2026-04-26 (C21 live navigation proof; C23, C31, and C22 proof remain valid) |
-| **Last Deployment** | 2026-04-26 commit `d5af4d5` (C21 navigation parity restore) |
-| **Last Test Run** | 2026-04-26 local build + deployed C21 navigation live proof |
-| **Current CTO Decision** | Runtime Truth Stabilization remains active. C21, C22, C31, and C23 are resolved live. Next locked order is C24 degraded system health, then C25 direct Supabase REST audit access. |
+| **Last Audit** | 2026-04-26 (Rule 16 transactional integrity live proof and C33 page-index truth live proof; earlier C21, C22, C23, C24, C25, C31, and C32 proof remain valid) |
+| **Last Deployment** | 2026-04-26 Vercel production deploy from the live working tree for Rule 16 transactional integrity and C33 page-index truth fix; aliased to `https://bimasakhi.com` |
+| **Last Test Run** | 2026-04-26 local build + predeploy gate + deployed Rule 16/C33 live proof |
+| **Current CTO Decision** | Runtime Truth Stabilization closed C21, C22, C23, C24, C25, C31, C32, Rule 16, and C33 in live scope. Next locked order is C26 delivery-log proof, then C29 and C30. |
 
 ---
 ## Phase Status
@@ -33,11 +33,11 @@
 | Phase 1 | Rendering Gap (Catch-all Route + SEO) | R->A | COMPLETE | 90% | 10% | Rendering/live route proof exists. C23 sitemap localhost leakage is now closed live. |
 | Phase 2 | Draft System (Pagegen + CCC) | R->A | COMPLETE | 80% | 20% | Draft create/edit/read/publish path verified live on April 26. |
 | Phase 3 | Image Intelligence | R->A | PARTIAL | 70% | 30% | Built: prompt tools, media schema/code, live media list read. Left: live upload proof, storage cleanup proof, alt text end-to-end, media governance. |
-| Phase 4 | Bulk Job Planner | B | PARTIAL | 65% | 35% | Built: bulk UI/API, job listing, QStash publish capability. Left: runtime job completion proof, pincode targeting proof, Rule 16 rollback/idempotency, duplicate check proof. |
+| Phase 4 | Bulk Job Planner | B | PARTIAL | 65% | 35% | Built: bulk UI/API, job listing, QStash publish capability, and Rule 16 transactional bulk start/idempotency/outbox recovery proof. Left: runtime multi-page completion depth, pincode targeting proof, and duplicate check proof. |
 | Phase 5 | Geo Intelligence | B | PARTIAL | 70% | 30% | Built: geo admin surfaces, city/locality/pincode code, live city read. Left: full CRUD, pincode import proof, generation trigger per area, CEO-complete controls. |
-| Phase 6 | Publish Pipeline | B | PARTIAL | 75% | 25% | Built: draft create/edit/publish/live URL render verified and sitemap canonical URL fix proven live. Left: transactional publish, scheduled publish proof, status-model drift cleanup, Rule 16 proof. |
+| Phase 6 | Publish Pipeline | B | PARTIAL | 75% | 25% | Built: draft create/edit/publish/live URL render verified, sitemap canonical URL fix proven live, Rule 16 transactional publish proof, and C33 page-index truth cleanup. Left: scheduled publish runtime execution proof and broader phase scope. |
 | Phase 14 | Super Admin Panel - Control Tower | R->A | PARTIAL | 65% | 35% | Built: login, feature flags, workflow config, logs/audit, safe mode. C22 live schema repair is applied and production `/api/admin/users` now returns 200. C31 is now resolved live: password-only login fails, email+password returns a real `admin_users` session for `admin@bimasakhi.com`, and browser login succeeds to `/admin`. Code Visibility, Version History, and full RBAC lifecycle still remain. |
-| Phase 21 | External System Governance | R->A | PARTIAL | 65% | 35% | Built: status route, health routes, QStash publish, Zoho test lead. Left: health degraded, dead event-retry/vendor-health-check crons, QStash delivery proof, WhatsApp/Email/Cliq failover, alert SLA proof. |
+| Phase 21 | External System Governance | R->A | PARTIAL | 65% | 35% | Built: status route, unified health truth, live event-retry/vendor-health-check recovery, QStash publish, Zoho test lead. Left: QStash delivery proof depth, WhatsApp/Email/Cliq failover, alert SLA proof. |
 | Phase 22 | System Memory & Traceability | A | PARTIAL | 75% | 25% | Built: docs structure, audit reports, audit scripts/results. Left: stale log cleanup, cross-links, ongoing one-truth enforcement. |
 | Phase 23 | Communication System | A | NOT STARTED / PARTIAL SCAFFOLD | 20% | 80% | Full WhatsApp/Telegram/Email/Cliq communication system not complete; some alert/integration pieces exist. |
 | Phase 24 | Media Management | A | PARTIAL | 40% | 60% | Media list code/live read exists; full upload/governance proof missing. |
@@ -58,13 +58,23 @@
 | Phase 19 | Universal Lead Hub | C | NOT STARTED / DB SCAFFOLD | 15% | 85% | Schema exists; full hub not proven. |
 | Phase 20 | System Intelligence Engine | D | NOT STARTED / DB SCAFFOLD | 10% | 90% | Schema/code scaffold only; full engine not proven. |
 
-> **CTO Note:** Runtime Truth Stabilization remains the only correct path. C21, C22, C31, and C23 are now closed live. Phase 25 is no longer BLOCKED, but it is still PARTIAL because admin sidebar/footer consolidation is not done. Next locked fixes are C24 then C25.
+> **CTO Note:** Runtime Truth Stabilization remains the only correct path. C21, C22, C23, C24, C25, C31, C32, Rule 16, and C33 are now closed live in scope. Phase 25 is no longer BLOCKED, but it is still PARTIAL because admin sidebar/footer consolidation is not done. The remaining medium gaps are C26, C29, and C30.
 
 ---
 ## Recent Activity
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | FIX | C33 resolved live: `page_index` truth was split into publication `status` and indexing `indexing_status`, legacy values were migrated and blocked at the DB layer, and public readers, sitemaps, and admin metrics now use one canonical model. | RESOLVED | [fix-015](fixes/fix_015_c33_page_index_truth_fix.md) |
+| 2026-04-26 | AUDIT | Targeted C33 live proof captured: direct DB showed `legacy_status_rows_after = 0` and `conflicting_rows_after = 0`, the database rejected `status='active'`, draft rows returned `404` and stayed out of sitemaps, and `/api/admin/seo/index-health` matched direct DB truth. | CURRENT TRUTH | [c33-page-index-live-proof](audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md) |
+| 2026-04-26 | FIX | Rule 16 resolved live in requested scope: DB-owned transactional RPCs now enforce atomic multi-table publish, bulk, pagegen, and admin write paths, idempotent replays reuse committed state, and the bulk outbox path has live recovery proof. | RESOLVED | [fix-014](fixes/fix_014_rule16_transactional_integrity.md) |
+| 2026-04-26 | AUDIT | Targeted Rule 16 live proof captured: direct Postgres failure simulation passed publish DB-error/kill/socket-drop, bulk DB-error/kill/idempotent replay/outbox recovery, pagegen persistence rollback, and admin multi-table rollback checks; post-proof residue verification returned zero remaining rule16 audit rows. | CURRENT TRUTH | [rule16-live-proof](audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md) |
+| 2026-04-26 | FIX | C32 resolved live: runtime control keys were moved to `system_control_config`, legacy duplicate keys were removed from `feature_flags`, the duplicate path was blocked at the DB/API layers, and production admin control surfaces now report one source of truth. | RESOLVED | [fix-013](fixes/fix_013_c32_control_plane_truth_unification.md) |
+| 2026-04-26 | AUDIT | Targeted C32 live proof captured: direct REST returned the canonical control row from `system_control_config`, `feature_flags` returned zero rows for reserved runtime keys, `/api/admin/feature-flags` returned those keys with `source=system_control_config`, and `/api/admin/system/health` reported `conflicting_states_possible: false`. | CURRENT TRUTH | [c32-control-plane-live-proof](audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md) |
+| 2026-04-26 | FIX | C25 resolved live: the broken PowerShell direct REST transport was replaced for Supabase probes, and a read-only external audit now reads critical production tables directly with the service role key outside the app layer. | RESOLVED | [fix-012](fixes/fix_012_c25_direct_supabase_rest_audit_access.md) |
+| 2026-04-26 | AUDIT | Targeted C25 live proof captured: direct read-only Supabase REST queries returned `200` for `system_control_config`, `feature_flags`, `system_alerts`, `job_dead_letters`, and `event_store` from the workstation without using the app proxy. | CURRENT TRUTH | [c25-direct-rest-proof](audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md) |
+| 2026-04-26 | FIX | C24 resolved live: commit `fcffe61` deployed, `/api/status`, `/api/admin/system/health`, and `/api/admin/vendor-health` now share one healthy verdict, required cron schedules were restored, and the live admin health UI renders `HEALTHY`. | RESOLVED | [fix-011](fixes/fix_011_c24_system_health_truth_unification.md) |
+| 2026-04-26 | AUDIT | Targeted C24 live proof captured: pre-fix hard failure was `dead_required_crons:event-retry,vendor-health-check`; post-fix proof showed all three health surfaces `HEALTHY` with only a historical DLQ warning. | CURRENT TRUTH | [c24-system-health-live-proof](audits/audit-2026-04-26-c24-system-health-live-proof.md) |
 | 2026-04-26 | FIX | C21 resolved live: commit `d5af4d5` deployed, production `/api/navigation` now returns 200 from `navigation_menu`, `/admin/navigation` controls the live public header, and the navbar reflects DB changes after reload. | RESOLVED | [fix-010](fixes/fix_010_c21_navigation_parity_restore.md) |
 | 2026-04-26 | AUDIT | Targeted C21 live proof captured: `/api/status` reported `d5af4d5`, `/api/navigation` returned a DB-backed tree, admin browser save changed `About` -> `About Us`, and the public navbar reflected the change before revert. | CURRENT TRUTH | [c21-navigation-live-proof](audits/audit-2026-04-26-c21-navigation-live-proof.md) |
 | 2026-04-26 | FIX | C23 resolved live: commit `16bb781` deployed, sitemap root/index URLs are canonical, and representative shard routes no longer emit `http://localhost:3000`. | RESOLVED | [fix-009](fixes/fix_009_c23_sitemap_canonical_site_url.md) |
@@ -120,21 +130,20 @@
 
 | # | Severity | Issue | Owner | Status | Link |
 |---|---|---|---|---|---|
-| C24 | **HIGH** | `/api/admin/system/health` reports `overall_health: DEGRADED` | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
-| C25 | **HIGH** | Direct `.env.local` Supabase REST audit access returned 401; direct DB script proof blocked | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
 | C26 | **MEDIUM** | QStash publish accepted, but delivery log proof was partial/not found immediately | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
-| C27 | **MEDIUM** | Phase 6 publish path works but multi-table publish is not transaction-proven under Rule 16 | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
-| C28 | **MEDIUM** | Phase 4 bulk flow has rollback/idempotency and duplicate-check proof gaps | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
 | C29 | **MEDIUM** | Phase 14 Code Visibility Layer 4 is not implemented/proven | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
 | C30 | **MEDIUM** | Phase 14 Content Version History is not implemented/proven | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
-| C32 | **HIGH** | Runtime control truth is split across `system_control_config` and `feature_flags`, causing conflicting flag state | CTO | OPEN | [cto-live-proof-refresh](audits/audit-2026-04-26-cto-live-proof-refresh.md) |
-| C33 | **MEDIUM** | `page_index` metrics disagree because code mixes `status='active'` and `status='published'` | CTO | OPEN | [cto-live-proof-refresh](audits/audit-2026-04-26-cto-live-proof-refresh.md) |
 
 ---
 ## Audit History
 
 | Date | Score | Key Findings | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | 64/100 unchanged | C33 live proof: `page_index` now uses canonical publication `status` plus `indexing_status`, legacy status rows and conflicting rows both returned `0`, draft rows returned `404`, and admin SEO metrics matched direct DB truth. | CURRENT TRUTH FOR C33 | [c33-page-index-live-proof](audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md) |
+| 2026-04-26 | 64/100 unchanged | Rule 16 live proof: publish/bulk/pagegen/admin multi-table writes are now transaction-proven under forced DB failure, client kill, network interruption, idempotent replay, and outbox recovery checks. | CURRENT TRUTH FOR RULE 16 | [rule16-live-proof](audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md) |
+| 2026-04-26 | 64/100 unchanged | C32 live proof: canonical runtime control keys now exist only in `system_control_config`, `feature_flags` returns zero rows for those reserved keys, admin feature flags return `source=system_control_config`, and admin system health reports `conflicting_states_possible: false`. | CURRENT TRUTH FOR C32 | [c32-control-plane-live-proof](audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md) |
+| 2026-04-26 | 64/100 unchanged | C25 live proof: the service role key now reads production Supabase REST directly outside the app layer, and a read-only audit returned `200` for `system_control_config`, `feature_flags`, `system_alerts`, `job_dead_letters`, and `event_store`. | CURRENT TRUTH FOR C25 | [c25-direct-rest-proof](audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md) |
+| 2026-04-26 | 64/100 unchanged | C24 live proof: version `fcffe61` is live, `/api/status` and `/api/admin/system/health` both report `HEALTHY`, `event-retry` and `vendor-health-check` are healthy after schedule recovery, and the authenticated browser health page renders `HEALTHY`. | CURRENT TRUTH FOR C24 | [c24-system-health-live-proof](audits/audit-2026-04-26-c24-system-health-live-proof.md) |
 | 2026-04-26 | 64/100 unchanged | C21 live proof: `/api/status` served `d5af4d5`, production `/api/navigation` returned 200 from `navigation_menu`, `/admin/navigation` loaded live, and an admin save changed the public navbar before the label was reverted. | CURRENT TRUTH FOR C21 | [c21-navigation-live-proof](audits/audit-2026-04-26-c21-navigation-live-proof.md) |
 | 2026-04-26 | 64/100 unchanged | C23 live proof: `/api/status` served `16bb781`, `/sitemap.xml` and `/sitemap-index.xml` emitted canonical `https://bimasakhi.com` URLs, and representative shard routes contained no `http://localhost:3000`. | CURRENT TRUTH FOR C23 | [c23-sitemap-live-proof](audits/audit-2026-04-26-c23-sitemap-live-proof.md) |
 | 2026-04-26 | 64/100 unchanged | C31 live proof: `/api/status` served `7335ece`, password-only login failed with `400`, email+password returned `200`, session payload resolved to `admin@bimasakhi.com`, and browser login reached `/admin`. | CURRENT TRUTH FOR C31 | [c31-rbac-live-proof](audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md) |
@@ -151,6 +160,11 @@
 
 | Date | Fix | Bible Ref | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | C33 page-index truth fix | Section 8, Section 10-12, Section 40 | RESOLVED LIVE | [fix-015](fixes/fix_015_c33_page_index_truth_fix.md) |
+| 2026-04-26 | Rule 16 transactional integrity enforcement | Rule 16, Section 10-12, Section 32, Section 40 | RESOLVED LIVE | [fix-014](fixes/fix_014_rule16_transactional_integrity.md) |
+| 2026-04-26 | C32 control-plane truth unification | Section 32, Section 39, Section 40 | RESOLVED LIVE | [fix-013](fixes/fix_013_c32_control_plane_truth_unification.md) |
+| 2026-04-26 | C25 direct Supabase REST audit access repair | Section 39, Section 40 | RESOLVED LIVE | [fix-012](fixes/fix_012_c25_direct_supabase_rest_audit_access.md) |
+| 2026-04-26 | C24 system health truth unification and cron recovery | Section 39, Section 40 | RESOLVED LIVE | [fix-011](fixes/fix_011_c24_system_health_truth_unification.md) |
 | 2026-04-26 | C21 production navigation parity restore | Section 45, Section 40 | RESOLVED LIVE | [fix-010](fixes/fix_010_c21_navigation_parity_restore.md) |
 | 2026-04-26 | C23 sitemap canonical URL fix | Section 8, Section 40 | RESOLVED LIVE | [fix-009](fixes/fix_009_c23_sitemap_canonical_site_url.md) |
 | 2026-04-26 | C31 RBAC cutover and legacy shared-password removal | Section 32, Section 40 | RESOLVED LIVE | [fix-008](fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md) |
@@ -186,6 +200,10 @@
 
 | Date | Migration | Status | Link |
 |---|---|---|---|
+| 2026-04-26 | 20260426031000_rule16_bulk_admin_atomicity.sql | EXECUTED | [migration-2026-04-26-rule16-bulk-admin-atomicity.md](migrations/migration-2026-04-26-rule16-bulk-admin-atomicity.md) |
+| 2026-04-26 | 20260426030500_c33_page_index_truth_fix.sql | EXECUTED | [migration-2026-04-26-c33-page-index-truth-fix.md](migrations/migration-2026-04-26-c33-page-index-truth-fix.md) |
+| 2026-04-26 | 20260426030000_rule16_publish_pipeline_atomicity.sql | EXECUTED | [migration-2026-04-26-rule16-publish-pipeline-atomicity.md](migrations/migration-2026-04-26-rule16-publish-pipeline-atomicity.md) |
+| 2026-04-26 | 20260426020000_c32_control_plane_truth_unification.sql | EXECUTED | [migration-2026-04-26-c32-control-plane-truth-unification.md](migrations/migration-2026-04-26-c32-control-plane-truth-unification.md) |
 | 2026-04-18 | 040_geo_intelligence.sql (pincode_areas + city coverage columns + locality seeding) | EXECUTED | [migration-040-geo-intelligence.md](migrations/migration-040-geo-intelligence.md) |
 | 2026-04-18 | 039_bulk_job_planner.sql (bulk_generation_jobs + content_drafts.bulk_job_id) | EXECUTED | [migration-039-bulk-job-planner.md](migrations/migration-039-bulk-job-planner.md) |
 | 2026-04-18 | 038_external_system_governance.sql (sla_snapshots, alert_deliveries, vendor_contracts) | EXECUTED | [migration-038-external-governance.md](migrations/migration-038-external-governance.md) |

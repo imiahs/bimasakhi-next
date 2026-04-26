@@ -8017,55 +8017,53 @@ You should not need a developer to:
 
 **UI:** Toggle switch per feature, with current status indicator (green = ON, red = OFF, yellow = degraded).
 
-**Database Table: `system_control_config`**
+**Canonical Runtime Control Source: `system_control_config` (singleton row)**
 
 ```sql
 CREATE TABLE system_control_config (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    key TEXT UNIQUE NOT NULL,          -- 'pagegen_enabled'
-    label TEXT NOT NULL,               -- 'Page Generation (Pagegen)'
-    description TEXT,                  -- 'Controls whether new pages can be generated via AI'
-    category TEXT NOT NULL,            -- 'generation' | 'publishing' | 'leads' | 'automation' | 'system'
-    value BOOLEAN DEFAULT TRUE,
-    restricted BOOLEAN DEFAULT FALSE,  -- if true, only super-admin can toggle
-    last_changed_by TEXT,
-    last_changed_at TIMESTAMPTZ DEFAULT NOW(),
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    singleton_key BOOLEAN UNIQUE NOT NULL DEFAULT TRUE,
+    system_mode TEXT DEFAULT 'normal',
+    safe_mode BOOLEAN NOT NULL DEFAULT FALSE,
+    ai_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    queue_paused BOOLEAN NOT NULL DEFAULT TRUE,
+    crm_auto_routing BOOLEAN NOT NULL DEFAULT FALSE,
+    followup_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    pagegen_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    bulk_generation_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    batch_size INTEGER NOT NULL DEFAULT 5,
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT system_control_config_singleton CHECK (singleton_key = TRUE)
 );
 ```
 
-**Feature Flags to Control (initial list):**
+**Canonical runtime controls:**
 
-| Key | Label | Category | Default |
-|-----|-------|----------|---------|
-| `pagegen_enabled` | Page Generation (AI) | generation | ON |
-| `bulk_generation_enabled` | Bulk Job Planner | generation | ON |
-| `auto_publish_enabled` | Auto-Publish Approved Pages | publishing | OFF |
-| `sitemap_drip_enabled` | Sitemap Drip (50/day cap) | publishing | ON |
-| `lead_capture_enabled` | Lead Form Capture | leads | ON |
-| `download_gate_enabled` | Download Lead Gate | leads | ON |
-| `whatsapp_alerts_enabled` | WhatsApp Lead Alerts | automation | ON |
-| `email_sequences_enabled` | Zoho Email Drip Sequences | automation | ON |
-| `lead_scoring_enabled` | Automatic Lead Scoring | leads | ON |
-| `bilingual_generation_enabled` | Hindi Content Generation | generation | ON |
-| `social_auto_draft_enabled` | Social Post Auto-Draft | automation | OFF |
-| `agent_personalization_enabled` | Agent Card on Pages | publishing | ON |
-| `gsc_sync_enabled` | GSC Performance Data Sync | system | ON |
-| `ai_pattern_analyzer_enabled` | Bi-weekly AI Insights Job | system | ON |
-| `safe_mode` | 🔴 SAFE MODE (system pause) | system | OFF |
+| Key | Purpose | Category | Default |
+|-----|---------|----------|---------|
+| `safe_mode` | Global emergency pause | system | OFF |
+| `pagegen_enabled` | Page generation worker guard | generation | ON |
+| `bulk_generation_enabled` | Bulk planner worker guard | generation | ON |
+| `ai_enabled` | AI execution gate | automation | OFF |
+| `queue_paused` | Queue dispatch pause | automation | ON |
+| `crm_auto_routing` | CRM automation gate | leads | OFF |
+| `followup_enabled` | Follow-up worker gate | leads | OFF |
+| `system_mode` | Normal / degraded / emergency mode | system | `normal` |
+
+**Non-canonical product toggles** remain in `feature_flags`, but after C32 the database forbids `safe_mode`, `pagegen_enabled`, and `bulk_generation_enabled` from existing there.
 
 **How it works in code:**
 
 ```javascript
 // At the start of any togglable system:
-const config = await getSystemConfig('pagegen_enabled');
-if (!config?.value) {
-  return Response.json({ skipped: true, reason: 'pagegen_enabled is OFF' });
+const enabled = await isSystemEnabled('pagegen_enabled');
+if (!enabled) {
+  return Response.json({ skipped: true, reason: 'pagegen_enabled or safe_mode' });
 }
 // ... rest of pagegen logic
 ```
 
-**SAFE MODE** is special: when toggled ON, it halts ALL automated operations (generation, publishing, email, WhatsApp). Read-only mode for the entire system. Used in emergencies (Google penalty detected, runaway bulk job, security concern). One toggle — everything pauses.
+**SAFE MODE** is special: when toggled ON in `system_control_config`, it halts ALL automated operations (generation, publishing, email, WhatsApp). Read-only mode for the entire system. Used in emergencies (Google penalty detected, runaway bulk job, security concern). One toggle — everything pauses.
 
 ---
 
@@ -8143,9 +8141,9 @@ AI RULES
   Max tokens per generation: [2048]
 ```
 
-**Every value stored in `system_control_config` table** (extending the boolean toggle table to also support numeric and text values via a `value_type` + `value_text` / `value_number` column).
+**Every non-boolean workflow value stored in `workflow_config` table.** Boolean runtime guardrails live in `system_control_config` after C32.
 
-**UI:** Not just toggles — sliders, number inputs, dropdowns, all saving to the same config table. CEO changes a number → code reads from DB → behaviour changes. No deployment.
+**UI:** Not just toggles — sliders, number inputs, dropdowns, all saving to `workflow_config`. CEO changes a number → code reads from DB → behaviour changes. No deployment.
 
 ---
 
@@ -8224,7 +8222,7 @@ A future capability (not in early phases) where specific, low-risk configuration
 
 **This is NOT general code editing.** It applies only to:
 - Text stored in the database (prompt templates, email templates, CTA text)
-- Configuration values already managed via `system_control_config`
+- Configuration values already managed via `system_control_config` or `workflow_config`
 
 Actual source code (`.js`, `.jsx` files) is never editable from the admin. That path is always: local dev → test → PR → deploy.
 
@@ -8448,12 +8446,39 @@ The admin panel is powerful. That power must be constrained by its own safety ru
 ### DB Tables Added by This Section
 
 ```sql
--- system_control_config (extended for non-boolean values)
-ALTER TABLE system_control_config ADD COLUMN IF NOT EXISTS value_type TEXT 
-    DEFAULT 'boolean' CHECK (value_type IN ('boolean','number','text','json'));
-ALTER TABLE system_control_config ADD COLUMN IF NOT EXISTS value_number NUMERIC;
-ALTER TABLE system_control_config ADD COLUMN IF NOT EXISTS value_text TEXT;
-ALTER TABLE system_control_config ADD COLUMN IF NOT EXISTS value_json JSONB;
+-- feature_flags (non-canonical product toggles only)
+CREATE TABLE IF NOT EXISTS feature_flags (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  key TEXT UNIQUE NOT NULL,
+  label TEXT NOT NULL,
+  description TEXT,
+  category TEXT NOT NULL,
+  value BOOLEAN DEFAULT TRUE,
+  restricted BOOLEAN DEFAULT FALSE,
+  last_changed_by TEXT,
+  last_changed_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT feature_flags_no_control_plane_keys CHECK (
+    key NOT IN ('safe_mode', 'pagegen_enabled', 'bulk_generation_enabled')
+  )
+);
+
+-- workflow_config (numeric/text workflow rules)
+CREATE TABLE IF NOT EXISTS workflow_config (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  key TEXT UNIQUE NOT NULL,
+  label TEXT NOT NULL,
+  description TEXT,
+  category TEXT NOT NULL,
+  value_type TEXT NOT NULL DEFAULT 'number',
+  value_number NUMERIC,
+  value_text TEXT,
+  min_value NUMERIC,
+  max_value NUMERIC,
+  last_changed_by TEXT,
+  last_changed_at TIMESTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
 -- admin_users (role-based access)
 CREATE TABLE IF NOT EXISTS admin_users (
@@ -8506,8 +8531,8 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 > ⚠️ **This is the ONLY status section. No other footer, summary, or status block exists in this document.**
 > ⚠️ **All status updates happen HERE. Duplicates are forbidden (Constitution Article 5 + Rule 47).**
 
-*Document last updated: April 26, 2026 (C21, C22, C31, and C23 closed live with post-deploy proof)*
-*Evidence sources: `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c21-navigation-live-proof.md`, `docs/audits/audit-2026-04-26-c22-live-repair-proof.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-baseline.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md`, `docs/audits/audit-2026-04-26-c23-sitemap-live-proof.md`, `scripts/audit/results/2026-04-26T11-27-05-144Z-admin-users-schema-before.json`, `scripts/audit/results/2026-04-26T11-35-16-887Z-admin-users-schema-after.json`, `scripts/audit/results/2026-04-26T11-35-25-832Z-c22-admin-users-live-proof.json`, `scripts/audit/results/2026-04-26T11-59-54-052Z-c31-login-mode-baseline.json`, `scripts/audit/results/2026-04-26T12-25-38-729Z-c31-rbac-cutover-live-proof.json`, `scripts/audit/results/2026-04-26T12-26-50-000Z-c31-admin-ui-browser-proof.json`, `scripts/audit/results/2026-04-26T12-53-24-129Z-c23-sitemap-live-proof.json`, `scripts/audit/results/2026-04-26T13-45-23-594Z-c21-navigation-live-proof.json`, `docs/fixes/fix_007_admin_users_schema_repair.md`, `docs/fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md`, `docs/fixes/fix_009_c23_sitemap_canonical_site_url.md`, `docs/fixes/fix_010_c21_navigation_parity_restore.md`*
+*Document last updated: April 26, 2026 (Rule 16 and C33 closed live with direct DB proof)*
+*Evidence sources: `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c24-system-health-live-proof.md`, `docs/audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md`, `docs/audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md`, `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`, `docs/fixes/fix_011_c24_system_health_truth_unification.md`, `docs/fixes/fix_012_c25_direct_supabase_rest_audit_access.md`, `docs/fixes/fix_013_c32_control_plane_truth_unification.md`, `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `scripts/audit/results/2026-04-26T18-13-17-570Z-rule16-transactional-integrity.json`, `scripts/audit/results/2026-04-26T18-17-12-972Z-c33-page-index-truth-fix.json`*
 *Total sections: 49 (Sections 0–49 + Section 0.1 CTO Operating Protocol)*  
 *Total rules: 33 (Rules 1–33) + 7 Constitution Articles + CTO Protocol Rules (A–G)*  
 
@@ -8521,9 +8546,9 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 1 | Rendering Gap | COMPLETE | 90% | Catch-all generated pages render live. Public routes respond. C23 sitemap localhost leakage is now closed live. |
 | 2 | Draft System | COMPLETE | 80% | Draft create, edit, read, approve, publish, and live URL render all passed in production. |
 | 3 | Image Intelligence | PARTIAL | 70% | Media read works. Live upload, storage cleanup proof, and full alt-text/media governance remain unverified. |
-| 4 | Bulk Job Planner | PARTIAL | 65% | Bulk UI/API exists and read path works. Runtime execution, rollback, idempotency, and pincode targeting are still unproven. |
+| 4 | Bulk Job Planner | PARTIAL | 65% | Bulk UI/API exists and read path works. Rule 16 transactional bulk start, idempotent replay, and outbox recovery are now proven live. Multi-page scale execution depth, pincode targeting, and duplicate-check proof remain incomplete. |
 | 5 | Geo Intelligence | PARTIAL | 70% | Geo city reads work. Full CEO CRUD, pincode import proof, and generation trigger per area remain incomplete. |
-| 6 | Publish Pipeline | PARTIAL | 75% | Core publish path works live, and the sitemap canonical URL fix is now proven live. Transaction safety, scheduled publish proof, status-model drift cleanup, and Rule 16 rollback proof remain open. |
+| 6 | Publish Pipeline | PARTIAL | 75% | Core publish path works live. The sitemap canonical URL fix, Rule 16 transactional publish proof, and C33 page-index truth cleanup are now proven live. Scheduled publish runtime execution proof and broader publish/index scope remain incomplete. |
 | 7 | Download Lead Magnets | NOT STARTED | 0% | No runtime proof collected. |
 | 8 | Multi-Intent Funnels | NOT STARTED | 0% | Gated by stabilization and Phase 23. |
 | 9 | Lead Scoring + Agent Personalization | PARTIAL | 25% | Code exists, but runtime proof was not collected in this audit. |
@@ -8538,8 +8563,8 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 18 | Customer Management | PARTIAL | 15% | Schema/scaffold exists. No live workflow proof collected. |
 | 19 | Universal Lead Hub | PARTIAL | 15% | Schema/scaffold exists. No live workflow proof collected. |
 | 20 | System Intelligence Engine | PARTIAL | 10% | Schema/scaffold exists. No live engine proof collected. |
-| 21 | External System Governance | PARTIAL | 65% | Zoho refresh + test lead passed. QStash publish passed, delivery proof partial. Health endpoint reports DEGRADED with dead crons and DLQ backlog. |
-| 22 | System Memory & Traceability | PARTIAL | 75% | Audit scripts and reports exist, but truth drift existed until this correction and ongoing single-truth enforcement is still needed. |
+| 21 | External System Governance | PARTIAL | 65% | Zoho refresh + test lead passed. QStash publish passed, delivery proof remains partial. Shared health truth is now live and healthy after cron recovery. |
+| 22 | System Memory & Traceability | PARTIAL | 75% | Audit scripts/results now include direct DB proof for C24, C25, C32, Rule 16, and C33. Stale log cleanup, cross-links, and ongoing one-truth enforcement still remain. |
 | 23 | Communication System | PARTIAL | 20% | Alert/QStash pieces exist. Full WhatsApp/Telegram/Email/Cliq proof is not complete. |
 | 24 | Media Management | PARTIAL | 40% | Media list read works. Upload and governance proof remain incomplete. |
 | 25 | Navigation Management | PARTIAL | 60% | Public header navigation is now live from `navigation_menu`: production `/api/navigation` returns 200, `/admin/navigation` edits the live header tree, and the public navbar fetches the API at runtime. Admin sidebar/footer consolidation, legacy nav cleanup, and richer Section 45 editor features remain open. |
@@ -8549,15 +8574,15 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (full-system score not re-scored after targeted C22, C31, and C23 fixes)
+Overall System Score: 64/100 (full-system score not re-scored after targeted Rule 16 and C33 live proof)
 Local Production Build: PASS (next build rerun on April 26, 2026)
 Live Runtime: PARTIAL
-System Mode Truth: /api/status = normal, /api/admin/system/health = DEGRADED
+System Mode Truth: /api/status = normal, /api/admin/system/health = HEALTHY, /api/admin/vendor-health = healthy
 
 Current issue count:
-  Critical: 1
-  High:     3
-  Medium:   6
+  Critical: 0
+  High:     0
+  Medium:   3
 
 Fresh runtime PASS proof:
   - /api/status, /api/test, /, /why
@@ -8567,31 +8592,38 @@ Fresh runtime PASS proof:
   - /sitemap.xml and /sitemap-index.xml now emit canonical https://bimasakhi.com URLs only
   - representative sitemap shard routes now emit canonical https://bimasakhi.com URLs only
   - content_drafts create/read/update/publish
-  - feature_flags read/write through app backend
+  - feature control surfaces read through app backend, with canonical runtime keys now sourced from system_control_config
   - page_index read through /api/admin/seo/index-health
   - Zoho OAuth refresh + TEST_AUDIT lead insert
   - QStash publish accepted with message id
 
-Fresh runtime FAIL proof:
-  - /api/navigation returns 404 in production
-  - /api/admin/system/health reports overall_health: DEGRADED
-  - Direct Supabase REST audit path returns 401 with current masked local credential
+Fresh runtime PASS proof:
+  - /api/status returns status: ok and overall_health: HEALTHY in production
+  - /api/admin/system/health returns overall_health: HEALTHY with no hard_failures
+  - /api/admin/vendor-health returns overall.health: healthy and embeds the same system_health snapshot
+  - event-retry and vendor-health-check are healthy required crons with fresh live runs
+  - authenticated /admin/system/health browser UI shows HEALTHY and System Health Dashboard
+  - C32 live control-plane proof: direct REST returns canonical runtime keys only from system_control_config, `/api/admin/feature-flags` returns those keys with source=system_control_config, and `/api/admin/system/health` reports conflicting_states_possible: false
+  - Rule 16 live proof: publish rollback on DB error, process kill, and socket drop passed; bulk rollback/idempotency/outbox recovery passed; pagegen persistence and admin multi-table rollback checks passed; residue verification returned zero remaining rule16 audit rows
+  - C33 live proof: direct DB shows `legacy_status_rows_after = 0` and `conflicting_rows_after = 0`; the DB rejects `status='active'`; draft pages return 404 and stay out of sitemaps; admin SEO metrics match direct DB truth
 
-Fresh PARTIAL / UNVERIFIED proof:
+Fresh runtime WARNING / UNVERIFIED proof:
   - QStash delivery log lookup remains partial
-  - Rule 16 transaction safety is not proven
+  - historical_dead_letters:3 remains visible as a warning
+  - morning-brief remains unknown until the next scheduled daily run and is non-required
   - Media upload was not revalidated live
-  - Bulk execution was not revalidated live
+  - Scheduled publish runtime was not separately revalidated live in this audit window
+  - Bulk multi-page scale execution depth was not revalidated live beyond transactional safety
+  - Phase 14 Code Visibility and Version History remain open
 
 Open contradictions still proven:
-  - /api/status and /api/admin/system/health disagree on ai_enabled truth
-  - page_index metrics disagree because code mixes status='active' and status='published'
+  - No current split-truth contradiction remains in the audited health, control-plane, publish, and page-index surfaces. Remaining open items are proof-depth or missing-feature gaps.
 ```
 
 ### Next Action
 
 ```
-PRIORITY: RUNTIME TRUTH STABILIZATION
+PRIORITY: REMAINING MEDIUM GAPS AFTER RUNTIME TRUTH STABILIZATION
 
 C22 STATUS: RESOLVED IN PRODUCTION
   - Targeted `admin_users` schema repair applied live and recorded.
@@ -8609,19 +8641,41 @@ C22 STATUS: RESOLVED IN PRODUCTION
   - `/sitemap.xml` and `/sitemap-index.xml` emit canonical `https://bimasakhi.com` URLs only.
   - Representative shard routes emit canonical `https://bimasakhi.com` URLs only.
 
-3. Restore navigation deploy parity.
-  - Production `/api/navigation` still returns 404.
-  - Phase 25 remains blocked until the live route exists.
+3. C21 STATUS: RESOLVED IN PRODUCTION
+  - Commit `d5af4d5` is live in `/api/status`.
+  - Production `/api/navigation` returns 200 from `navigation_menu`.
+  - `/admin/navigation` controls the live public header.
 
-4. Restore operational health.
-   - event-retry dead
-   - vendor-health-check dead
-   - morning-brief unknown
-   - active critical alert present
-   - DLQ depth = 3
+4. C24 STATUS: RESOLVED IN PRODUCTION
+   - Commit `fcffe61` is live in `/api/status`.
+   - `/api/status`, `/api/admin/system/health`, and `/api/admin/vendor-health` now agree on HEALTHY.
+   - `event-retry` and `vendor-health-check` are healthy after live schedule recovery and forced execution.
+   - Authenticated `/admin/system/health` browser UI shows `HEALTHY`.
 
-5. Prove Rule 16 safety.
-  - Publish and bulk flows need transactional or RPC-backed rollback proof.
+5. C25 STATUS: RESOLVED IN PRODUCTION
+  - PowerShell direct REST transport no longer returns false 401s for live Supabase probes.
+  - External read-only audit queries now read `system_control_config`, `feature_flags`, `system_alerts`, `job_dead_letters`, and `event_store` directly via Supabase REST.
+  - Audit-grade direct REST proof path is stable from outside the app layer.
 
-Dynamic navbar parity is now fixed live. Phase 25 remains PARTIAL until admin sidebar/footer consolidation and the remaining stabilization items are re-tested live.
+6. C32 STATUS: RESOLVED IN PRODUCTION
+  - Canonical runtime control keys now exist only in `system_control_config`.
+  - `feature_flags` no longer contains `safe_mode`, `pagegen_enabled`, or `bulk_generation_enabled`.
+  - `/api/admin/feature-flags` and `/api/admin/system/health` now expose `system_control_config` as the single control-plane source.
+
+7. RULE 16 STATUS: PROVED LIVE IN REQUESTED SCOPE
+  - Publish, bulk, pagegen persistence, and admin multi-table writes now execute through DB-owned transactional primitives.
+  - Live failure simulation passed DB error, process kill, network interruption, idempotent replay, and outbox recovery checks.
+  - Direct DB residue verification returned zero remaining rule16 audit rows after cleanup.
+
+8. C33 STATUS: RESOLVED IN PRODUCTION
+  - `page_index` now uses canonical publication `status` plus separate `indexing_status`.
+  - Legacy values are blocked at the DB layer, and invalid publication/indexing combinations normalize before commit.
+  - Public routing, sitemaps, indexing workers, and admin metrics now read the same truth model.
+
+9. Next locked work.
+  - C26: deepen QStash delivery-log proof.
+  - C29: implement and prove Phase 14 Code Visibility Layer 4.
+  - C30: implement and prove Phase 14 Content Version History.
+
+Runtime Truth Stabilization closed C21, C22, C23, C24, C25, C31, C32, Rule 16, and C33 with live proof. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the remaining medium gaps are now C26, C29, and C30.
 ```
