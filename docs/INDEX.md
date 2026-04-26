@@ -10,17 +10,17 @@
 
 | Metric | Value |
 |---|---|
-| **System Score** | 64/100 (targeted C23 live proof added; full-system score not re-scored) |
+| **System Score** | 64/100 (targeted C21 live proof added; full-system score not re-scored) |
 | **Build Status** | PASS - local production build rerun succeeded on 2026-04-26 |
 | **System Mode** | NORMAL from /api/status; DEGRADED from /api/admin/system/health; control-plane truth still split |
-| **Open Critical Issues** | 1 (C21) |
+| **Open Critical Issues** | 0 |
 | **Open High Issues** | 3 (C24, C25, C32) |
 | **Open Medium Issues** | 6 (C26-C30, C33) |
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
-| **Last Audit** | 2026-04-26 (C23 live sitemap proof; C31 and C22 proof remain valid) |
-| **Last Deployment** | 2026-04-26 commit `16bb781` (C23 sitemap canonical URL fix) |
-| **Last Test Run** | 2026-04-26 local build + deployed C23 sitemap root/index/shard proof |
-| **Current CTO Decision** | Runtime Truth Stabilization remains active. C22, C31, and C23 are resolved live. Next locked order is C21 navigation deploy parity and `/api/navigation` recovery, then C24 degraded system health. |
+| **Last Audit** | 2026-04-26 (C21 live navigation proof; C23, C31, and C22 proof remain valid) |
+| **Last Deployment** | 2026-04-26 commit `d5af4d5` (C21 navigation parity restore) |
+| **Last Test Run** | 2026-04-26 local build + deployed C21 navigation live proof |
+| **Current CTO Decision** | Runtime Truth Stabilization remains active. C21, C22, C31, and C23 are resolved live. Next locked order is C24 degraded system health, then C25 direct Supabase REST audit access. |
 
 ---
 ## Phase Status
@@ -41,7 +41,7 @@
 | Phase 22 | System Memory & Traceability | A | PARTIAL | 75% | 25% | Built: docs structure, audit reports, audit scripts/results. Left: stale log cleanup, cross-links, ongoing one-truth enforcement. |
 | Phase 23 | Communication System | A | NOT STARTED / PARTIAL SCAFFOLD | 20% | 80% | Full WhatsApp/Telegram/Email/Cliq communication system not complete; some alert/integration pieces exist. |
 | Phase 24 | Media Management | A | PARTIAL | 40% | 60% | Media list code/live read exists; full upload/governance proof missing. |
-| Phase 25 | Navigation Management | A | BLOCKED | 20% | 80% | Local migration/helper/API exists, but production /api/navigation is 404; no /admin/navigation; Navbar is not DB-driven. |
+| Phase 25 | Navigation Management | A | PARTIAL | 60% | 40% | Public header navigation is now live from `navigation_menu`: production `/api/navigation` returns 200, `/admin/navigation` controls the live header tree, and the public navbar fetches the API at runtime. Admin sidebar/footer consolidation and broader Section 45 editor features remain open. |
 | Phase 26 | Unified Content Dashboard | A | NOT STARTED | 0% | 100% | All content types in one view not proven. |
 | Phase 27 | Geo Control System | A | PARTIAL | 35% | 65% | Some geo controls exist; full CEO add city/locality/pincode/generation flow not complete. |
 | Phase 7 | Download Lead Magnets | B | NOT STARTED | 0% | 100% | Lead-gated download system not proven. |
@@ -58,13 +58,15 @@
 | Phase 19 | Universal Lead Hub | C | NOT STARTED / DB SCAFFOLD | 15% | 85% | Schema exists; full hub not proven. |
 | Phase 20 | System Intelligence Engine | D | NOT STARTED / DB SCAFFOLD | 10% | 90% | Schema/code scaffold only; full engine not proven. |
 
-> **CTO Note:** Runtime Truth Stabilization remains the only correct path. C22, C31, and C23 are now closed live. Dynamic navbar remains BLOCKED, and the next locked fixes are C21 then C24.
+> **CTO Note:** Runtime Truth Stabilization remains the only correct path. C21, C22, C31, and C23 are now closed live. Phase 25 is no longer BLOCKED, but it is still PARTIAL because admin sidebar/footer consolidation is not done. Next locked fixes are C24 then C25.
 
 ---
 ## Recent Activity
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | FIX | C21 resolved live: commit `d5af4d5` deployed, production `/api/navigation` now returns 200 from `navigation_menu`, `/admin/navigation` controls the live public header, and the navbar reflects DB changes after reload. | RESOLVED | [fix-010](fixes/fix_010_c21_navigation_parity_restore.md) |
+| 2026-04-26 | AUDIT | Targeted C21 live proof captured: `/api/status` reported `d5af4d5`, `/api/navigation` returned a DB-backed tree, admin browser save changed `About` -> `About Us`, and the public navbar reflected the change before revert. | CURRENT TRUTH | [c21-navigation-live-proof](audits/audit-2026-04-26-c21-navigation-live-proof.md) |
 | 2026-04-26 | FIX | C23 resolved live: commit `16bb781` deployed, sitemap root/index URLs are canonical, and representative shard routes no longer emit `http://localhost:3000`. | RESOLVED | [fix-009](fixes/fix_009_c23_sitemap_canonical_site_url.md) |
 | 2026-04-26 | AUDIT | Targeted C23 live proof captured: `/api/status` reported `16bb781`, root and secondary sitemap indexes emitted canonical URLs, and representative shard routes showed no localhost leakage. | CURRENT TRUTH | [c23-sitemap-live-proof](audits/audit-2026-04-26-c23-sitemap-live-proof.md) |
 | 2026-04-26 | FIX | C31 resolved live: commit `7335ece` deployed, password-only login now fails, email+password returns a real `admin_users` session, and browser admin login reaches `/admin`. | RESOLVED | [fix-008](fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md) |
@@ -118,7 +120,6 @@
 
 | # | Severity | Issue | Owner | Status | Link |
 |---|---|---|---|---|---|
-| C21 | **CRITICAL** | Production `/api/navigation` returns 404; Phase 25 cannot start as complete dynamic navbar work | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
 | C24 | **HIGH** | `/api/admin/system/health` reports `overall_health: DEGRADED` | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
 | C25 | **HIGH** | Direct `.env.local` Supabase REST audit access returned 401; direct DB script proof blocked | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
 | C26 | **MEDIUM** | QStash publish accepted, but delivery log proof was partial/not found immediately | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
@@ -134,6 +135,7 @@
 
 | Date | Score | Key Findings | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | 64/100 unchanged | C21 live proof: `/api/status` served `d5af4d5`, production `/api/navigation` returned 200 from `navigation_menu`, `/admin/navigation` loaded live, and an admin save changed the public navbar before the label was reverted. | CURRENT TRUTH FOR C21 | [c21-navigation-live-proof](audits/audit-2026-04-26-c21-navigation-live-proof.md) |
 | 2026-04-26 | 64/100 unchanged | C23 live proof: `/api/status` served `16bb781`, `/sitemap.xml` and `/sitemap-index.xml` emitted canonical `https://bimasakhi.com` URLs, and representative shard routes contained no `http://localhost:3000`. | CURRENT TRUTH FOR C23 | [c23-sitemap-live-proof](audits/audit-2026-04-26-c23-sitemap-live-proof.md) |
 | 2026-04-26 | 64/100 unchanged | C31 live proof: `/api/status` served `7335ece`, password-only login failed with `400`, email+password returned `200`, session payload resolved to `admin@bimasakhi.com`, and browser login reached `/admin`. | CURRENT TRUTH FOR C31 | [c31-rbac-live-proof](audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md) |
 | 2026-04-26 | 64/100 unchanged | C31 baseline: password-only login still returns 200, email+password still issues legacy `admin@system` token, and local cutover code/build are ready but not deployed. | CURRENT TRUTH FOR C31 | [c31-rbac-baseline](audits/audit-2026-04-26-c31-rbac-cutover-baseline.md) |
@@ -149,6 +151,7 @@
 
 | Date | Fix | Bible Ref | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | C21 production navigation parity restore | Section 45, Section 40 | RESOLVED LIVE | [fix-010](fixes/fix_010_c21_navigation_parity_restore.md) |
 | 2026-04-26 | C23 sitemap canonical URL fix | Section 8, Section 40 | RESOLVED LIVE | [fix-009](fixes/fix_009_c23_sitemap_canonical_site_url.md) |
 | 2026-04-26 | C31 RBAC cutover and legacy shared-password removal | Section 32, Section 40 | RESOLVED LIVE | [fix-008](fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md) |
 | 2026-04-26 | C22 admin_users schema repair and users POST compatibility patch | Section 32, Section 40 | RESOLVED LIVE | [fix-007](fixes/fix_007_admin_users_schema_repair.md) |

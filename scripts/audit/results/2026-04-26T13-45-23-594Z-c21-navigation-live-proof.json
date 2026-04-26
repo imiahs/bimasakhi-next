@@ -1,0 +1,109 @@
+{
+  "captured_at": "2026-04-26T13:45:23.594Z",
+  "issue": "C21",
+  "title": "Production navigation parity live proof",
+  "status": "RESOLVED LIVE",
+  "local_build": {
+    "command": "npm run build",
+    "result": "pass",
+    "routes_verified": [
+      "/admin/navigation",
+      "/api/navigation",
+      "/api/admin/navigation",
+      "/api/admin/navigation/[id]"
+    ]
+  },
+  "deployment": {
+    "commit": "d5af4d5",
+    "api_status": {
+      "statusCode": 200,
+      "status": "ok",
+      "version": "d5af4d5",
+      "environment": "production",
+      "timestamp": "2026-04-26T13:45:23.594Z",
+      "checks": {
+        "db": "ok",
+        "qstash_configured": true,
+        "redis_configured": true,
+        "system_mode": "normal"
+      }
+    }
+  },
+  "migration": {
+    "file": "supabase/migrations/20260426000000_navigation_menu.sql",
+    "schema_migration": {
+      "id": 68,
+      "migration_name": "20260426000000_navigation_menu.sql",
+      "executed_at": "2026-04-26T13:30:36.837Z"
+    },
+    "navigation_menu_row_count": 12,
+    "public_header_top_level": [
+      "Home",
+      "Why Join",
+      "Income",
+      "Eligibility",
+      "Blog",
+      "Tools",
+      "Downloads",
+      "About",
+      "Contact",
+      "Apply Now"
+    ],
+    "tools_children": [
+      "LIC Income Calculator",
+      "LIC Commission Calculator"
+    ],
+    "cta_item": "Apply Now"
+  },
+  "api_navigation": {
+    "statusCode": 200,
+    "success": true,
+    "top_level_count": 10,
+    "tools_child_count": 2,
+    "final_about_label": "About",
+    "final_about_updated_at": "2026-04-26T13:41:31.88+00:00"
+  },
+  "admin_browser_proof": {
+    "login_page": "https://bimasakhi.com/admin/login",
+    "authenticated_page": "https://bimasakhi.com/admin",
+    "sidebar_navigation_link_visible": true,
+    "navigation_editor_page": "https://bimasakhi.com/admin/navigation",
+    "navigation_editor_loaded": true,
+    "editor_copy": "Public header navigation now reads from the database through /api/navigation. Changes made here go live on the next page reload."
+  },
+  "mutation_proof": {
+    "item_id": "84a224ab-d7a9-477d-9707-db864d8173e8",
+    "field": "name",
+    "before": "About",
+    "changed_to": "About Us",
+    "admin_saved_message": "Saved About Us.",
+    "api_after_change": {
+      "statusCode": 200,
+      "item_name": "About Us",
+      "updated_at": "2026-04-26T13:38:02.398+00:00"
+    },
+    "public_after_change": {
+      "loading_state_seen": true,
+      "navbar_label": "About Us"
+    },
+    "reverted_to": "About",
+    "admin_revert_message": "Saved About.",
+    "api_after_revert": {
+      "statusCode": 200,
+      "item_name": "About",
+      "updated_at": "2026-04-26T13:41:31.88+00:00"
+    },
+    "public_after_revert": {
+      "navbar_label": "About"
+    }
+  },
+  "verdict": {
+    "production_api_navigation_200": true,
+    "navigation_is_db_driven": true,
+    "admin_panel_controls_navbar": true,
+    "frontend_consumes_api": true,
+    "production_state_reverted_after_proof": true,
+    "phase_25_blocker_closed": true,
+    "phase_25_status": "PARTIAL"
+  }
+}

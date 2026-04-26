@@ -7009,50 +7009,55 @@ VERIFICATION:
 ## 45. 🧭 Navigation Management System — Database-Driven Menus
 
 > *"Agar mujhe koi nav menu ko badalna ho, ya koi new lagane ho ya koi sub menu banane ho to kya mai code m ja kar karunga?"*
-> *Audit Finding: Navigation hardcoded in TWO files (ClientLayout.jsx AND AdminLayout.jsx). Two conflicting navigation systems coexist.*
+> *Live update (2026-04-26): the public header navigation is now DB-driven in production through `/admin/navigation` -> `/api/navigation` -> `Navbar`. Remaining gap: admin sidebar/footer consolidation is still incomplete.*
 
-### The Problem (From Audit)
+### Current Truth / Remaining Gap
 
-1. Admin sidebar hardcoded in `app/admin/ClientLayout.jsx` (NAV_LINKS array)
-2. Old admin sidebar in `components/admin/AdminLayout.jsx` (ADMIN_LINKS array)  
-3. Two systems = confusing + `/admin/pages` hidden from new nav
-4. Public website nav also hardcoded in layout components
-5. CEO cannot change ANY menu without code deployment
+1. Public header navigation is live from `navigation_menu` and returns `200` from production `/api/navigation`.
+2. `/admin/navigation` can create, edit, nest one level, toggle active state, set `order_index`, and toggle a top-level CTA for the public header.
+3. Public desktop and mobile header navigation now fetch `/api/navigation` at runtime and render the returned tree.
+4. Admin sidebar in `app/admin/ClientLayout.jsx` is still hardcoded.
+5. `components/admin/AdminLayout.jsx` remains a legacy hardcoded surface.
+6. Footer navigation, role visibility rules, drag-drop ordering, preview-before-save, and full multi-menu consolidation are still open.
 
 ### Navigation Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│          NAVIGATION MANAGEMENT SYSTEM                 │
-│          /admin/navigation                            │
-├─────────────────────────────────────────────────────┤
-│                                                      │
-│  Menu Types:                                         │
-│  ├── Public Header Nav (main website top menu)       │
-│  ├── Public Footer Nav (website footer links)        │
-│  ├── Admin Sidebar Nav (admin panel navigation)      │
-│  └── Mobile Nav (mobile hamburger menu)              │
-│                                                      │
-│  DB Table: navigation_menus                          │
-│  ┌──────────────────────────────────────────────┐    │
-│  │ id | menu_type | label | url | parent_id |   │    │
-│  │    | icon | sort_order | is_active | roles   │    │
-│  └──────────────────────────────────────────────┘    │
-│                                                      │
-│  Admin UI:                                           │
-│  ├── Drag-and-drop menu ordering                     │
-│  ├── Add/remove menu items                           │
-│  ├── Nest items (create sub-menus)                   │
-│  ├── Toggle items active/inactive                    │
-│  ├── Set role visibility (admin/editor/agent)        │
-│  └── Preview before save                             │
-│                                                      │
-│  Consolidation Plan:                                 │
-│  1. Merge NAV_LINKS + ADMIN_LINKS → single DB table │
-│  2. Remove hardcoded arrays from both files          │
-│  3. Render nav from DB query                         │
-│  4. Admin UI for management                          │
-└─────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│        NAVIGATION MANAGEMENT SYSTEM (CURRENT TRUTH)       │
+│        /admin/navigation                                  │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Live in production now:                                   │
+│  ├── Public Header Nav (desktop)                           │
+│  ├── Public Header Nav (mobile)                            │
+│  ├── Nested public submenus (one level)                    │
+│  └── Public CTA item                                       │
+│                                                            │
+│  Still not DB-driven:                                      │
+│  ├── Admin Sidebar Nav                                     │
+│  ├── Public Footer Nav                                     │
+│  └── Role-based nav visibility / preview / drag-drop       │
+│                                                            │
+│  DB Table: navigation_menu                                 │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │ id | name | slug | parent_id | order_index |        │  │
+│  │ is_active | is_cta | created_at | updated_at        │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                                                            │
+│  Live control path:                                        │
+│  /admin/navigation                                          │
+│       -> app/api/admin/navigation                           │
+│       -> public.navigation_menu                             │
+│       -> app/api/navigation                                 │
+│       -> components/layout/Navbar.jsx                       │
+│                                                            │
+│  Remaining consolidation:                                  │
+│  1. Move admin sidebar to DB                               │
+│  2. Decide footer menu model + consumer                    │
+│  3. Remove legacy hardcoded admin nav surfaces             │
+│  4. Add drag-drop, preview, and role visibility            │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ### Phase: 25 | Priority: A | Depends on: Navigation Fix (Priority R)
@@ -7674,11 +7679,11 @@ PRIORITY A — FOUNDATION (System Safety + CEO Control)
     📄 Sections: 42
     🔗 Depends on: None (can start immediately)
 
-  Phase 25: Navigation Management         ⬜ NOT STARTED
-    ├── 25a: DB-driven Menu System        ⬜ NOT STARTED
-    ├── 25b: Admin Menu Editor UI         ⬜ NOT STARTED
-    ├── 25c: Public Site Menu Rendering   ⬜ NOT STARTED
-    └── 25d: Admin Sidebar from DB        ⬜ NOT STARTED
+  Phase 25: Navigation Management         ⚠️ PARTIAL → 6/10
+    ├── 25a: DB-driven Menu System        ✅ FIXED LIVE — `navigation_menu` + `/api/navigation` now serve the public header in production
+    ├── 25b: Admin Menu Editor UI         ✅ FIXED LIVE — `/admin/navigation` edits the live public header tree
+    ├── 25c: Public Site Menu Rendering   ✅ FIXED LIVE — Navbar fetches the API and reflects DB changes after reload
+    └── 25d: Admin Sidebar from DB        ⬜ NOT STARTED — `app/admin/ClientLayout.jsx` is still hardcoded; footer/legacy consolidation remains
     📄 Sections: 45
     🔗 Depends on: Navigation Fix (Priority R)
 
@@ -8501,14 +8506,14 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 > ⚠️ **This is the ONLY status section. No other footer, summary, or status block exists in this document.**
 > ⚠️ **All status updates happen HERE. Duplicates are forbidden (Constitution Article 5 + Rule 47).**
 
-*Document last updated: April 26, 2026 (C22, C31, and C23 closed live with post-deploy proof)*
-*Evidence sources: `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c22-live-repair-proof.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-baseline.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md`, `docs/audits/audit-2026-04-26-c23-sitemap-live-proof.md`, `scripts/audit/results/2026-04-26T11-27-05-144Z-admin-users-schema-before.json`, `scripts/audit/results/2026-04-26T11-35-16-887Z-admin-users-schema-after.json`, `scripts/audit/results/2026-04-26T11-35-25-832Z-c22-admin-users-live-proof.json`, `scripts/audit/results/2026-04-26T11-59-54-052Z-c31-login-mode-baseline.json`, `scripts/audit/results/2026-04-26T12-25-38-729Z-c31-rbac-cutover-live-proof.json`, `scripts/audit/results/2026-04-26T12-26-50-000Z-c31-admin-ui-browser-proof.json`, `scripts/audit/results/2026-04-26T12-53-24-129Z-c23-sitemap-live-proof.json`, `docs/fixes/fix_007_admin_users_schema_repair.md`, `docs/fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md`, `docs/fixes/fix_009_c23_sitemap_canonical_site_url.md`*
+*Document last updated: April 26, 2026 (C21, C22, C31, and C23 closed live with post-deploy proof)*
+*Evidence sources: `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c21-navigation-live-proof.md`, `docs/audits/audit-2026-04-26-c22-live-repair-proof.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-baseline.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md`, `docs/audits/audit-2026-04-26-c23-sitemap-live-proof.md`, `scripts/audit/results/2026-04-26T11-27-05-144Z-admin-users-schema-before.json`, `scripts/audit/results/2026-04-26T11-35-16-887Z-admin-users-schema-after.json`, `scripts/audit/results/2026-04-26T11-35-25-832Z-c22-admin-users-live-proof.json`, `scripts/audit/results/2026-04-26T11-59-54-052Z-c31-login-mode-baseline.json`, `scripts/audit/results/2026-04-26T12-25-38-729Z-c31-rbac-cutover-live-proof.json`, `scripts/audit/results/2026-04-26T12-26-50-000Z-c31-admin-ui-browser-proof.json`, `scripts/audit/results/2026-04-26T12-53-24-129Z-c23-sitemap-live-proof.json`, `scripts/audit/results/2026-04-26T13-45-23-594Z-c21-navigation-live-proof.json`, `docs/fixes/fix_007_admin_users_schema_repair.md`, `docs/fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md`, `docs/fixes/fix_009_c23_sitemap_canonical_site_url.md`, `docs/fixes/fix_010_c21_navigation_parity_restore.md`*
 *Total sections: 49 (Sections 0–49 + Section 0.1 CTO Operating Protocol)*  
 *Total rules: 33 (Rules 1–33) + 7 Constitution Articles + CTO Protocol Rules (A–G)*  
 
 ### Phase Status (Constitution Article 2 compliant — no fake completions)
 
-*Fresh verification baseline: April 26, 2026 — local production build rerun + live runtime re-audited against production.*
+*Fresh verification baseline: April 26, 2026 — local production build rerun plus post-deploy live proof for C21, C22, C31, and C23.*
 *Status below reflects current provable reality. COMPLETE here means runtime-proven and still consistent with prior CEO-approved completion, not a new CEO sign-off created by this rerun.*
 
 | Phase | Name | Status | CTO Audit % | Current Proof / Remaining Gap |
@@ -8537,7 +8542,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 22 | System Memory & Traceability | PARTIAL | 75% | Audit scripts and reports exist, but truth drift existed until this correction and ongoing single-truth enforcement is still needed. |
 | 23 | Communication System | PARTIAL | 20% | Alert/QStash pieces exist. Full WhatsApp/Telegram/Email/Cliq proof is not complete. |
 | 24 | Media Management | PARTIAL | 40% | Media list read works. Upload and governance proof remain incomplete. |
-| 25 | Navigation Management | BLOCKED | 20% | Local migration/helper/API exist, but production `/api/navigation` is 404, no `/admin/navigation` exists, and Navbar is still hardcoded. |
+| 25 | Navigation Management | PARTIAL | 60% | Public header navigation is now live from `navigation_menu`: production `/api/navigation` returns 200, `/admin/navigation` edits the live header tree, and the public navbar fetches the API at runtime. Admin sidebar/footer consolidation, legacy nav cleanup, and richer Section 45 editor features remain open. |
 | 26 | Unified Content Dashboard | NOT STARTED | 0% | No runtime proof collected. |
 | 27 | Geo Control System | PARTIAL | 35% | Some geo controls exist. Full CEO add city/locality/pincode/generation flow remains incomplete. |
 
@@ -8616,7 +8621,7 @@ C22 STATUS: RESOLVED IN PRODUCTION
    - DLQ depth = 3
 
 5. Prove Rule 16 safety.
-   - Publish and bulk flows need transactional or RPC-backed rollback proof.
+  - Publish and bulk flows need transactional or RPC-backed rollback proof.
 
-Dynamic navbar remains BLOCKED until navigation parity is fixed and the remaining stabilization items are re-tested live.
+Dynamic navbar parity is now fixed live. Phase 25 remains PARTIAL until admin sidebar/footer consolidation and the remaining stabilization items are re-tested live.
 ```
