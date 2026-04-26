@@ -7,11 +7,13 @@ const token = await new SignJWT({ role: 'admin' })
     .setExpirationTime('1h')
     .sign(secret);
 
+const adminEmail = (process.env.ADMIN_EMAIL || 'admin@bimasakhi.com').trim().toLowerCase();
+
 // Try login first
 const loginResp = await fetch('https://bimasakhi.com/api/admin/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password: process.env.ADMIN_PASSWORD })
+    body: JSON.stringify({ email: adminEmail, password: process.env.ADMIN_PASSWORD })
 });
 console.log('Login status:', loginResp.status);
 const setCookie = loginResp.headers.getSetCookie();

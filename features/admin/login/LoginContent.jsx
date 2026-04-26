@@ -17,11 +17,12 @@ const LoginContent = () => {
         setError('');
 
         try {
+            const normalizedEmail = email.toLowerCase().trim();
             const res = await fetch('/api/admin/login', {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
+                body: JSON.stringify({ email: normalizedEmail, password })
             });
 
             let response;

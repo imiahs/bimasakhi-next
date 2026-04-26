@@ -10,21 +10,22 @@ export const dynamic = 'force-dynamic';
  * Stage 4 fix (C7): Real RBAC login.
  *
  * Auth flow:
- *   1. If ADMIN_USERS_ENABLED=true → look up email+password in admin_users table.
- *   2. If admin_users table is empty or ADMIN_USERS_ENABLED is not set →
- *      fall back to single ADMIN_PASSWORD env var (transition safety).
+ *   1. If ADMIN_USERS_ENABLED=true or admin_users already has seeded rows →
+ *      look up email+password in admin_users table.
+ *   2. Only if admin_users is still empty → allow the single ADMIN_PASSWORD
+ *      bootstrap fallback.
  *
  * To fully enable real RBAC:
  *   1. Run migration 041_real_rbac_admin_users.sql
  *   2. Insert super_admin row (use scripts/hash_password.js to generate hash)
- *   3. Set ADMIN_USERS_ENABLED=true in Vercel environment variables
+ *   3. Deploy UI/API changes that submit email+password
  *   4. Remove ADMIN_PASSWORD env var after verifying login works
  */
 export async function POST(request) {
     try {
         const body = await request.json();
 
-        const useRealAuth = process.env.ADMIN_USERS_ENABLED === 'true';
+        const useRealAuth = await shouldUseRealAuth();
 
         if (useRealAuth) {
             return await handleRealAuth(body);
@@ -35,6 +36,25 @@ export async function POST(request) {
         console.error('Login error:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
+}
+
+async function shouldUseRealAuth() {
+    if (process.env.ADMIN_USERS_ENABLED === 'true') {
+        return true;
+    }
+
+    const supabase = getServiceSupabase();
+    const { data, error } = await supabase
+        .from('admin_users')
+        .select('id')
+        .limit(1);
+
+    if (error) {
+        console.error('[Auth] Failed to inspect admin_users seed state:', error);
+        return false;
+    }
+
+    return Array.isArray(data) && data.length > 0;
 }
 
 /**
@@ -76,8 +96,8 @@ async function handleRealAuth(body) {
 }
 
 /**
- * Legacy: single ADMIN_PASSWORD env var (transition fallback).
- * Grants super_admin role. Used until admin_users table is seeded.
+ * Bootstrap-only fallback: single ADMIN_PASSWORD env var.
+ * This is allowed only before admin_users is seeded.
  */
 async function handleLegacyAuth(body) {
     const { password } = body;

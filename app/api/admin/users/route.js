@@ -53,14 +53,17 @@ export const POST = withAdminAuth(async (request, user) => {
         // Hash password using bcrypt (dynamic import for edge compat)
         const bcrypt = await import('bcryptjs');
         const password_hash = await bcrypt.hash(password, 12);
+        const normalizedEmail = email.toLowerCase().trim();
+        const normalizedName = typeof name === 'string' ? name.trim() : '';
+        const displayName = normalizedName || normalizedEmail.split('@')[0];
 
         const supabase = getServiceSupabase();
 
         const { data, error } = await supabase
             .from('admin_users')
             .insert({
-                email: email.toLowerCase().trim(),
-                name: name || null,
+                email: normalizedEmail,
+                name: displayName,
                 role: role || 'editor',
                 password_hash,
                 is_active: true,

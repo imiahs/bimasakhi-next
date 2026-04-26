@@ -3,12 +3,13 @@ const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+const adminEmail = (process.env.ADMIN_EMAIL || 'admin@bimasakhi.com').trim().toLowerCase();
 
 // Login to get admin cookie
 const loginResp = await fetch('https://bimasakhi.com/api/admin/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password: process.env.ADMIN_PASSWORD }),
+    body: JSON.stringify({ email: adminEmail, password: process.env.ADMIN_PASSWORD }),
 });
 const cookie = loginResp.headers.getSetCookie()[0].split(';')[0];
 

@@ -8,6 +8,7 @@
 import { SignJWT } from 'jose';
 
 const BASE_URL = 'https://bimasakhi.com';
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@bimasakhi.com').trim().toLowerCase();
 
 // Login and get admin session cookie
 let adminCookie = null;
@@ -16,7 +17,7 @@ async function ensureLogin() {
     const resp = await fetch(`${BASE_URL}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: process.env.ADMIN_PASSWORD }),
+        body: JSON.stringify({ email: ADMIN_EMAIL, password: process.env.ADMIN_PASSWORD }),
     });
     if (resp.status !== 200) throw new Error(`Login failed: ${resp.status}`);
     const setCookie = resp.headers.getSetCookie();
