@@ -1,8 +1,9 @@
+import { getSiteUrl } from '@/lib/siteUrl';
 import { supabase } from '@/lib/supabase';
 
 // High Performance Sitemap Index Aggregator
 export async function GET() {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const siteUrl = getSiteUrl();
 
     if (process.env.SUPABASE_ENABLED !== 'true') {
         return new Response(
