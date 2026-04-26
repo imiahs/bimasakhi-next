@@ -1,0 +1,157 @@
+﻿{
+    "name":  "admin-systems-read-ps",
+    "started_at":  "2026-04-26T11:57:24.3382137Z",
+    "finished_at":  "2026-04-26T11:57:33.6206970Z",
+    "status":  "PASS",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "ADMIN_PASSWORD":  {
+                                                               "present":  true,
+                                                               "masked":  "Haim...vija (20 chars)"
+                                                           }
+                                    },
+                       "timestamp":  "2026-04-26T11:57:24.4203647Z"
+                   },
+                   {
+                       "name":  "admin_login",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "role":  "super_admin"
+                                                 },
+                                        "error":  null,
+                                        "cookie_count":  1
+                                    },
+                       "timestamp":  "2026-04-26T11:57:25.5383351Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_drafts",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/ccc/drafts?limit=5",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"drafts\":  [\r\n                   {\r\n                       \"id\":  \"b32234da-4986-407e-ba9a-ff7c490c0b28\",\r\n                       \"slug\":  \"new-page-1777199268339\",\r\n                       \"page_title\":  \"TEST_AUDIT_ Draft Runtime Audit\",\r\n                       \"hero_headline\":  \"TEST_AUDIT_ Draft Runtime Audit\",\r\n                       \"meta_title\":  \"TEST_AUDIT_ Meta Title\",\r\n                       \"word_count\":  0,\r\n                       \"quality_score\":  null,\r\n                       \"status\":  \"published\",\r\n                       \"review_notes\":  null,\r\n                       \"reviewer\":  \"29ad3939-62cb-4f46-a03c-58dc22e4e5da\",\r\n                       \"re",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:26.2062651Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_bulk",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/ccc/bulk",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n\r\n             ]\r\n}",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:27.3479403Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_media",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/media",
+                                        "body_sample":  "{\r\n    \"media\":  [\r\n\r\n              ]\r\n}",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:27.9809304Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_logs",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/logs",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"logs\":  [\r\n                 {\r\n                     \"id\":  \"obs_7f941497-c07f-461c-9048-010930311855\",\r\n                     \"type\":  \"ALERT_SCAN_CLEAN\",\r\n                     \"message\":  \"Alert scan: 0 alerts fired, 7 rules checked\",\r\n                     \"metadata\":  {\r\n                                      \"results\":  [\r\n                                                      {\r\n                                                          \"rule\":  \"event_store_critical_failures\",\r\n                                                          \"status\":  \"ok\"\r\n                                                      },\r\n                                                    ",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:28.8699163Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_audit_log",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/audit-log?limit=5",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"id\":  \"924ba9c6-7801-4fbb-85ef-04d4432622a6\",\r\n                     \"admin_id\":  \"bf438f7b-bee4-4be2-8148-9c8f2633f959\",\r\n                     \"admin_email\":  \"cron_execution\",\r\n                     \"action\":  \"user management\",\r\n                     \"target_resource\":  \"/api/admin/users\",\r\n                     \"metadata\":  {\r\n                                      \"params\":  {\r\n\r\n                                                 }\r\n                                  },\r\n                     \"ip_address\":  \"106.219.152.62\",\r\n                     \"created_at\":  \"2026-04-26T11:35:26.349723+00:00\"\r\n                ",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:29.4580253Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_feature_flags",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/feature-flags",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"id\":  \"dd98df3a-b7ea-4ba7-b235-b51a789cac36\",\r\n                     \"key\":  \"social_auto_draft_enabled\",\r\n                     \"label\":  \"Social Post Auto-Draft\",\r\n                     \"description\":  \"Auto-generate social media post drafts\",\r\n                     \"category\":  \"automation\",\r\n                     \"value\":  false,\r\n                     \"restricted\":  true,\r\n                     \"last_changed_by\":  null,\r\n                     \"last_changed_at\":  \"2026-04-18T12:53:00.911921+00:00\",\r\n                     \"created_at\":  \"2026-04-18T12:53:00.911921+00:00\"\r\n                 },\r\n                 {\r\n  ",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:30.1999484Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_workflow_config",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/workflow-config",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"id\":  \"000a85b8-915c-48d5-8e27-eb466b6cfe47\",\r\n                     \"key\":  \"ai_model_fallback\",\r\n                     \"label\":  \"Fallback AI model\",\r\n                     \"description\":  \"Fallback model when primary fails\",\r\n                     \"category\":  \"ai\",\r\n                     \"value_type\":  \"text\",\r\n                     \"value_number\":  null,\r\n                     \"value_text\":  \"gpt-4o\",\r\n                     \"min_value\":  null,\r\n                     \"max_value\":  null,\r\n                     \"last_changed_by\":  \"49487904-68d0-4a3a-ab7f-abf5f1248f9b\",\r\n                     \"last_changed_at\":  \"2026",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:30.9011275Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_users",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/users",
+                                        "body_sample":  "{\r\n    \"users\":  [\r\n                  {\r\n                      \"id\":  \"4dcaed28-d730-49b3-a030-db70996a3ae1\",\r\n                      \"email\":  \"admin@bimasakhi.com\",\r\n                      \"name\":  \"Super Admin\",\r\n                      \"role\":  \"super_admin\",\r\n                      \"active\":  true,\r\n                      \"lastLogin\":  null,\r\n                      \"createdAt\":  \"2026-03-10T19:55:56.247857+00:00\"\r\n                  }\r\n              ]\r\n}",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:31.6067862Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_geo_cities",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/locations/cities",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"id\":  \"ba203abc-4d16-4449-87f1-0339b7c1fa21\",\r\n                     \"city_name\":  \"Bangalore\",\r\n                     \"slug\":  \"bangalore\",\r\n                     \"population\":  8443675,\r\n                     \"active\":  true,\r\n                     \"state\":  \"Karnataka\"\r\n                 },\r\n                 {\r\n                     \"id\":  \"cb222dd4-20df-4ae6-89f5-06b67c097d94\",\r\n                     \"city_name\":  \"Chennai\",\r\n                     \"slug\":  \"chennai\",\r\n                     \"population\":  4681087,\r\n                     \"active\":  true,\r\n                     \"state\":  \"Tamil Nadu\"\r\n                 }",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:32.3262705Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_system_health",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/system/health",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"timestamp\":  \"2026-04-26T11:57:32.790Z\",\r\n    \"overall_health\":  \"DEGRADED\",\r\n    \"system_mode\":  {\r\n                        \"mode\":  \"normal\",\r\n                        \"safe_mode\":  false,\r\n                        \"ai_enabled\":  true,\r\n                        \"followup_enabled\":  true\r\n                    },\r\n    \"crons\":  {\r\n                  \"alert-scan\":  {\r\n                                     \"status\":  \"healthy\",\r\n                                     \"last_run\":  \"2026-04-26T11:55:03.31801+00:00\",\r\n                                     \"age_minutes\":  2,\r\n                                     \"expected_interval\":  \"5m\"\r\n                                 },\r",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-26T11:57:33.5981448Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}

@@ -1,0 +1,34 @@
+{
+  "captured_at": "2026-04-26T11:59:54.047Z",
+  "base_url": "https://bimasakhi.com",
+  "password_only": {
+    "status": 200,
+    "ok": true,
+    "body": {
+      "success": true,
+      "role": "super_admin"
+    },
+    "jwt_payload": {
+      "role": "super_admin",
+      "sub": "09661187-886e-49e2-8c7c-be68bf197d72",
+      "email": "admin@system",
+      "iat": 1777204793,
+      "exp": 1777291193
+    }
+  },
+  "email_and_password": {
+    "status": 200,
+    "ok": true,
+    "body": {
+      "success": true,
+      "role": "super_admin"
+    },
+    "jwt_payload": {
+      "role": "super_admin",
+      "sub": "ede541fc-eafa-4f8a-b2c7-16c3586f92d6",
+      "email": "admin@system",
+      "iat": 1777204794,
+      "exp": 1777291194
+    }
+  }
+}

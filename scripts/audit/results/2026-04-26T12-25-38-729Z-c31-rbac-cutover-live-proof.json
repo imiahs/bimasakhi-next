@@ -1,0 +1,40 @@
+{
+  "captured_at": "2026-04-26T12:25:38.718Z",
+  "base_url": "https://bimasakhi.com",
+  "target_version": "7335ece",
+  "password_only": {
+    "status": 400,
+    "ok": false,
+    "body": {
+      "error": "Email and password are required"
+    },
+    "jwt_payload": null,
+    "condition_pass": true
+  },
+  "email_and_password": {
+    "status": 200,
+    "ok": true,
+    "body": {
+      "success": true,
+      "role": "super_admin"
+    },
+    "jwt_payload": {
+      "role": "super_admin",
+      "sub": "4dcaed28-d730-49b3-a030-db70996a3ae1",
+      "email": "admin@bimasakhi.com",
+      "iat": 1777206338,
+      "exp": 1777292738
+    },
+    "condition_pass": true
+  },
+  "session_payload_check": {
+    "email": "admin@bimasakhi.com",
+    "condition_pass": true
+  },
+  "admin_page_with_api_cookie": {
+    "status": 200,
+    "ok": true,
+    "body_sample": "<!DOCTYPE html><!--AOj_n4vf3OKbiOzOSJLTx--><html lang=\"en\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/><link rel=\"preload\" href=\"/_next/static/med"
+  },
+  "overall_pass": true
+}

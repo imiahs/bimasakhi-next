@@ -1,0 +1,23 @@
+{
+  "captured_at": "2026-04-26T12:26:50.000Z",
+  "target_version": "7335ece",
+  "admin_login_page": {
+    "url": "https://bimasakhi.com/admin/login",
+    "title": "Admin Login | Bima Sakhi"
+  },
+  "admin_dashboard": {
+    "url": "https://bimasakhi.com/admin",
+    "title": "Bima Sakhi OS | Business Control | Bima Sakhi",
+    "visible_markers": [
+      "Dashboard",
+      "CRM",
+      "Content",
+      "Pages",
+      "Features",
+      "Workflow",
+      "Production control panel for the real growth engine."
+    ],
+    "condition_pass": true
+  },
+  "overall_pass": true
+}
