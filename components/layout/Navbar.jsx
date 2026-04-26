@@ -5,8 +5,23 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
+function isHrefActive(pathname, href) {
+    if (!href) {
+        return false;
+    }
+
+    if (href === '/') {
+        return pathname === '/';
+    }
+
+    return pathname === href || pathname?.startsWith(`${href}/`);
+}
+
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [navigationItems, setNavigationItems] = useState([]);
+    const [navigationLoading, setNavigationLoading] = useState(true);
+    const [navigationError, setNavigationError] = useState(null);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -21,7 +36,49 @@ const Navbar = () => {
         setMenuOpen(false);
     };
 
-    const navClass = (href) => pathname === href ? 'active' : '';
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchNavigation = async () => {
+            setNavigationLoading(true);
+            setNavigationError(null);
+
+            try {
+                const response = await fetch('/api/navigation', {
+                    cache: 'no-store',
+                });
+                const payload = await response.json();
+
+                if (!payload.success) {
+                    throw new Error(payload.error || 'Failed to load navigation.');
+                }
+
+                if (!cancelled) {
+                    setNavigationItems(payload.menu || []);
+                }
+            } catch (error) {
+                if (!cancelled) {
+                    setNavigationError(error.message);
+                    setNavigationItems([]);
+                }
+            } finally {
+                if (!cancelled) {
+                    setNavigationLoading(false);
+                }
+            }
+        };
+
+        fetchNavigation();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const navItems = navigationItems.filter((item) => !item.is_cta);
+    const ctaItem = navigationItems.find((item) => item.is_cta) || null;
+
+    const navClass = (href) => isHrefActive(pathname, href) ? 'active' : '';
 
     if (pathname?.startsWith('/admin')) return null;
 
@@ -43,22 +100,49 @@ const Navbar = () => {
 
                 {/* Desktop Navigation */}
                 <nav className="nav-links desktop-menu">
-                    <Link href="/" className={navClass('/')}>Home</Link>
-                    <Link href="/why" className={navClass('/why')}>Why Join</Link>
-                    <Link href="/income" className={navClass('/income')}>Income</Link>
-                    <Link href="/eligibility" className={navClass('/eligibility')}>Eligibility</Link>
-                    <Link href="/blog" className={navClass('/blog')}>Blog</Link>
-                    <Link href="/tools" className={navClass('/tools')}>Tools</Link>
-                    <Link href="/downloads" className={navClass('/downloads')}>Downloads</Link>
-                    <Link href="/about" className={navClass('/about')}>About</Link>
-                    <Link href="/contact" className={navClass('/contact')}>Contact</Link>
+                    {navigationLoading ? (
+                        <span className="navbar-status">Loading navigation...</span>
+                    ) : navigationError ? (
+                        <span className="navbar-status navbar-status-error">Navigation unavailable</span>
+                    ) : (
+                        navItems.map((item) => {
+                            const hasChildren = item.children?.length > 0;
+                            const parentActive = isHrefActive(pathname, item.slug) || item.children?.some((child) => isHrefActive(pathname, child.slug));
+
+                            return (
+                                <div key={item.id} className={`nav-item ${hasChildren ? 'has-children' : ''}`}>
+                                    {item.slug ? (
+                                        <Link href={item.slug} className={parentActive ? 'active' : ''}>{item.name}</Link>
+                                    ) : (
+                                        <button type="button" className={`nav-link-button ${parentActive ? 'active' : ''}`}>{item.name}</button>
+                                    )}
+
+                                    {hasChildren && (
+                                        <div className="nav-submenu">
+                                            {item.children.map((child) => (
+                                                child.slug ? (
+                                                    <Link key={child.id} href={child.slug} className={navClass(child.slug)}>
+                                                        {child.name}
+                                                    </Link>
+                                                ) : (
+                                                    <span key={child.id} className="nav-submenu-label">{child.name}</span>
+                                                )
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })
+                    )}
                 </nav>
 
                 {/* Desktop CTA */}
                 <div className="nav-cta desktop-menu">
-                    <Link href="/apply" className="apply-btn">
-                        Apply Now
-                    </Link>
+                    {ctaItem?.slug ? (
+                        <Link href={ctaItem.slug} className="apply-btn">
+                            {ctaItem.name}
+                        </Link>
+                    ) : null}
                 </div>
 
                 {/* Hamburger */}
@@ -81,20 +165,41 @@ const Navbar = () => {
 
             {/* Mobile Slide Menu */}
             <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+                {navigationLoading ? (
+                    <span className="navbar-status">Loading navigation...</span>
+                ) : navigationError ? (
+                    <span className="navbar-status navbar-status-error">Navigation unavailable</span>
+                ) : (
+                    navItems.map((item) => (
+                        <div key={item.id} className="mobile-nav-group">
+                            {item.slug ? (
+                                <Link href={item.slug} onClick={closeMenu} className={navClass(item.slug)}>{item.name}</Link>
+                            ) : (
+                                <span className="mobile-nav-label">{item.name}</span>
+                            )}
 
-                <Link href="/" onClick={closeMenu} className={navClass('/')}>Home</Link>
-                <Link href="/why" onClick={closeMenu} className={navClass('/why')}>Why Join</Link>
-                <Link href="/income" onClick={closeMenu} className={navClass('/income')}>Income</Link>
-                <Link href="/eligibility" onClick={closeMenu} className={navClass('/eligibility')}>Eligibility</Link>
-                <Link href="/blog" onClick={closeMenu} className={navClass('/blog')}>Blog</Link>
-                <Link href="/tools" onClick={closeMenu} className={navClass('/tools')}>Tools</Link>
-                <Link href="/downloads" onClick={closeMenu} className={navClass('/downloads')}>Downloads</Link>
-                <Link href="/about" onClick={closeMenu} className={navClass('/about')}>About</Link>
-                <Link href="/contact" onClick={closeMenu} className={navClass('/contact')}>Contact</Link>
+                            {item.children?.length > 0 && (
+                                <div className="mobile-submenu">
+                                    {item.children.map((child) => (
+                                        child.slug ? (
+                                            <Link key={child.id} href={child.slug} onClick={closeMenu} className={navClass(child.slug)}>
+                                                {child.name}
+                                            </Link>
+                                        ) : (
+                                            <span key={child.id} className="mobile-nav-label mobile-nav-sublabel">{child.name}</span>
+                                        )
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ))
+                )}
 
-                <Link href="/apply" className="apply-btn mobile-apply" onClick={closeMenu}>
-                    Apply Now
-                </Link>
+                {ctaItem?.slug ? (
+                    <Link href={ctaItem.slug} className="apply-btn mobile-apply" onClick={closeMenu}>
+                        {ctaItem.name}
+                    </Link>
+                ) : null}
 
             </div>
 

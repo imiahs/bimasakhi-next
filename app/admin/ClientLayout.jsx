@@ -80,6 +80,7 @@ const NAV_LINKS = [
     { label: 'Pages', href: '/admin/pages', icon: 'PG', note: 'CMS page builder' },
     { label: 'Bulk', href: '/admin/ccc/bulk', icon: 'BK', note: 'Job planner' },
     { label: 'Geo', href: '/admin/locations/geo', icon: 'GL', note: 'Coverage intel' },
+    { label: 'Navigation', href: '/admin/navigation', icon: 'PG', note: 'Navbar control' },
     { label: 'Queue', href: '/admin/ai', icon: 'AI', note: 'Worker engine' },
     { label: 'Failed', href: '/admin/failed-leads', icon: 'RX', note: 'Recovery lane' },
     { label: 'Analytics', href: '/admin/analytics', icon: 'AN', note: 'Attribution' },
