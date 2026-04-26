@@ -3,7 +3,7 @@
 
 > **Status:** ACTIVE — Governance restructured April 19, 2026  
 > **Owner:** CTO (under CEO authority — Constitution Article 1)  
-> **Last Updated:** April 19, 2026  
+> **Last Updated:** April 26, 2026
 > **Core Vision:** Transform pagegen from a black-box content generator into India's most powerful programmatic SEO + lead acquisition machine for LIC/financial services — organically, without ads.
 
 ---
@@ -8501,8 +8501,8 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 > ⚠️ **This is the ONLY status section. No other footer, summary, or status block exists in this document.**
 > ⚠️ **All status updates happen HERE. Duplicates are forbidden (Constitution Article 5 + Rule 47).**
 
-*Document last updated: April 26, 2026 (C22 and C31 closed live with post-deploy proof)*  
-*Evidence sources: `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c22-live-repair-proof.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-baseline.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md`, `scripts/audit/results/2026-04-26T11-27-05-144Z-admin-users-schema-before.json`, `scripts/audit/results/2026-04-26T11-35-16-887Z-admin-users-schema-after.json`, `scripts/audit/results/2026-04-26T11-35-25-832Z-c22-admin-users-live-proof.json`, `scripts/audit/results/2026-04-26T11-59-54-052Z-c31-login-mode-baseline.json`, `scripts/audit/results/2026-04-26T12-25-38-729Z-c31-rbac-cutover-live-proof.json`, `scripts/audit/results/2026-04-26T12-26-50-000Z-c31-admin-ui-browser-proof.json`, `docs/fixes/fix_007_admin_users_schema_repair.md`, `docs/fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md`*  
+*Document last updated: April 26, 2026 (C22, C31, and C23 closed live with post-deploy proof)*
+*Evidence sources: `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c22-live-repair-proof.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-baseline.md`, `docs/audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md`, `docs/audits/audit-2026-04-26-c23-sitemap-live-proof.md`, `scripts/audit/results/2026-04-26T11-27-05-144Z-admin-users-schema-before.json`, `scripts/audit/results/2026-04-26T11-35-16-887Z-admin-users-schema-after.json`, `scripts/audit/results/2026-04-26T11-35-25-832Z-c22-admin-users-live-proof.json`, `scripts/audit/results/2026-04-26T11-59-54-052Z-c31-login-mode-baseline.json`, `scripts/audit/results/2026-04-26T12-25-38-729Z-c31-rbac-cutover-live-proof.json`, `scripts/audit/results/2026-04-26T12-26-50-000Z-c31-admin-ui-browser-proof.json`, `scripts/audit/results/2026-04-26T12-53-24-129Z-c23-sitemap-live-proof.json`, `docs/fixes/fix_007_admin_users_schema_repair.md`, `docs/fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md`, `docs/fixes/fix_009_c23_sitemap_canonical_site_url.md`*
 *Total sections: 49 (Sections 0–49 + Section 0.1 CTO Operating Protocol)*  
 *Total rules: 33 (Rules 1–33) + 7 Constitution Articles + CTO Protocol Rules (A–G)*  
 
@@ -8513,12 +8513,12 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 
 | Phase | Name | Status | CTO Audit % | Current Proof / Remaining Gap |
 |-------|------|--------|-------------|-------------------------------|
-| 1 | Rendering Gap | COMPLETE | 90% | Catch-all generated pages render live. Public routes respond. Sitemap bug remains under Phase 6 cleanup. |
+| 1 | Rendering Gap | COMPLETE | 90% | Catch-all generated pages render live. Public routes respond. C23 sitemap localhost leakage is now closed live. |
 | 2 | Draft System | COMPLETE | 80% | Draft create, edit, read, approve, publish, and live URL render all passed in production. |
 | 3 | Image Intelligence | PARTIAL | 70% | Media read works. Live upload, storage cleanup proof, and full alt-text/media governance remain unverified. |
 | 4 | Bulk Job Planner | PARTIAL | 65% | Bulk UI/API exists and read path works. Runtime execution, rollback, idempotency, and pincode targeting are still unproven. |
 | 5 | Geo Intelligence | PARTIAL | 70% | Geo city reads work. Full CEO CRUD, pincode import proof, and generation trigger per area remain incomplete. |
-| 6 | Publish Pipeline | PARTIAL | 75% | Core publish path works live. Transaction safety, scheduled publish proof, sitemap base URL fix, and Rule 16 rollback proof remain open. |
+| 6 | Publish Pipeline | PARTIAL | 75% | Core publish path works live, and the sitemap canonical URL fix is now proven live. Transaction safety, scheduled publish proof, status-model drift cleanup, and Rule 16 rollback proof remain open. |
 | 7 | Download Lead Magnets | NOT STARTED | 0% | No runtime proof collected. |
 | 8 | Multi-Intent Funnels | NOT STARTED | 0% | Gated by stabilization and Phase 23. |
 | 9 | Lead Scoring + Agent Personalization | PARTIAL | 25% | Code exists, but runtime proof was not collected in this audit. |
@@ -8544,13 +8544,13 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (full-system score not re-scored after targeted C22 repair)
+Overall System Score: 64/100 (full-system score not re-scored after targeted C22, C31, and C23 fixes)
 Local Production Build: PASS (next build rerun on April 26, 2026)
 Live Runtime: PARTIAL
 System Mode Truth: /api/status = normal, /api/admin/system/health = DEGRADED
 
 Current issue count:
-  Critical: 2
+  Critical: 1
   High:     3
   Medium:   6
 
@@ -8559,6 +8559,8 @@ Fresh runtime PASS proof:
   - Admin login
   - C31 live RBAC cutover: password-only login rejected, email+password returns 200, session payload uses admin@bimasakhi.com, browser login reaches /admin
   - /api/admin/users after live schema repair
+  - /sitemap.xml and /sitemap-index.xml now emit canonical https://bimasakhi.com URLs only
+  - representative sitemap shard routes now emit canonical https://bimasakhi.com URLs only
   - content_drafts create/read/update/publish
   - feature_flags read/write through app backend
   - page_index read through /api/admin/seo/index-health
@@ -8567,7 +8569,6 @@ Fresh runtime PASS proof:
 
 Fresh runtime FAIL proof:
   - /api/navigation returns 404 in production
-  - /sitemap.xml emits http://localhost:3000 URLs in production
   - /api/admin/system/health reports overall_health: DEGRADED
   - Direct Supabase REST audit path returns 401 with current masked local credential
 
@@ -8598,8 +8599,10 @@ C22 STATUS: RESOLVED IN PRODUCTION
   - Email+password login now returns `200` with session email `admin@bimasakhi.com`.
   - Browser login succeeds end-to-end to `/admin`.
 
-2. Fix production sitemap base URL.
-   - Remove localhost fallback from live XML output.
+2. C23 STATUS: RESOLVED IN PRODUCTION
+  - Commit `16bb781` is live in `/api/status`.
+  - `/sitemap.xml` and `/sitemap-index.xml` emit canonical `https://bimasakhi.com` URLs only.
+  - Representative shard routes emit canonical `https://bimasakhi.com` URLs only.
 
 3. Restore navigation deploy parity.
   - Production `/api/navigation` still returns 404.
@@ -8611,11 +8614,6 @@ C22 STATUS: RESOLVED IN PRODUCTION
    - morning-brief unknown
    - active critical alert present
    - DLQ depth = 3
-
-4. Fix deployment parity for navigation.
-   - /api/navigation must be live
-   - /admin/navigation CRUD must exist
-   - Navbar must consume DB-backed navigation
 
 5. Prove Rule 16 safety.
    - Publish and bulk flows need transactional or RPC-backed rollback proof.

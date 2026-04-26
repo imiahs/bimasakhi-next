@@ -1,0 +1,65 @@
+{
+  "captured_at": "2026-04-26T12:53:24.129Z",
+  "issue": "C23",
+  "status": "RESOLVED LIVE",
+  "deployment": {
+    "status_url": "https://bimasakhi.com/api/status",
+    "version": "16bb781",
+    "environment": "production",
+    "checks": {
+      "db": "ok",
+      "qstash_configured": true,
+      "redis_configured": true,
+      "system_mode": "normal"
+    }
+  },
+  "sitemap_checks": [
+    {
+      "url": "https://bimasakhi.com/sitemap.xml",
+      "contains_localhost": false,
+      "sample_locs": [
+        "https://bimasakhi.com/sitemaps/sitemap-core.xml",
+        "https://bimasakhi.com/sitemaps/sitemap-localities-1.xml",
+        "https://bimasakhi.com/sitemaps/sitemap-keywords-latest.xml"
+      ]
+    },
+    {
+      "url": "https://bimasakhi.com/sitemap-index.xml",
+      "contains_localhost": false,
+      "sample_locs": [
+        "https://bimasakhi.com/sitemaps/sitemap-core.xml",
+        "https://bimasakhi.com/sitemaps/sitemap-keywords-latest.xml",
+        "https://bimasakhi.com/sitemaps/sitemap-localities-1.xml"
+      ]
+    },
+    {
+      "url": "https://bimasakhi.com/sitemaps/sitemap-core.xml",
+      "contains_localhost": false,
+      "sample_locs": [
+        "https://bimasakhi.com/",
+        "https://bimasakhi.com/tools",
+        "https://bimasakhi.com/blog",
+        "https://bimasakhi.com/about"
+      ]
+    },
+    {
+      "url": "https://bimasakhi.com/sitemaps/sitemap-localities-1.xml",
+      "contains_localhost": false,
+      "sample_locs": [
+        "https://bimasakhi.com/new-page-1777145992848",
+        "https://bimasakhi.com/new-page-1777146052926",
+        "https://bimasakhi.com/new-page-1777199268339"
+      ]
+    },
+    {
+      "url": "https://bimasakhi.com/sitemaps/sitemap-keywords-latest.xml",
+      "contains_localhost": false,
+      "sample_locs": [
+        "https://bimasakhi.com/new-page-1777199268339",
+        "https://bimasakhi.com/new-page-1777146052926",
+        "https://bimasakhi.com/new-page-1777145992848"
+      ]
+    }
+  ],
+  "overall_pass": true
+}

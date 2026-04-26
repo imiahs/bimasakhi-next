@@ -10,17 +10,17 @@
 
 | Metric | Value |
 |---|---|
-| **System Score** | 64/100 (CTO Live Proof Refresh, 2026-04-26) |
+| **System Score** | 64/100 (targeted C23 live proof added; full-system score not re-scored) |
 | **Build Status** | PASS - local production build rerun succeeded on 2026-04-26 |
 | **System Mode** | NORMAL from /api/status; DEGRADED from /api/admin/system/health; control-plane truth still split |
-| **Open Critical Issues** | 2 (C21, C23) |
+| **Open Critical Issues** | 1 (C21) |
 | **Open High Issues** | 3 (C24, C25, C32) |
 | **Open Medium Issues** | 6 (C26-C30, C33) |
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
-| **Last Audit** | 2026-04-26 (C31 live cutover proof; C22 live repair proof remains valid) |
-| **Last Deployment** | 2026-04-26 commit `7335ece` (C31 RBAC cutover) |
-| **Last Test Run** | 2026-04-26 local build + deployed C31 auth proof + browser admin login |
-| **Current CTO Decision** | Runtime Truth Stabilization remains active. C22 and C31 are resolved live. Next locked order is C23 sitemap localhost URLs, then C21 navigation deploy parity and `/api/navigation` recovery. |
+| **Last Audit** | 2026-04-26 (C23 live sitemap proof; C31 and C22 proof remain valid) |
+| **Last Deployment** | 2026-04-26 commit `16bb781` (C23 sitemap canonical URL fix) |
+| **Last Test Run** | 2026-04-26 local build + deployed C23 sitemap root/index/shard proof |
+| **Current CTO Decision** | Runtime Truth Stabilization remains active. C22, C31, and C23 are resolved live. Next locked order is C21 navigation deploy parity and `/api/navigation` recovery, then C24 degraded system health. |
 
 ---
 ## Phase Status
@@ -30,12 +30,12 @@
 
 | Phase | Name | Priority | Status | Built % | Left % | Notes |
 |---|---|---|---|---:|---:|---|
-| Phase 1 | Rendering Gap (Catch-all Route + SEO) | R->A | COMPLETE | 90% | 10% | Rendering/live route proof exists. Sitemap localhost bug remains under Phase 6 SEO cleanup. |
+| Phase 1 | Rendering Gap (Catch-all Route + SEO) | R->A | COMPLETE | 90% | 10% | Rendering/live route proof exists. C23 sitemap localhost leakage is now closed live. |
 | Phase 2 | Draft System (Pagegen + CCC) | R->A | COMPLETE | 80% | 20% | Draft create/edit/read/publish path verified live on April 26. |
 | Phase 3 | Image Intelligence | R->A | PARTIAL | 70% | 30% | Built: prompt tools, media schema/code, live media list read. Left: live upload proof, storage cleanup proof, alt text end-to-end, media governance. |
 | Phase 4 | Bulk Job Planner | B | PARTIAL | 65% | 35% | Built: bulk UI/API, job listing, QStash publish capability. Left: runtime job completion proof, pincode targeting proof, Rule 16 rollback/idempotency, duplicate check proof. |
 | Phase 5 | Geo Intelligence | B | PARTIAL | 70% | 30% | Built: geo admin surfaces, city/locality/pincode code, live city read. Left: full CRUD, pincode import proof, generation trigger per area, CEO-complete controls. |
-| Phase 6 | Publish Pipeline | B | PARTIAL | 75% | 25% | Built: draft create/edit/publish/live URL render verified. Left: transactional publish, scheduled publish proof, sitemap base URL fix, status-model drift cleanup, Rule 16 proof. |
+| Phase 6 | Publish Pipeline | B | PARTIAL | 75% | 25% | Built: draft create/edit/publish/live URL render verified and sitemap canonical URL fix proven live. Left: transactional publish, scheduled publish proof, status-model drift cleanup, Rule 16 proof. |
 | Phase 14 | Super Admin Panel - Control Tower | R->A | PARTIAL | 65% | 35% | Built: login, feature flags, workflow config, logs/audit, safe mode. C22 live schema repair is applied and production `/api/admin/users` now returns 200. C31 is now resolved live: password-only login fails, email+password returns a real `admin_users` session for `admin@bimasakhi.com`, and browser login succeeds to `/admin`. Code Visibility, Version History, and full RBAC lifecycle still remain. |
 | Phase 21 | External System Governance | R->A | PARTIAL | 65% | 35% | Built: status route, health routes, QStash publish, Zoho test lead. Left: health degraded, dead event-retry/vendor-health-check crons, QStash delivery proof, WhatsApp/Email/Cliq failover, alert SLA proof. |
 | Phase 22 | System Memory & Traceability | A | PARTIAL | 75% | 25% | Built: docs structure, audit reports, audit scripts/results. Left: stale log cleanup, cross-links, ongoing one-truth enforcement. |
@@ -58,13 +58,15 @@
 | Phase 19 | Universal Lead Hub | C | NOT STARTED / DB SCAFFOLD | 15% | 85% | Schema exists; full hub not proven. |
 | Phase 20 | System Intelligence Engine | D | NOT STARTED / DB SCAFFOLD | 10% | 90% | Schema/code scaffold only; full engine not proven. |
 
-> **CTO Note:** Runtime Truth Stabilization remains the only correct path. C22 and C31 are now closed live. Dynamic navbar remains BLOCKED, and the next locked fixes are C23 then C21.
+> **CTO Note:** Runtime Truth Stabilization remains the only correct path. C22, C31, and C23 are now closed live. Dynamic navbar remains BLOCKED, and the next locked fixes are C21 then C24.
 
 ---
 ## Recent Activity
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | FIX | C23 resolved live: commit `16bb781` deployed, sitemap root/index URLs are canonical, and representative shard routes no longer emit `http://localhost:3000`. | RESOLVED | [fix-009](fixes/fix_009_c23_sitemap_canonical_site_url.md) |
+| 2026-04-26 | AUDIT | Targeted C23 live proof captured: `/api/status` reported `16bb781`, root and secondary sitemap indexes emitted canonical URLs, and representative shard routes showed no localhost leakage. | CURRENT TRUTH | [c23-sitemap-live-proof](audits/audit-2026-04-26-c23-sitemap-live-proof.md) |
 | 2026-04-26 | FIX | C31 resolved live: commit `7335ece` deployed, password-only login now fails, email+password returns a real `admin_users` session, and browser admin login reaches `/admin`. | RESOLVED | [fix-008](fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md) |
 | 2026-04-26 | AUDIT | Targeted C31 live cutover proof captured: `/api/status` reported `7335ece`, API auth checks passed, and browser login loaded the authenticated admin dashboard. | CURRENT TRUTH | [c31-rbac-live-proof](audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md) |
 | 2026-04-26 | FIX | C31 Step 2 started: real RBAC cutover code was staged locally, runtime proof tooling was updated to use `email + password`, and baseline proof showed production still issuing legacy `admin@system` sessions. | IN_PROGRESS | [fix-008](fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md) |
@@ -117,7 +119,6 @@
 | # | Severity | Issue | Owner | Status | Link |
 |---|---|---|---|---|---|
 | C21 | **CRITICAL** | Production `/api/navigation` returns 404; Phase 25 cannot start as complete dynamic navbar work | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
-| C23 | **CRITICAL** | Production `/sitemap.xml` contains `http://localhost:3000` URLs; SEO output unsafe | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
 | C24 | **HIGH** | `/api/admin/system/health` reports `overall_health: DEGRADED` | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
 | C25 | **HIGH** | Direct `.env.local` Supabase REST audit access returned 401; direct DB script proof blocked | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
 | C26 | **MEDIUM** | QStash publish accepted, but delivery log proof was partial/not found immediately | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
@@ -133,6 +134,7 @@
 
 | Date | Score | Key Findings | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | 64/100 unchanged | C23 live proof: `/api/status` served `16bb781`, `/sitemap.xml` and `/sitemap-index.xml` emitted canonical `https://bimasakhi.com` URLs, and representative shard routes contained no `http://localhost:3000`. | CURRENT TRUTH FOR C23 | [c23-sitemap-live-proof](audits/audit-2026-04-26-c23-sitemap-live-proof.md) |
 | 2026-04-26 | 64/100 unchanged | C31 live proof: `/api/status` served `7335ece`, password-only login failed with `400`, email+password returned `200`, session payload resolved to `admin@bimasakhi.com`, and browser login reached `/admin`. | CURRENT TRUTH FOR C31 | [c31-rbac-live-proof](audits/audit-2026-04-26-c31-rbac-cutover-live-proof.md) |
 | 2026-04-26 | 64/100 unchanged | C31 baseline: password-only login still returns 200, email+password still issues legacy `admin@system` token, and local cutover code/build are ready but not deployed. | CURRENT TRUTH FOR C31 | [c31-rbac-baseline](audits/audit-2026-04-26-c31-rbac-cutover-baseline.md) |
 | 2026-04-26 | 64/100 unchanged | Targeted C22 proof: pre/post schema snapshots captured, `admin_users` repair recorded, and authenticated `/api/admin/users` returned 200. | CURRENT TRUTH FOR C22 | [c22-live-repair](audits/audit-2026-04-26-c22-live-repair-proof.md) |
@@ -147,6 +149,7 @@
 
 | Date | Fix | Bible Ref | Status | Link |
 |---|---|---|---|---|
+| 2026-04-26 | C23 sitemap canonical URL fix | Section 8, Section 40 | RESOLVED LIVE | [fix-009](fixes/fix_009_c23_sitemap_canonical_site_url.md) |
 | 2026-04-26 | C31 RBAC cutover and legacy shared-password removal | Section 32, Section 40 | RESOLVED LIVE | [fix-008](fixes/fix_008_c31_rbac_cutover_remove_legacy_shared_password.md) |
 | 2026-04-26 | C22 admin_users schema repair and users POST compatibility patch | Section 32, Section 40 | RESOLVED LIVE | [fix-007](fixes/fix_007_admin_users_schema_repair.md) |
 | 2026-04-18 | content_drafts table creation | Section 9-12 | DONE | [migration-content-drafts-table.md](migrations/migration-content-drafts-table.md) |
