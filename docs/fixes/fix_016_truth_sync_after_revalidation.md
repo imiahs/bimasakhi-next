@@ -3,7 +3,9 @@
 **Date:** 2026-04-27  
 **Author:** CTO (Agent)  
 **Bible Reference:** Section 40, Rule 25, Constitution Article 5  
-**Status:** COMPLETE
+**Status:** HISTORICAL DOC CORRECTION - SUPERSEDED BY FIX 017
+
+**Superseded By:** `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`
 
 ## Context
 
@@ -27,18 +29,18 @@ Under CCC governance, the documentation layer had to be corrected before any fur
 
 ## Outcome
 
-The documentation layer now states the correct live truth:
+This record was the correct documentation correction before the later same-day runtime repair landed.
 
-- Rule 16 is **PARTIAL AFTER APRIL 27 REVALIDATION**
-- C33 is **RESOLVED LIVE FOR C33 SCOPE ONLY**
-- the next locked work is Rule 16 revalidation repair, then C26, C29, and C30
+It is now historical because the later April 27 repair and rerun passed, moving Rule 16 back to a live resolved state in the requested audited scope.
 
-No runtime fix is claimed in this record. This is a truth-correction fix for the documentation layer.
+No runtime fix was claimed in this record. This remained a documentation-only correction.
 
 ## Cross-References
 
 - Related audit: `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`
+- Related audit: `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`
 - Related fix: `docs/fixes/fix_014_rule16_transactional_integrity.md`
+- Related fix: `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`
 - Related fix: `docs/fixes/fix_015_c33_page_index_truth_fix.md`
 - Related authority: `docs/CONTENT_COMMAND_CENTER.md`
 - Related index: `docs/INDEX.md`

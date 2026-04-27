@@ -1,14 +1,17 @@
 # Rule 16 Revalidation + Truth Sync Audit - 2026-04-27
 
-**Status:** CURRENT TRUTH AFTER APRIL 27 REVALIDATION  
+**Status:** HISTORICAL BASELINE BEFORE APRIL 27 REPAIR  
 **Audit Type:** Fresh Rule 16 rerun + documentation reconciliation  
 **Primary References:** `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `docs/CONTENT_COMMAND_CENTER.md`, `docs/INDEX.md`  
 **Secondary References:** `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`  
+**Superseded By:** `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`  
 **Execution Window:** 2026-04-27 UTC / IST
 
 ## 1. Executive Summary
 
-The April 26 passing Rule 16 artifact is no longer the controlling current-truth record.
+This audit was the correct same-day baseline before the later April 27 runtime repair landed.
+
+At this point in time, the April 26 passing Rule 16 artifact was no longer the controlling current-truth record.
 
 The fresh April 27 rerun failed two required Rule 16 checks:
 
@@ -19,7 +22,7 @@ That means Rule 16 must be reopened as **PARTIAL**.
 
 C33 did not fail in this rerun. The April 26 C33 proof still stands, but only for the `page_index` truth contradiction. It must not be used as evidence that the broader publish pipeline or Rule 16 is fully closed.
 
-This audit exists to make the documentation layer match the latest live evidence before any further closure claim.
+This audit existed to make the documentation layer match the failing live evidence before any further closure claim.
 
 ## 2. Evidence Files
 

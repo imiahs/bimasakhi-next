@@ -1,11 +1,13 @@
 import { getSiteUrl } from '@/lib/siteUrl';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 // This acts as the Sitemap Index root mapping to distinct 1000-page XML shards natively
 export async function GET() {
     const siteUrl = getSiteUrl();
 
-    if (process.env.SUPABASE_ENABLED !== 'true') {
+    if (!supabase) {
         return new Response(`<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>`, {
             status: 200,
             headers: { 'Content-Type': 'text/xml' }
@@ -16,7 +18,7 @@ export async function GET() {
         const { count: activeCount } = await supabase
             .from('page_index')
             .select('id', { count: 'exact', head: true })
-            .eq('status', 'active');
+            .eq('status', 'published');
 
         // Default fallback if error
         const totalPages = activeCount || 0;
@@ -55,7 +57,7 @@ export async function GET() {
             status: 200,
             headers: {
                 'Content-Type': 'text/xml',
-                'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=43200'
+                'Cache-Control': 'no-store, max-age=0'
             }
         });
     } catch (err) {

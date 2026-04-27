@@ -1,0 +1,894 @@
+{
+  "name": "rule16-transactional-integrity",
+  "started_at": "2026-04-27T03:57:22.426Z",
+  "finished_at": "2026-04-27T03:58:58.051Z",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "env_presence_masked",
+      "status": "INFO",
+      "evidence": {
+        "Database_Password": true,
+        "QSTASH_TOKEN": true,
+        "SUPABASE_URL": true
+      },
+      "timestamp": "2026-04-27T03:57:22.838Z"
+    },
+    {
+      "name": "publish_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "eecb1327-20aa-4da8-a432-0ffbcc0cd0d1",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        },
+        "forced_failure": "rule16_forced_failure:page_index_upserted",
+        "after_failure": {
+          "draft": {
+            "id": "eecb1327-20aa-4da8-a432-0ffbcc0cd0d1",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        },
+        "retry_result": {
+          "success": true,
+          "draft_id": "eecb1327-20aa-4da8-a432-0ffbcc0cd0d1",
+          "page_slug": "rule16-publish-1777262242418-718d3157",
+          "draft_status": "published",
+          "published_at": "2026-04-27T03:57:23.397424+00:00",
+          "page_index_id": "407e9adf-ffa5-4475-8e40-3de057a0a531",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "draft": {
+            "id": "eecb1327-20aa-4da8-a432-0ffbcc0cd0d1",
+            "status": "published",
+            "page_index_id": "407e9adf-ffa5-4475-8e40-3de057a0a531",
+            "published_at": "2026-04-27T03:57:23.397Z",
+            "reviewer": "rule16_audit"
+          },
+          "page": {
+            "id": "407e9adf-ffa5-4475-8e40-3de057a0a531",
+            "page_slug": "rule16-publish-1777262242418-718d3157",
+            "status": "published",
+            "indexing_status": "pending"
+          },
+          "content": {
+            "page_index_id": "407e9adf-ffa5-4475-8e40-3de057a0a531",
+            "hero_headline": "RULE16_PUBLISH_1777262242418-718d3157",
+            "meta_title": "RULE16_PUBLISH_1777262242418-718d3157 title"
+          }
+        },
+        "live_page_status": 200,
+        "sitemap_contains_slug": true
+      },
+      "timestamp": "2026-04-27T03:57:25.113Z"
+    },
+    {
+      "name": "publish_kill_process_mid_execution",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "4c849690-28b5-4fda-a274-fd607f4544c3",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        },
+        "child_exit": {
+          "code": null,
+          "signal": null,
+          "timed_out": true
+        },
+        "after_kill": {
+          "draft": {
+            "id": "4c849690-28b5-4fda-a274-fd607f4544c3",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        }
+      },
+      "timestamp": "2026-04-27T03:57:37.408Z"
+    },
+    {
+      "name": "publish_network_drop_mid_execution",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "980debb8-0f32-4be8-a7b4-5ad4a58e443f",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        },
+        "child_exit": {
+          "code": 1,
+          "signal": null,
+          "timed_out": false
+        },
+        "after_drop": {
+          "draft": {
+            "id": "980debb8-0f32-4be8-a7b4-5ad4a58e443f",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        }
+      },
+      "timestamp": "2026-04-27T03:57:41.942Z"
+    },
+    {
+      "name": "publish_idempotent_replay_same_key",
+      "status": "PASS",
+      "evidence": {
+        "first": {
+          "success": true,
+          "draft_id": "2759a8df-2b0c-4e2c-939c-d6345315f30f",
+          "page_slug": "rule16-publish-idempotent-1777262242418-718d3157",
+          "draft_status": "published",
+          "published_at": "2026-04-27T03:57:42.29269+00:00",
+          "page_index_id": "6e6ffa1f-832e-456e-ac03-f56975b99757",
+          "idempotent_replay": false
+        },
+        "second": {
+          "success": true,
+          "draft_id": "2759a8df-2b0c-4e2c-939c-d6345315f30f",
+          "draft_status": "published",
+          "page_index_id": "6e6ffa1f-832e-456e-ac03-f56975b99757",
+          "idempotent_replay": true
+        },
+        "after_replay": {
+          "draft": {
+            "id": "2759a8df-2b0c-4e2c-939c-d6345315f30f",
+            "status": "published",
+            "page_index_id": "6e6ffa1f-832e-456e-ac03-f56975b99757",
+            "published_at": "2026-04-27T03:57:42.292Z",
+            "reviewer": "rule16_audit"
+          },
+          "page": {
+            "id": "6e6ffa1f-832e-456e-ac03-f56975b99757",
+            "page_slug": "rule16-publish-idempotent-1777262242418-718d3157",
+            "status": "published",
+            "indexing_status": "pending"
+          },
+          "content": {
+            "page_index_id": "6e6ffa1f-832e-456e-ac03-f56975b99757",
+            "hero_headline": "RULE16_PUBLISH_IDEMPOTENT_1777262242418-718d3157",
+            "meta_title": "RULE16_PUBLISH_IDEMPOTENT_1777262242418-718d3157 title"
+          }
+        },
+        "page_count": 1
+      },
+      "timestamp": "2026-04-27T03:57:42.176Z"
+    },
+    {
+      "name": "bulk_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "job": {
+            "id": "51d0f24a-09b6-488d-b8cf-d0768332ee13",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": null,
+          "draft": null
+        },
+        "failure": "rule16_forced_failure:generation_queue_inserted",
+        "after_failure": {
+          "job": {
+            "id": "51d0f24a-09b6-488d-b8cf-d0768332ee13",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": null,
+          "draft": null
+        },
+        "retry": {
+          "job_id": "51d0f24a-09b6-488d-b8cf-d0768332ee13",
+          "status": "running",
+          "success": true,
+          "queue_id": "fb20471d-b914-4290-9717-fa6c201d8a95",
+          "total_items": 1,
+          "event_store_id": "ee4ad452-c8e5-4426-9bf2-5adcb48010ea",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "job": {
+            "id": "51d0f24a-09b6-488d-b8cf-d0768332ee13",
+            "status": "running",
+            "generation_queue_id": "fb20471d-b914-4290-9717-fa6c201d8a95",
+            "total_pages": 1,
+            "generated_count": 0
+          },
+          "queue": {
+            "id": "fb20471d-b914-4290-9717-fa6c201d8a95",
+            "status": "pending",
+            "progress": 0,
+            "total_items": 1
+          },
+          "event": {
+            "id": "ee4ad452-c8e5-4426-9bf2-5adcb48010ea",
+            "status": "pending",
+            "retry_count": 0,
+            "dispatch_message_id": null
+          },
+          "page": null,
+          "draft": null
+        }
+      },
+      "timestamp": "2026-04-27T03:57:42.565Z"
+    },
+    {
+      "name": "bulk_kill_process_mid_execution",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "job": {
+            "id": "d74af959-4b8d-4a92-82f8-1194455498fe",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": null,
+          "draft": null
+        },
+        "child_exit": {
+          "code": null,
+          "signal": null,
+          "timed_out": true
+        },
+        "after_kill": {
+          "job": {
+            "id": "d74af959-4b8d-4a92-82f8-1194455498fe",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": null,
+          "draft": null
+        }
+      },
+      "timestamp": "2026-04-27T03:57:54.844Z"
+    },
+    {
+      "name": "bulk_idempotent_replay_same_key",
+      "status": "PASS",
+      "evidence": {
+        "first": {
+          "job_id": "377190f3-0e5f-4d83-abd0-fd9c1996fcfc",
+          "status": "running",
+          "success": true,
+          "queue_id": "11272e7a-fcab-405a-a8e0-8d69f88105cf",
+          "total_items": 1,
+          "event_store_id": "8f14730b-89dc-4f0b-925f-a3ffaad9e493",
+          "idempotent_replay": false
+        },
+        "second": {
+          "job_id": "377190f3-0e5f-4d83-abd0-fd9c1996fcfc",
+          "status": "running",
+          "success": true,
+          "queue_id": "11272e7a-fcab-405a-a8e0-8d69f88105cf",
+          "total_items": 1,
+          "event_store_id": "8f14730b-89dc-4f0b-925f-a3ffaad9e493",
+          "idempotent_replay": true
+        },
+        "after_replay": {
+          "job": {
+            "id": "377190f3-0e5f-4d83-abd0-fd9c1996fcfc",
+            "status": "running",
+            "generation_queue_id": "11272e7a-fcab-405a-a8e0-8d69f88105cf",
+            "total_pages": 1,
+            "generated_count": 0
+          },
+          "queue": {
+            "id": "11272e7a-fcab-405a-a8e0-8d69f88105cf",
+            "status": "pending",
+            "progress": 0,
+            "total_items": 1
+          },
+          "event": {
+            "id": "8f14730b-89dc-4f0b-925f-a3ffaad9e493",
+            "status": "pending",
+            "retry_count": 0,
+            "dispatch_message_id": null
+          },
+          "page": null,
+          "draft": null
+        },
+        "queue_count": 1,
+        "event_count": 1
+      },
+      "timestamp": "2026-04-27T03:57:55.154Z"
+    },
+    {
+      "name": "bulk_network_drop_then_retry_daemon_recovery",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "job": {
+            "id": "89fa4e27-28ec-4b06-af7b-2eb44e8efa0b",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": {
+            "id": "4b94c42f-a340-439d-a941-7c00433953b8",
+            "page_slug": "rule16-bulk-existing-1777262242418-718d3157",
+            "status": "draft",
+            "indexing_status": "blocked"
+          },
+          "draft": null
+        },
+        "after_drop": {
+          "job": {
+            "id": "89fa4e27-28ec-4b06-af7b-2eb44e8efa0b",
+            "status": "running",
+            "generation_queue_id": "3e19be25-c5f3-46b5-adfb-12d9b22da55f",
+            "total_pages": 1,
+            "generated_count": 0
+          },
+          "queue": {
+            "id": "3e19be25-c5f3-46b5-adfb-12d9b22da55f",
+            "status": "pending",
+            "progress": 0,
+            "total_items": 1
+          },
+          "event": {
+            "id": "b4642b00-d2dd-45a9-abe6-1649705e895a",
+            "status": "pending",
+            "retry_count": 0,
+            "dispatch_message_id": null
+          },
+          "page": {
+            "id": "4b94c42f-a340-439d-a941-7c00433953b8",
+            "page_slug": "rule16-bulk-existing-1777262242418-718d3157",
+            "status": "draft",
+            "indexing_status": "blocked"
+          },
+          "draft": null
+        },
+        "after_retry": {
+          "job": {
+            "id": "89fa4e27-28ec-4b06-af7b-2eb44e8efa0b",
+            "status": "completed",
+            "generation_queue_id": "3e19be25-c5f3-46b5-adfb-12d9b22da55f",
+            "total_pages": 1,
+            "generated_count": 1
+          },
+          "queue": {
+            "id": "3e19be25-c5f3-46b5-adfb-12d9b22da55f",
+            "status": "completed",
+            "progress": 1,
+            "total_items": 1
+          },
+          "event": {
+            "id": "b4642b00-d2dd-45a9-abe6-1649705e895a",
+            "status": "completed",
+            "retry_count": 1,
+            "dispatch_message_id": null
+          },
+          "page": {
+            "id": "4b94c42f-a340-439d-a941-7c00433953b8",
+            "page_slug": "rule16-bulk-existing-1777262242418-718d3157",
+            "status": "draft",
+            "indexing_status": "blocked"
+          },
+          "draft": null
+        },
+        "start_result": {
+          "job_id": "89fa4e27-28ec-4b06-af7b-2eb44e8efa0b",
+          "status": "running",
+          "success": true,
+          "queue_id": "3e19be25-c5f3-46b5-adfb-12d9b22da55f",
+          "total_items": 1,
+          "event_store_id": "b4642b00-d2dd-45a9-abe6-1649705e895a",
+          "idempotent_replay": false
+        }
+      },
+      "timestamp": "2026-04-27T03:58:54.259Z"
+    },
+    {
+      "name": "pagegen_persist_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "page": null,
+          "fingerprint": null,
+          "content": null,
+          "draft": null,
+          "review_count": 0
+        },
+        "failure": "rule16_forced_failure:location_content_upserted",
+        "after_failure": {
+          "page": null,
+          "fingerprint": null,
+          "content": null,
+          "draft": null,
+          "review_count": 0
+        },
+        "retry": {
+          "success": true,
+          "draft_id": "f649d434-57ca-4537-8390-d3b98681712b",
+          "page_slug": "rule16-pagegen-1777262242418-718d3157",
+          "page_index_id": "c4281ef1-c84a-4b3d-b3b3-5122d2cc1617",
+          "review_required": true,
+          "skipped_existing": false,
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "page": {
+            "id": "c4281ef1-c84a-4b3d-b3b3-5122d2cc1617",
+            "page_slug": "rule16-pagegen-1777262242418-718d3157",
+            "status": "draft",
+            "indexing_status": "blocked"
+          },
+          "fingerprint": {
+            "page_index_id": "c4281ef1-c84a-4b3d-b3b3-5122d2cc1617",
+            "content_hash": "b9b9432e1817cf48fc39322a476722bae0e7e835e3eac641f0b4054853d6f098"
+          },
+          "content": {
+            "page_index_id": "c4281ef1-c84a-4b3d-b3b3-5122d2cc1617",
+            "hero_headline": "Rule16 Pagegen 1777262242418-718d3157",
+            "word_count": 720
+          },
+          "draft": {
+            "id": "f649d434-57ca-4537-8390-d3b98681712b",
+            "status": "draft",
+            "quality_score": "7.2",
+            "generation_queue_id": "0c1a7567-9c0c-447a-822d-36a9416bfca1"
+          },
+          "review_count": 1
+        }
+      },
+      "timestamp": "2026-04-27T03:58:54.747Z"
+    },
+    {
+      "name": "admin_custom_page_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "page": {
+            "id": "0b8e5349-4904-4956-a562-512a2520942a",
+            "title": "Before Title",
+            "status": "draft"
+          },
+          "blocks": [
+            {
+              "block_type": "Hero",
+              "block_order": 0,
+              "block_data": {
+                "headline": "before"
+              }
+            }
+          ],
+          "version_count": 0
+        },
+        "failure": "rule16_forced_failure:custom_page_updated",
+        "after_failure": {
+          "page": {
+            "id": "0b8e5349-4904-4956-a562-512a2520942a",
+            "title": "Before Title",
+            "status": "draft"
+          },
+          "blocks": [
+            {
+              "block_type": "Hero",
+              "block_order": 0,
+              "block_data": {
+                "headline": "before"
+              }
+            }
+          ],
+          "version_count": 0
+        },
+        "retry": {
+          "page_id": "0b8e5349-4904-4956-a562-512a2520942a",
+          "success": true,
+          "block_count": 2,
+          "version_number": 1,
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "page": {
+            "id": "0b8e5349-4904-4956-a562-512a2520942a",
+            "title": "After Title",
+            "status": "published"
+          },
+          "blocks": [
+            {
+              "block_type": "Hero",
+              "block_order": 0,
+              "block_data": {
+                "headline": "after"
+              }
+            },
+            {
+              "block_type": "CTA",
+              "block_order": 1,
+              "block_data": {
+                "cta": "apply"
+              }
+            }
+          ],
+          "version_count": 1
+        }
+      },
+      "timestamp": "2026-04-27T03:58:55.273Z"
+    },
+    {
+      "name": "admin_blog_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "post": {
+            "id": "94fb7735-89bb-4db6-89b0-28fae03b509d",
+            "slug": "rule16-blog-1777262242418-718d3157",
+            "title": "Before Blog",
+            "status": "draft"
+          },
+          "version_count": 0
+        },
+        "failure": "rule16_forced_failure:blog_post_versioned",
+        "after_failure": {
+          "post": {
+            "id": "94fb7735-89bb-4db6-89b0-28fae03b509d",
+            "slug": "rule16-blog-1777262242418-718d3157",
+            "title": "Before Blog",
+            "status": "draft"
+          },
+          "version_count": 0
+        },
+        "retry": {
+          "slug": "rule16-blog-1777262242418-718d3157",
+          "post_id": "94fb7735-89bb-4db6-89b0-28fae03b509d",
+          "success": true,
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "post": {
+            "id": "94fb7735-89bb-4db6-89b0-28fae03b509d",
+            "slug": "rule16-blog-1777262242418-718d3157",
+            "title": "After Blog",
+            "status": "published"
+          },
+          "version_count": 1
+        }
+      },
+      "timestamp": "2026-04-27T03:58:55.613Z"
+    },
+    {
+      "name": "admin_seo_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "override": {
+            "id": "e363cb7d-29b3-4926-bf08-8709ed6183c7",
+            "route_path": "/rule16-seo-1777262242418-718d3157",
+            "meta_title": "Before SEO",
+            "meta_description": "Before Desc"
+          },
+          "version_count": 0
+        },
+        "failure": "rule16_forced_failure:seo_version_inserted",
+        "after_failure": {
+          "override": {
+            "id": "e363cb7d-29b3-4926-bf08-8709ed6183c7",
+            "route_path": "/rule16-seo-1777262242418-718d3157",
+            "meta_title": "Before SEO",
+            "meta_description": "Before Desc"
+          },
+          "version_count": 0
+        },
+        "retry": {
+          "success": true,
+          "route_path": "/rule16-seo-1777262242418-718d3157",
+          "override_id": "e363cb7d-29b3-4926-bf08-8709ed6183c7",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "override": {
+            "id": "e363cb7d-29b3-4926-bf08-8709ed6183c7",
+            "route_path": "/rule16-seo-1777262242418-718d3157",
+            "meta_title": "After SEO",
+            "meta_description": "After Desc"
+          },
+          "version_count": 1
+        }
+      },
+      "timestamp": "2026-04-27T03:58:55.920Z"
+    },
+    {
+      "name": "admin_tool_configs_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "configs": [
+            {
+              "config_key": "rule16_tool_a_1777262242418-718d3157",
+              "config_value": "\"before-a\""
+            },
+            {
+              "config_key": "rule16_tool_b_1777262242418-718d3157",
+              "config_value": "\"before-b\""
+            }
+          ],
+          "version_count": 0
+        },
+        "failure": "rule16_forced_failure:tool_config_applied:rule16_tool_a_1777262242418-718d3157",
+        "after_failure": {
+          "configs": [
+            {
+              "config_key": "rule16_tool_a_1777262242418-718d3157",
+              "config_value": "\"before-a\""
+            },
+            {
+              "config_key": "rule16_tool_b_1777262242418-718d3157",
+              "config_value": "\"before-b\""
+            }
+          ],
+          "version_count": 0
+        },
+        "retry": {
+          "success": true,
+          "updated_count": 2,
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "configs": [
+            {
+              "config_key": "rule16_tool_a_1777262242418-718d3157",
+              "config_value": "\"after-a\""
+            },
+            {
+              "config_key": "rule16_tool_b_1777262242418-718d3157",
+              "config_value": "\"after-b\""
+            }
+          ],
+          "version_count": 2
+        }
+      },
+      "timestamp": "2026-04-27T03:58:56.217Z"
+    },
+    {
+      "name": "admin_draft_edit_sync_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "ef57126a-6cf1-4b5d-96c5-c5e5eabe73c1",
+            "status": "draft",
+            "hero_headline": "Before Hero",
+            "meta_title": "Before Meta",
+            "body_content": "Before Body"
+          },
+          "content": {
+            "page_index_id": "20c77889-d3ba-480d-b029-f534e9dd62df",
+            "hero_headline": "Before Hero",
+            "meta_title": "Before Meta",
+            "local_opportunity_description": "Before Body"
+          }
+        },
+        "failure": "rule16_forced_failure:draft_updated",
+        "after_failure": {
+          "draft": {
+            "id": "ef57126a-6cf1-4b5d-96c5-c5e5eabe73c1",
+            "status": "draft",
+            "hero_headline": "Before Hero",
+            "meta_title": "Before Meta",
+            "body_content": "Before Body"
+          },
+          "content": {
+            "page_index_id": "20c77889-d3ba-480d-b029-f534e9dd62df",
+            "hero_headline": "Before Hero",
+            "meta_title": "Before Meta",
+            "local_opportunity_description": "Before Body"
+          }
+        },
+        "retry": {
+          "success": true,
+          "draft_id": "ef57126a-6cf1-4b5d-96c5-c5e5eabe73c1",
+          "page_index_id": "20c77889-d3ba-480d-b029-f534e9dd62df",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "draft": {
+            "id": "ef57126a-6cf1-4b5d-96c5-c5e5eabe73c1",
+            "status": "draft",
+            "hero_headline": "After Hero",
+            "meta_title": "After Meta",
+            "body_content": "After Body"
+          },
+          "content": {
+            "page_index_id": "20c77889-d3ba-480d-b029-f534e9dd62df",
+            "hero_headline": "After Hero",
+            "meta_title": "After Meta",
+            "local_opportunity_description": "After Body"
+          }
+        }
+      },
+      "timestamp": "2026-04-27T03:58:56.590Z"
+    },
+    {
+      "name": "admin_draft_unpublish_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "03050c8a-da06-45d7-b887-3ef129febe55",
+            "status": "published",
+            "page_index_id": "98bbfeef-adb4-4cb1-a2f3-270335e1b609",
+            "published_at": "2026-04-27T03:58:56.934Z",
+            "reviewer": null
+          },
+          "page": {
+            "id": "98bbfeef-adb4-4cb1-a2f3-270335e1b609",
+            "page_slug": "rule16-transition-unpublish-1777262242418-718d3157",
+            "status": "published",
+            "indexing_status": "indexed"
+          },
+          "content": null
+        },
+        "failure": "rule16_forced_failure:page_index_transitioned",
+        "after_failure": {
+          "draft": {
+            "id": "03050c8a-da06-45d7-b887-3ef129febe55",
+            "status": "published",
+            "page_index_id": "98bbfeef-adb4-4cb1-a2f3-270335e1b609",
+            "published_at": "2026-04-27T03:58:56.934Z",
+            "reviewer": null
+          },
+          "page": {
+            "id": "98bbfeef-adb4-4cb1-a2f3-270335e1b609",
+            "page_slug": "rule16-transition-unpublish-1777262242418-718d3157",
+            "status": "published",
+            "indexing_status": "indexed"
+          },
+          "content": null
+        },
+        "retry": {
+          "success": true,
+          "draft_id": "03050c8a-da06-45d7-b887-3ef129febe55",
+          "page_status": "unpublished",
+          "draft_status": "draft",
+          "page_index_id": "98bbfeef-adb4-4cb1-a2f3-270335e1b609",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "draft": {
+            "id": "03050c8a-da06-45d7-b887-3ef129febe55",
+            "status": "draft",
+            "page_index_id": "98bbfeef-adb4-4cb1-a2f3-270335e1b609",
+            "published_at": null,
+            "reviewer": "rule16_audit"
+          },
+          "page": {
+            "id": "98bbfeef-adb4-4cb1-a2f3-270335e1b609",
+            "page_slug": "rule16-transition-unpublish-1777262242418-718d3157",
+            "status": "unpublished",
+            "indexing_status": "blocked"
+          },
+          "content": null
+        }
+      },
+      "timestamp": "2026-04-27T03:58:57.017Z"
+    },
+    {
+      "name": "admin_draft_archive_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "5f751ac1-e43b-4e30-8193-fff796894647",
+            "status": "published",
+            "page_index_id": "88b0dfd3-6288-4466-86a0-4a45184aa58f",
+            "published_at": "2026-04-27T03:58:57.360Z",
+            "reviewer": null
+          },
+          "page": {
+            "id": "88b0dfd3-6288-4466-86a0-4a45184aa58f",
+            "page_slug": "rule16-transition-archive-1777262242418-718d3157",
+            "status": "published",
+            "indexing_status": "indexed"
+          },
+          "content": null
+        },
+        "failure": "rule16_forced_failure:page_index_transitioned",
+        "after_failure": {
+          "draft": {
+            "id": "5f751ac1-e43b-4e30-8193-fff796894647",
+            "status": "published",
+            "page_index_id": "88b0dfd3-6288-4466-86a0-4a45184aa58f",
+            "published_at": "2026-04-27T03:58:57.360Z",
+            "reviewer": null
+          },
+          "page": {
+            "id": "88b0dfd3-6288-4466-86a0-4a45184aa58f",
+            "page_slug": "rule16-transition-archive-1777262242418-718d3157",
+            "status": "published",
+            "indexing_status": "indexed"
+          },
+          "content": null
+        },
+        "retry": {
+          "success": true,
+          "draft_id": "5f751ac1-e43b-4e30-8193-fff796894647",
+          "page_status": "archived",
+          "draft_status": "archived",
+          "page_index_id": "88b0dfd3-6288-4466-86a0-4a45184aa58f",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "draft": {
+            "id": "5f751ac1-e43b-4e30-8193-fff796894647",
+            "status": "archived",
+            "page_index_id": "88b0dfd3-6288-4466-86a0-4a45184aa58f",
+            "published_at": "2026-04-27T03:58:57.360Z",
+            "reviewer": "rule16_audit"
+          },
+          "page": {
+            "id": "88b0dfd3-6288-4466-86a0-4a45184aa58f",
+            "page_slug": "rule16-transition-archive-1777262242418-718d3157",
+            "status": "archived",
+            "indexing_status": "blocked"
+          },
+          "content": null
+        }
+      },
+      "timestamp": "2026-04-27T03:58:57.451Z"
+    },
+    {
+      "name": "rule16_transactional_integrity_verdict",
+      "status": "PASS",
+      "evidence": {
+        "failed_checks": [],
+        "total_checks": 17
+      },
+      "timestamp": "2026-04-27T03:58:57.451Z"
+    }
+  ],
+  "errors": []
+}

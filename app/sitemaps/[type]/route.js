@@ -1,12 +1,14 @@
 import { getSiteUrl } from '@/lib/siteUrl';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 // This handles dynamic resolution for /sitemaps/sitemap-localities-[1].xml
 export async function GET(request, { params }) {
     const { type } = params;
     const siteUrl = getSiteUrl();
 
-    if (process.env.SUPABASE_ENABLED !== 'true') {
+    if (!supabase) {
         return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`, { status: 200, headers: { 'Content-Type': 'text/xml' } });
     }
 
@@ -35,7 +37,7 @@ export async function GET(request, { params }) {
                 const { data: pageRange } = await supabase
                     .from('page_index')
                     .select('page_slug, page_type, updated_at')
-                    .eq('status', 'active')
+                    .eq('status', 'published')
                     .order('page_type', { ascending: true }) // Ranks cities highest natively
                     .range(start, end);
 
@@ -50,12 +52,11 @@ export async function GET(request, { params }) {
             }
         }
         else if (type === 'sitemap-keywords-latest.xml') {
-            // Discovery engine pushing ONLY newly active urls 
-            // Emulating finding the freshest latest 'active' promotions.
+            // Discovery engine pushing ONLY newly published URLs.
             const { data: recentPages } = await supabase
                 .from('page_index')
                 .select('page_slug, updated_at')
-                .eq('status', 'active')
+                .eq('status', 'published')
                 .order('updated_at', { ascending: false })
                 .limit(200);
 
@@ -88,8 +89,7 @@ export async function GET(request, { params }) {
             status: 200,
             headers: {
                 'Content-Type': 'text/xml',
-                // Cached mapping explicitly to limit DB hits on mass crawls
-                'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=43200'
+                'Cache-Control': 'no-store, max-age=0'
             }
         });
     } catch (err) {

@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import GeneratedPageTemplate from '@/components/layout/GeneratedPageTemplate';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 /**
  * Catch-all route for AI-generated pages.
@@ -31,7 +32,7 @@ async function getGeneratedPage(slugArray) {
     .from('page_index')
     .select('id, page_slug, page_type, status, city_id, locality_id')
     .eq('page_slug', joinedSlug)
-    .in('status', ['active', 'pending_index'])
+    .eq('status', 'published')
     .maybeSingle();
 
   if (!pageRes.data && joinedSlug !== flatSlug) {
@@ -39,7 +40,7 @@ async function getGeneratedPage(slugArray) {
       .from('page_index')
       .select('id, page_slug, page_type, status, city_id, locality_id')
       .eq('page_slug', flatSlug)
-      .in('status', ['active', 'pending_index'])
+      .eq('status', 'published')
       .maybeSingle();
   }
 
@@ -63,7 +64,7 @@ async function getGeneratedPage(slugArray) {
       .from('page_index')
       .select('page_slug')
       .eq('city_id', page.city_id)
-      .in('status', ['active', 'pending_index'])
+      .eq('status', 'published')
       .neq('id', page.id)
       .limit(6);
 

@@ -3,7 +3,9 @@
 **Date:** 2026-04-26  
 **Author:** CTO (Agent)  
 **Bible Reference:** Rule 16, Section 10-12, Section 32, Section 40  
-**Status:** PARTIAL AFTER APRIL 27 REVALIDATION
+**Status:** HISTORICAL BASELINE - SUPERSEDED BY FIX 017
+
+**Current Closure Record:** `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`
 
 ## Context
 
@@ -155,7 +157,9 @@ The harness was fixed, rerun, and then a direct DB residue scan confirmed zero r
 - `tool_configs`
 - `idempotency_keys`
 
-## April 27 Revalidation Correction
+## April 27 Revalidation Baseline
+
+This section is historical same-day baseline only. The repaired current-truth rerun is recorded in `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`.
 
 Fresh rerun artifact:
 
@@ -195,7 +199,7 @@ What changed in runtime truth:
 
 ## Result
 
-**Rule 16 status:** PARTIAL AFTER APRIL 27 REVALIDATION
+**Historical verdict at this point in time:** PARTIAL AFTER APRIL 27 REVALIDATION
 
 Truth boundary after this fix:
 
@@ -205,10 +209,14 @@ Truth boundary after this fix:
 - C26, C29, and C30 remain open separate work
 - scheduled publish now shares the same transactional RPC, but scheduled runtime itself was not separately executed during this audit window
 
+Current live closure is recorded in `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md` and `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`.
+
 ## Cross-References
 
 - Related audit: `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`
 - Related audit: `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`
+- Related audit: `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`
+- Related fix: `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`
 - Related migration: `docs/migrations/migration-2026-04-26-rule16-publish-pipeline-atomicity.md`
 - Related migration: `docs/migrations/migration-2026-04-26-rule16-bulk-admin-atomicity.md`
 - Related migration: `docs/migrations/migration-2026-04-26-c33-page-index-truth-fix.md`

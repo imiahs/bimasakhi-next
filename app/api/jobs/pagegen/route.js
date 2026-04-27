@@ -5,9 +5,10 @@ import { getSystemPrompt, buildPagePrompt } from '@/lib/ai/promptTemplates';
 import { generateImagePrompts } from '@/lib/ai/imagePrompts';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
 import { isSystemEnabled } from '@/lib/featureFlags';
+import { markCompleted, markFailed } from '@/lib/events/eventStore';
+import { dispatchPagegenOutbox } from '@/lib/events/dispatchPagegenOutbox';
 import crypto from 'crypto';
 import { verifySignatureAppRouter } from '@upstash/qstash/nextjs';
-import { enqueuePageGeneration } from '@/lib/queue/publisher';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -206,33 +207,47 @@ async function cleanupPartialPage(supabase, pageId) {
     await supabase.from('page_index').delete().eq('id', pageId);
 }
 
-async function handler(request) {
-    let body = {};
-    try {
-        body = await request.json();
-    } catch {
-        body = {};
-    }
-    const { queueId } = body;
+export async function executePagegenJob(body = {}) {
+    const { queueId, _event_store_id: currentEventStoreId = null } = body;
 
     // STEP 5: Worker entry verification log
     console.log('[PAGEGEN WORKER EXECUTED]', { queueId, timestamp: new Date().toISOString() });
 
     if (!queueId) {
-        return NextResponse.json({ error: 'Missing queueId payload from QStash' }, { status: 400 });
+        await markFailed(currentEventStoreId, 'Missing queueId payload from QStash');
+        return {
+            status: 400,
+            body: { error: 'Missing queueId payload from QStash' },
+        };
     }
 
     const config = await getSystemConfig();
     if (config.queue_paused) {
         await logSystemAction('GUARD_BLOCKED', { guard: 'queue_paused', route: '/api/jobs/pagegen' });
-        return NextResponse.json({ success: true, message: 'System paused via control config.' });
+        await markFailed(currentEventStoreId, 'System paused via control config.', {
+            queue_id: queueId,
+            retriable: true,
+            guard: 'queue_paused',
+        });
+        return {
+            status: 503,
+            body: { success: false, error: 'System paused via control config.' },
+        };
     }
 
     // Phase 14: Feature flag + Safe Mode check
     const pagegenEnabled = await isSystemEnabled('pagegen_enabled');
     if (!pagegenEnabled) {
         await logSystemAction('GUARD_BLOCKED', { guard: 'pagegen_enabled or safe_mode', route: '/api/jobs/pagegen' });
-        return NextResponse.json({ success: true, message: 'Page generation disabled via feature flag or Safe Mode.' });
+        await markFailed(currentEventStoreId, 'Page generation disabled via feature flag or Safe Mode.', {
+            queue_id: queueId,
+            retriable: true,
+            guard: 'pagegen_enabled_or_safe_mode',
+        });
+        return {
+            status: 503,
+            body: { success: false, error: 'Page generation disabled via feature flag or Safe Mode.' },
+        };
     }
 
     const supabase = getServiceSupabase();
@@ -251,13 +266,21 @@ async function handler(request) {
 
         queueJob = queueRes.data;
         if (!queueJob || queueJob.status === 'completed') {
-            return NextResponse.json({ success: true, message: 'Queue job not found or already completed.' });
+            await markCompleted(currentEventStoreId, { queue_id: queueId, skipped: true, reason: 'queue_missing_or_completed' });
+            return {
+                status: 200,
+                body: { success: true, message: 'Queue job not found or already completed.' },
+            };
         }
 
         const validation = validatePageGenJob(queueJob);
         if (!validation.valid) {
             await markQueueFailed(supabase, queueJob, validation.reason);
-            return NextResponse.json({ success: false, error: validation.reason }, { status: 422 });
+            await markFailed(currentEventStoreId, validation.reason, { queue_id: queueJob.id, payload: queueJob.payload || null });
+            return {
+                status: 422,
+                body: { success: false, error: validation.reason },
+            };
         }
 
         const totalItems = validation.payload.pages.length;
@@ -289,7 +312,19 @@ async function handler(request) {
             }).eq('id', queueJob.id);
             await writeGenerationLog(supabase, queueJob.id, 'completed', 'No remaining pages to process');
             await finalizeJobRun(supabase, jobRunId, 'completed');
-            return NextResponse.json({ success: true });
+            await markCompleted(currentEventStoreId, {
+                queue_id: queueJob.id,
+                processed: 0,
+                reviews: 0,
+                new_progress: totalItems,
+                complete: true,
+                dispatch_deferred: false,
+                reason: 'no_remaining_pages',
+            });
+            return {
+                status: 200,
+                body: { success: true },
+            };
         }
 
         let processedCount = 0;
@@ -351,129 +386,125 @@ async function handler(request) {
             const contentStr = `${aiContent.hero_headline || ''} ${mainContent}`;
             const contentHash = crypto.createHash('sha256').update(contentStr).digest('hex');
 
-            const pageInsertRes = await supabase.from('page_index').insert({
-                page_slug: slug,
-                city_id,
-                locality_id,
-                keyword_variation_id,
-                status: 'pending_index',
-                page_type: page_type || 'locality_page'
-            }).select('id').single();
+            const qualityScore = calculateQualityScore(aiContent, realWordCount);
 
-            if (pageInsertRes.error) {
-                throw new Error(`page_index insert failed for ${slug}: ${pageInsertRes.error.message}`);
-            }
+            const imagePrompts = generateImagePrompts(
+                { city: cityName, locality: pageReq.locality_name || '', slug, content_type: content_level || 'local_service' },
+                { hero_headline: aiContent.hero_headline || '', meta_title: aiContent.meta_title || '' }
+            );
 
-            const newPage = pageInsertRes.data;
+            const persistKey = crypto
+                .createHash('sha256')
+                .update(JSON.stringify({ queueId: queueJob.id, slug, contentHash }))
+                .digest('hex');
 
-            try {
-                await supabase.from('content_fingerprints').insert({
-                    page_index_id: newPage.id,
-                    content_hash: contentHash
-                });
-
-                const contentInsertRes = await supabase.from('location_content').insert({
-                    page_index_id: newPage.id,
-                    content_level: content_level || 'locality_page',
-                    city_id,
-                    locality_id,
-                    keyword_variation: keyword_text,
+            const { data: persistResult, error: persistErr } = await supabase.rpc('rule16_pagegen_persist_generated_page', {
+                p_queue_id: queueJob.id,
+                p_page_request: pageReq,
+                p_generated_result: {
+                    page_title: aiContent.hero_headline || '',
                     hero_headline: aiContent.hero_headline || '',
                     local_opportunity_description: mainContent,
                     faq_data: aiContent.faq_data,
                     cta_text: aiContent.cta_text || 'Apply Now',
                     meta_title: aiContent.meta_title || '',
                     meta_description: aiContent.meta_description || '',
-                    word_count: realWordCount
-                });
-
-                if (contentInsertRes.error) {
-                    throw new Error(`location_content insert failed for ${slug}: ${contentInsertRes.error.message}`);
-                }
-
-                // Write draft for admin review (CCC Phase 2)
-                const qualityScore = calculateQualityScore(aiContent, realWordCount);
-
-                // Phase 3: Generate image prompts for the draft
-                const imagePrompts = generateImagePrompts(
-                    { city: cityName, locality: pageReq.locality_name || '', slug, content_type: content_level || 'local_service' },
-                    { hero_headline: aiContent.hero_headline || '', meta_title: aiContent.meta_title || '' }
-                );
-
-                const { data: draftData, error: draftErr } = await supabase.from('content_drafts').insert({
-                    generation_queue_id: queueJob.id,
-                    page_index_id: newPage.id,
-                    city_id,
-                    locality_id,
-                    slug,
-                    page_title: aiContent.hero_headline || '',
-                    meta_title: aiContent.meta_title || '',
-                    meta_description: aiContent.meta_description || '',
-                    hero_headline: aiContent.hero_headline || '',
-                    body_content: mainContent,
-                    faq_data: aiContent.faq_data,
-                    cta_text: aiContent.cta_text || 'Apply Now',
                     word_count: realWordCount,
                     quality_score: qualityScore,
                     generation_time_ms: generationTimeMs,
                     ai_model: 'gemini-2.0-flash',
                     image_prompts: imagePrompts,
-                    status: 'draft'
-                }).select('id').single();
+                    content_hash: contentHash,
+                },
+                p_idempotency_key: persistKey,
+            });
 
-                if (draftErr) {
-                    console.error(`[PageGen] content_drafts insert FAILED for ${slug}: ${draftErr.message} (code: ${draftErr.code})`);
-                    await writeGenerationLog(supabase, queueJob.id, 'draft_insert_failed', `Draft insert failed for ${slug}: ${draftErr.message}`);
-                } else {
-                    console.log(`[PAGEGEN SUCCESS] slug=${slug} draftId=${draftData?.id} words=${realWordCount} quality=${qualityScore} duration=${generationTimeMs}ms`);
-                }
+            if (persistErr) {
+                throw new Error(`page persistence failed for ${slug}: ${persistErr.message}`);
+            }
 
-                if (realWordCount < 800) {
+            if (persistResult.skipped_existing) {
+                await writeGenerationLog(supabase, queueJob.id, 'page_skipped', `Page already exists: ${slug}`);
+            } else {
+                console.log(`[PAGEGEN SUCCESS] slug=${slug} draftId=${persistResult?.draft_id} words=${realWordCount} quality=${qualityScore} duration=${generationTimeMs}ms`);
+                if (persistResult.review_required) {
                     reviewCount++;
-                    await supabase.from('content_review_queue').insert({
-                        page_index_id: newPage.id,
-                        reason: `Generated content requires review: ${realWordCount} words`,
-                        status: 'pending_review',
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    });
                     await writeGenerationLog(supabase, queueJob.id, 'page_review_required', `Generated ${slug} with ${realWordCount} words`);
                 } else {
                     await writeGenerationLog(supabase, queueJob.id, 'page_generated', `Generated ${slug}`);
                 }
-            } catch (error) {
-                await cleanupPartialPage(supabase, newPage.id);
-                throw error;
             }
 
             processedCount++;
         }
 
-        const newProgress = currentProgress + processedCount;
-        const isComplete = newProgress >= pagesToGenerate.length;
+        const nextProgress = currentProgress + processedCount;
+        const finalizeKey = `${queueJob.id}:${nextProgress}`;
+        const { data: finalizeResult, error: finalizeErr } = await supabase.rpc('rule16_finalize_generation_queue', {
+            p_queue_id: queueJob.id,
+            p_processed_count: processedCount,
+            p_total_items: totalItems,
+            p_current_progress: currentProgress,
+            p_next_payload: { queueId: queueJob.id },
+            p_idempotency_key: finalizeKey,
+        });
 
-        await supabase.from('generation_queue').update({
-            status: isComplete ? 'completed' : 'processing',
-            task_type: CANONICAL_TASK_TYPE,
-            progress: newProgress,
-            total_items: totalItems,
-            ...(isComplete ? { completed_at: new Date().toISOString() } : {})
-        }).eq('id', queueJob.id);
+        if (finalizeErr) {
+            throw finalizeErr;
+        }
 
         await finalizeJobRun(supabase, jobRunId, 'completed');
 
-        // CHAIN EXECUTION: If not complete, automatically dispatch the next QStash event!
-        if (!isComplete) {
-            await enqueuePageGeneration({ queueId: queueJob.id }).catch((e) => console.error("[PageGen] Chained enqueue error:", e));
+        let dispatchDeferred = false;
+        if (finalizeResult.event_store_id) {
+            const dispatchResult = await dispatchPagegenOutbox(
+                finalizeResult.event_store_id,
+                { queueId: queueJob.id },
+                { queue_id: queueJob.id, progress: finalizeResult.new_progress, source: 'pagegen_next' }
+            );
+            dispatchDeferred = !dispatchResult.success;
         }
 
-        return NextResponse.json({ success: true, processed: processedCount, reviews: reviewCount });
+        await markCompleted(currentEventStoreId, {
+            queue_id: queueJob.id,
+            processed: processedCount,
+            reviews: reviewCount,
+            new_progress: finalizeResult.new_progress,
+            complete: finalizeResult.is_complete,
+            dispatch_deferred: dispatchDeferred,
+        });
+
+        return {
+            status: 200,
+            body: {
+                success: true,
+                processed: processedCount,
+                reviews: reviewCount,
+                dispatch_deferred: dispatchDeferred,
+            },
+        };
     } catch (e) {
         console.error('[PageGen] Cron Error:', e);
         await markQueueFailed(supabase, queueJob, e.message);
         await finalizeJobRun(supabase, jobRunId, 'failed', e.message, queueJob?.payload || null);
-        return NextResponse.json({ error: 'Internal Server Error', detail: e.message }, { status: 500 });
+        await markFailed(currentEventStoreId, e.message, { queue_id: queueJob?.id || queueId, payload: queueJob?.payload || null });
+        return {
+            status: 500,
+            body: { error: 'Internal Server Error', detail: e.message },
+        };
     }
+}
+
+async function handler(request) {
+    let body = {};
+    try {
+        body = await request.json();
+    } catch {
+        body = {};
+    }
+
+    const result = await executePagegenJob(body);
+    return NextResponse.json(result.body, { status: result.status });
 }
 
 export const POST = process.env.NODE_ENV === 'development' ? handler : verifySignatureAppRouter(handler);

@@ -1,11 +1,13 @@
 import { getSiteUrl } from '@/lib/siteUrl';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 // High Performance Sitemap Index Aggregator
 export async function GET() {
     const siteUrl = getSiteUrl();
 
-    if (process.env.SUPABASE_ENABLED !== 'true') {
+    if (!supabase) {
         return new Response(
             `<?xml version="1.0" encoding="UTF-8"?><sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></sitemapindex>`,
             { status: 200, headers: { 'Content-Type': 'text/xml' } }
@@ -17,7 +19,7 @@ export async function GET() {
         const { count, error } = await supabase
             .from('page_index')
             .select('*', { count: 'exact', head: true })
-            .eq('status', 'active');
+            .eq('status', 'published');
 
         const activePagesCount = count || 0;
         const SHARD_LIMIT = 2000;
@@ -49,8 +51,7 @@ export async function GET() {
             status: 200,
             headers: {
                 'Content-Type': 'text/xml',
-                // Aggregator limits set securely for Free Plan constraints 
-                'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=43200'
+                'Cache-Control': 'no-store, max-age=0'
             }
         });
     } catch (e) {
