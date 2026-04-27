@@ -3,7 +3,7 @@
 **Date:** 2026-04-26  
 **Author:** CTO (Agent)  
 **Bible Reference:** Section 8, Section 10-12, Section 40, Rule 25  
-**Status:** RESOLVED LIVE
+**Status:** RESOLVED LIVE FOR C33 SCOPE ONLY
 
 ## Context
 
@@ -143,7 +143,7 @@ Important note on the metrics check:
 
 ## Outcome
 
-C33 is now resolved live.
+C33 remains resolved live in its own `page_index` truth scope.
 
 What changed in runtime truth:
 
@@ -154,17 +154,19 @@ What changed in runtime truth:
 
 ## Result
 
-**C33 status:** RESOLVED LIVE
+**C33 status:** RESOLVED LIVE FOR C33 SCOPE ONLY
 
 Truth boundary after this fix:
 
 - this closes the `page_index` truth contradiction and metrics split
+- this must not be used as evidence that Rule 16 or the broader publish pipeline is fully closed
 - this does not make Phase 6 SEO/publish work complete end to end
 - remaining open medium work is now C26, C29, and C30
 
 ## Cross-References
 
 - Related audit: `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`
+- Related audit: `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`
 - Related migration: `docs/migrations/migration-2026-04-26-c33-page-index-truth-fix.md`
 - Related fix: `docs/fixes/fix_014_rule16_transactional_integrity.md`
 - Related baseline audit: `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`

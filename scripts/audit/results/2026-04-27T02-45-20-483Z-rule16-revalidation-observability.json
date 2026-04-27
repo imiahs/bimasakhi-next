@@ -1,0 +1,64 @@
+{
+  "captured_at": "2026-04-27T02:45:20.480Z",
+  "source_audit_result": "scripts/audit/results/2026-04-27T02-21-11-828Z-rule16-transactional-integrity.json",
+  "queue_id": "6bd93f51-57e5-42b0-98ae-102abb0188b0",
+  "event_store_id": "7fd7636c-facd-4aa5-8d23-4c3cef185aad",
+  "summary": {
+    "retry_daemon_dispatched": true,
+    "pagegen_worker_log_found_in_window": false,
+    "note": "Retry daemon dispatch was observed for the failed bulk recovery event, but no downstream worker log was captured in the same observability window."
+  },
+  "observability_window": [
+    {
+      "source": "retry_daemon",
+      "level": "RETRY_DISPATCHED",
+      "message": "Retry: pagegen_requested (attempt 1)",
+      "metadata": {
+        "event_name": "pagegen_requested",
+        "message_id": "msg_7YoJxFpwkEy6sUx5c1HUP6doz69fyYxo1sJxZ24QdXNJQaaDMeb2i",
+        "retry_count": 1,
+        "event_store_id": "d6a213e9-cf70-4eba-8e36-dff0f7d1ce9f"
+      },
+      "created_at": "2026-04-27T02:19:04.920Z"
+    },
+    {
+      "source": "retry_daemon",
+      "level": "RETRY_DISPATCHED",
+      "message": "Retry: pagegen_requested (attempt 1)",
+      "metadata": {
+        "event_name": "pagegen_requested",
+        "message_id": "msg_7YoJxFpwkEy6sUx4wCNAobunj2jBbH3tY7MepBLyShyb3HiGXPEfT",
+        "retry_count": 1,
+        "event_store_id": "6e5debc9-31df-480d-b5f9-0c700176604a"
+      },
+      "created_at": "2026-04-27T02:19:06.796Z"
+    },
+    {
+      "source": "retry_daemon",
+      "level": "RETRY_DISPATCHED",
+      "message": "Retry: pagegen_requested (attempt 1)",
+      "metadata": {
+        "event_name": "pagegen_requested",
+        "message_id": "msg_7YoJxFpwkEy5zBp2W1JnVB35X9273T1cisncvT1KJaBCKdY8jGata",
+        "retry_count": 1,
+        "event_store_id": "7fd7636c-facd-4aa5-8d23-4c3cef185aad"
+      },
+      "created_at": "2026-04-27T02:19:08.166Z"
+    },
+    {
+      "source": "retry_daemon",
+      "level": "RETRY_DAEMON_RUN",
+      "message": "Retry daemon: 3 retried, 0 failed, 0 skipped, 0 stuck detected",
+      "metadata": {
+        "mode": "normal",
+        "errors": [],
+        "failed": 0,
+        "retried": 3,
+        "skipped": 0,
+        "duration_ms": 5744,
+        "stuck_detected": 0
+      },
+      "created_at": "2026-04-27T02:19:08.417Z"
+    }
+  ]
+}

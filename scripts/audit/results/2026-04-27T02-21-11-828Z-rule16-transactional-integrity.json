@@ -1,0 +1,870 @@
+{
+  "name": "rule16-transactional-integrity",
+  "started_at": "2026-04-27T02:18:26.863Z",
+  "finished_at": "2026-04-27T02:21:11.828Z",
+  "status": "FAIL",
+  "checks": [
+    {
+      "name": "env_presence_masked",
+      "status": "INFO",
+      "evidence": {
+        "Database_Password": true,
+        "QSTASH_TOKEN": true,
+        "SUPABASE_URL": true
+      },
+      "timestamp": "2026-04-27T02:18:27.455Z"
+    },
+    {
+      "name": "publish_force_db_error_then_retry",
+      "status": "FAIL",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "fd701f27-47d5-4075-bb22-aada9d88026d",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        },
+        "forced_failure": "rule16_forced_failure:page_index_upserted",
+        "after_failure": {
+          "draft": {
+            "id": "fd701f27-47d5-4075-bb22-aada9d88026d",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        },
+        "retry_result": {
+          "success": true,
+          "draft_id": "fd701f27-47d5-4075-bb22-aada9d88026d",
+          "page_slug": "rule16-publish-1777256306854-de53aac2",
+          "draft_status": "published",
+          "published_at": "2026-04-27T02:18:27.134049+00:00",
+          "page_index_id": "3dd16489-7bb7-44cf-ae28-237859f078c6",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "draft": {
+            "id": "fd701f27-47d5-4075-bb22-aada9d88026d",
+            "status": "published",
+            "page_index_id": "3dd16489-7bb7-44cf-ae28-237859f078c6",
+            "published_at": "2026-04-27T02:18:27.134Z",
+            "reviewer": "rule16_audit"
+          },
+          "page": {
+            "id": "3dd16489-7bb7-44cf-ae28-237859f078c6",
+            "page_slug": "rule16-publish-1777256306854-de53aac2",
+            "status": "published",
+            "indexing_status": "pending"
+          },
+          "content": {
+            "page_index_id": "3dd16489-7bb7-44cf-ae28-237859f078c6",
+            "hero_headline": "RULE16_PUBLISH_1777256306854-de53aac2",
+            "meta_title": "RULE16_PUBLISH_1777256306854-de53aac2 title"
+          }
+        },
+        "live_page_status": 404,
+        "sitemap_contains_slug": false
+      },
+      "timestamp": "2026-04-27T02:18:31.273Z"
+    },
+    {
+      "name": "publish_kill_process_mid_execution",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "41cc2524-dfe0-40f8-a9f7-6c9fdb815a71",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        },
+        "child_exit": {
+          "code": null,
+          "signal": null,
+          "timed_out": true
+        },
+        "after_kill": {
+          "draft": {
+            "id": "41cc2524-dfe0-40f8-a9f7-6c9fdb815a71",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        }
+      },
+      "timestamp": "2026-04-27T02:18:43.531Z"
+    },
+    {
+      "name": "publish_network_drop_mid_execution",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "3a3ba458-68ab-451c-a288-f43be25c89f0",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        },
+        "child_exit": {
+          "code": 1,
+          "signal": null,
+          "timed_out": false
+        },
+        "after_drop": {
+          "draft": {
+            "id": "3a3ba458-68ab-451c-a288-f43be25c89f0",
+            "status": "draft",
+            "page_index_id": null,
+            "published_at": null,
+            "reviewer": null
+          },
+          "page": null,
+          "content": null
+        }
+      },
+      "timestamp": "2026-04-27T02:18:48.458Z"
+    },
+    {
+      "name": "publish_idempotent_replay_same_key",
+      "status": "PASS",
+      "evidence": {
+        "first": {
+          "success": true,
+          "draft_id": "b8d94f0d-b1e8-4fd3-9d95-7c3e41d78c45",
+          "page_slug": "rule16-publish-idempotent-1777256306854-de53aac2",
+          "draft_status": "published",
+          "published_at": "2026-04-27T02:18:47.857078+00:00",
+          "page_index_id": "be6f2bb0-4be6-4314-b71a-b219851c9436",
+          "idempotent_replay": false
+        },
+        "second": {
+          "success": true,
+          "draft_id": "b8d94f0d-b1e8-4fd3-9d95-7c3e41d78c45",
+          "draft_status": "published",
+          "page_index_id": "be6f2bb0-4be6-4314-b71a-b219851c9436",
+          "idempotent_replay": true
+        },
+        "after_replay": {
+          "draft": {
+            "id": "b8d94f0d-b1e8-4fd3-9d95-7c3e41d78c45",
+            "status": "published",
+            "page_index_id": "be6f2bb0-4be6-4314-b71a-b219851c9436",
+            "published_at": "2026-04-27T02:18:47.857Z",
+            "reviewer": "rule16_audit"
+          },
+          "page": {
+            "id": "be6f2bb0-4be6-4314-b71a-b219851c9436",
+            "page_slug": "rule16-publish-idempotent-1777256306854-de53aac2",
+            "status": "published",
+            "indexing_status": "pending"
+          },
+          "content": {
+            "page_index_id": "be6f2bb0-4be6-4314-b71a-b219851c9436",
+            "hero_headline": "RULE16_PUBLISH_IDEMPOTENT_1777256306854-de53aac2",
+            "meta_title": "RULE16_PUBLISH_IDEMPOTENT_1777256306854-de53aac2 title"
+          }
+        },
+        "page_count": 1
+      },
+      "timestamp": "2026-04-27T02:18:48.736Z"
+    },
+    {
+      "name": "bulk_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "job": {
+            "id": "774b8606-2866-4d8e-aaab-2f53442530e3",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": null,
+          "draft": null
+        },
+        "failure": "rule16_forced_failure:generation_queue_inserted",
+        "after_failure": {
+          "job": {
+            "id": "774b8606-2866-4d8e-aaab-2f53442530e3",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": null,
+          "draft": null
+        },
+        "retry": {
+          "job_id": "774b8606-2866-4d8e-aaab-2f53442530e3",
+          "status": "running",
+          "success": true,
+          "queue_id": "c3a69110-6a29-4191-ae05-d211d4278e7f",
+          "total_items": 1,
+          "event_store_id": "d6a213e9-cf70-4eba-8e36-dff0f7d1ce9f",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "job": {
+            "id": "774b8606-2866-4d8e-aaab-2f53442530e3",
+            "status": "running",
+            "generation_queue_id": "c3a69110-6a29-4191-ae05-d211d4278e7f",
+            "total_pages": 1,
+            "generated_count": 0
+          },
+          "queue": {
+            "id": "c3a69110-6a29-4191-ae05-d211d4278e7f",
+            "status": "pending",
+            "progress": 0,
+            "total_items": 1
+          },
+          "event": {
+            "id": "d6a213e9-cf70-4eba-8e36-dff0f7d1ce9f",
+            "status": "pending",
+            "retry_count": 0,
+            "dispatch_message_id": null
+          },
+          "page": null,
+          "draft": null
+        }
+      },
+      "timestamp": "2026-04-27T02:18:49.173Z"
+    },
+    {
+      "name": "bulk_kill_process_mid_execution",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "job": {
+            "id": "2823edde-d2d4-49a2-b485-a9a37c214129",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": null,
+          "draft": null
+        },
+        "child_exit": {
+          "code": null,
+          "signal": null,
+          "timed_out": true
+        },
+        "after_kill": {
+          "job": {
+            "id": "2823edde-d2d4-49a2-b485-a9a37c214129",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": null,
+          "draft": null
+        }
+      },
+      "timestamp": "2026-04-27T02:19:01.429Z"
+    },
+    {
+      "name": "bulk_idempotent_replay_same_key",
+      "status": "PASS",
+      "evidence": {
+        "first": {
+          "job_id": "249039a3-9920-4abe-956f-ddb92c447732",
+          "status": "running",
+          "success": true,
+          "queue_id": "b9d38487-d610-4673-ac77-bf3e7d58ed19",
+          "total_items": 1,
+          "event_store_id": "6e5debc9-31df-480d-b5f9-0c700176604a",
+          "idempotent_replay": false
+        },
+        "second": {
+          "job_id": "249039a3-9920-4abe-956f-ddb92c447732",
+          "status": "running",
+          "success": true,
+          "queue_id": "b9d38487-d610-4673-ac77-bf3e7d58ed19",
+          "total_items": 1,
+          "event_store_id": "6e5debc9-31df-480d-b5f9-0c700176604a",
+          "idempotent_replay": true
+        },
+        "after_replay": {
+          "job": {
+            "id": "249039a3-9920-4abe-956f-ddb92c447732",
+            "status": "running",
+            "generation_queue_id": "b9d38487-d610-4673-ac77-bf3e7d58ed19",
+            "total_pages": 1,
+            "generated_count": 0
+          },
+          "queue": {
+            "id": "b9d38487-d610-4673-ac77-bf3e7d58ed19",
+            "status": "pending",
+            "progress": 0,
+            "total_items": 1
+          },
+          "event": {
+            "id": "6e5debc9-31df-480d-b5f9-0c700176604a",
+            "status": "pending",
+            "retry_count": 0,
+            "dispatch_message_id": null
+          },
+          "page": null,
+          "draft": null
+        },
+        "queue_count": 1,
+        "event_count": 1
+      },
+      "timestamp": "2026-04-27T02:19:01.769Z"
+    },
+    {
+      "name": "bulk_network_drop_then_retry_daemon_recovery",
+      "status": "FAIL",
+      "evidence": {
+        "before": {
+          "job": {
+            "id": "6f5b071d-87df-4f74-b221-97299923d3fa",
+            "status": "planned",
+            "generation_queue_id": null,
+            "total_pages": 0,
+            "generated_count": 0
+          },
+          "queue": null,
+          "event": null,
+          "page": {
+            "id": "a1313bb7-dca3-42c3-a85d-729a38531b1a",
+            "page_slug": "rule16-bulk-existing-1777256306854-de53aac2",
+            "status": "draft",
+            "indexing_status": "blocked"
+          },
+          "draft": null
+        },
+        "after_drop": {
+          "job": {
+            "id": "6f5b071d-87df-4f74-b221-97299923d3fa",
+            "status": "running",
+            "generation_queue_id": "6bd93f51-57e5-42b0-98ae-102abb0188b0",
+            "total_pages": 1,
+            "generated_count": 0
+          },
+          "queue": {
+            "id": "6bd93f51-57e5-42b0-98ae-102abb0188b0",
+            "status": "pending",
+            "progress": 0,
+            "total_items": 1
+          },
+          "event": {
+            "id": "7fd7636c-facd-4aa5-8d23-4c3cef185aad",
+            "status": "pending",
+            "retry_count": 0,
+            "dispatch_message_id": null
+          },
+          "page": {
+            "id": "a1313bb7-dca3-42c3-a85d-729a38531b1a",
+            "page_slug": "rule16-bulk-existing-1777256306854-de53aac2",
+            "status": "draft",
+            "indexing_status": "blocked"
+          },
+          "draft": null
+        },
+        "after_retry": null,
+        "start_result": {
+          "job_id": "6f5b071d-87df-4f74-b221-97299923d3fa",
+          "status": "running",
+          "success": true,
+          "queue_id": "6bd93f51-57e5-42b0-98ae-102abb0188b0",
+          "total_items": 1,
+          "event_store_id": "7fd7636c-facd-4aa5-8d23-4c3cef185aad",
+          "idempotent_replay": false
+        }
+      },
+      "timestamp": "2026-04-27T02:21:07.686Z"
+    },
+    {
+      "name": "pagegen_persist_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "page": null,
+          "fingerprint": null,
+          "content": null,
+          "draft": null,
+          "review_count": 0
+        },
+        "failure": "rule16_forced_failure:location_content_upserted",
+        "after_failure": {
+          "page": null,
+          "fingerprint": null,
+          "content": null,
+          "draft": null,
+          "review_count": 0
+        },
+        "retry": {
+          "success": true,
+          "draft_id": "8968c537-46de-4df9-bcde-c088e49086dd",
+          "page_slug": "rule16-pagegen-1777256306854-de53aac2",
+          "page_index_id": "01d94db5-0526-4fb8-85e0-c669e2412581",
+          "review_required": true,
+          "skipped_existing": false,
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "page": {
+            "id": "01d94db5-0526-4fb8-85e0-c669e2412581",
+            "page_slug": "rule16-pagegen-1777256306854-de53aac2",
+            "status": "draft",
+            "indexing_status": "blocked"
+          },
+          "fingerprint": {
+            "page_index_id": "01d94db5-0526-4fb8-85e0-c669e2412581",
+            "content_hash": "b22d4b775346035318172cd1f3df3cacf26f82ea438d396f4e9001f798a3072f"
+          },
+          "content": {
+            "page_index_id": "01d94db5-0526-4fb8-85e0-c669e2412581",
+            "hero_headline": "Rule16 Pagegen 1777256306854-de53aac2",
+            "word_count": 720
+          },
+          "draft": {
+            "id": "8968c537-46de-4df9-bcde-c088e49086dd",
+            "status": "draft",
+            "quality_score": "7.2",
+            "generation_queue_id": "9c29f103-f61b-4fd0-b91c-0b126d9b1afa"
+          },
+          "review_count": 1
+        }
+      },
+      "timestamp": "2026-04-27T02:21:08.245Z"
+    },
+    {
+      "name": "admin_custom_page_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "page": {
+            "id": "99f62ee0-c139-473c-9b8d-55c3f09bd7b5",
+            "title": "Before Title",
+            "status": "draft"
+          },
+          "blocks": [
+            {
+              "block_type": "Hero",
+              "block_order": 0,
+              "block_data": {
+                "headline": "before"
+              }
+            }
+          ],
+          "version_count": 0
+        },
+        "failure": "rule16_forced_failure:custom_page_updated",
+        "after_failure": {
+          "page": {
+            "id": "99f62ee0-c139-473c-9b8d-55c3f09bd7b5",
+            "title": "Before Title",
+            "status": "draft"
+          },
+          "blocks": [
+            {
+              "block_type": "Hero",
+              "block_order": 0,
+              "block_data": {
+                "headline": "before"
+              }
+            }
+          ],
+          "version_count": 0
+        },
+        "retry": {
+          "page_id": "99f62ee0-c139-473c-9b8d-55c3f09bd7b5",
+          "success": true,
+          "block_count": 2,
+          "version_number": 1,
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "page": {
+            "id": "99f62ee0-c139-473c-9b8d-55c3f09bd7b5",
+            "title": "After Title",
+            "status": "published"
+          },
+          "blocks": [
+            {
+              "block_type": "Hero",
+              "block_order": 0,
+              "block_data": {
+                "headline": "after"
+              }
+            },
+            {
+              "block_type": "CTA",
+              "block_order": 1,
+              "block_data": {
+                "cta": "apply"
+              }
+            }
+          ],
+          "version_count": 1
+        }
+      },
+      "timestamp": "2026-04-27T02:21:08.746Z"
+    },
+    {
+      "name": "admin_blog_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "post": {
+            "id": "65e9855a-c9ad-4965-a4cf-28adf0f73348",
+            "slug": "rule16-blog-1777256306854-de53aac2",
+            "title": "Before Blog",
+            "status": "draft"
+          },
+          "version_count": 0
+        },
+        "failure": "rule16_forced_failure:blog_post_versioned",
+        "after_failure": {
+          "post": {
+            "id": "65e9855a-c9ad-4965-a4cf-28adf0f73348",
+            "slug": "rule16-blog-1777256306854-de53aac2",
+            "title": "Before Blog",
+            "status": "draft"
+          },
+          "version_count": 0
+        },
+        "retry": {
+          "slug": "rule16-blog-1777256306854-de53aac2",
+          "post_id": "65e9855a-c9ad-4965-a4cf-28adf0f73348",
+          "success": true,
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "post": {
+            "id": "65e9855a-c9ad-4965-a4cf-28adf0f73348",
+            "slug": "rule16-blog-1777256306854-de53aac2",
+            "title": "After Blog",
+            "status": "published"
+          },
+          "version_count": 1
+        }
+      },
+      "timestamp": "2026-04-27T02:21:09.175Z"
+    },
+    {
+      "name": "admin_seo_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "override": {
+            "id": "2cf86570-f94d-4811-b63e-885370af1211",
+            "route_path": "/rule16-seo-1777256306854-de53aac2",
+            "meta_title": "Before SEO",
+            "meta_description": "Before Desc"
+          },
+          "version_count": 0
+        },
+        "failure": "rule16_forced_failure:seo_version_inserted",
+        "after_failure": {
+          "override": {
+            "id": "2cf86570-f94d-4811-b63e-885370af1211",
+            "route_path": "/rule16-seo-1777256306854-de53aac2",
+            "meta_title": "Before SEO",
+            "meta_description": "Before Desc"
+          },
+          "version_count": 0
+        },
+        "retry": {
+          "success": true,
+          "route_path": "/rule16-seo-1777256306854-de53aac2",
+          "override_id": "2cf86570-f94d-4811-b63e-885370af1211",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "override": {
+            "id": "2cf86570-f94d-4811-b63e-885370af1211",
+            "route_path": "/rule16-seo-1777256306854-de53aac2",
+            "meta_title": "After SEO",
+            "meta_description": "After Desc"
+          },
+          "version_count": 1
+        }
+      },
+      "timestamp": "2026-04-27T02:21:09.518Z"
+    },
+    {
+      "name": "admin_tool_configs_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "configs": [
+            {
+              "config_key": "rule16_tool_a_1777256306854-de53aac2",
+              "config_value": "\"before-a\""
+            },
+            {
+              "config_key": "rule16_tool_b_1777256306854-de53aac2",
+              "config_value": "\"before-b\""
+            }
+          ],
+          "version_count": 0
+        },
+        "failure": "rule16_forced_failure:tool_config_applied:rule16_tool_a_1777256306854-de53aac2",
+        "after_failure": {
+          "configs": [
+            {
+              "config_key": "rule16_tool_a_1777256306854-de53aac2",
+              "config_value": "\"before-a\""
+            },
+            {
+              "config_key": "rule16_tool_b_1777256306854-de53aac2",
+              "config_value": "\"before-b\""
+            }
+          ],
+          "version_count": 0
+        },
+        "retry": {
+          "success": true,
+          "updated_count": 2,
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "configs": [
+            {
+              "config_key": "rule16_tool_a_1777256306854-de53aac2",
+              "config_value": "\"after-a\""
+            },
+            {
+              "config_key": "rule16_tool_b_1777256306854-de53aac2",
+              "config_value": "\"after-b\""
+            }
+          ],
+          "version_count": 2
+        }
+      },
+      "timestamp": "2026-04-27T02:21:09.879Z"
+    },
+    {
+      "name": "admin_draft_edit_sync_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "e2df6cdd-631e-4521-906b-7fb052cbb241",
+            "status": "draft",
+            "hero_headline": "Before Hero",
+            "meta_title": "Before Meta",
+            "body_content": "Before Body"
+          },
+          "content": {
+            "page_index_id": "ba17c068-fb29-45c7-abc9-c78f77ae5586",
+            "hero_headline": "Before Hero",
+            "meta_title": "Before Meta",
+            "local_opportunity_description": "Before Body"
+          }
+        },
+        "failure": "rule16_forced_failure:draft_updated",
+        "after_failure": {
+          "draft": {
+            "id": "e2df6cdd-631e-4521-906b-7fb052cbb241",
+            "status": "draft",
+            "hero_headline": "Before Hero",
+            "meta_title": "Before Meta",
+            "body_content": "Before Body"
+          },
+          "content": {
+            "page_index_id": "ba17c068-fb29-45c7-abc9-c78f77ae5586",
+            "hero_headline": "Before Hero",
+            "meta_title": "Before Meta",
+            "local_opportunity_description": "Before Body"
+          }
+        },
+        "retry": {
+          "success": true,
+          "draft_id": "e2df6cdd-631e-4521-906b-7fb052cbb241",
+          "page_index_id": "ba17c068-fb29-45c7-abc9-c78f77ae5586",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "draft": {
+            "id": "e2df6cdd-631e-4521-906b-7fb052cbb241",
+            "status": "draft",
+            "hero_headline": "After Hero",
+            "meta_title": "After Meta",
+            "body_content": "After Body"
+          },
+          "content": {
+            "page_index_id": "ba17c068-fb29-45c7-abc9-c78f77ae5586",
+            "hero_headline": "After Hero",
+            "meta_title": "After Meta",
+            "local_opportunity_description": "After Body"
+          }
+        }
+      },
+      "timestamp": "2026-04-27T02:21:10.274Z"
+    },
+    {
+      "name": "admin_draft_unpublish_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "4d34b017-0ebe-4a26-84c4-543cf933a5a4",
+            "status": "published",
+            "page_index_id": "ec00dc12-4b0a-4831-827d-42e5b49e0b07",
+            "published_at": "2026-04-27T02:21:09.645Z",
+            "reviewer": null
+          },
+          "page": {
+            "id": "ec00dc12-4b0a-4831-827d-42e5b49e0b07",
+            "page_slug": "rule16-transition-unpublish-1777256306854-de53aac2",
+            "status": "published",
+            "indexing_status": "indexed"
+          },
+          "content": null
+        },
+        "failure": "rule16_forced_failure:page_index_transitioned",
+        "after_failure": {
+          "draft": {
+            "id": "4d34b017-0ebe-4a26-84c4-543cf933a5a4",
+            "status": "published",
+            "page_index_id": "ec00dc12-4b0a-4831-827d-42e5b49e0b07",
+            "published_at": "2026-04-27T02:21:09.645Z",
+            "reviewer": null
+          },
+          "page": {
+            "id": "ec00dc12-4b0a-4831-827d-42e5b49e0b07",
+            "page_slug": "rule16-transition-unpublish-1777256306854-de53aac2",
+            "status": "published",
+            "indexing_status": "indexed"
+          },
+          "content": null
+        },
+        "retry": {
+          "success": true,
+          "draft_id": "4d34b017-0ebe-4a26-84c4-543cf933a5a4",
+          "page_status": "unpublished",
+          "draft_status": "draft",
+          "page_index_id": "ec00dc12-4b0a-4831-827d-42e5b49e0b07",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "draft": {
+            "id": "4d34b017-0ebe-4a26-84c4-543cf933a5a4",
+            "status": "draft",
+            "page_index_id": "ec00dc12-4b0a-4831-827d-42e5b49e0b07",
+            "published_at": null,
+            "reviewer": "rule16_audit"
+          },
+          "page": {
+            "id": "ec00dc12-4b0a-4831-827d-42e5b49e0b07",
+            "page_slug": "rule16-transition-unpublish-1777256306854-de53aac2",
+            "status": "unpublished",
+            "indexing_status": "blocked"
+          },
+          "content": null
+        }
+      },
+      "timestamp": "2026-04-27T02:21:10.762Z"
+    },
+    {
+      "name": "admin_draft_archive_force_db_error_then_retry",
+      "status": "PASS",
+      "evidence": {
+        "before": {
+          "draft": {
+            "id": "ff70fec7-122f-45cf-951a-535a10e90aab",
+            "status": "published",
+            "page_index_id": "5f748f6d-56f9-4e61-849a-63802d7d72cb",
+            "published_at": "2026-04-27T02:21:10.135Z",
+            "reviewer": null
+          },
+          "page": {
+            "id": "5f748f6d-56f9-4e61-849a-63802d7d72cb",
+            "page_slug": "rule16-transition-archive-1777256306854-de53aac2",
+            "status": "published",
+            "indexing_status": "indexed"
+          },
+          "content": null
+        },
+        "failure": "rule16_forced_failure:page_index_transitioned",
+        "after_failure": {
+          "draft": {
+            "id": "ff70fec7-122f-45cf-951a-535a10e90aab",
+            "status": "published",
+            "page_index_id": "5f748f6d-56f9-4e61-849a-63802d7d72cb",
+            "published_at": "2026-04-27T02:21:10.135Z",
+            "reviewer": null
+          },
+          "page": {
+            "id": "5f748f6d-56f9-4e61-849a-63802d7d72cb",
+            "page_slug": "rule16-transition-archive-1777256306854-de53aac2",
+            "status": "published",
+            "indexing_status": "indexed"
+          },
+          "content": null
+        },
+        "retry": {
+          "success": true,
+          "draft_id": "ff70fec7-122f-45cf-951a-535a10e90aab",
+          "page_status": "archived",
+          "draft_status": "archived",
+          "page_index_id": "5f748f6d-56f9-4e61-849a-63802d7d72cb",
+          "idempotent_replay": false
+        },
+        "after_retry": {
+          "draft": {
+            "id": "ff70fec7-122f-45cf-951a-535a10e90aab",
+            "status": "archived",
+            "page_index_id": "5f748f6d-56f9-4e61-849a-63802d7d72cb",
+            "published_at": "2026-04-27T02:21:10.135Z",
+            "reviewer": "rule16_audit"
+          },
+          "page": {
+            "id": "5f748f6d-56f9-4e61-849a-63802d7d72cb",
+            "page_slug": "rule16-transition-archive-1777256306854-de53aac2",
+            "status": "archived",
+            "indexing_status": "blocked"
+          },
+          "content": null
+        }
+      },
+      "timestamp": "2026-04-27T02:21:11.229Z"
+    },
+    {
+      "name": "rule16_transactional_integrity_verdict",
+      "status": "FAIL",
+      "evidence": {
+        "failed_checks": [
+          "publish_force_db_error_then_retry",
+          "bulk_network_drop_then_retry_daemon_recovery"
+        ],
+        "total_checks": 17
+      },
+      "timestamp": "2026-04-27T02:21:11.229Z"
+    }
+  ],
+  "errors": []
+}

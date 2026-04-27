@@ -8531,14 +8531,14 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 > ⚠️ **This is the ONLY status section. No other footer, summary, or status block exists in this document.**
 > ⚠️ **All status updates happen HERE. Duplicates are forbidden (Constitution Article 5 + Rule 47).**
 
-*Document last updated: April 26, 2026 (Rule 16 and C33 closed live with direct DB proof)*
-*Evidence sources: `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c24-system-health-live-proof.md`, `docs/audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md`, `docs/audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md`, `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`, `docs/fixes/fix_011_c24_system_health_truth_unification.md`, `docs/fixes/fix_012_c25_direct_supabase_rest_audit_access.md`, `docs/fixes/fix_013_c32_control_plane_truth_unification.md`, `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `scripts/audit/results/2026-04-26T18-13-17-570Z-rule16-transactional-integrity.json`, `scripts/audit/results/2026-04-26T18-17-12-972Z-c33-page-index-truth-fix.json`*
+*Document last updated: April 27, 2026 (Rule 16 reopened after fresh rerun; C33 remains closed only for `page_index` truth scope)*
+*Evidence sources: `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`, `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c24-system-health-live-proof.md`, `docs/audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md`, `docs/audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md`, `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`, `docs/fixes/fix_011_c24_system_health_truth_unification.md`, `docs/fixes/fix_012_c25_direct_supabase_rest_audit_access.md`, `docs/fixes/fix_013_c32_control_plane_truth_unification.md`, `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `docs/fixes/fix_016_truth_sync_after_revalidation.md`, `scripts/audit/results/2026-04-27T02-21-11-828Z-rule16-transactional-integrity.json`, `scripts/audit/results/2026-04-27T02-45-20-483Z-rule16-revalidation-observability.json`, `scripts/audit/results/2026-04-26T18-17-12-972Z-c33-page-index-truth-fix.json`*
 *Total sections: 49 (Sections 0–49 + Section 0.1 CTO Operating Protocol)*  
 *Total rules: 33 (Rules 1–33) + 7 Constitution Articles + CTO Protocol Rules (A–G)*  
 
 ### Phase Status (Constitution Article 2 compliant — no fake completions)
 
-*Fresh verification baseline: April 26, 2026 — local production build rerun plus post-deploy live proof for C21, C22, C31, and C23.*
+*Fresh verification baseline: April 27, 2026 — targeted Rule 16 rerun plus documentation truth reconciliation. April 26 live proof for C21, C22, C23, C24, C25, C31, C32, and C33 remains valid where not contradicted by the April 27 rerun.*
 *Status below reflects current provable reality. COMPLETE here means runtime-proven and still consistent with prior CEO-approved completion, not a new CEO sign-off created by this rerun.*
 
 | Phase | Name | Status | CTO Audit % | Current Proof / Remaining Gap |
@@ -8546,9 +8546,9 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 1 | Rendering Gap | COMPLETE | 90% | Catch-all generated pages render live. Public routes respond. C23 sitemap localhost leakage is now closed live. |
 | 2 | Draft System | COMPLETE | 80% | Draft create, edit, read, approve, publish, and live URL render all passed in production. |
 | 3 | Image Intelligence | PARTIAL | 70% | Media read works. Live upload, storage cleanup proof, and full alt-text/media governance remain unverified. |
-| 4 | Bulk Job Planner | PARTIAL | 65% | Bulk UI/API exists and read path works. Rule 16 transactional bulk start, idempotent replay, and outbox recovery are now proven live. Multi-page scale execution depth, pincode targeting, and duplicate-check proof remain incomplete. |
+| 4 | Bulk Job Planner | PARTIAL | 55% | Bulk UI/API exists and read path works. April 27 revalidation still proved transactional bulk start rollback and same-key idempotent replay, but live retry-daemon recovery did not complete end to end after the dispatch-gap simulation. Multi-page scale execution depth, pincode targeting, and duplicate-check proof remain incomplete. |
 | 5 | Geo Intelligence | PARTIAL | 70% | Geo city reads work. Full CEO CRUD, pincode import proof, and generation trigger per area remain incomplete. |
-| 6 | Publish Pipeline | PARTIAL | 75% | Core publish path works live. The sitemap canonical URL fix, Rule 16 transactional publish proof, and C33 page-index truth cleanup are now proven live. Scheduled publish runtime execution proof and broader publish/index scope remain incomplete. |
+| 6 | Publish Pipeline | PARTIAL | 65% | Core publish path works live. C33 page-index truth cleanup remains valid in its own scope, but the April 27 Rule 16 rerun failed post-retry visibility proof: the retry committed DB state, yet the live page still returned `404` and the sitemap omitted the slug. Scheduled publish runtime execution proof and broader publish/index scope remain incomplete. |
 | 7 | Download Lead Magnets | NOT STARTED | 0% | No runtime proof collected. |
 | 8 | Multi-Intent Funnels | NOT STARTED | 0% | Gated by stabilization and Phase 23. |
 | 9 | Lead Scoring + Agent Personalization | PARTIAL | 25% | Code exists, but runtime proof was not collected in this audit. |
@@ -8564,7 +8564,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 19 | Universal Lead Hub | PARTIAL | 15% | Schema/scaffold exists. No live workflow proof collected. |
 | 20 | System Intelligence Engine | PARTIAL | 10% | Schema/scaffold exists. No live engine proof collected. |
 | 21 | External System Governance | PARTIAL | 65% | Zoho refresh + test lead passed. QStash publish passed, delivery proof remains partial. Shared health truth is now live and healthy after cron recovery. |
-| 22 | System Memory & Traceability | PARTIAL | 75% | Audit scripts/results now include direct DB proof for C24, C25, C32, Rule 16, and C33. Stale log cleanup, cross-links, and ongoing one-truth enforcement still remain. |
+| 22 | System Memory & Traceability | PARTIAL | 70% | Audit scripts/results now include direct DB proof for C24, C25, C32, C33, and the April 27 Rule 16 revalidation. This truth sync corrected stale closure claims, but stale log cleanup, cross-links, and ongoing one-truth enforcement still remain. |
 | 23 | Communication System | PARTIAL | 20% | Alert/QStash pieces exist. Full WhatsApp/Telegram/Email/Cliq proof is not complete. |
 | 24 | Media Management | PARTIAL | 40% | Media list read works. Upload and governance proof remain incomplete. |
 | 25 | Navigation Management | PARTIAL | 60% | Public header navigation is now live from `navigation_menu`: production `/api/navigation` returns 200, `/admin/navigation` edits the live header tree, and the public navbar fetches the API at runtime. Admin sidebar/footer consolidation, legacy nav cleanup, and richer Section 45 editor features remain open. |
@@ -8574,14 +8574,14 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (full-system score not re-scored after targeted Rule 16 and C33 live proof)
+Overall System Score: 60/100 (April 27 rerun reopened Rule 16; C33 remains a scoped truth fix)
 Local Production Build: PASS (next build rerun on April 26, 2026)
 Live Runtime: PARTIAL
 System Mode Truth: /api/status = normal, /api/admin/system/health = HEALTHY, /api/admin/vendor-health = healthy
 
 Current issue count:
   Critical: 0
-  High:     0
+  High:     1
   Medium:   3
 
 Fresh runtime PASS proof:
@@ -8604,10 +8604,12 @@ Fresh runtime PASS proof:
   - event-retry and vendor-health-check are healthy required crons with fresh live runs
   - authenticated /admin/system/health browser UI shows HEALTHY and System Health Dashboard
   - C32 live control-plane proof: direct REST returns canonical runtime keys only from system_control_config, `/api/admin/feature-flags` returns those keys with source=system_control_config, and `/api/admin/system/health` reports conflicting_states_possible: false
-  - Rule 16 live proof: publish rollback on DB error, process kill, and socket drop passed; bulk rollback/idempotency/outbox recovery passed; pagegen persistence and admin multi-table rollback checks passed; residue verification returned zero remaining rule16 audit rows
-  - C33 live proof: direct DB shows `legacy_status_rows_after = 0` and `conflicting_rows_after = 0`; the DB rejects `status='active'`; draft pages return 404 and stay out of sitemaps; admin SEO metrics match direct DB truth
+  - Rule 16 deep-check pass set: publish process-kill rollback and socket-drop rollback still pass; bulk forced-DB-error rollback, kill rollback, and same-key idempotent replay still pass; pagegen persistence and admin multi-table rollback checks still pass; residue verification remained clean in the April 27 rerun
+  - C33 live proof: direct DB shows `legacy_status_rows_after = 0` and `conflicting_rows_after = 0`; the DB rejects `status='active'`; draft pages return 404 and stay out of sitemaps; admin SEO metrics match direct DB truth for the C33 scope only
 
 Fresh runtime WARNING / UNVERIFIED proof:
+  - Rule 16 rerun failed `publish_force_db_error_then_retry`: retry committed DB state, but the live page returned `404` and the sitemap omitted the slug
+  - Rule 16 rerun failed `bulk_network_drop_then_retry_daemon_recovery`: retry daemon dispatch was observed, but queue/job completion was not proven in the same observability window
   - QStash delivery log lookup remains partial
   - historical_dead_letters:3 remains visible as a warning
   - morning-brief remains unknown until the next scheduled daily run and is non-required
@@ -8617,13 +8619,14 @@ Fresh runtime WARNING / UNVERIFIED proof:
   - Phase 14 Code Visibility and Version History remain open
 
 Open contradictions still proven:
-  - No current split-truth contradiction remains in the audited health, control-plane, publish, and page-index surfaces. Remaining open items are proof-depth or missing-feature gaps.
+  - Rule 16 remains reopened after the April 27 rerun: publish retry visibility and bulk retry-daemon completion are not yet closed live.
+  - C33 remains closed only for the `page_index` truth contradiction; it does not close broader publish-pipeline or Rule 16 behavior.
 ```
 
 ### Next Action
 
 ```
-PRIORITY: REMAINING MEDIUM GAPS AFTER RUNTIME TRUTH STABILIZATION
+PRIORITY: CURRENT LOCKED ORDER AFTER APRIL 27 REVALIDATION
 
 C22 STATUS: RESOLVED IN PRODUCTION
   - Targeted `admin_users` schema repair applied live and recorded.
@@ -8662,20 +8665,23 @@ C22 STATUS: RESOLVED IN PRODUCTION
   - `feature_flags` no longer contains `safe_mode`, `pagegen_enabled`, or `bulk_generation_enabled`.
   - `/api/admin/feature-flags` and `/api/admin/system/health` now expose `system_control_config` as the single control-plane source.
 
-7. RULE 16 STATUS: PROVED LIVE IN REQUESTED SCOPE
-  - Publish, bulk, pagegen persistence, and admin multi-table writes now execute through DB-owned transactional primitives.
-  - Live failure simulation passed DB error, process kill, network interruption, idempotent replay, and outbox recovery checks.
-  - Direct DB residue verification returned zero remaining rule16 audit rows after cleanup.
+7. RULE 16 STATUS: PARTIAL AFTER APRIL 27 REVALIDATION
+  - Publish, bulk, pagegen persistence, and admin multi-table writes still execute through DB-owned transactional primitives.
+  - Fresh artifact `2026-04-27T02-21-11-828Z-rule16-transactional-integrity.json` failed `publish_force_db_error_then_retry`: retry committed DB state, but the live page returned `404` and the sitemap omitted the slug.
+  - The same artifact failed `bulk_network_drop_then_retry_daemon_recovery`: retry daemon dispatch was observed for the committed outbox event, but queue/job completion was not proven in the same window.
+  - Requested Rule 16 scope is reopened until both failures pass live again.
 
-8. C33 STATUS: RESOLVED IN PRODUCTION
+8. C33 STATUS: RESOLVED IN PRODUCTION FOR C33 SCOPE ONLY
   - `page_index` now uses canonical publication `status` plus separate `indexing_status`.
   - Legacy values are blocked at the DB layer, and invalid publication/indexing combinations normalize before commit.
   - Public routing, sitemaps, indexing workers, and admin metrics now read the same truth model.
+  - This does not close broader publish-pipeline or Rule 16 runtime behavior.
 
 9. Next locked work.
+  - Rule 16: repair and rerun publish post-retry visibility proof and bulk retry-daemon recovery proof.
   - C26: deepen QStash delivery-log proof.
   - C29: implement and prove Phase 14 Code Visibility Layer 4.
   - C30: implement and prove Phase 14 Content Version History.
 
-Runtime Truth Stabilization closed C21, C22, C23, C24, C25, C31, C32, Rule 16, and C33 with live proof. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the remaining medium gaps are now C26, C29, and C30.
+Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C31, and C32. C33 remains resolved only for the `page_index` truth contradiction. Rule 16 is reopened as PARTIAL after the April 27 rerun. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the locked open work is now Rule 16 revalidation repair, then C26, C29, and C30.
 ```

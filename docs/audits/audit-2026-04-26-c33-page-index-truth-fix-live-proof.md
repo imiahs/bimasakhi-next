@@ -1,6 +1,6 @@
 # C33 Page Index Truth Fix Live Proof - 2026-04-26
 
-**Status:** CURRENT TRUTH FOR C33  
+**Status:** CURRENT TRUTH FOR C33 ONLY  
 **Audit Type:** Live runtime truth proof with direct DB verification  
 **Primary Reference:** `docs/fixes/fix_015_c33_page_index_truth_fix.md`  
 **Secondary References:** `docs/migrations/migration-2026-04-26-c33-page-index-truth-fix.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/CONTENT_COMMAND_CENTER.md`, `docs/INDEX.md`  
@@ -8,7 +8,7 @@
 
 ## 1. Executive Summary
 
-C33 is now resolved live.
+C33 remains resolved live for the `page_index` truth contradiction only.
 
 The baseline contradiction was that `page_index.status` was doing two jobs at once: publication truth and indexing lifecycle truth. That allowed readers, dashboards, sitemaps, and runtime visibility to disagree even when they were all reading `page_index`.
 
@@ -85,7 +85,7 @@ Important boundary:
 
 ## 7. Verdict
 
-**C33 status:** CURRENT TRUTH FOR C33
+**C33 status:** CURRENT TRUTH FOR C33 ONLY
 
 What is now proven:
 
@@ -94,6 +94,7 @@ What is now proven:
 - invalid publication/indexing combinations are corrected before commit
 - draft pages are no longer publicly visible or sitemap-visible through the old `pending_index` ambiguity
 - admin metrics now agree with direct DB truth
+- this does not close broader Rule 16 or publish-pipeline runtime behavior
 
 What remains outside this proof boundary:
 

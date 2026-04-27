@@ -3,7 +3,7 @@
 **Date:** 2026-04-26  
 **Author:** CTO (Agent)  
 **Bible Reference:** Rule 16, Section 10-12, Section 32, Section 40  
-**Status:** RESOLVED LIVE IN REQUESTED SCOPE
+**Status:** PARTIAL AFTER APRIL 27 REVALIDATION
 
 ## Context
 
@@ -155,9 +155,36 @@ The harness was fixed, rerun, and then a direct DB residue scan confirmed zero r
 - `tool_configs`
 - `idempotency_keys`
 
+## April 27 Revalidation Correction
+
+Fresh rerun artifact:
+
+- `scripts/audit/results/2026-04-27T02-21-11-828Z-rule16-transactional-integrity.json`
+
+Supporting observability capture:
+
+- `scripts/audit/results/2026-04-27T02-45-20-483Z-rule16-revalidation-observability.json`
+
+What still passed in the April 27 rerun:
+
+1. publish rollback on process kill mid-execution
+2. publish rollback on socket drop mid-execution
+3. bulk rollback on forced DB error
+4. bulk rollback on process kill mid-execution
+5. bulk same-key idempotent replay
+6. pagegen persistence rollback on forced DB error
+7. admin multi-table rollback checks in the audited scope
+
+What failed in the April 27 rerun:
+
+1. `publish_force_db_error_then_retry` failed because the retry committed DB state, but the live page returned `404` and the sitemap omitted the slug.
+2. `bulk_network_drop_then_retry_daemon_recovery` failed because the main artifact never reached a completed `after_retry` state. A follow-up observability query proved that the retry daemon did dispatch the queued event, but no downstream worker completion was captured in the same window.
+
+That means the April 26 closure claim is no longer current truth.
+
 ## Outcome
 
-Rule 16 is now proven live for the requested transactional-integrity scope.
+The database-owned Rule 16 primitives remain deployed, but Rule 16 is no longer closed live for the requested transactional-integrity scope.
 
 What changed in runtime truth:
 
@@ -168,11 +195,12 @@ What changed in runtime truth:
 
 ## Result
 
-**Rule 16 status:** RESOLVED LIVE IN REQUESTED SCOPE
+**Rule 16 status:** PARTIAL AFTER APRIL 27 REVALIDATION
 
 Truth boundary after this fix:
 
-- this closes the requested publish, bulk, and admin multi-table Rule 16 proof scope
+- the April 26 deploy still moved the critical write paths into DB-owned transactional primitives
+- the requested Rule 16 scope is reopened until the failed April 27 publish and bulk recovery checks pass live again
 - this does not mean Phase 4, Phase 6, or Phase 14 are now complete
 - C26, C29, and C30 remain open separate work
 - scheduled publish now shares the same transactional RPC, but scheduled runtime itself was not separately executed during this audit window
@@ -180,6 +208,7 @@ Truth boundary after this fix:
 ## Cross-References
 
 - Related audit: `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`
+- Related audit: `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`
 - Related migration: `docs/migrations/migration-2026-04-26-rule16-publish-pipeline-atomicity.md`
 - Related migration: `docs/migrations/migration-2026-04-26-rule16-bulk-admin-atomicity.md`
 - Related migration: `docs/migrations/migration-2026-04-26-c33-page-index-truth-fix.md`

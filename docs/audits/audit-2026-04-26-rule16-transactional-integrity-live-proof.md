@@ -1,14 +1,16 @@
 # Rule 16 Transactional Integrity Live Proof - 2026-04-26
 
-**Status:** CURRENT TRUTH FOR RULE 16  
+**Status:** HISTORICAL PASSING ARTIFACT - SUPERSEDED BY 2026-04-27 REVALIDATION  
 **Audit Type:** Live failure-safety proof with direct DB verification  
 **Primary Reference:** `docs/fixes/fix_014_rule16_transactional_integrity.md`  
-**Secondary References:** `docs/migrations/migration-2026-04-26-rule16-publish-pipeline-atomicity.md`, `docs/migrations/migration-2026-04-26-rule16-bulk-admin-atomicity.md`, `docs/migrations/migration-2026-04-26-c33-page-index-truth-fix.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/CONTENT_COMMAND_CENTER.md`, `docs/INDEX.md`  
+**Secondary References:** `docs/migrations/migration-2026-04-26-rule16-publish-pipeline-atomicity.md`, `docs/migrations/migration-2026-04-26-rule16-bulk-admin-atomicity.md`, `docs/migrations/migration-2026-04-26-c33-page-index-truth-fix.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`, `docs/CONTENT_COMMAND_CENTER.md`, `docs/INDEX.md`  
 **Execution Window:** 2026-04-26 UTC / IST
 
 ## 1. Executive Summary
 
-Rule 16 is now proven live for the requested system-failure safety scope.
+This April 26 pass remains a valid historical record that the DB-owned Rule 16 primitives and initial live probes once passed together.
+
+It is no longer the controlling current-truth record because the fresh April 27 rerun failed two required checks and reopened Rule 16 as PARTIAL.
 
 The proof covered:
 
@@ -122,9 +124,9 @@ The harness was fixed and rerun. After that, a direct DB residue scan returned z
 
 ## 8. Verdict
 
-**Rule 16 status:** CURRENT TRUTH FOR REQUESTED LIVE SCOPE
+**Rule 16 status on 2026-04-26:** PASSING ARTIFACT ONLY
 
-What is now proven:
+What this artifact still proves historically:
 
 - the requested multi-table write paths are transaction-safe under forced DB failure
 - publish and bulk probes survive hard client interruption without partial state
@@ -133,6 +135,7 @@ What is now proven:
 
 What remains outside this proof boundary:
 
+- current Rule 16 status now lives in `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`
 - this is not a claim that Phase 4 or Phase 6 is now complete
 - scheduled publish now uses the same DB transaction primitive, but scheduled runtime itself was not separately executed in this audit window
 - open medium work after this closure is now C26, C29, and C30
