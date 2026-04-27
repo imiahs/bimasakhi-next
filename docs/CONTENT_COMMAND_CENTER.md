@@ -3,7 +3,7 @@
 
 > **Status:** ACTIVE — Governance restructured April 19, 2026  
 > **Owner:** CTO (under CEO authority — Constitution Article 1)  
-> **Last Updated:** April 26, 2026
+> **Last Updated:** April 27, 2026
 > **Core Vision:** Transform pagegen from a black-box content generator into India's most powerful programmatic SEO + lead acquisition machine for LIC/financial services — organically, without ads.
 
 ---
@@ -7615,14 +7615,15 @@ PRIORITY R — REMEDIATION FIRST (Fix Audit Findings Before New Work)
     └── 14g: Feature Flag Creation UI     ❌ NOT DONE — can only toggle existing flags, cannot create new ones
     📄 Sections: 32
 
-  Phase 21: External Governance           ⚠️ PARTIAL → 8/10 (was 7/10)
+  Phase 21: External Governance           ⚠️ PARTIAL → 8.5/10 (was 7/10)
     ├── 21a: Circuit Breakers             ✅ COMPLETE
     ├── 21b: SLA Tracking                 ✅ COMPLETE
     ├── 21c: DLQ Consumer                 ✅ COMPLETE
     ├── 21d: Alert Delivery Channels      ✅ FIXED — WhatsApp + Telegram code integrated in alertSystem.js
     │   └── ⚠️ CAVEAT: Code exists but env vars (ALERT_WHATSAPP_WEBHOOK, TELEGRAM_BOT_TOKEN) must be SET in production
     ├── 21e: CEO Morning Brief            ⚠️ DEPENDS — channels work only if env vars are configured
-    └── 21f: Escalation Testing           ⬜ NOT STARTED
+    ├── 21f: Escalation Testing           ⬜ NOT STARTED
+    └── 21g: Delivery Truth Proof         ✅ FIXED LIVE — `external_delivery_logs`, admin sync API, retry history, health metrics, and real delivered/cancelled proof
     📄 Sections: 39, 41
 
   Phase 4:  Bulk Job Planner              ⚠️ PARTIAL (unchanged)
@@ -8574,7 +8575,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (Rule 16 repaired and revalidated live; C26, C29, and C30 remain open)
+Overall System Score: 64/100 (Rule 16 and C26 delivery truth are verified live; C29 and C30 remain open)
 Local Production Build: PASS (npm run build on April 27, 2026)
 Live Runtime: PARTIAL
 System Mode Truth: /api/status = normal, /api/admin/system/health = HEALTHY, /api/admin/vendor-health = healthy
@@ -8582,7 +8583,7 @@ System Mode Truth: /api/status = normal, /api/admin/system/health = HEALTHY, /ap
 Current issue count:
   Critical: 0
   High:     0
-  Medium:   3
+  Medium:   2
 
 Fresh runtime PASS proof:
   - /api/status, /api/test, /, /why
@@ -8595,7 +8596,7 @@ Fresh runtime PASS proof:
   - feature control surfaces read through app backend, with canonical runtime keys now sourced from system_control_config
   - page_index read through /api/admin/seo/index-health
   - Zoho OAuth refresh + TEST_AUDIT lead insert
-  - QStash publish accepted with message id
+  - C26 live delivery truth proof: real `contact_created` dispatch reached `delivered`; real `lead_hot` failure produced provider `ERROR/RETRY` history, then terminal `cancelled` truth; `/api/admin/delivery-logs` metrics matched `/api/admin/system/health`; post-proof cleanup restored delivery metrics to zero with `overall_health=HEALTHY`
 
 Fresh runtime PASS proof:
   - /api/status returns status: ok and overall_health: HEALTHY in production
@@ -8613,7 +8614,6 @@ Fresh runtime PASS proof:
   - C33 live proof: direct DB shows `legacy_status_rows_after = 0` and `conflicting_rows_after = 0`; the DB rejects `status='active'`; draft pages return 404 and stay out of sitemaps; admin SEO metrics match direct DB truth for the C33 scope only
 
 Fresh runtime WARNING / UNVERIFIED proof:
-  - QStash delivery log lookup remains partial
   - morning-brief remains unknown until the next scheduled daily run and is non-required
   - Media upload was not revalidated live
   - Scheduled publish runtime was not separately revalidated live in this audit window
@@ -8621,7 +8621,6 @@ Fresh runtime WARNING / UNVERIFIED proof:
   - Phase 14 Code Visibility and Version History remain open
 
 Open gaps still proven:
-  - C26 remains open: QStash publish accepted, but delivery-log proof is still partial.
   - C29 remains open: Phase 14 Code Visibility Layer 4 is not implemented/proven.
   - C30 remains open: Phase 14 Content Version History is not implemented/proven.
   - C33 remains closed only for the `page_index` truth contradiction; it does not close broader publication behavior outside the audited scope.
@@ -8678,16 +8677,21 @@ C22 STATUS: RESOLVED IN PRODUCTION
   - Later same-day governance cleanup cleared DLQ residue to `job_dead_letters=0` and restored live health to `HEALTHY` without reopening Rule 16.
   - Later same-day single-flow proof generated exactly one page queue row, completed with `retry_count=0`, published successfully to a live `200` URL with sitemap visibility, then archived the temporary proof page after capture.
 
-8. C33 STATUS: RESOLVED IN PRODUCTION FOR C33 SCOPE ONLY
+8. C26 STATUS: RESOLVED IN PRODUCTION
+  - `external_delivery_logs` migration applied live and recorded.
+  - Real `contact_created` dispatch reached `delivered` with linked `event_store_id` and `generation_queue_id`.
+  - Real `lead_hot` failure showed provider `ERROR/RETRY` history, was terminally cancelled through QStash for the synthetic proof path, and preserved non-silent `event_store.status=failed` truth.
+  - `/api/admin/delivery-logs` metrics matched `/api/admin/system/health` during the proof window, and post-proof cleanup restored `delivery_failures_recent=0` with `overall_health=HEALTHY`.
+
+9. C33 STATUS: RESOLVED IN PRODUCTION FOR C33 SCOPE ONLY
   - `page_index` now uses canonical publication `status` plus separate `indexing_status`.
   - Legacy values are blocked at the DB layer, and invalid publication/indexing combinations normalize before commit.
   - Public routing, sitemaps, indexing workers, and admin metrics now read the same truth model.
   - This does not close broader publish-pipeline or Rule 16 runtime behavior.
 
-9. Next locked work.
-  - C26: deepen QStash delivery-log proof.
+10. Next locked work.
   - C29: implement and prove Phase 14 Code Visibility Layer 4.
   - C30: implement and prove Phase 14 Content Version History.
 
-Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C31, C32, and Rule 16 in the requested audited scope. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the locked open work is now C26, C29, and C30.
+Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C26, C31, C32, and Rule 16 in the requested audited scope. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the locked open work is now C29 and C30.
 ```

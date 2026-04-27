@@ -10,17 +10,17 @@
 
 | Metric | Value |
 |---|---|
-| **System Score** | 64/100 (Rule 16 remains repaired in requested audited scope; controlled governance cleanup and single-flow proof passed; C33 remains a scoped truth fix) |
-| **Build Status** | PASS - last local production build rerun succeeded on 2026-04-26; the April 27 run was a targeted live revalidation |
-| **System Mode** | NORMAL control mode; HEALTHY on /api/status, /api/admin/system/health, and /api/admin/vendor-health after the April 27 governance cleanup |
+| **System Score** | 64/100 (Rule 16 remains repaired in requested audited scope; C26 delivery truth is now proven live; C29 and C30 remain open) |
+| **Build Status** | PASS - last local production build rerun succeeded on 2026-04-27 before the live C26 deploy/proof cycle |
+| **System Mode** | NORMAL control mode; HEALTHY on /api/status, /api/admin/system/health, and /api/admin/vendor-health after the April 27 C26 proof cleanup |
 | **Open Critical Issues** | 0 |
 | **Open High Issues** | 0 |
-| **Open Medium Issues** | 3 (C26, C29, C30) |
+| **Open Medium Issues** | 2 (C29, C30) |
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
-| **Last Audit** | 2026-04-27 (controlled governance cleanup + single-flow proof: DLQ cleared, one exact page flow generated and published successfully, proof page archived, health remained clean) |
-| **Last Deployment** | 2026-04-26 Vercel production deploy from the live working tree for Rule 16 transactional integrity and C33 page-index truth fix; aliased to `https://bimasakhi.com` |
-| **Last Test Run** | 2026-04-27 controlled governance cleanup + single-flow page-generation proof |
-| **Current CTO Decision** | Rule 16 remains resolved in the requested audited scope. Controlled governance cleanup and one exact page-generation proof both passed. The locked open order remains C26, C29, then C30. |
+| **Last Audit** | 2026-04-27 (C26 delivery truth live proof passed: real delivered and cancelled provider states were captured, admin delivery metrics matched system health, proof residue was cleaned, and health returned to HEALTHY) |
+| **Last Deployment** | 2026-04-27 Vercel production deploy from the live working tree for the C26 delivery truth layer and proof surfaces; aliased to `https://bimasakhi.com` |
+| **Last Test Run** | 2026-04-27 C26 live delivery truth proof + post-proof cleanup verification |
+| **Current CTO Decision** | Rule 16 and C26 delivery truth are now resolved in the requested audited scope. The locked open order is C29, then C30. |
 
 ---
 ## Phase Status
@@ -37,7 +37,7 @@
 | Phase 5 | Geo Intelligence | B | PARTIAL | 70% | 30% | Built: geo admin surfaces, city/locality/pincode code, live city read. Left: full CRUD, pincode import proof, generation trigger per area, CEO-complete controls. |
 | Phase 6 | Publish Pipeline | B | PARTIAL | 65% | 35% | Built: draft create/edit/publish/live URL render verified, sitemap canonical URL fix proven live, C33 page-index truth cleanup for its own scope, and April 27 publish retry visibility repair proof. Left: scheduled publish runtime execution proof and broader phase scope. |
 | Phase 14 | Super Admin Panel - Control Tower | R->A | PARTIAL | 65% | 35% | Built: login, feature flags, workflow config, logs/audit, safe mode. C22 live schema repair is applied and production `/api/admin/users` now returns 200. C31 is now resolved live: password-only login fails, email+password returns a real `admin_users` session for `admin@bimasakhi.com`, and browser login succeeds to `/admin`. Code Visibility, Version History, and full RBAC lifecycle still remain. |
-| Phase 21 | External System Governance | R->A | PARTIAL | 65% | 35% | Built: status route, unified health truth, live event-retry/vendor-health-check recovery, QStash publish, Zoho test lead. Left: QStash delivery proof depth, WhatsApp/Email/Cliq failover, alert SLA proof. |
+| Phase 21 | External System Governance | R->A | PARTIAL | 75% | 25% | Built: status route, unified health truth, live event-retry/vendor-health-check recovery, QStash publish, external delivery truth ledger, admin delivery log API, live delivered/cancelled provider proof, Zoho test lead. Left: WhatsApp/Email/Cliq failover and alert SLA proof. |
 | Phase 22 | System Memory & Traceability | A | PARTIAL | 70% | 30% | Built: docs structure, audit reports, audit scripts/results, and April 27 truth-sync correction. Left: stale log cleanup, cross-links, ongoing one-truth enforcement. |
 | Phase 23 | Communication System | A | NOT STARTED / PARTIAL SCAFFOLD | 20% | 80% | Full WhatsApp/Telegram/Email/Cliq communication system not complete; some alert/integration pieces exist. |
 | Phase 24 | Media Management | A | PARTIAL | 40% | 60% | Media list code/live read exists; full upload/governance proof missing. |
@@ -58,13 +58,15 @@
 | Phase 19 | Universal Lead Hub | C | NOT STARTED / DB SCAFFOLD | 15% | 85% | Schema exists; full hub not proven. |
 | Phase 20 | System Intelligence Engine | D | NOT STARTED / DB SCAFFOLD | 10% | 90% | Schema/code scaffold only; full engine not proven. |
 
-> **CTO Note:** Runtime Truth Stabilization remains the only correct path. Rule 16 is re-closed live for the requested audited scope after the April 27 runtime repair and rerun. C21, C22, C23, C24, C25, C31, and C32 remain closed in live scope, and C33 remains closed only for the `page_index` truth contradiction. Phase 25 is no longer BLOCKED, but it is still PARTIAL because admin sidebar/footer consolidation is not done. The locked open work is now C26, C29, and C30.
+> **CTO Note:** Runtime Truth Stabilization remains the only correct path. Rule 16 and C26 are now closed live for the requested audited scope. C21, C22, C23, C24, C25, C26, C31, and C32 remain closed in live scope, and C33 remains closed only for the `page_index` truth contradiction. Phase 25 is no longer BLOCKED, but it is still PARTIAL because admin sidebar/footer consolidation is not done. The locked open work is now C29 and C30.
 
 ---
 ## Recent Activity
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-04-27 | AUDIT | C26 delivery truth live proof passed: real `contact_created` dispatch reached `delivered`, real `lead_hot` failure showed provider retry history then terminal `cancelled` truth, `/api/admin/delivery-logs` metrics matched `/api/admin/system/health`, and proof residue was cleaned so health returned to `HEALTHY`. | CURRENT TRUTH FOR C26 | [c26-delivery-truth-proof](audits/audit-c26-delivery-truth-proof.md) |
+| 2026-04-27 | FIX | C26 delivery-level truth landed live: `external_delivery_logs`, provider sync, retry observability, admin delivery API, delivery health metrics, and the dedicated proof harness were deployed and verified. | RESOLVED LIVE | [fix-c26-delivery-layer](fixes/fix-c26-delivery-layer.md) |
 | 2026-04-27 | AUDIT | Controlled governance cleanup and single-flow proof passed: DLQ was cleared to zero, queue stayed in controlled mode (`queue_paused=true`, `batch_size=1`, `bulk_generation_enabled=false`), one exact page-generation flow completed and published with live sitemap proof, and the temporary proof page was archived after capture. | CURRENT OPERATIONAL TRUTH | [governance-cleanup-single-flow](audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md) |
 | 2026-04-27 | FIX | Rule 16 runtime repair landed: generated page visibility, sitemap truth, retry-daemon completion proof, pagegen event ACK closure, and harness cleanup order were repaired. The fresh rerun passed end to end. | RESOLVED LIVE IN REQUESTED SCOPE | [fix-017](fixes/fix_017_rule16_repair_and_revalidation_pass.md) |
 | 2026-04-27 | AUDIT | Fresh Rule 16 repair rerun passed end to end: publish retry now returns `200` and the sitemap contains the repaired slug, bulk retry-daemon recovery reaches completed queue/job/event state, and the final artifact status is `PASS`. | CURRENT TRUTH AFTER REPAIR | [rule16-repair-pass](audits/audit-2026-04-27-rule16-repair-revalidation-pass.md) |
@@ -135,7 +137,6 @@
 
 | # | Severity | Issue | Owner | Status | Link |
 |---|---|---|---|---|---|
-| C26 | **MEDIUM** | QStash publish accepted, but delivery log proof was partial/not found immediately | CTO | OPEN | [verified-live-audit](audits/verified-live-system-audit-2026-04-26.md) |
 | C29 | **MEDIUM** | Phase 14 Code Visibility Layer 4 is not implemented/proven | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
 | C30 | **MEDIUM** | Phase 14 Content Version History is not implemented/proven | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
 
@@ -144,7 +145,8 @@
 
 | Date | Score | Key Findings | Status | Link |
 |---|---|---|---|---|
-| 2026-04-27 | 64/100 unchanged | Controlled governance cleanup passed: DLQ was cleared to zero, live health returned to `HEALTHY`, one exact page-generation flow completed with `retry_count=0`, the published URL returned `200`, sitemap shards contained the slug, and the temporary proof page was archived afterward. Open issues remain C26, C29, and C30. | CURRENT OPERATIONAL TRUTH | [governance-cleanup-single-flow](audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md) |
+| 2026-04-27 | 64/100 unchanged | C26 live proof passed: real `contact_created` dispatch reached `delivered`, real `lead_hot` failure showed provider retry history and terminal `cancelled` truth, `/api/admin/delivery-logs` metrics matched `/api/admin/system/health`, and post-proof cleanup restored delivery metrics to zero with overall health `HEALTHY`. | CURRENT TRUTH FOR C26 | [c26-delivery-truth-proof](audits/audit-c26-delivery-truth-proof.md) |
+| 2026-04-27 | 64/100 unchanged | Controlled governance cleanup passed: DLQ was cleared to zero, live health returned to `HEALTHY`, one exact page-generation flow completed with `retry_count=0`, the published URL returned `200`, sitemap shards contained the slug, and the temporary proof page was archived afterward. At that point in the day, delivery truth was still open alongside C29 and C30. | HISTORICAL EARLIER SAME-DAY OPERATIONAL TRUTH | [governance-cleanup-single-flow](audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md) |
 | 2026-04-27 | 64/100 | Rule 16 runtime repair and fresh live rerun both passed: publish retry now returns `200` and the sitemap contains the slug, bulk retry-daemon recovery now completes queue/job/event state, and the final artifact status is `PASS`. C33 remains valid only for the `page_index` truth contradiction. | CURRENT TRUTH AFTER REPAIR | [rule16-repair-pass](audits/audit-2026-04-27-rule16-repair-revalidation-pass.md) |
 | 2026-04-27 | 60/100 historical baseline | Fresh Rule 16 revalidation invalidated the April 26 closure claim: publish retry committed DB state but the live page returned `404` and the sitemap omitted the slug; bulk retry daemon dispatched but queue/job completion was not proven. C33 remained valid only for the `page_index` truth contradiction. | HISTORICAL BASELINE BEFORE REPAIR | [rule16-revalidation](audits/audit-2026-04-27-rule16-revalidation-truth-sync.md) |
 | 2026-04-26 | 60/100 historical context | C33 live proof: `page_index` now uses canonical publication `status` plus `indexing_status`, legacy status rows and conflicting rows both returned `0`, draft rows returned `404`, and admin SEO metrics matched direct DB truth. | CURRENT TRUTH FOR C33 ONLY | [c33-page-index-live-proof](audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md) |
@@ -168,6 +170,7 @@
 
 | Date | Fix | Bible Ref | Status | Link |
 |---|---|---|---|---|
+| 2026-04-27 | C26 delivery-level truth system | Section 39, Section 40 | RESOLVED LIVE | [fix-c26-delivery-layer](fixes/fix-c26-delivery-layer.md) |
 | 2026-04-27 | Rule 16 repair and revalidation pass | Rule 16, Section 8, Section 10-12, Section 32, Section 40 | RESOLVED LIVE IN REQUESTED SCOPE | [fix-017](fixes/fix_017_rule16_repair_and_revalidation_pass.md) |
 | 2026-04-27 | Truth sync after revalidation | Section 40, Rule 25, Constitution Article 5 | COMPLETE | [fix-016](fixes/fix_016_truth_sync_after_revalidation.md) |
 | 2026-04-26 | C33 page-index truth fix | Section 8, Section 10-12, Section 40 | RESOLVED LIVE - C33 SCOPE ONLY | [fix-015](fixes/fix_015_c33_page_index_truth_fix.md) |
