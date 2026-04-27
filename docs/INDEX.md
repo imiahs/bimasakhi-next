@@ -10,17 +10,17 @@
 
 | Metric | Value |
 |---|---|
-| **System Score** | 60/100 (April 27 rerun reopened Rule 16; C33 remains a scoped truth fix) |
+| **System Score** | 64/100 (Rule 16 remains repaired in requested audited scope; controlled governance cleanup and single-flow proof passed; C33 remains a scoped truth fix) |
 | **Build Status** | PASS - last local production build rerun succeeded on 2026-04-26; the April 27 run was a targeted live revalidation |
-| **System Mode** | NORMAL control mode; HEALTHY on /api/status, /api/admin/system/health, and /api/admin/vendor-health after cron recovery |
+| **System Mode** | NORMAL control mode; HEALTHY on /api/status, /api/admin/system/health, and /api/admin/vendor-health after the April 27 governance cleanup |
 | **Open Critical Issues** | 0 |
-| **Open High Issues** | 1 (Rule16-R1: April 27 revalidation failure) |
+| **Open High Issues** | 0 |
 | **Open Medium Issues** | 3 (C26, C29, C30) |
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
-| **Last Audit** | 2026-04-27 (Rule 16 revalidation truth sync: Rule 16 reopened as PARTIAL; C33 reaffirmed for `page_index` scope only) |
+| **Last Audit** | 2026-04-27 (controlled governance cleanup + single-flow proof: DLQ cleared, one exact page flow generated and published successfully, proof page archived, health remained clean) |
 | **Last Deployment** | 2026-04-26 Vercel production deploy from the live working tree for Rule 16 transactional integrity and C33 page-index truth fix; aliased to `https://bimasakhi.com` |
-| **Last Test Run** | 2026-04-27 targeted Rule 16 revalidation rerun + documentation truth sync |
-| **Current CTO Decision** | Rule 16 is reopened as PARTIAL after the April 27 rerun. C33 remains closed only for the `page_index` truth contradiction. Next locked order is Rule 16 revalidation repair, then C26, C29, and C30. |
+| **Last Test Run** | 2026-04-27 controlled governance cleanup + single-flow page-generation proof |
+| **Current CTO Decision** | Rule 16 remains resolved in the requested audited scope. Controlled governance cleanup and one exact page-generation proof both passed. The locked open order remains C26, C29, then C30. |
 
 ---
 ## Phase Status
@@ -33,9 +33,9 @@
 | Phase 1 | Rendering Gap (Catch-all Route + SEO) | R->A | COMPLETE | 90% | 10% | Rendering/live route proof exists. C23 sitemap localhost leakage is now closed live. |
 | Phase 2 | Draft System (Pagegen + CCC) | R->A | COMPLETE | 80% | 20% | Draft create/edit/read/publish path verified live on April 26. |
 | Phase 3 | Image Intelligence | R->A | PARTIAL | 70% | 30% | Built: prompt tools, media schema/code, live media list read. Left: live upload proof, storage cleanup proof, alt text end-to-end, media governance. |
-| Phase 4 | Bulk Job Planner | B | PARTIAL | 55% | 45% | Built: bulk UI/API, job listing, QStash publish capability, and transactional bulk start rollback/idempotent replay proof. Left: end-to-end retry recovery proof, runtime multi-page completion depth, pincode targeting proof, and duplicate check proof. |
+| Phase 4 | Bulk Job Planner | B | PARTIAL | 55% | 45% | Built: bulk UI/API, job listing, QStash publish capability, transactional bulk start rollback/idempotent replay proof, and April 27 retry-daemon recovery proof. Left: runtime multi-page completion depth, pincode targeting proof, and duplicate check proof. |
 | Phase 5 | Geo Intelligence | B | PARTIAL | 70% | 30% | Built: geo admin surfaces, city/locality/pincode code, live city read. Left: full CRUD, pincode import proof, generation trigger per area, CEO-complete controls. |
-| Phase 6 | Publish Pipeline | B | PARTIAL | 65% | 35% | Built: draft create/edit/publish/live URL render verified, sitemap canonical URL fix proven live, and C33 page-index truth cleanup for its own scope. Left: Rule 16 publish retry visibility proof, scheduled publish runtime execution proof, and broader phase scope. |
+| Phase 6 | Publish Pipeline | B | PARTIAL | 65% | 35% | Built: draft create/edit/publish/live URL render verified, sitemap canonical URL fix proven live, C33 page-index truth cleanup for its own scope, and April 27 publish retry visibility repair proof. Left: scheduled publish runtime execution proof and broader phase scope. |
 | Phase 14 | Super Admin Panel - Control Tower | R->A | PARTIAL | 65% | 35% | Built: login, feature flags, workflow config, logs/audit, safe mode. C22 live schema repair is applied and production `/api/admin/users` now returns 200. C31 is now resolved live: password-only login fails, email+password returns a real `admin_users` session for `admin@bimasakhi.com`, and browser login succeeds to `/admin`. Code Visibility, Version History, and full RBAC lifecycle still remain. |
 | Phase 21 | External System Governance | R->A | PARTIAL | 65% | 35% | Built: status route, unified health truth, live event-retry/vendor-health-check recovery, QStash publish, Zoho test lead. Left: QStash delivery proof depth, WhatsApp/Email/Cliq failover, alert SLA proof. |
 | Phase 22 | System Memory & Traceability | A | PARTIAL | 70% | 30% | Built: docs structure, audit reports, audit scripts/results, and April 27 truth-sync correction. Left: stale log cleanup, cross-links, ongoing one-truth enforcement. |
@@ -65,6 +65,7 @@
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-04-27 | AUDIT | Controlled governance cleanup and single-flow proof passed: DLQ was cleared to zero, queue stayed in controlled mode (`queue_paused=true`, `batch_size=1`, `bulk_generation_enabled=false`), one exact page-generation flow completed and published with live sitemap proof, and the temporary proof page was archived after capture. | CURRENT OPERATIONAL TRUTH | [governance-cleanup-single-flow](audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md) |
 | 2026-04-27 | FIX | Rule 16 runtime repair landed: generated page visibility, sitemap truth, retry-daemon completion proof, pagegen event ACK closure, and harness cleanup order were repaired. The fresh rerun passed end to end. | RESOLVED LIVE IN REQUESTED SCOPE | [fix-017](fixes/fix_017_rule16_repair_and_revalidation_pass.md) |
 | 2026-04-27 | AUDIT | Fresh Rule 16 repair rerun passed end to end: publish retry now returns `200` and the sitemap contains the repaired slug, bulk retry-daemon recovery reaches completed queue/job/event state, and the final artifact status is `PASS`. | CURRENT TRUTH AFTER REPAIR | [rule16-repair-pass](audits/audit-2026-04-27-rule16-repair-revalidation-pass.md) |
 | 2026-04-27 | FIX | Truth sync after revalidation: CCC, INDEX, and the Rule 16/C33 records were corrected to match the April 27 evidence. Rule 16 is reopened as PARTIAL, and C33 is explicitly scoped to the `page_index` truth fix only. | COMPLETE | [fix-016](fixes/fix_016_truth_sync_after_revalidation.md) |
@@ -143,6 +144,7 @@
 
 | Date | Score | Key Findings | Status | Link |
 |---|---|---|---|---|
+| 2026-04-27 | 64/100 unchanged | Controlled governance cleanup passed: DLQ was cleared to zero, live health returned to `HEALTHY`, one exact page-generation flow completed with `retry_count=0`, the published URL returned `200`, sitemap shards contained the slug, and the temporary proof page was archived afterward. Open issues remain C26, C29, and C30. | CURRENT OPERATIONAL TRUTH | [governance-cleanup-single-flow](audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md) |
 | 2026-04-27 | 64/100 | Rule 16 runtime repair and fresh live rerun both passed: publish retry now returns `200` and the sitemap contains the slug, bulk retry-daemon recovery now completes queue/job/event state, and the final artifact status is `PASS`. C33 remains valid only for the `page_index` truth contradiction. | CURRENT TRUTH AFTER REPAIR | [rule16-repair-pass](audits/audit-2026-04-27-rule16-repair-revalidation-pass.md) |
 | 2026-04-27 | 60/100 historical baseline | Fresh Rule 16 revalidation invalidated the April 26 closure claim: publish retry committed DB state but the live page returned `404` and the sitemap omitted the slug; bulk retry daemon dispatched but queue/job completion was not proven. C33 remained valid only for the `page_index` truth contradiction. | HISTORICAL BASELINE BEFORE REPAIR | [rule16-revalidation](audits/audit-2026-04-27-rule16-revalidation-truth-sync.md) |
 | 2026-04-26 | 60/100 historical context | C33 live proof: `page_index` now uses canonical publication `status` plus `indexing_status`, legacy status rows and conflicting rows both returned `0`, draft rows returned `404`, and admin SEO metrics matched direct DB truth. | CURRENT TRUTH FOR C33 ONLY | [c33-page-index-live-proof](audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md) |

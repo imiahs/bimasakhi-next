@@ -8531,14 +8531,14 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 > ⚠️ **This is the ONLY status section. No other footer, summary, or status block exists in this document.**
 > ⚠️ **All status updates happen HERE. Duplicates are forbidden (Constitution Article 5 + Rule 47).**
 
-*Document last updated: April 27, 2026 (Rule 16 repaired and rerun PASS; C33 remains closed only for `page_index` truth scope)*
-*Evidence sources: `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`, `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`, `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c24-system-health-live-proof.md`, `docs/audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md`, `docs/audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md`, `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`, `docs/fixes/fix_011_c24_system_health_truth_unification.md`, `docs/fixes/fix_012_c25_direct_supabase_rest_audit_access.md`, `docs/fixes/fix_013_c32_control_plane_truth_unification.md`, `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `docs/fixes/fix_016_truth_sync_after_revalidation.md`, `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`, `scripts/audit/results/2026-04-27T03-58-58-051Z-rule16-transactional-integrity.json`, `scripts/audit/results/2026-04-26T18-17-12-972Z-c33-page-index-truth-fix.json`*
+*Document last updated: April 27, 2026 (Rule 16 repaired and rerun PASS; controlled governance cleanup + single-flow proof PASS; C33 remains closed only for `page_index` truth scope)*
+*Evidence sources: `docs/audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md`, `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`, `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`, `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c24-system-health-live-proof.md`, `docs/audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md`, `docs/audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md`, `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`, `docs/fixes/fix_011_c24_system_health_truth_unification.md`, `docs/fixes/fix_012_c25_direct_supabase_rest_audit_access.md`, `docs/fixes/fix_013_c32_control_plane_truth_unification.md`, `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `docs/fixes/fix_016_truth_sync_after_revalidation.md`, `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`, `scripts/audit/results/2026-04-27T03-58-58-051Z-rule16-transactional-integrity.json`, `scripts/audit/results/2026-04-27T05-40-21-000Z-controlled-governance-cleanup-single-flow.json`, `scripts/audit/results/2026-04-26T18-17-12-972Z-c33-page-index-truth-fix.json`*
 *Total sections: 49 (Sections 0–49 + Section 0.1 CTO Operating Protocol)*  
 *Total rules: 33 (Rules 1–33) + 7 Constitution Articles + CTO Protocol Rules (A–G)*  
 
 ### Phase Status (Constitution Article 2 compliant — no fake completions)
 
-*Fresh verification baseline: April 27, 2026 — Rule 16 runtime repair, production redeploy, and fresh passing revalidation. April 26 live proof for C21, C22, C23, C24, C25, C31, C32, and C33 remains valid where not contradicted by later evidence.*
+*Fresh verification baseline: April 27, 2026 — Rule 16 runtime repair, production redeploy, fresh passing revalidation, later same-day controlled governance cleanup, and one exact single-flow page-generation proof. April 26 live proof for C21, C22, C23, C24, C25, C31, C32, and C33 remains valid where not contradicted by later evidence.*
 *Status below reflects current provable reality. COMPLETE here means runtime-proven and still consistent with prior CEO-approved completion, not a new CEO sign-off created by this rerun.*
 
 | Phase | Name | Status | CTO Audit % | Current Proof / Remaining Gap |
@@ -8564,7 +8564,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 19 | Universal Lead Hub | PARTIAL | 15% | Schema/scaffold exists. No live workflow proof collected. |
 | 20 | System Intelligence Engine | PARTIAL | 10% | Schema/scaffold exists. No live engine proof collected. |
 | 21 | External System Governance | PARTIAL | 65% | Zoho refresh + test lead passed. QStash publish passed, delivery proof remains partial. Shared health truth is now live and healthy after cron recovery. |
-| 22 | System Memory & Traceability | PARTIAL | 70% | Audit scripts/results now include direct DB proof for C24, C25, C32, C33, the April 27 Rule 16 failure baseline, and the later same-day PASS rerun. The harness cleanup path was repaired so the final Rule 16 artifact now concludes cleanly, but stale log cleanup, cross-links, and ongoing one-truth enforcement still remain. |
+| 22 | System Memory & Traceability | PARTIAL | 70% | Audit scripts/results now include direct DB proof for C24, C25, C32, C33, the April 27 Rule 16 failure baseline, the later same-day PASS rerun, and the later controlled governance cleanup + single-flow proof. The harness cleanup path was repaired so the final Rule 16 artifact now concludes cleanly, but stale log cleanup, cross-links, and ongoing one-truth enforcement still remain. |
 | 23 | Communication System | PARTIAL | 20% | Alert/QStash pieces exist. Full WhatsApp/Telegram/Email/Cliq proof is not complete. |
 | 24 | Media Management | PARTIAL | 40% | Media list read works. Upload and governance proof remain incomplete. |
 | 25 | Navigation Management | PARTIAL | 60% | Public header navigation is now live from `navigation_menu`: production `/api/navigation` returns 200, `/admin/navigation` edits the live header tree, and the public navbar fetches the API at runtime. Admin sidebar/footer consolidation, legacy nav cleanup, and richer Section 45 editor features remain open. |
@@ -8604,6 +8604,8 @@ Fresh runtime PASS proof:
   - event-retry and vendor-health-check are healthy required crons with fresh live runs
   - authenticated /admin/system/health browser UI shows HEALTHY and System Health Dashboard
   - C32 live control-plane proof: direct REST returns canonical runtime keys only from system_control_config, `/api/admin/feature-flags` returns those keys with source=system_control_config, and `/api/admin/system/health` reports conflicting_states_possible: false
+  - controlled governance cleanup: `job_dead_letters=0`, `queue_pending=0`, `current_stuck_events=0`, and the live control row now holds `queue_paused=true`, `bulk_generation_enabled=false`, `batch_size=1`
+  - controlled single-flow proof: one exact pagegen queue row completed with `retry_count=0`, one draft was generated with `word_count=1583` and `quality_score=9.5`, the draft published successfully, the live URL returned `200`, sitemap-localities and sitemap-keywords shards both contained the slug, and the temporary proof page was archived after capture without degrading health
   - Rule 16 publish retry visibility repaired: `publish_force_db_error_then_retry` now returns `live_page_status=200` and `sitemap_contains_slug=true`
   - Rule 16 bulk retry-daemon recovery repaired: `bulk_network_drop_then_retry_daemon_recovery` now ends with completed `job`, `queue`, and `event` state plus `retry_count=1`
   - Rule 16 verdict repaired: `rule16_transactional_integrity_verdict` passes with `failed_checks=[]` in the fresh artifact
@@ -8612,7 +8614,6 @@ Fresh runtime PASS proof:
 
 Fresh runtime WARNING / UNVERIFIED proof:
   - QStash delivery log lookup remains partial
-  - historical_dead_letters:3 remains visible as a warning
   - morning-brief remains unknown until the next scheduled daily run and is non-required
   - Media upload was not revalidated live
   - Scheduled publish runtime was not separately revalidated live in this audit window
@@ -8674,6 +8675,8 @@ C22 STATUS: RESOLVED IN PRODUCTION
   - `publish_force_db_error_then_retry` now returns `live_page_status=200` and `sitemap_contains_slug=true`.
   - `bulk_network_drop_then_retry_daemon_recovery` now ends with `job.status=completed`, `queue.status=completed`, and `event.status=completed`.
   - The audit harness cleanup path was fixed, so the artifact now closes cleanly instead of failing after proof.
+  - Later same-day governance cleanup cleared DLQ residue to `job_dead_letters=0` and restored live health to `HEALTHY` without reopening Rule 16.
+  - Later same-day single-flow proof generated exactly one page queue row, completed with `retry_count=0`, published successfully to a live `200` URL with sitemap visibility, then archived the temporary proof page after capture.
 
 8. C33 STATUS: RESOLVED IN PRODUCTION FOR C33 SCOPE ONLY
   - `page_index` now uses canonical publication `status` plus separate `indexing_status`.
