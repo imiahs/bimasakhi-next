@@ -2,7 +2,7 @@
 
 > **Purpose:** Master entry point for all system documentation. Read this FIRST before any work.  
 > **Bible Reference:** Section 40 (System Memory & Traceability), Rule 25  
-> **Last Updated:** May 1, 2026
+> **Last Updated:** May 2, 2026
 
 ---
 
@@ -10,17 +10,17 @@
 
 | Metric | Value |
 |---|---|
-| **System Score** | 64/100 unchanged (May 1 safe forensic pass corrected stale current-state wording, but no new phase-closure proof landed; C29 and C30 remain open) |
-| **Build Status** | PASS - local production build rerun succeeded on 2026-05-01; non-blocking Edge Runtime warnings from `jose` remain |
+| **System Score** | 64/100 unchanged (May 2 C29 live proof closed the Code Visibility issue, but Phase 14 remains PARTIAL and C30 remains open) |
+| **Build Status** | PASS - local production build rerun succeeded on 2026-05-02; non-blocking Edge Runtime warnings from `jose` remain |
 | **System Mode** | NORMAL / HEALTHY in the current live window. Historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current `delivery_failures_recent=0` and `/api/admin/system/health` is `HEALTHY` because delivery health uses a recent 24-hour window |
 | **Open Critical Issues** | 0 |
 | **Open High Issues** | 0 |
-| **Open Medium Issues** | 2 (C29, C30) |
+| **Open Medium Issues** | 1 (C30 open) |
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
-| **Last Audit** | 2026-05-01 safe forensic live status reconciliation (local build PASS with warnings; Vercel/admin/Supabase live reads PASS; QStash publish PASS with partial log lookup; Zoho PASS; historical C26 failed rows still present, but current health window is `HEALTHY`) |
-| **Last Deployment** | 2026-04-27 Vercel production deploy from the live working tree for the C26 delivery truth layer and proof surfaces; aliased to `https://bimasakhi.com` |
-| **Last Test Run** | 2026-05-01 safe forensic pass across local build, Vercel runtime, admin reads, direct Supabase REST, QStash, Zoho, and delivery-truth reconciliation |
-| **Current CTO Decision** | Keep the score unchanged. Treat C26 no-cleanup persistence proof as historical closure evidence, not as the current live system mode. The locked open order remains C29, then C30. |
+| **Last Audit** | 2026-05-02 live C29 production proof: `/api/status` reported `d0f35c1`, authenticated `/api/admin/system/code` returned the full module/flow snapshot, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200` without runtime errors, all exposed control links returned `200`, and live cross-checks matched observability/delivery/status truth. |
+| **Last Deployment** | 2026-05-02 Vercel production deploy for the C29 Code Visibility runtime slice; `/api/status.version` confirmed live commit `d0f35c1` at `https://bimasakhi.com` |
+| **Last Test Run** | 2026-05-02 authenticated live C29 proof: admin login PASS, `/api/admin/system/code` PASS, `?module=event_bus` PASS, `/admin/system/code` 200, control links PASS, and cross-layer consistency PASS |
+| **Current CTO Decision** | C29 is now closed in requested live scope. Keep the score unchanged until C30 and broader Phase 14 lifecycle gaps are closed. |
 
 ---
 ## Phase Status
@@ -36,7 +36,7 @@
 | Phase 4 | Bulk Job Planner | B | PARTIAL | 55% | 45% | Built: bulk UI/API, job listing, QStash publish capability, transactional bulk start rollback/idempotent replay proof, and April 27 retry-daemon recovery proof. Left: runtime multi-page completion depth, pincode targeting proof, and duplicate check proof. |
 | Phase 5 | Geo Intelligence | B | PARTIAL | 70% | 30% | Built: geo admin surfaces, city/locality/pincode code, live city read. Left: full CRUD, pincode import proof, generation trigger per area, CEO-complete controls. |
 | Phase 6 | Publish Pipeline | B | PARTIAL | 65% | 35% | Built: draft create/edit/publish/live URL render verified, sitemap canonical URL fix proven live, C33 page-index truth cleanup for its own scope, and April 27 publish retry visibility repair proof. Left: scheduled publish runtime execution proof and broader phase scope. |
-| Phase 14 | Super Admin Panel - Control Tower | R->A | PARTIAL | 65% | 35% | Built: login, feature flags, workflow config, logs/audit, safe mode. C22 live schema repair is applied and production `/api/admin/users` now returns 200. C31 is now resolved live: password-only login fails, email+password returns a real `admin_users` session for `admin@bimasakhi.com`, and browser login succeeds to `/admin`. Code Visibility, Version History, and full RBAC lifecycle still remain. |
+| Phase 14 | Super Admin Panel - Control Tower | R->A | PARTIAL | 65% | 35% | Built: login, feature flags, workflow config, logs/audit, safe mode, and live C29 Code Visibility core surfaces. On 2026-05-02 commit `d0f35c1` deployed authenticated `/api/admin/system/code`, filtered module reads, direct `/admin/system/code` rendering, and live control-link validation. Delivery metrics matched `/api/admin/delivery-logs`, event-bus stuck count matched `/api/admin/observability`, and control-plane `queue_paused` matched `/api/status.feature_flags.queue_paused`. The scoped deploy intentionally excluded the local-only sidebar link in `app/admin/ClientLayout.jsx` to avoid unrelated shell edits. Version History and full RBAC lifecycle still remain. |
 | Phase 21 | External System Governance | R->A | PARTIAL | 75% | 25% | Built: status route, unified health truth, live event-retry/vendor-health-check recovery, QStash publish, external delivery truth ledger, admin delivery log API, Zoho test lead, and preserved historical C26 failed rows. Left: current QStash log lookup closure, WhatsApp/Email/Cliq failover, and alert SLA proof. |
 | Phase 22 | System Memory & Traceability | A | PARTIAL | 70% | 30% | Built: docs structure, audit reports, audit scripts/results, and April 27 truth-sync correction. Left: stale log cleanup, cross-links, ongoing one-truth enforcement. |
 | Phase 23 | Communication System | A | NOT STARTED / PARTIAL SCAFFOLD | 20% | 80% | Full WhatsApp/Telegram/Email/Cliq communication system not complete; some alert/integration pieces exist. |
@@ -58,13 +58,16 @@
 | Phase 19 | Universal Lead Hub | C | NOT STARTED / DB SCAFFOLD | 15% | 85% | Schema exists; full hub not proven. |
 | Phase 20 | System Intelligence Engine | D | NOT STARTED / DB SCAFFOLD | 10% | 90% | Schema/code scaffold only; full engine not proven. |
 
-> **CTO Note:** Runtime Truth Stabilization remains the only correct path. Rule 16 and C26 remain closed in the requested audited scope, but May 1 reconciliation proved that the current live health window is now `HEALTHY`. Historical C26 failed rows remain preserved as ledger truth; they are no longer the current operating state. C21, C22, C23, C24, C25, C26, C31, and C32 remain closed in live scope, and C33 remains closed only for the `page_index` truth contradiction. Phase 25 is still PARTIAL because admin sidebar/footer consolidation is not done. The locked open work remains C29 and C30.
+> **CTO Note:** Runtime Truth Stabilization remains the only correct path. Rule 16 and C26 remain closed in the requested audited scope, but May 1 reconciliation proved that the current live health window is now `HEALTHY`. Historical C26 failed rows remain preserved as ledger truth; they are no longer the current operating state. C21, C22, C23, C24, C25, C26, C31, C32, and C33 remain closed in their requested live scopes, and C29 is now closed in live scope as of 2026-05-02. Phase 25 is still PARTIAL because admin sidebar/footer consolidation is not done. The locked open work now remains C30.
 
 ---
 ## Recent Activity
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-05-02 | AUDIT | C29 live production proof passed: `/api/status` reported `d0f35c1`, authenticated `/api/admin/system/code` returned `200` with 6 modules and 5 flows, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200` with no runtime errors, all exposed control links returned `200`, and live cross-checks matched observability, delivery-truth, and status truth. | CURRENT TRUTH - C29 CLOSED | [audit-2026-05-02-c29-live-proof](audits/audit-2026-05-02-c29-live-proof.md) |
+| 2026-05-02 | AUDIT | C29 local MVP proof passed: authenticated local `/api/admin/system/code` returned the full module/flow snapshot, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200`, and `npm run build` passed. | LOCAL PROOF ONLY - LIVE PENDING | [audit-c29-visibility-proof](audits/audit-c29-visibility-proof.md) |
+| 2026-05-02 | FIX | C29 Code Visibility core surfaces were deployed in commit `d0f35c1`: static registry, read-only admin API, direct `/admin/system/code` UI, and delivery-truth cross-verification helpers are now live and proven. The scoped deploy intentionally excluded the local-only sidebar link in `app/admin/ClientLayout.jsx` to avoid unrelated admin shell edits. | DEPLOYED + LIVE PROVEN IN REQUESTED SCOPE | [fix-c29-visibility-layer](fixes/fix-c29-visibility-layer.md) |
 | 2026-05-01 | AUDIT | Safe forensic live status reconciliation passed in the non-destructive scope: local build PASS with Edge warnings, production runtime/admin/direct Supabase reads PASS, QStash publish PASS with partial log lookup, Zoho OAuth + lead upsert PASS, and historical C26 failed rows were reconciled against the current `HEALTHY` live window. | CURRENT TRUTH | [audit-2026-05-01-cto-forensic-live-status-reconciliation](audits/audit-2026-05-01-cto-forensic-live-status-reconciliation.md) |
 | 2026-05-01 | FIX | CCC and INDEX were truth-synced after the forensic pass: C26 no-cleanup closure remains historical proof, but the stale current `DEGRADED` wording was corrected to the real May 1 `HEALTHY` live state. | COMPLETE | [fix_018_may1_forensic_truth_reconciliation](fixes/fix_018_may1_forensic_truth_reconciliation.md) |
 | 2026-04-27 | AUDIT | C26 no-cleanup persistence proof passed: real provider `404` failure remained visible through the retry window, the linked `external_delivery_logs` row stayed `FAILED` after a 365-second wait, and `/api/admin/system/health` stayed truthfully `DEGRADED` during that proof window. | HISTORICAL C26 CLOSURE PROOF | [c26-no-cleanup-persistence-proof](audits/audit-2026-04-27-c26-no-cleanup-persistence-proof.md) |
@@ -141,7 +144,6 @@
 
 | # | Severity | Issue | Owner | Status | Link |
 |---|---|---|---|---|---|
-| C29 | **MEDIUM** | Phase 14 Code Visibility Layer 4 is not implemented/proven | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
 | C30 | **MEDIUM** | Phase 14 Content Version History is not implemented/proven | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
 
 ---
@@ -149,6 +151,8 @@
 
 | Date | Score | Key Findings | Status | Link |
 |---|---|---|---|---|
+| 2026-05-02 | 64/100 unchanged | C29 live production proof passed: `/api/status` reported `d0f35c1`, authenticated admin login succeeded, `/api/admin/system/code` returned the module/flow snapshot, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200` with no runtime errors, all exposed control links returned `200`, and the delivery/event-bus/control-plane comparisons matched their live cross-check surfaces. C29 is now closed in requested live scope. | CURRENT TRUTH - C29 CLOSED | [audit-2026-05-02-c29-live-proof](audits/audit-2026-05-02-c29-live-proof.md) |
+| 2026-05-02 | 64/100 unchanged | C29 local MVP proof passed before deployment: authenticated local login succeeded, `/api/admin/system/code` returned the module/flow snapshot, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200`, post-patch control links were verified, and `npm run build` passed. This local artifact is now historical because the same-day live production proof closed C29. | HISTORICAL SAME-DAY LOCAL BASELINE | [audit-c29-visibility-proof](audits/audit-c29-visibility-proof.md) |
 | 2026-05-01 | 64/100 unchanged | Safe forensic live status reconciliation: local build passed with Edge warnings, production runtime/admin/direct Supabase reads passed, QStash publish passed with partial log lookup, Zoho passed, historical C26 failed rows were still present in `external_delivery_logs`, and the current live health window was `HEALTHY` with `delivery_failures_recent=0`. | CURRENT TRUTH | [audit-2026-05-01-cto-forensic-live-status-reconciliation](audits/audit-2026-05-01-cto-forensic-live-status-reconciliation.md) |
 | 2026-04-27 | 64/100 unchanged | C26 no-cleanup persistence proof passed: real provider `404` failure remained visible through retries, the linked `external_delivery_logs` row stayed `FAILED` after the 365-second wait, `/api/admin/delivery-logs` metrics matched `/api/admin/system/health`, and health remained truthfully `DEGRADED` during that proof window. | HISTORICAL C26 CLOSURE PROOF | [c26-no-cleanup-persistence-proof](audits/audit-2026-04-27-c26-no-cleanup-persistence-proof.md) |
 | 2026-04-27 | 64/100 unchanged | C26 live proof passed: real `contact_created` dispatch reached `delivered`, real `lead_hot` failure showed provider retry history and terminal `cancelled` truth, `/api/admin/delivery-logs` metrics matched `/api/admin/system/health`, and post-proof cleanup restored delivery metrics to zero with overall health `HEALTHY`. | HISTORICAL EARLIER C26 CLEANUP PROOF | [c26-delivery-truth-proof](audits/audit-c26-delivery-truth-proof.md) |
@@ -176,6 +180,7 @@
 
 | Date | Fix | Bible Ref | Status | Link |
 |---|---|---|---|---|
+| 2026-05-02 | C29 Code Visibility layer | Section 32, Section 39, Section 40 | DEPLOYED + LIVE PROVEN IN REQUESTED SCOPE | [fix-c29-visibility-layer](fixes/fix-c29-visibility-layer.md) |
 | 2026-05-01 | May 1 forensic truth reconciliation | Section 39, Section 40, Constitution Article 5 | COMPLETE | [fix_018_may1_forensic_truth_reconciliation](fixes/fix_018_may1_forensic_truth_reconciliation.md) |
 | 2026-04-27 | C26 delivery persistence finalization | Section 39, Section 40 | CLOSED IN REQUESTED AUDITED SCOPE | [fix-c26-delivery-persistence-finalization](fixes/fix-c26-delivery-persistence-finalization.md) |
 | 2026-04-27 | C26 delivery-level truth system | Section 39, Section 40 | RESOLVED LIVE | [fix-c26-delivery-layer](fixes/fix-c26-delivery-layer.md) |

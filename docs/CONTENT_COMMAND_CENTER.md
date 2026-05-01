@@ -3,7 +3,7 @@
 
 > **Status:** ACTIVE — Governance restructured April 19, 2026  
 > **Owner:** CTO (under CEO authority — Constitution Article 1)  
-> **Last Updated:** April 27, 2026
+> **Last Updated:** May 2, 2026
 > **Core Vision:** Transform pagegen from a black-box content generator into India's most powerful programmatic SEO + lead acquisition machine for LIC/financial services — organically, without ads.
 
 ---
@@ -210,7 +210,7 @@ Every phase MUST have one of these statuses:
   Phase 3:  ⚠️ PARTIAL (image upload broken in production)
   Phase 4:  ⚠️ PARTIAL (city-only, no locality targeting)
   Phase 5:  ⚠️ PARTIAL (CEO cannot add cities/localities)
-  Phase 14: ⚠️ PARTIAL (RBAC fake, Code Visibility missing, Version History missing)
+  Phase 14: ⚠️ PARTIAL (C29 Code Visibility is live-proven and closed, but Version History and broader RBAC lifecycle proof are still missing)
   Phase 21: ⚠️ PARTIAL (alerts never reach CEO, channels not connected)
   Phase 22: 🔄 IN PROGRESS (docs/ structure created)
 ```
@@ -7610,7 +7610,7 @@ PRIORITY R — REMEDIATION FIRST (Fix Audit Findings Before New Work)
     ├── 14c: Audit Log                    ✅ COMPLETE (but no date range filter/search — Stage 6e)
     ├── 14d: RBAC (Real User Mgmt)        ✅ FIXED — admin_users table, bcrypt auth, JWT sessions, role checks
     │   └── 14d-sub: User Mgmt UI         ⚠️ PARTIAL — /admin/users page exists but Invite button locked (read-only)
-    ├── 14e: Code Visibility (Layer 4)    ⬜ NOT STARTED
+    ├── 14e: Code Visibility (Layer 4)    🟨 MVP BUILT — local API/UI/build proof captured; live deployment proof pending
     ├── 14f: Content Version History      ⬜ NOT STARTED
     └── 14g: Feature Flag Creation UI     ❌ NOT DONE — can only toggle existing flags, cannot create new ones
     📄 Sections: 32
@@ -8557,7 +8557,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 11 | Bilingual Engine | NOT STARTED | 0% | No runtime proof collected. |
 | 12 | Intelligence + Social Engine | PARTIAL | 20% | Scaffold exists. No full runtime proof collected. |
 | 13 | Self-Growing Loops | NOT STARTED | 0% | No runtime proof collected. |
-| 14 | Super Admin Panel | PARTIAL | 65% | Login, feature flags, workflow config, logs, and audit reads work. C22 live schema repair is applied and authenticated `/api/admin/users` now returns 200. C31 live cutover is deployed and proven: password-only login now fails, email+password returns 200, the session payload resolves to `admin@bimasakhi.com`, and browser login reaches `/admin`. Code Visibility, Version History, and broader RBAC lifecycle work still remain. |
+| 14 | Super Admin Panel | PARTIAL | 65% | Login, feature flags, workflow config, logs, and audit reads work. C22 live schema repair is applied and authenticated `/api/admin/users` now returns 200. C31 live cutover is deployed and proven: password-only login now fails, email+password returns 200, the session payload resolves to `admin@bimasakhi.com`, and browser login reaches `/admin`. C29 Code Visibility is now deployed and live-proven in requested scope on commit `d0f35c1`: authenticated `/api/admin/system/code` returned the module/flow snapshot, `?module=event_bus` returned one module, `/admin/system/code` rendered without runtime errors, and all exposed control links returned `200`. Delivery truth, event-bus truth, and control-plane queue state all matched their live cross-check surfaces. The scoped deploy intentionally excluded the local-only sidebar link in `app/admin/ClientLayout.jsx` to avoid unrelated admin shell edits. Version History and broader RBAC lifecycle work still remain. |
 | 15 | Agent Creation Pipeline | PARTIAL | 10% | Surface exists, but no end-to-end runtime proof collected. |
 | 16 | Active Agent Management | PARTIAL | 10% | Surface exists, but no end-to-end runtime proof collected. |
 | 17 | Agent Lifecycle & Compliance | NOT STARTED | 0% | No runtime proof collected. |
@@ -8575,7 +8575,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (unchanged on 2026-05-01; no new phase-closure proof landed, and C29/C30 remain open)
+Overall System Score: 64/100 (unchanged on 2026-05-02; C29 live proof closed the Code Visibility issue, but Phase 14 remains PARTIAL and C30 remains open)
 Local Production Build: PASS (npm run build on May 1, 2026; non-blocking Edge Runtime warnings from `jose` remain)
 Live Runtime: PASS in the audited safe scope; overall phase readiness remains PARTIAL
 System Mode Truth: current live state is `normal` / `HEALTHY`; historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current delivery metrics are zero because health uses a recent 24-hour window
@@ -8583,7 +8583,19 @@ System Mode Truth: current live state is `normal` / `HEALTHY`; historical C26 fa
 Current issue count:
   Critical: 0
   High:     0
-  Medium:   2
+  Medium:   1
+
+Fresh 2026-05-02 live C29 proof:
+  - `/api/status` reported production version `d0f35c1`
+  - Real admin login returned `200`, `success=true`, and `role=super_admin`
+  - Authenticated `/api/admin/system/code` returned `200` with `modules.length=6` and `flows.length=5`
+  - Authenticated `/api/admin/system/code?module=event_bus` returned exactly one `event_bus` module
+  - Authenticated `/admin/system/code` returned `200` with no runtime error markers
+  - All exposed control links returned `200`
+  - `delivery_engine.metrics` matched `/api/admin/delivery-logs`
+  - `event_bus.metrics.stuck_events` matched `/api/admin/observability` at `0`
+  - `control_plane.metrics.queue_paused` matched `/api/status.feature_flags.queue_paused = true`
+  - `/api/admin/system/health` remained `HEALTHY`; it does not currently emit `queue_paused`, so that flag was verified against `/api/status`
 
 Fresh 2026-05-01 live proof:
   - Local `npm run build` passed
@@ -8602,11 +8614,11 @@ Fresh 2026-05-01 warnings / remaining limits:
   - Media upload was not revalidated live in this pass
   - Scheduled publish runtime was not rerun in this pass
   - Bulk multi-page execution depth was not rerun in this pass
-  - Phase 14 Code Visibility and Version History remain open
+  - The scoped production deploy intentionally excluded the local-only sidebar link in `app/admin/ClientLayout.jsx`; the proved live C29 UI surface is the direct route `/admin/system/code`
+  - Phase 14 Content Version History is still not closed in live scope
   - Local build still reports Edge Runtime warnings from `jose`
 
 Open gaps still proven:
-  - C29 remains open: Phase 14 Code Visibility Layer 4 is not implemented or proven.
   - C30 remains open: Phase 14 Content Version History is not implemented or proven.
   - C33 remains closed only for the `page_index` truth contradiction; it does not close broader publication behavior outside the audited scope.
 ```
@@ -8678,8 +8690,8 @@ C22 STATUS: RESOLVED IN PRODUCTION
   - This does not close broader publish-pipeline or Rule 16 runtime behavior.
 
 10. Next locked work.
-  - C29: implement and prove Phase 14 Code Visibility Layer 4.
+  - C29: closed in requested live scope on 2026-05-02 via commit `d0f35c1`.
   - C30: implement and prove Phase 14 Content Version History.
 
-Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C26, C31, C32, and Rule 16 in the requested audited scope. C26 closure rests on historical no-cleanup persistence proof, while the current live health window is now `HEALTHY`. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the locked open work is now C29 and C30.
+Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C26, C31, C32, and Rule 16 in the requested audited scope. C26 closure rests on historical no-cleanup persistence proof, while the current live health window is now `HEALTHY`. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the locked open work is now C30.
 ```
