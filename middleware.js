@@ -1,4 +1,5 @@
 import { logError } from '@/lib/monitoring/logError';
+import { getAdminAccessDecision, getAdminLandingPath } from '@/lib/auth/adminAccessControl';
 import { NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
 
@@ -74,11 +75,26 @@ export async function middleware(request) {
         try {
             // Cryptographically verify the JWT using Edge-compatible logic
             const { payload } = await jwtVerify(authCookie?.value || authCookie, JWT_SECRET);
+            const accessDecision = getAdminAccessDecision({
+                role: payload.role,
+                pathname,
+                method: request.method,
+                surface: 'api',
+            });
+
+            if (!accessDecision.allowed) {
+                return NextResponse.json({
+                    error: `Insufficient permissions. Required: ${accessDecision.allowedRoles.join(', ')}`,
+                }, { status: 403 });
+            }
 
             // Allow request through, append headers if needed
             const requestHeaders = new Headers(request.headers);
             requestHeaders.set('x-admin-role', payload.role);
             requestHeaders.set('x-admin-user', payload.sub);
+            if (payload.email) {
+                requestHeaders.set('x-admin-email', payload.email);
+            }
 
             return NextResponse.next({
                 request: {
@@ -111,11 +127,32 @@ export async function middleware(request) {
         try {
             // Cryptographically verify the JWT using Edge-compatible logic
             const { payload } = await jwtVerify(authCookie?.value || authCookie, JWT_SECRET);
+            const accessDecision = getAdminAccessDecision({
+                role: payload.role,
+                pathname,
+                method: request.method,
+                surface: 'page',
+            });
+
+            if (!accessDecision.allowed) {
+                const landingPath = getAdminLandingPath(payload.role);
+                const redirectPath = pathname === landingPath ? '/admin/login' : landingPath;
+                const deniedUrl = new URL(redirectPath, request.url);
+
+                if (redirectPath !== '/admin/login') {
+                    deniedUrl.searchParams.set('access', 'denied');
+                }
+
+                return NextResponse.redirect(deniedUrl);
+            }
 
             // Allow request through, append headers if needed
             const requestHeaders = new Headers(request.headers);
             requestHeaders.set('x-admin-role', payload.role);
             requestHeaders.set('x-admin-user', payload.sub);
+            if (payload.email) {
+                requestHeaders.set('x-admin-email', payload.email);
+            }
 
             return NextResponse.next({
                 request: {

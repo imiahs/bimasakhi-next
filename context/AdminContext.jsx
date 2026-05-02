@@ -9,6 +9,7 @@ export function AdminProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [globalError, setGlobalError] = useState(null);
+    const [role, setRole] = useState(null);
     const router = useRouter();
     const pathname = usePathname();
 
@@ -22,10 +23,13 @@ export function AdminProvider({ children }) {
                 const res = await adminApi.checkAuth();
                 if (res.authenticated) {
                     setIsAuthenticated(true);
+                    setRole(res.role || null);
                 } else {
+                    setRole(null);
                     router.push('/admin/login');
                 }
             } catch (err) {
+                setRole(null);
                 setGlobalError(err.message);
                 router.push('/admin/login');
             } finally {
@@ -39,6 +43,7 @@ export function AdminProvider({ children }) {
         isAuthenticated,
         isLoading,
         globalError,
+        role,
         setGlobalError
     };
 

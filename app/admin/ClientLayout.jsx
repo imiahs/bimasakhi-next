@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AdminProvider, useAdmin } from '@/context/AdminContext';
+import { filterAdminNavigationByRole } from '@/lib/auth/adminAccessControl';
 import { adminApi } from '@/lib/adminApi';
 import { ADMIN_PINNED_ROUTES, ADMIN_ROUTE_GROUPS, buildAdminNavigationFromTree, getActiveAdminRoute } from './routeRegistry';
 
@@ -177,16 +178,31 @@ function HealthBadge() {
 
 function InnerLayout({ children }) {
     const pathname = usePathname();
-    const { isAuthenticated, isLoading, globalError } = useAdmin();
+    const { isAuthenticated, isLoading, globalError, role } = useAdmin();
     const [loggingOut, setLoggingOut] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
     const [sidebarNavigation, setSidebarNavigation] = useState(DEFAULT_SIDEBAR_NAVIGATION);
 
-    const pinnedRoutes = sidebarNavigation.pinnedRoutes;
-    const routeGroups = sidebarNavigation.routeGroups;
+    const visibleSidebarNavigation = useMemo(() => {
+        const filteredNavigation = filterAdminNavigationByRole(sidebarNavigation, role);
+
+        if (filteredNavigation.pinnedRoutes.length > 0 || filteredNavigation.routeGroups.length > 0) {
+            return filteredNavigation;
+        }
+
+        return filterAdminNavigationByRole(DEFAULT_SIDEBAR_NAVIGATION, role);
+    }, [role, sidebarNavigation]);
+
+    const pinnedRoutes = visibleSidebarNavigation.pinnedRoutes;
+    const routeGroups = visibleSidebarNavigation.routeGroups;
 
     useEffect(() => {
-        if (!isAuthenticated || pathname === '/admin/login') {
+        if (!isAuthenticated || !role || pathname === '/admin/login') {
+            return undefined;
+        }
+
+        if (role !== 'super_admin') {
+            setSidebarNavigation(DEFAULT_SIDEBAR_NAVIGATION);
             return undefined;
         }
 
@@ -219,7 +235,7 @@ function InnerLayout({ children }) {
         return () => {
             cancelled = true;
         };
-    }, [isAuthenticated, pathname]);
+    }, [isAuthenticated, pathname, role]);
 
     const activeLink = useMemo(
         () => getActiveAdminRoute(pathname, { pinnedRoutes, routeGroups }),
