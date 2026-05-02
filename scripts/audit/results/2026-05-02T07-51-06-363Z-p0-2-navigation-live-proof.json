@@ -1,0 +1,211 @@
+{
+  "name": "p0-2-navigation-live-proof",
+  "started_at": "2026-05-02T07:50:43.473Z",
+  "finished_at": "2026-05-02T07:51:06.362Z",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "env_presence_masked",
+      "status": "INFO",
+      "evidence": {
+        "ADMIN_EMAIL": {
+          "present": false,
+          "masked": null
+        },
+        "ADMIN_PASSWORD": {
+          "present": true,
+          "masked": "Haim...vija (20 chars)"
+        },
+        "SUPABASE_URL": {
+          "present": true,
+          "masked": "http...e.co (40 chars)"
+        },
+        "SUPABASE_SERVICE_ROLE_KEY": {
+          "present": true,
+          "masked": "sb_s...eZm_ (41 chars)"
+        }
+      },
+      "timestamp": "2026-05-02T07:50:43.637Z"
+    },
+    {
+      "name": "admin_login",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "ok": true,
+        "cookie_present": true,
+        "body": {
+          "success": true,
+          "role": "super_admin"
+        }
+      },
+      "timestamp": "2026-05-02T07:50:52.678Z"
+    },
+    {
+      "name": "deployment_status",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "ok": true,
+        "expected_version": "a49ef91",
+        "observed_version": "a49ef91",
+        "overall_health": null,
+        "environment": "production"
+      },
+      "timestamp": "2026-05-02T07:50:53.784Z"
+    },
+    {
+      "name": "api_public_header",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "menu_key": "public_header",
+        "root_count": 10
+      },
+      "timestamp": "2026-05-02T07:50:56.772Z"
+    },
+    {
+      "name": "api_public_footer",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "menu_key": "public_footer",
+        "root_count": 3
+      },
+      "timestamp": "2026-05-02T07:50:56.772Z"
+    },
+    {
+      "name": "api_admin_sidebar",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "menu_key": "admin_sidebar",
+        "item_count": 57,
+        "tree_count": 7
+      },
+      "timestamp": "2026-05-02T07:50:56.772Z"
+    },
+    {
+      "name": "mutation_targets_present",
+      "status": "PASS",
+      "evidence": {
+        "header_target": {
+          "id": "0a161887-2d6f-44c1-9f45-dad619b6ed17",
+          "name": "Home"
+        },
+        "footer_target": {
+          "id": "ac8cd266-e6b6-40d3-adab-5bc2ebe95442",
+          "name": "Contact Us"
+        },
+        "sidebar_target": {
+          "id": "16751676-c072-4f13-a54f-c4263fbd64c2",
+          "name": "Backups"
+        }
+      },
+      "timestamp": "2026-05-02T07:50:56.772Z"
+    },
+    {
+      "name": "db_menu_key_separation",
+      "status": "PASS",
+      "evidence": {
+        "counts": {
+          "admin_sidebar": 57,
+          "public_footer": 13,
+          "public_header": 12
+        }
+      },
+      "timestamp": "2026-05-02T07:50:57.477Z"
+    },
+    {
+      "name": "db_parent_child_integrity",
+      "status": "PASS",
+      "evidence": {
+        "missing_parent_count": 0,
+        "cross_menu_count": 0
+      },
+      "timestamp": "2026-05-02T07:50:57.477Z"
+    },
+    {
+      "name": "mutation_header",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "updated_name": "Home LIVE"
+      },
+      "timestamp": "2026-05-02T07:50:58.380Z"
+    },
+    {
+      "name": "live_header_api_reflects_change",
+      "status": "PASS",
+      "evidence": {
+        "visible_immediately": true,
+        "visible_after_reload": true
+      },
+      "timestamp": "2026-05-02T07:51:00.033Z"
+    },
+    {
+      "name": "mutation_footer",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "updated_name": "Contact Us LIVE"
+      },
+      "timestamp": "2026-05-02T07:51:00.824Z"
+    },
+    {
+      "name": "live_footer_api_reflects_change",
+      "status": "PASS",
+      "evidence": {
+        "visible_immediately": true,
+        "visible_after_reload": true
+      },
+      "timestamp": "2026-05-02T07:51:01.962Z"
+    },
+    {
+      "name": "mutation_sidebar",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "updated_name": "Backups LIVE"
+      },
+      "timestamp": "2026-05-02T07:51:02.892Z"
+    },
+    {
+      "name": "live_sidebar_api_reflects_change",
+      "status": "PASS",
+      "evidence": {
+        "visible_immediately": true,
+        "visible_after_reload": true
+      },
+      "timestamp": "2026-05-02T07:51:04.120Z"
+    },
+    {
+      "name": "revert_sidebar",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "reverted_name": "Backups"
+      },
+      "timestamp": "2026-05-02T07:51:04.932Z"
+    },
+    {
+      "name": "revert_footer",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "reverted_name": "Contact Us"
+      },
+      "timestamp": "2026-05-02T07:51:05.747Z"
+    },
+    {
+      "name": "revert_header",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "reverted_name": "Home"
+      },
+      "timestamp": "2026-05-02T07:51:06.362Z"
+    }
+  ],
+  "errors": []
+}

@@ -7009,16 +7009,17 @@ VERIFICATION:
 ## 45. 🧭 Navigation Management System — Database-Driven Menus
 
 > *"Agar mujhe koi nav menu ko badalna ho, ya koi new lagane ho ya koi sub menu banane ho to kya mai code m ja kar karunga?"*
-> *Live update (2026-04-26): the public header navigation is now DB-driven in production through `/admin/navigation` -> `/api/navigation` -> `Navbar`. Remaining gap: admin sidebar/footer consolidation is still incomplete.*
+> *Production update (2026-05-02): P0.2 now unifies the public header, public footer, and active admin sidebar into one live `navigation_menu` system through `/admin/navigation`, and the unified slice is production-proven.*
 
 ### Current Truth / Remaining Gap
 
-1. Public header navigation is live from `navigation_menu` and returns `200` from production `/api/navigation`.
-2. `/admin/navigation` can create, edit, nest one level, toggle active state, set `order_index`, and toggle a top-level CTA for the public header.
-3. Public desktop and mobile header navigation now fetch `/api/navigation` at runtime and render the returned tree.
-4. Admin sidebar in `app/admin/ClientLayout.jsx` is still hardcoded.
-5. `components/admin/AdminLayout.jsx` remains a legacy hardcoded surface.
-6. Footer navigation, role visibility rules, drag-drop ordering, preview-before-save, and full multi-menu consolidation are still open.
+1. One shared `navigation_menu` table now drives `public_header`, `public_footer`, and `admin_sidebar` live through `menu_key`.
+2. `/admin/navigation` now switches across `Public Header`, `Public Footer`, and `Admin Sidebar` inside one control surface.
+3. Public desktop and mobile header navigation fetch `/api/navigation` at runtime and preserve a hard fallback.
+4. Public footer navigation now fetches `/api/navigation?menu=public_footer` at runtime and preserves a hard fallback.
+5. The active admin sidebar in `app/admin/ClientLayout.jsx` now fetches `/api/admin/navigation?menu=admin_sidebar` and preserves the route-registry fallback.
+6. `components/admin/AdminLayout.jsx` remains a legacy hardcoded surface, but it is not the active admin shell.
+7. Role visibility rules, drag-drop ordering, and preview-before-save are still open.
 
 ### Navigation Architecture
 
@@ -7028,35 +7029,32 @@ VERIFICATION:
 │        /admin/navigation                                  │
 ├────────────────────────────────────────────────────────────┤
 │                                                            │
-│  Live in production now:                                   │
-│  ├── Public Header Nav (desktop)                           │
-│  ├── Public Header Nav (mobile)                            │
-│  ├── Nested public submenus (one level)                    │
-│  └── Public CTA item                                       │
-│                                                            │
-│  Still not DB-driven:                                      │
-│  ├── Admin Sidebar Nav                                     │
+│  Controlled live from one surface now:                     │
+│  ├── Public Header Nav (desktop + mobile)                  │
 │  ├── Public Footer Nav                                     │
-│  └── Role-based nav visibility / preview / drag-drop       │
+│  └── Active Admin Sidebar Nav                              │
 │                                                            │
 │  DB Table: navigation_menu                                 │
 │  ┌──────────────────────────────────────────────────────┐  │
 │  │ id | name | slug | parent_id | order_index |        │  │
-│  │ is_active | is_cta | created_at | updated_at        │  │
+│  │ is_active | is_cta | menu_key | icon_key | note |   │  │
+│  │ created_at | updated_at                             │  │
 │  └──────────────────────────────────────────────────────┘  │
 │                                                            │
-│  Live control path:                                        │
+│  Shared control paths:                                     │
 │  /admin/navigation                                          │
 │       -> app/api/admin/navigation                           │
 │       -> public.navigation_menu                             │
-│       -> app/api/navigation                                 │
+│       -> app/api/navigation?menu=public_header              │
+│       -> app/api/navigation?menu=public_footer              │
+│       -> app/admin/ClientLayout.jsx (admin_sidebar)         │
 │       -> components/layout/Navbar.jsx                       │
+│       -> components/layout/Footer.jsx                       │
 │                                                            │
-│  Remaining consolidation:                                  │
-│  1. Move admin sidebar to DB                               │
-│  2. Decide footer menu model + consumer                    │
-│  3. Remove legacy hardcoded admin nav surfaces             │
-│  4. Add drag-drop, preview, and role visibility            │
+│  Remaining gap:                                             │
+│  1. Role visibility rules                                   │
+│  2. Drag-drop ordering + preview-before-save                │
+│  3. Legacy surface cleanup if it becomes active again       │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -8538,8 +8536,8 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 > ⚠️ **This is the ONLY status section. No other footer, summary, or status block exists in this document.**
 > ⚠️ **All status updates happen HERE. Duplicates are forbidden (Constitution Article 5 + Rule 47).**
 
-*Document last updated: April 27, 2026 (Rule 16 repaired and rerun PASS; controlled governance cleanup + single-flow proof PASS; C33 remains closed only for `page_index` truth scope)*
-*Evidence sources: `docs/audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md`, `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`, `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`, `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c24-system-health-live-proof.md`, `docs/audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md`, `docs/audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md`, `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`, `docs/fixes/fix_011_c24_system_health_truth_unification.md`, `docs/fixes/fix_012_c25_direct_supabase_rest_audit_access.md`, `docs/fixes/fix_013_c32_control_plane_truth_unification.md`, `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `docs/fixes/fix_016_truth_sync_after_revalidation.md`, `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`, `scripts/audit/results/2026-04-27T03-58-58-051Z-rule16-transactional-integrity.json`, `scripts/audit/results/2026-04-27T05-40-21-000Z-controlled-governance-cleanup-single-flow.json`, `scripts/audit/results/2026-04-26T18-17-12-972Z-c33-page-index-truth-fix.json`*
+*Document last updated: May 2, 2026 (C29 closed live, C30 locally proven, P0.1 locally proven, and P0.2 navigation unification locally proven; Phase 25 still remains partial)*
+*Evidence sources: `docs/audits/audit-2026-05-02-p0-2-navigation-unification-proof.md`, `docs/audits/audit-2026-05-02-p0-1-route-registry-sidebar-proof.md`, `docs/audits/audit-2026-05-02-c29-live-proof.md`, `docs/audits/audit-2026-05-02-c30-runtime-proof.md`, `docs/audits/audit-2026-05-01-cto-forensic-live-status-reconciliation.md`, `docs/audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md`, `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`, `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`, `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c24-system-health-live-proof.md`, `docs/audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md`, `docs/audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md`, `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`, `docs/fixes/fix-p0-2-navigation-unification.md`, `docs/fixes/fix-p0-1-route-registry-sidebar.md`, `docs/fixes/fix-c29-visibility-layer.md`, `docs/fixes/fix-c30-version-history.md`, `docs/fixes/fix_011_c24_system_health_truth_unification.md`, `docs/fixes/fix_012_c25_direct_supabase_rest_audit_access.md`, `docs/fixes/fix_013_c32_control_plane_truth_unification.md`, `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `docs/fixes/fix_016_truth_sync_after_revalidation.md`, `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`, `scripts/audit/results/2026-05-02T05-47-06-p0-2-navigation-unification-proof.json`, `scripts/audit/results/2026-05-02T04-42-55-000Z-p0-1-route-registry-sidebar-proof.json`, `scripts/audit/results/2026-04-27T03-58-58-051Z-rule16-transactional-integrity.json`, `scripts/audit/results/2026-04-27T05-40-21-000Z-controlled-governance-cleanup-single-flow.json`, `scripts/audit/results/2026-04-26T18-17-12-972Z-c33-page-index-truth-fix.json`*
 *Total sections: 49 (Sections 0–49 + Section 0.1 CTO Operating Protocol)*  
 *Total rules: 33 (Rules 1–33) + 7 Constitution Articles + CTO Protocol Rules (A–G)*  
 
@@ -8574,14 +8572,14 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 22 | System Memory & Traceability | PARTIAL | 70% | Audit scripts/results now include direct DB proof for C24, C25, C32, C33, the April 27 Rule 16 failure baseline, the later same-day PASS rerun, and the later controlled governance cleanup + single-flow proof. The harness cleanup path was repaired so the final Rule 16 artifact now concludes cleanly, but stale log cleanup, cross-links, and ongoing one-truth enforcement still remain. |
 | 23 | Communication System | PARTIAL | 20% | Alert/QStash pieces exist. Full WhatsApp/Telegram/Email/Cliq proof is not complete. |
 | 24 | Media Management | PARTIAL | 40% | Media list read works. Upload and governance proof remain incomplete. |
-| 25 | Navigation Management | PARTIAL | 60% | Public header navigation is now live from `navigation_menu`: production `/api/navigation` returns 200, `/admin/navigation` edits the live header tree, and the public navbar fetches the API at runtime. Admin sidebar/footer consolidation, legacy nav cleanup, and richer Section 45 editor features remain open. |
+| 25 | Navigation Management | PARTIAL | 75% | One shared `navigation_menu` system now drives the public header, public footer, and active admin sidebar live in production. `/admin/navigation` switches across all three menu families, the public consumers fetch their scoped APIs with fallbacks, the active admin shell fetches the DB-backed sidebar with the route-registry fallback preserved, and P0.2 is now closed live in its requested scope. Role visibility, drag-drop ordering, preview-before-save, and broader Section 45 ergonomics remain open. |
 | 26 | Unified Content Dashboard | NOT STARTED | 0% | No runtime proof collected. |
 | 27 | Geo Control System | PARTIAL | 35% | Some geo controls exist. Full CEO add city/locality/pincode/generation flow remains incomplete. |
 
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (unchanged on 2026-05-02; C29 is closed live, and C30 now has DB + local runtime proof but remains open until live deployment proof)
+Overall System Score: 64/100 (unchanged on 2026-05-02; C29 is closed live, C30 now has DB + local runtime proof but remains open until live deployment proof, and Phase 25 P0.2 is now closed live while broader phase ergonomics remain open)
 Local Production Build: PASS (npm run build on May 1, 2026; non-blocking Edge Runtime warnings from `jose` remain)
 Live Runtime: PASS in the audited safe scope; overall phase readiness remains PARTIAL
 System Mode Truth: current live state is `normal` / `HEALTHY`; historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current delivery metrics are zero because health uses a recent 24-hour window
@@ -8610,6 +8608,28 @@ Fresh 2026-05-02 C30 DB + local runtime proof:
   - Save 1 created version `1`, save 2 created version `2`, and restore of version `1` created version `3`
   - Version snapshots matched the original draft state, the save-1 state, and the pre-restore save-2 state exactly
   - Direct DB query confirmed three rows for the same `draft_id` with sequential `version_number` values `1, 2, 3`
+
+Fresh 2026-05-02 local P0.1 route-registry/sidebar proof:
+  - Hydrated authenticated admin sidebar rendered `4` grouped sections and `53` links
+  - Hidden implemented routes including `Media`, `Resources`, `Observability`, `Users`, and `Code` are now visible in the shell
+  - Static route scan verified all `53` registry hrefs map to real `app/admin/**/page.js` files
+  - Deep nested route resolution returned the correct route labels for `/admin/ccc/bulk`, `/admin/ccc/drafts/123`, `/admin/system/observability/live`, and `/admin/settings/backups/export`
+  - Browser verification showed `/admin/ccc/bulk` highlights `Bulk Planner` only and `/admin/settings/backups` highlights `Backups` only
+  - `/admin/login` still bypasses the shell correctly
+  - No DB schema changes or migration files were required for P0.1
+  - DB-backed `GET /api/admin/users` and `GET /api/admin/ccc/bulk` both returned `200`
+  - Synthetic local load proof completed `530000` active-route checks in `1134.25ms`
+
+Fresh 2026-05-02 live P0.2 navigation unification proof:
+  - Production `/api/status` reported deployed version `a49ef91`
+  - Targeted production migration `20260502093000_p0_2_navigation_unification.sql` was applied directly and additively
+  - Authenticated production `/api/admin/navigation` returned `200` across `Public Header`, `Public Footer`, and `Admin Sidebar`
+  - Temporary live rename proof changed `Home` -> `Home LIVE UI`, `Contact Us` -> `Contact Us LIVE UI`, and `Backups` -> `Backups LIVE UI`, then reverted all three rows cleanly
+  - Reloaded production homepage rendered `Home LIVE UI` in the header and `Contact Us LIVE UI` in the footer
+  - Reloaded authenticated production admin shell rendered `Backups LIVE UI` in the sidebar
+  - Forced production browser failure for `**/api/navigation*` still rendered fallback header and footer menus with `Home`, `Apply Now`, `Contact Us`, and `Privacy Policy`
+  - Direct production DB verification confirmed `navigation_menu` counts `public_header=12`, `public_footer=13`, `admin_sidebar=57`
+  - Direct production DB verification confirmed `missing_parent_count=0` and `cross_menu_count=0`
 
 Fresh 2026-05-01 live proof:
   - Local `npm run build` passed
@@ -8707,5 +8727,5 @@ C22 STATUS: RESOLVED IN PRODUCTION
   - C29: closed in requested live scope on 2026-05-02 via commit `d0f35c1`.
   - C30: deploy and prove Phase 14 Content Version History in live scope.
 
-Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C26, C31, C32, and Rule 16 in the requested audited scope. C26 closure rests on historical no-cleanup persistence proof, while the current live health window is now `HEALTHY`. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the locked open work is now C30.
+Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C26, C31, C32, and Rule 16 in the requested audited scope. C26 closure rests on historical no-cleanup persistence proof, while the current live health window is now `HEALTHY`. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL, but both P0.1 route-registry/sidebar rebuild and P0.2 navigation unification are now locally proven. Production proof plus remaining role-visibility, drag-drop, and preview controls still remain. The locked live issue is still C30.
 ```
