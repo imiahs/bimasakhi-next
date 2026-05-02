@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AdminProvider, useAdmin } from '@/context/AdminContext';
 import { adminApi } from '@/lib/adminApi';
+import { ADMIN_PINNED_ROUTES, ADMIN_ROUTE_GROUPS, buildAdminNavigationFromTree, getActiveAdminRoute } from './routeRegistry';
 
 /* ── SVG Icons ── */
 const icons = {
@@ -71,27 +72,37 @@ const icons = {
             <path d="M7 8h6M7 11h4" />
         </svg>
     ),
+    BK: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M4 5h12v10H4z" />
+            <path d="M7 2v4M13 2v4M7 10h6M7 13h4" />
+        </svg>
+    ),
+    HB: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M10 17s-5-3.1-5-7.5A2.5 2.5 0 017.5 7c1.04 0 1.92.57 2.5 1.4.58-.83 1.46-1.4 2.5-1.4A2.5 2.5 0 0115 9.5C15 13.9 10 17 10 17z" />
+        </svg>
+    ),
+    DL: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M4 4h12v9H4z" />
+            <path d="M8 13l2 3 2-3" />
+            <path d="M7 8h6" />
+        </svg>
+    ),
+    LO: (
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+            <path d="M8 4H5a1 1 0 00-1 1v10a1 1 0 001 1h3" />
+            <path d="M12 7l3 3-3 3" />
+            <path d="M8 10h7" />
+        </svg>
+    ),
 };
 
-const NAV_LINKS = [
-    { label: 'Dashboard', href: '/admin', icon: 'HQ', note: 'Mission control' },
-    { label: 'CRM', href: '/admin/crm', icon: 'CR', note: 'Lead operations' },
-    { label: 'Content', href: '/admin/ccc', icon: 'CC', note: 'Draft review' },
-    { label: 'Pages', href: '/admin/pages', icon: 'PG', note: 'CMS page builder' },
-    { label: 'Bulk', href: '/admin/ccc/bulk', icon: 'BK', note: 'Job planner' },
-    { label: 'Geo', href: '/admin/locations/geo', icon: 'GL', note: 'Coverage intel' },
-    { label: 'Navigation', href: '/admin/navigation', icon: 'PG', note: 'Navbar control' },
-    { label: 'Queue', href: '/admin/ai', icon: 'AI', note: 'Worker engine' },
-    { label: 'Failed', href: '/admin/failed-leads', icon: 'RX', note: 'Recovery lane' },
-    { label: 'Analytics', href: '/admin/analytics', icon: 'AN', note: 'Attribution' },
-    { label: 'Logs', href: '/admin/logs', icon: 'LG', note: 'Runtime trail' },
-    { label: 'Features', href: '/admin/control/features', icon: 'CN', note: 'Toggle controls' },
-    { label: 'Workflow', href: '/admin/control/workflow', icon: 'CN', note: 'Thresholds & caps' },
-    { label: 'Audit', href: '/admin/system/audit', icon: 'LG', note: 'Action history' },
-    { label: 'Health', href: '/admin/system/health', icon: 'HB', note: 'Vendor resilience' },
-    { label: 'DLQ', href: '/admin/system/dlq', icon: 'DL', note: 'Dead letters' },
-    { label: 'Settings', href: '/admin/settings', icon: 'CN', note: 'Legacy switches' }
-];
+const DEFAULT_SIDEBAR_NAVIGATION = {
+    pinnedRoutes: ADMIN_PINNED_ROUTES,
+    routeGroups: ADMIN_ROUTE_GROUPS,
+};
 
 /* ── Safe Mode Banner ── */
 function SafeModeBanner() {
@@ -131,7 +142,7 @@ function HealthBadge() {
     useEffect(() => {
         const fetchHealth = async () => {
             try {
-                const res = await fetch('/api/status');
+                const res = await fetch('/api/status', { cache: 'no-store' });
                 const data = await res.json();
                 setHealth(data);
             } catch { setHealth(null); }
@@ -144,11 +155,12 @@ function HealthBadge() {
     if (!health) return null;
 
     const mode = health.checks?.system_mode || 'unknown';
-    const status = health.status || 'unknown';
+    const status = String(health.overall_health || (health.status === 'ok' ? 'HEALTHY' : 'DEGRADED')).toLowerCase();
 
     const config = {
-        ok: { label: 'LIVE', color: 'bg-emerald-500', glow: 'shadow-[0_0_12px_rgba(16,185,129,0.5)]', text: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
+        healthy: { label: 'HEALTHY', color: 'bg-emerald-500', glow: 'shadow-[0_0_12px_rgba(16,185,129,0.5)]', text: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
         degraded: { label: 'DEGRADED', color: 'bg-amber-500', glow: 'shadow-[0_0_12px_rgba(245,158,11,0.5)]', text: 'text-amber-400', border: 'border-amber-500/20', bg: 'bg-amber-500/10' },
+        safe_mode: { label: 'SAFE MODE', color: 'bg-orange-500', glow: 'shadow-[0_0_12px_rgba(249,115,22,0.5)]', text: 'text-orange-400', border: 'border-orange-500/20', bg: 'bg-orange-500/10' },
     };
     const c = config[status] || { label: 'DOWN', color: 'bg-red-500', glow: 'shadow-[0_0_12px_rgba(244,63,94,0.5)]', text: 'text-red-400', border: 'border-red-500/20', bg: 'bg-red-500/10' };
 
@@ -168,10 +180,51 @@ function InnerLayout({ children }) {
     const { isAuthenticated, isLoading, globalError } = useAdmin();
     const [loggingOut, setLoggingOut] = useState(false);
     const [collapsed, setCollapsed] = useState(false);
+    const [sidebarNavigation, setSidebarNavigation] = useState(DEFAULT_SIDEBAR_NAVIGATION);
 
-    const activeLink = useMemo(() => (
-        NAV_LINKS.find((link) => pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href)))
-    ), [pathname]);
+    const pinnedRoutes = sidebarNavigation.pinnedRoutes;
+    const routeGroups = sidebarNavigation.routeGroups;
+
+    useEffect(() => {
+        if (!isAuthenticated || pathname === '/admin/login') {
+            return undefined;
+        }
+
+        let cancelled = false;
+
+        const fetchSidebarNavigation = async () => {
+            try {
+                const response = await fetch('/api/admin/navigation?menu=admin_sidebar', {
+                    credentials: 'include',
+                    cache: 'no-store',
+                });
+                const payload = await response.json();
+
+                if (!payload.success || !Array.isArray(payload.tree) || payload.tree.length === 0) {
+                    throw new Error(payload.error || 'Admin sidebar navigation unavailable.');
+                }
+
+                if (!cancelled) {
+                    setSidebarNavigation(buildAdminNavigationFromTree(payload.tree));
+                }
+            } catch {
+                if (!cancelled) {
+                    setSidebarNavigation(DEFAULT_SIDEBAR_NAVIGATION);
+                }
+            }
+        };
+
+        fetchSidebarNavigation();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isAuthenticated, pathname]);
+
+    const activeLink = useMemo(
+        () => getActiveAdminRoute(pathname, { pinnedRoutes, routeGroups }),
+        [pathname, pinnedRoutes, routeGroups]
+    );
 
     if (pathname === '/admin/login') {
         return <div className="admin-root flex min-h-screen items-center justify-center p-6">{children}</div>;
@@ -220,30 +273,70 @@ function InnerLayout({ children }) {
                     </div>
 
                     {/* Navigation */}
-                    <nav className="admin-scrollbar flex-1 space-y-0.5 overflow-y-auto px-2 py-4">
-                        {NAV_LINKS.map((link) => {
-                            const active = pathname === link.href || (link.href !== '/admin' && pathname.startsWith(link.href));
+                    <nav className="admin-scrollbar flex-1 overflow-y-auto px-2 py-4">
+                        <div className="space-y-4">
+                            <div className="space-y-0.5">
+                                {pinnedRoutes.map((link) => {
+                                    const active = activeLink?.href === link.href;
 
-                            return (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${
-                                        active
-                                            ? 'mc-nav-active text-emerald-400'
-                                            : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
-                                    }`}
-                                >
-                                    <span className={`flex-shrink-0 ${active ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
-                                        {icons[link.icon]}
-                                    </span>
+                                    return (
+                                        <Link
+                                            key={link.href}
+                                            href={link.href}
+                                            className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${
+                                                active
+                                                    ? 'mc-nav-active text-emerald-400'
+                                                    : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
+                                            }`}
+                                        >
+                                            <span className={`flex-shrink-0 ${active ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                                                {icons[link.icon] || icons.PG}
+                                            </span>
 
+                                            {!collapsed && (
+                                                <span className="text-[13px] font-medium">{link.label}</span>
+                                            )}
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+
+                            {routeGroups.map((group) => (
+                                <div key={group.id} className="space-y-1.5">
                                     {!collapsed && (
-                                        <span className="text-[13px] font-medium">{link.label}</span>
+                                        <p className="px-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                                            {group.label}
+                                        </p>
                                     )}
-                                </Link>
-                            );
-                        })}
+
+                                    <div className="space-y-0.5">
+                                        {group.routes.map((link) => {
+                                            const active = activeLink?.href === link.href;
+
+                                            return (
+                                                <Link
+                                                    key={link.href}
+                                                    href={link.href}
+                                                    className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-200 ${
+                                                        active
+                                                            ? 'mc-nav-active text-emerald-400'
+                                                            : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200'
+                                                    }`}
+                                                >
+                                                    <span className={`flex-shrink-0 ${active ? 'text-emerald-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                                                        {icons[link.icon] || icons.PG}
+                                                    </span>
+
+                                                    {!collapsed && (
+                                                        <span className="text-[13px] font-medium">{link.label}</span>
+                                                    )}
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </nav>
 
                     {/* Logout */}

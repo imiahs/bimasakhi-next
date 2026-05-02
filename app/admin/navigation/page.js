@@ -2,14 +2,37 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-const EMPTY_FORM = {
-    name: '',
-    slug: '',
-    parent_id: '',
-    order_index: 0,
-    is_active: true,
-    is_cta: false,
-};
+const MENU_OPTIONS = [
+    {
+        value: 'public_header',
+        label: 'Public Header',
+        helper: 'Desktop and mobile header navigation, including the CTA item.',
+    },
+    {
+        value: 'public_footer',
+        label: 'Public Footer',
+        helper: 'Footer columns are top-level blank-slug group rows with one-level child links.',
+    },
+    {
+        value: 'admin_sidebar',
+        label: 'Admin Sidebar',
+        helper: 'Pinned routes stay top-level; sidebar sections are blank-slug group rows with one-level child links.',
+    },
+];
+
+function createEmptyForm(menuKey = MENU_OPTIONS[0].value) {
+    return {
+        name: '',
+        slug: '',
+        parent_id: '',
+        order_index: 0,
+        is_active: true,
+        is_cta: false,
+        menu_key: menuKey,
+        icon_key: '',
+        note: '',
+    };
+}
 
 function sortItems(items) {
     return [...items].sort((left, right) => {
@@ -22,6 +45,7 @@ function sortItems(items) {
 }
 
 export default function NavigationAdminPage() {
+    const [selectedMenuKey, setSelectedMenuKey] = useState(MENU_OPTIONS[0].value);
     const [items, setItems] = useState([]);
     const [drafts, setDrafts] = useState({});
     const [loading, setLoading] = useState(true);
@@ -30,7 +54,7 @@ export default function NavigationAdminPage() {
     const [creating, setCreating] = useState(false);
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
-    const [newItem, setNewItem] = useState(EMPTY_FORM);
+    const [newItem, setNewItem] = useState(() => createEmptyForm(MENU_OPTIONS[0].value));
 
     const syncDrafts = useCallback((nextItems) => {
         setDrafts(Object.fromEntries(nextItems.map((item) => [item.id, {
@@ -40,6 +64,9 @@ export default function NavigationAdminPage() {
             order_index: item.order_index || 0,
             is_active: item.is_active !== false,
             is_cta: Boolean(item.is_cta),
+            menu_key: item.menu_key || MENU_OPTIONS[0].value,
+            icon_key: item.icon_key || '',
+            note: item.note || '',
         }])));
     }, []);
 
@@ -48,7 +75,10 @@ export default function NavigationAdminPage() {
         setError(null);
 
         try {
-            const response = await fetch('/api/admin/navigation', { credentials: 'include', cache: 'no-store' });
+            const response = await fetch(`/api/admin/navigation?menu=${encodeURIComponent(selectedMenuKey)}`, {
+                credentials: 'include',
+                cache: 'no-store',
+            });
             const payload = await response.json();
 
             if (!payload.success) {
@@ -65,13 +95,31 @@ export default function NavigationAdminPage() {
         } finally {
             setLoading(false);
         }
-    }, [syncDrafts]);
+    }, [selectedMenuKey, syncDrafts]);
+
+    useEffect(() => {
+        setNewItem(createEmptyForm(selectedMenuKey));
+        setMessage(null);
+        setError(null);
+    }, [selectedMenuKey]);
 
     useEffect(() => {
         fetchItems();
     }, [fetchItems]);
 
-    const topLevelOptions = useMemo(() => items.filter((item) => !item.parent_id), [items]);
+    const topLevelOptions = useMemo(() => {
+        if (selectedMenuKey === 'public_header') {
+            return items.filter((item) => !item.parent_id && !item.is_cta);
+        }
+
+        return items.filter((item) => !item.parent_id && !item.slug);
+    }, [items, selectedMenuKey]);
+
+    const selectedMenu = useMemo(
+        () => MENU_OPTIONS.find((option) => option.value === selectedMenuKey) || MENU_OPTIONS[0],
+        [selectedMenuKey]
+    );
+    const isAdminSidebarMenu = selectedMenuKey === 'admin_sidebar';
 
     const handleDraftChange = (id, field, value) => {
         setDrafts((current) => ({
@@ -155,7 +203,10 @@ export default function NavigationAdminPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify(newItem),
+                body: JSON.stringify({
+                    ...newItem,
+                    menu_key: selectedMenuKey,
+                }),
             });
             const payload = await response.json();
 
@@ -163,7 +214,7 @@ export default function NavigationAdminPage() {
                 throw new Error(payload.error || 'Failed to create navigation item.');
             }
 
-            setNewItem(EMPTY_FORM);
+            setNewItem(createEmptyForm(selectedMenuKey));
             setMessage(`Created ${payload.item.name}.`);
             await fetchItems();
         } catch (requestError) {
@@ -177,15 +228,31 @@ export default function NavigationAdminPage() {
         <div className="space-y-6">
             <div className="flex flex-col gap-2">
                 <h1 className="text-2xl font-bold text-white">Navigation</h1>
+                <div className="flex flex-wrap gap-2">
+                    {MENU_OPTIONS.map((option) => (
+                        <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => setSelectedMenuKey(option.value)}
+                            className={`rounded-lg border px-3 py-1.5 text-sm transition ${selectedMenuKey === option.value
+                                ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300'
+                                : 'border-white/10 text-slate-400 hover:border-emerald-500/40 hover:text-white'
+                            }`}
+                        >
+                            {option.label}
+                        </button>
+                    ))}
+                </div>
                 <p className="text-sm text-slate-400">
-                    Public header navigation now reads from the database through <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-emerald-300">/api/navigation</code>.
-                    Changes made here go live on the next page reload.
+                    One control surface now manages the public header, public footer, and admin sidebar. The active menu is <code className="rounded bg-white/5 px-1.5 py-0.5 text-xs text-emerald-300">{selectedMenu.label}</code>.
+                    Changes made here go live on the next page reload, with consumer fallbacks preserved.
                 </p>
+                <p className="text-xs text-slate-500">{selectedMenu.helper}</p>
             </div>
 
             <form onSubmit={handleCreate} className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
                 <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-white">Add Menu Item</h2>
+                    <h2 className="text-lg font-semibold text-white">Add {selectedMenu.label} Item</h2>
                     <span className="text-xs text-slate-500">Top-level and one-level nested items are supported</span>
                 </div>
 
@@ -249,10 +316,34 @@ export default function NavigationAdminPage() {
                             type="checkbox"
                             checked={newItem.is_cta}
                             onChange={(event) => handleNewItemChange('is_cta', event.target.checked)}
-                            disabled={Boolean(newItem.parent_id)}
+                            disabled={Boolean(newItem.parent_id) || selectedMenuKey !== 'public_header'}
                         />
                         <span>Render as CTA</span>
                     </label>
+
+                    {isAdminSidebarMenu && (
+                        <>
+                            <label className="flex flex-col gap-2 text-sm text-slate-300">
+                                <span>Icon Key</span>
+                                <input
+                                    value={newItem.icon_key}
+                                    onChange={(event) => handleNewItemChange('icon_key', event.target.value.toUpperCase())}
+                                    className="rounded-lg border border-white/10 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                                    placeholder="PG"
+                                />
+                            </label>
+
+                            <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2 xl:col-span-3">
+                                <span>Note</span>
+                                <input
+                                    value={newItem.note}
+                                    onChange={(event) => handleNewItemChange('note', event.target.value)}
+                                    className="rounded-lg border border-white/10 bg-slate-950/70 px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                                    placeholder="Backup operations"
+                                />
+                            </label>
+                        </>
+                    )}
                 </div>
 
                 <div className="mt-4 flex items-center gap-3">
@@ -270,7 +361,7 @@ export default function NavigationAdminPage() {
 
             <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5">
                 <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-white">Current Navbar Structure</h2>
+                    <h2 className="text-lg font-semibold text-white">Current {selectedMenu.label} Structure</h2>
                     <button
                         type="button"
                         onClick={fetchItems}
@@ -287,7 +378,7 @@ export default function NavigationAdminPage() {
                 ) : (
                     <div className="space-y-4">
                         {sortItems(items).map((item) => {
-                            const draft = drafts[item.id] || EMPTY_FORM;
+                            const draft = drafts[item.id] || createEmptyForm(selectedMenuKey);
                             const parentName = item.parent_id
                                 ? items.find((candidate) => candidate.id === item.parent_id)?.name || 'Unknown parent'
                                 : 'Top-level';
@@ -367,11 +458,33 @@ export default function NavigationAdminPage() {
                                             <input
                                                 type="checkbox"
                                                 checked={draft.is_cta}
-                                                disabled={Boolean(draft.parent_id)}
+                                                disabled={Boolean(draft.parent_id) || draft.menu_key !== 'public_header'}
                                                 onChange={(event) => handleDraftChange(item.id, 'is_cta', event.target.checked)}
                                             />
                                             <span>CTA button</span>
                                         </label>
+
+                                        {isAdminSidebarMenu && (
+                                            <>
+                                                <label className="flex flex-col gap-2 text-sm text-slate-300">
+                                                    <span>Icon Key</span>
+                                                    <input
+                                                        value={draft.icon_key}
+                                                        onChange={(event) => handleDraftChange(item.id, 'icon_key', event.target.value.toUpperCase())}
+                                                        className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                                                    />
+                                                </label>
+
+                                                <label className="flex flex-col gap-2 text-sm text-slate-300 md:col-span-2 xl:col-span-3">
+                                                    <span>Note</span>
+                                                    <input
+                                                        value={draft.note}
+                                                        onChange={(event) => handleDraftChange(item.id, 'note', event.target.value)}
+                                                        className="rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2 text-sm text-white outline-none focus:border-emerald-500"
+                                                    />
+                                                </label>
+                                            </>
+                                        )}
                                     </div>
 
                                     <div className="mt-4 flex items-center gap-3">

@@ -17,11 +17,32 @@ function isHrefActive(pathname, href) {
     return pathname === href || pathname?.startsWith(`${href}/`);
 }
 
+const FALLBACK_PUBLIC_HEADER_MENU = [
+    { id: 'fallback-home', name: 'Home', slug: '/', is_cta: false, children: [] },
+    { id: 'fallback-why', name: 'Why Join', slug: '/why', is_cta: false, children: [] },
+    { id: 'fallback-income', name: 'Income', slug: '/income', is_cta: false, children: [] },
+    { id: 'fallback-eligibility', name: 'Eligibility', slug: '/eligibility', is_cta: false, children: [] },
+    { id: 'fallback-blog', name: 'Blog', slug: '/blog', is_cta: false, children: [] },
+    {
+        id: 'fallback-tools',
+        name: 'Tools',
+        slug: '/tools',
+        is_cta: false,
+        children: [
+            { id: 'fallback-tools-income', name: 'LIC Income Calculator', slug: '/tools/lic-income-calculator' },
+            { id: 'fallback-tools-commission', name: 'LIC Commission Calculator', slug: '/tools/lic-commission-calculator' },
+        ],
+    },
+    { id: 'fallback-downloads', name: 'Downloads', slug: '/downloads', is_cta: false, children: [] },
+    { id: 'fallback-about', name: 'About', slug: '/about', is_cta: false, children: [] },
+    { id: 'fallback-contact', name: 'Contact', slug: '/contact', is_cta: false, children: [] },
+    { id: 'fallback-apply', name: 'Apply Now', slug: '/apply', is_cta: true, children: [] },
+];
+
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const [navigationItems, setNavigationItems] = useState([]);
+    const [navigationItems, setNavigationItems] = useState(FALLBACK_PUBLIC_HEADER_MENU);
     const [navigationLoading, setNavigationLoading] = useState(true);
-    const [navigationError, setNavigationError] = useState(null);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -41,7 +62,6 @@ const Navbar = () => {
 
         const fetchNavigation = async () => {
             setNavigationLoading(true);
-            setNavigationError(null);
 
             try {
                 const response = await fetch('/api/navigation', {
@@ -54,12 +74,13 @@ const Navbar = () => {
                 }
 
                 if (!cancelled) {
-                    setNavigationItems(payload.menu || []);
+                    setNavigationItems(Array.isArray(payload.menu) && payload.menu.length > 0
+                        ? payload.menu
+                        : FALLBACK_PUBLIC_HEADER_MENU);
                 }
-            } catch (error) {
+            } catch {
                 if (!cancelled) {
-                    setNavigationError(error.message);
-                    setNavigationItems([]);
+                    setNavigationItems(FALLBACK_PUBLIC_HEADER_MENU);
                 }
             } finally {
                 if (!cancelled) {
@@ -102,8 +123,6 @@ const Navbar = () => {
                 <nav className="nav-links desktop-menu">
                     {navigationLoading ? (
                         <span className="navbar-status">Loading navigation...</span>
-                    ) : navigationError ? (
-                        <span className="navbar-status navbar-status-error">Navigation unavailable</span>
                     ) : (
                         navItems.map((item) => {
                             const hasChildren = item.children?.length > 0;
@@ -167,8 +186,6 @@ const Navbar = () => {
             <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
                 {navigationLoading ? (
                     <span className="navbar-status">Loading navigation...</span>
-                ) : navigationError ? (
-                    <span className="navbar-status navbar-status-error">Navigation unavailable</span>
                 ) : (
                     navItems.map((item) => (
                         <div key={item.id} className="mobile-nav-group">

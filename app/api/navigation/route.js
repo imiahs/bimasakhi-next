@@ -1,14 +1,15 @@
 import { NextResponse } from 'next/server';
-import { getNavigationMenu } from '@/lib/navigation/getNavigationMenu';
+import { getNavigationMenu, normalizeMenuKey } from '@/lib/navigation/getNavigationMenu';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request) {
     try {
-        const menu = await getNavigationMenu();
+        const menuKey = normalizeMenuKey(request.nextUrl.searchParams.get('menu'));
+        const menu = await getNavigationMenu({ menuKey });
 
         return NextResponse.json(
-            { success: true, menu },
+            { success: true, menuKey, menu },
             { headers: { 'Cache-Control': 'no-store, max-age=0' } }
         );
     } catch (error) {

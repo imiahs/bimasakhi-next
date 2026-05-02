@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 import {
     deleteNavigationItem,
+    listNavigationItems,
     normalizeNavigationSlug,
     sanitizeNavigationInput,
     updateNavigationItem,
@@ -9,7 +10,7 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-function validateNavigationPayload(payload, id) {
+async function validateNavigationPayload(payload, id) {
     const normalized = sanitizeNavigationInput(payload);
 
     if (!normalized.name) {
@@ -24,6 +25,26 @@ function validateNavigationPayload(payload, id) {
         return { error: 'CTA items must be top-level items.' };
     }
 
+    if (normalized.parent_id) {
+        const items = await listNavigationItems({
+            includeInactive: true,
+            menuKey: normalized.menu_key,
+        });
+        const parent = items.find((item) => item.id === normalized.parent_id);
+
+        if (!parent) {
+            return { error: 'Parent item must exist in the same menu.' };
+        }
+
+        if (parent.parent_id) {
+            return { error: 'Only one level of nesting is supported.' };
+        }
+
+        if (normalized.menu_key !== 'public_header' && parent.slug) {
+            return { error: 'Footer and admin sidebar children must use a top-level group parent.' };
+        }
+    }
+
     return { data: normalized };
 }
 
@@ -31,7 +52,7 @@ export const PATCH = withAdminAuth(async (request, user, context) => {
     try {
         const { id } = await context.params;
         const body = await request.json();
-        const validation = validateNavigationPayload(body, id);
+        const validation = await validateNavigationPayload(body, id);
 
         if (validation.error) {
             return NextResponse.json({ success: false, error: validation.error }, { status: 400 });

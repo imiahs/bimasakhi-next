@@ -4,13 +4,14 @@ import {
     buildNavigationTree,
     createNavigationItem,
     listNavigationItems,
+    normalizeMenuKey,
     normalizeNavigationSlug,
     sanitizeNavigationInput,
 } from '@/lib/navigation/getNavigationMenu';
 
 export const dynamic = 'force-dynamic';
 
-function validateNavigationPayload(payload, { isCreate = false } = {}) {
+async function validateNavigationPayload(payload, { id = null } = {}) {
     const normalized = sanitizeNavigationInput(payload);
 
     if (!normalized.name) {
@@ -21,18 +22,40 @@ function validateNavigationPayload(payload, { isCreate = false } = {}) {
         return { error: 'CTA items must be top-level items.' };
     }
 
-    if (!isCreate && payload.parent_id === payload.id) {
+    if (normalized.parent_id && normalized.parent_id === id) {
         return { error: 'An item cannot be its own parent.' };
+    }
+
+    if (normalized.parent_id) {
+        const items = await listNavigationItems({
+            includeInactive: true,
+            menuKey: normalized.menu_key,
+        });
+        const parent = items.find((item) => item.id === normalized.parent_id);
+
+        if (!parent) {
+            return { error: 'Parent item must exist in the same menu.' };
+        }
+
+        if (parent.parent_id) {
+            return { error: 'Only one level of nesting is supported.' };
+        }
+
+        if (normalized.menu_key !== 'public_header' && parent.slug) {
+            return { error: 'Footer and admin sidebar children must use a top-level group parent.' };
+        }
     }
 
     return { data: normalized };
 }
 
-export const GET = withAdminAuth(async () => {
+export const GET = withAdminAuth(async (request) => {
     try {
-        const items = await listNavigationItems({ includeInactive: true });
+        const menuKey = normalizeMenuKey(request.nextUrl.searchParams.get('menu'));
+        const items = await listNavigationItems({ includeInactive: true, menuKey });
         return NextResponse.json({
             success: true,
+            menuKey,
             items,
             tree: buildNavigationTree(items),
         });
@@ -44,7 +67,7 @@ export const GET = withAdminAuth(async () => {
 export const POST = withAdminAuth(async (request) => {
     try {
         const body = await request.json();
-        const validation = validateNavigationPayload(body, { isCreate: true });
+        const validation = await validateNavigationPayload(body);
 
         if (validation.error) {
             return NextResponse.json({ success: false, error: validation.error }, { status: 400 });

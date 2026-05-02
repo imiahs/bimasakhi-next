@@ -3,10 +3,78 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import VisitorCounter from '../ui/VisitorCounter';
+
+const FALLBACK_PUBLIC_FOOTER_GROUPS = [
+    {
+        id: 'footer-explore',
+        name: 'Explore',
+        children: [
+            { id: 'footer-why', name: 'Why Join', slug: '/why' },
+            { id: 'footer-income', name: 'Income Model', slug: '/income' },
+            { id: 'footer-eligibility', name: 'Eligibility', slug: '/eligibility' },
+            { id: 'footer-apply', name: 'Apply Now', slug: '/apply' },
+        ],
+    },
+    {
+        id: 'footer-resources',
+        name: 'Resources',
+        children: [
+            { id: 'footer-downloads', name: 'Downloads', slug: '/downloads' },
+            { id: 'footer-contact', name: 'Contact Us', slug: '/contact' },
+            { id: 'footer-about', name: 'About Us', slug: '/about' },
+        ],
+    },
+    {
+        id: 'footer-legal',
+        name: 'Legal',
+        children: [
+            { id: 'footer-privacy', name: 'Privacy Policy', slug: '/privacy-policy' },
+            { id: 'footer-terms', name: 'Terms & Conditions', slug: '/terms-conditions' },
+            { id: 'footer-disclaimer', name: 'Disclaimer', slug: '/disclaimer' },
+        ],
+    },
+];
 
 const Footer = () => {
     const pathname = usePathname();
+    const [footerGroups, setFooterGroups] = useState(FALLBACK_PUBLIC_FOOTER_GROUPS);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        const fetchFooterNavigation = async () => {
+            try {
+                const response = await fetch('/api/navigation?menu=public_footer', {
+                    cache: 'no-store',
+                });
+                const payload = await response.json();
+
+                if (!payload.success) {
+                    throw new Error(payload.error || 'Failed to load footer navigation.');
+                }
+
+                const nextGroups = Array.isArray(payload.menu)
+                    ? payload.menu.filter((item) => Array.isArray(item.children) && item.children.length > 0)
+                    : [];
+
+                if (!cancelled && nextGroups.length > 0) {
+                    setFooterGroups(nextGroups);
+                }
+            } catch {
+                if (!cancelled) {
+                    setFooterGroups(FALLBACK_PUBLIC_FOOTER_GROUPS);
+                }
+            }
+        };
+
+        fetchFooterNavigation();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     if (pathname?.startsWith('/admin')) return null;
 
@@ -32,36 +100,18 @@ const Footer = () => {
                     </p>
                 </div>
 
-                {/* Column 2 - Explore */}
-                <div>
-                    <h4>Explore</h4>
-                    <ul>
-                        <li><Link href="/why">Why Join</Link></li>
-                        <li><Link href="/income">Income Model</Link></li>
-                        <li><Link href="/eligibility">Eligibility</Link></li>
-                        <li><Link href="/apply">Apply Now</Link></li>
-                    </ul>
-                </div>
-
-                {/* Column 3 - Resources */}
-                <div>
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><Link href="/downloads">Downloads</Link></li>
-                        <li><Link href="/contact">Contact Us</Link></li>
-                        <li><Link href="/about">About Us</Link></li>
-                    </ul>
-                </div>
-
-                {/* Column 4 - Legal */}
-                <div>
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><Link href="/privacy-policy">Privacy Policy</Link></li>
-                        <li><Link href="/terms-conditions">Terms & Conditions</Link></li>
-                        <li><Link href="/disclaimer">Disclaimer</Link></li>
-                    </ul>
-                </div>
+                {footerGroups.map((group) => (
+                    <div key={group.id || group.name}>
+                        <h4>{group.name}</h4>
+                        <ul>
+                            {(group.children || []).map((item) => (
+                                item.slug ? (
+                                    <li key={item.id || item.slug}><Link href={item.slug}>{item.name}</Link></li>
+                                ) : null
+                            ))}
+                        </ul>
+                    </div>
+                ))}
 
             </div>
 
