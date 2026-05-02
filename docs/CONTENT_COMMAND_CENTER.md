@@ -7610,8 +7610,8 @@ PRIORITY R — REMEDIATION FIRST (Fix Audit Findings Before New Work)
     ├── 14c: Audit Log                    ✅ COMPLETE (but no date range filter/search — Stage 6e)
     ├── 14d: RBAC (Real User Mgmt)        ✅ FIXED — admin_users table, bcrypt auth, JWT sessions, role checks
     │   └── 14d-sub: User Mgmt UI         ⚠️ PARTIAL — /admin/users page exists but Invite button locked (read-only)
-    ├── 14e: Code Visibility (Layer 4)    🟨 MVP BUILT — local API/UI/build proof captured; live deployment proof pending
-    ├── 14f: Content Version History      ⬜ NOT STARTED
+    ├── 14e: Code Visibility (Layer 4)    ✅ LIVE PROVEN — direct API/page/control-link proof closed C29 in requested live scope
+    ├── 14f: Content Version History      🟨 MVP BUILT — migration applied, local save/save/restore proof passed; live deployment proof pending
     └── 14g: Feature Flag Creation UI     ❌ NOT DONE — can only toggle existing flags, cannot create new ones
     📄 Sections: 32
 
@@ -8356,6 +8356,12 @@ In the draft editor, a "Version History" tab shows all previous versions with a 
 
 **Use case:** Editor makes changes that make a page worse. CEO can revert to the AI-generated original, or to any saved intermediate version.
 
+**Status on 2026-05-02:**
+- Migration `20260502050000_c30_content_version_history.sql` is applied and recorded in `schema_migrations`
+- Authenticated local proof passed: open existing draft -> save -> save -> fetch version history -> restore version 1
+- Direct DB verification confirmed three version rows for one `draft_id` with sequential `version_number` values `1, 2, 3`
+- C30 remains open in live scope until the deployed production build is proven
+
 #### Safe Mode — Emergency System Pause
 
 A single red toggle in Layer 1 labeled **"🔴 SAFE MODE"**.
@@ -8575,7 +8581,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (unchanged on 2026-05-02; C29 live proof closed the Code Visibility issue, but Phase 14 remains PARTIAL and C30 remains open)
+Overall System Score: 64/100 (unchanged on 2026-05-02; C29 is closed live, and C30 now has DB + local runtime proof but remains open until live deployment proof)
 Local Production Build: PASS (npm run build on May 1, 2026; non-blocking Edge Runtime warnings from `jose` remain)
 Live Runtime: PASS in the audited safe scope; overall phase readiness remains PARTIAL
 System Mode Truth: current live state is `normal` / `HEALTHY`; historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current delivery metrics are zero because health uses a recent 24-hour window
@@ -8596,6 +8602,14 @@ Fresh 2026-05-02 live C29 proof:
   - `event_bus.metrics.stuck_events` matched `/api/admin/observability` at `0`
   - `control_plane.metrics.queue_paused` matched `/api/status.feature_flags.queue_paused = true`
   - `/api/admin/system/health` remained `HEALTHY`; it does not currently emit `queue_paused`, so that flag was verified against `/api/status`
+
+Fresh 2026-05-02 C30 DB + local runtime proof:
+  - Migration `20260502050000_c30_content_version_history.sql` applied successfully and was recorded in `schema_migrations`
+  - `content_version_history` exists with required columns `id`, `draft_id`, `snapshot`, `version_number`, and `created_at`
+  - Real authenticated local draft flow passed on draft `8ad8c681-ca98-42ad-a5b1-b8299a8fdb06`
+  - Save 1 created version `1`, save 2 created version `2`, and restore of version `1` created version `3`
+  - Version snapshots matched the original draft state, the save-1 state, and the pre-restore save-2 state exactly
+  - Direct DB query confirmed three rows for the same `draft_id` with sequential `version_number` values `1, 2, 3`
 
 Fresh 2026-05-01 live proof:
   - Local `npm run build` passed
@@ -8619,7 +8633,7 @@ Fresh 2026-05-01 warnings / remaining limits:
   - Local build still reports Edge Runtime warnings from `jose`
 
 Open gaps still proven:
-  - C30 remains open: Phase 14 Content Version History is not implemented or proven.
+  - C30 remains open in live scope: migration applied and local save/save/restore proof passed, but deployed production proof is still pending.
   - C33 remains closed only for the `page_index` truth contradiction; it does not close broader publication behavior outside the audited scope.
 ```
 
@@ -8691,7 +8705,7 @@ C22 STATUS: RESOLVED IN PRODUCTION
 
 10. Next locked work.
   - C29: closed in requested live scope on 2026-05-02 via commit `d0f35c1`.
-  - C30: implement and prove Phase 14 Content Version History.
+  - C30: deploy and prove Phase 14 Content Version History in live scope.
 
 Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C26, C31, C32, and Rule 16 in the requested audited scope. C26 closure rests on historical no-cleanup persistence proof, while the current live health window is now `HEALTHY`. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL until admin sidebar/footer consolidation, and the locked open work is now C30.
 ```

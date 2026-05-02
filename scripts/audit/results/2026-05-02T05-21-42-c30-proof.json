@@ -1,0 +1,121 @@
+{
+  "captured_at": "2026-05-02T05:21:42+05:30",
+  "verdict": "PASS_DB_APPLIED_LOCAL_RUNTIME_PROVEN",
+  "scope": {
+    "migration": "20260502050000_c30_content_version_history.sql",
+    "runtime_surface": "http://localhost:3000/api/admin/ccc/drafts/[id]",
+    "db_table": "public.content_version_history"
+  },
+  "migration": {
+    "status": "applied",
+    "ledger": {
+      "migration_name": "20260502050000_c30_content_version_history.sql",
+      "executed_at": "2026-05-01T23:41:16.792Z"
+    },
+    "table": "content_version_history",
+    "required_columns": [
+      "id",
+      "draft_id",
+      "snapshot",
+      "version_number",
+      "created_at"
+    ],
+    "present_columns": [
+      "id",
+      "draft_id",
+      "version_number",
+      "saved_by",
+      "snapshot",
+      "change_summary",
+      "created_at"
+    ],
+    "required_present": true,
+    "errors": []
+  },
+  "runtime_proof": {
+    "status": "pass",
+    "base_url": "http://localhost:3000",
+    "draft": {
+      "id": "8ad8c681-ca98-42ad-a5b1-b8299a8fdb06",
+      "slug": "new-page-1776650009929",
+      "status": "draft"
+    },
+    "save_sequence": [
+      {
+        "step": "open",
+        "page_title": "New Page"
+      },
+      {
+        "step": "save_1",
+        "page_title": "New Page [C30_RUNTIME_PROOF_1777679391731_V1]",
+        "version_number": 1
+      },
+      {
+        "step": "save_2",
+        "page_title": "New Page [C30_RUNTIME_PROOF_1777679391731_V2]",
+        "version_number": 2
+      },
+      {
+        "step": "restore_version_1",
+        "page_title": "New Page",
+        "version_number_created_by_restore": 3
+      }
+    ],
+    "checks": {
+      "version1SnapshotMatchesOriginal": true,
+      "version2SnapshotMatchesSave1": true,
+      "version3SnapshotMatchesSave2": true,
+      "restoredStateMatchesOriginal": true,
+      "noDuplicateWrites": true,
+      "noDataCorruption": true
+    }
+  },
+  "db_verification": {
+    "draft_id": "8ad8c681-ca98-42ad-a5b1-b8299a8fdb06",
+    "row_count": 3,
+    "multiple_versions_exist": true,
+    "correct_draft_id_mapping": true,
+    "version_number_incrementing": true,
+    "rows": [
+      {
+        "id": "5c3a2da7-916d-4089-adbb-b52b3fef2b4d",
+        "draft_id": "8ad8c681-ca98-42ad-a5b1-b8299a8fdb06",
+        "version_number": 1,
+        "saved_by": "4dcaed28-d730-49b3-a030-db70996a3ae1",
+        "change_summary": "C30 runtime proof save 1",
+        "snapshot_page_title": "New Page",
+        "created_at": "2026-05-01T23:49:51.965Z"
+      },
+      {
+        "id": "7e2b3f33-a15e-48b2-92e9-6860d2a98234",
+        "draft_id": "8ad8c681-ca98-42ad-a5b1-b8299a8fdb06",
+        "version_number": 2,
+        "saved_by": "4dcaed28-d730-49b3-a030-db70996a3ae1",
+        "change_summary": "C30 runtime proof save 2",
+        "snapshot_page_title": "New Page [C30_RUNTIME_PROOF_1777679391731_V1]",
+        "created_at": "2026-05-01T23:49:52.291Z"
+      },
+      {
+        "id": "9147c761-1a7e-4039-abd6-e65d516eadd6",
+        "draft_id": "8ad8c681-ca98-42ad-a5b1-b8299a8fdb06",
+        "version_number": 3,
+        "saved_by": "4dcaed28-d730-49b3-a030-db70996a3ae1",
+        "change_summary": "C30 runtime proof restore version 1",
+        "snapshot_page_title": "New Page [C30_RUNTIME_PROOF_1777679391731_V2]",
+        "created_at": "2026-05-01T23:49:53.192Z"
+      }
+    ]
+  },
+  "issues_found": [
+    {
+      "type": "proof_harness",
+      "status": "resolved",
+      "detail": "The first mutation attempt omitted same-origin headers and correctly received 403 CSRF token missing or origin mismatch. Rerun with matching Origin and Referer headers passed without any code change."
+    }
+  ],
+  "final_status": {
+    "sequence": "COMPLETE",
+    "c30": "OPEN_IN_LIVE_SCOPE",
+    "phase_14": "PARTIAL"
+  }
+}

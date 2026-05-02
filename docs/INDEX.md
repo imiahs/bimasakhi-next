@@ -10,17 +10,17 @@
 
 | Metric | Value |
 |---|---|
-| **System Score** | 64/100 unchanged (May 2 C29 live proof closed the Code Visibility issue, but Phase 14 remains PARTIAL and C30 remains open) |
+| **System Score** | 64/100 unchanged (May 2 C30 DB migration and local runtime proof landed, but C30 remains open until deployed live proof is captured) |
 | **Build Status** | PASS - local production build rerun succeeded on 2026-05-02; non-blocking Edge Runtime warnings from `jose` remain |
 | **System Mode** | NORMAL / HEALTHY in the current live window. Historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current `delivery_failures_recent=0` and `/api/admin/system/health` is `HEALTHY` because delivery health uses a recent 24-hour window |
 | **Open Critical Issues** | 0 |
 | **Open High Issues** | 0 |
 | **Open Medium Issues** | 1 (C30 open) |
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
-| **Last Audit** | 2026-05-02 live C29 production proof: `/api/status` reported `d0f35c1`, authenticated `/api/admin/system/code` returned the full module/flow snapshot, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200` without runtime errors, all exposed control links returned `200`, and live cross-checks matched observability/delivery/status truth. |
+| **Last Audit** | 2026-05-02 C30 DB + local runtime proof: migration `20260502050000_c30_content_version_history.sql` applied, authenticated local draft save/save/restore returned versions `1, 2, 3`, and direct DB rows confirmed sequential versioning plus correct snapshots. Live deployment proof is still pending. |
 | **Last Deployment** | 2026-05-02 Vercel production deploy for the C29 Code Visibility runtime slice; `/api/status.version` confirmed live commit `d0f35c1` at `https://bimasakhi.com` |
-| **Last Test Run** | 2026-05-02 authenticated live C29 proof: admin login PASS, `/api/admin/system/code` PASS, `?module=event_bus` PASS, `/admin/system/code` 200, control links PASS, and cross-layer consistency PASS |
-| **Current CTO Decision** | C29 is now closed in requested live scope. Keep the score unchanged until C30 and broader Phase 14 lifecycle gaps are closed. |
+| **Last Test Run** | 2026-05-02 authenticated local C30 proof: admin login PASS, draft open/save/save/version-history/restore PASS, and direct DB row verification PASS |
+| **Current CTO Decision** | C30 now has DB migration and local runtime proof. Keep the score unchanged and the issue open until the deployed production build is proven live. |
 
 ---
 ## Phase Status
@@ -58,13 +58,15 @@
 | Phase 19 | Universal Lead Hub | C | NOT STARTED / DB SCAFFOLD | 15% | 85% | Schema exists; full hub not proven. |
 | Phase 20 | System Intelligence Engine | D | NOT STARTED / DB SCAFFOLD | 10% | 90% | Schema/code scaffold only; full engine not proven. |
 
-> **CTO Note:** Runtime Truth Stabilization remains the only correct path. Rule 16 and C26 remain closed in the requested audited scope, but May 1 reconciliation proved that the current live health window is now `HEALTHY`. Historical C26 failed rows remain preserved as ledger truth; they are no longer the current operating state. C21, C22, C23, C24, C25, C26, C31, C32, and C33 remain closed in their requested live scopes, and C29 is now closed in live scope as of 2026-05-02. Phase 25 is still PARTIAL because admin sidebar/footer consolidation is not done. The locked open work now remains C30.
+> **CTO Note:** Runtime Truth Stabilization remains the only correct path. Rule 16 and C26 remain closed in the requested audited scope, but May 1 reconciliation proved that the current live health window is now `HEALTHY`. Historical C26 failed rows remain preserved as ledger truth; they are no longer the current operating state. C21, C22, C23, C24, C25, C26, C31, C32, and C33 remain closed in their requested live scopes, and C29 is now closed in live scope as of 2026-05-02. C30 now has DB migration and authenticated local runtime proof, but it remains open until the deployed production build is proven live. Phase 25 is still PARTIAL because admin sidebar/footer consolidation is not done. The locked open work now remains C30.
 
 ---
 ## Recent Activity
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-05-02 | AUDIT | C30 DB + local runtime proof passed: migration `20260502050000_c30_content_version_history.sql` applied, `content_version_history` exists with required columns, authenticated local draft save/save/restore returned versions `1, 2, 3`, and direct DB rows confirmed sequential versioning plus correct snapshots. | CURRENT LOCAL+DB TRUTH - LIVE PENDING | [audit-2026-05-02-c30-runtime-proof](audits/audit-2026-05-02-c30-runtime-proof.md) |
+| 2026-05-02 | FIX | C30 Content Version History MVP landed: draft version-history table/index, snapshotting in `rule16_update_content_draft`, draft version list/diff/restore support, and backward-compatible route behavior for pre-migration environments. | IMPLEMENTED + DB APPLIED + LOCAL RUNTIME PROVEN | [fix-c30-version-history](fixes/fix-c30-version-history.md) |
 | 2026-05-02 | AUDIT | C29 live production proof passed: `/api/status` reported `d0f35c1`, authenticated `/api/admin/system/code` returned `200` with 6 modules and 5 flows, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200` with no runtime errors, all exposed control links returned `200`, and live cross-checks matched observability, delivery-truth, and status truth. | CURRENT TRUTH - C29 CLOSED | [audit-2026-05-02-c29-live-proof](audits/audit-2026-05-02-c29-live-proof.md) |
 | 2026-05-02 | AUDIT | C29 local MVP proof passed: authenticated local `/api/admin/system/code` returned the full module/flow snapshot, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200`, and `npm run build` passed. | LOCAL PROOF ONLY - LIVE PENDING | [audit-c29-visibility-proof](audits/audit-c29-visibility-proof.md) |
 | 2026-05-02 | FIX | C29 Code Visibility core surfaces were deployed in commit `d0f35c1`: static registry, read-only admin API, direct `/admin/system/code` UI, and delivery-truth cross-verification helpers are now live and proven. The scoped deploy intentionally excluded the local-only sidebar link in `app/admin/ClientLayout.jsx` to avoid unrelated admin shell edits. | DEPLOYED + LIVE PROVEN IN REQUESTED SCOPE | [fix-c29-visibility-layer](fixes/fix-c29-visibility-layer.md) |
@@ -144,13 +146,14 @@
 
 | # | Severity | Issue | Owner | Status | Link |
 |---|---|---|---|---|---|
-| C30 | **MEDIUM** | Phase 14 Content Version History is not implemented/proven | CTO | OPEN | [cto-audit](audits/cto-system-audit-2026-04-26.md) |
+| C30 | **MEDIUM** | Phase 14 Content Version History is implemented, migration-applied, and local-runtime proven, but not yet live-proven | CTO | OPEN | [c30-runtime-proof](audits/audit-2026-05-02-c30-runtime-proof.md) |
 
 ---
 ## Audit History
 
 | Date | Score | Key Findings | Status | Link |
 |---|---|---|---|---|
+| 2026-05-02 | 64/100 unchanged | C30 DB + local runtime proof passed: migration `20260502050000_c30_content_version_history.sql` applied, authenticated local draft save/save/restore created versions `1, 2, 3`, restore returned the draft to the original state, and direct DB rows confirmed sequential versioning plus correct snapshots. C30 remains open in live scope because deployed proof is still pending. | CURRENT LOCAL+DB TRUTH - LIVE PENDING | [audit-2026-05-02-c30-runtime-proof](audits/audit-2026-05-02-c30-runtime-proof.md) |
 | 2026-05-02 | 64/100 unchanged | C29 live production proof passed: `/api/status` reported `d0f35c1`, authenticated admin login succeeded, `/api/admin/system/code` returned the module/flow snapshot, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200` with no runtime errors, all exposed control links returned `200`, and the delivery/event-bus/control-plane comparisons matched their live cross-check surfaces. C29 is now closed in requested live scope. | CURRENT TRUTH - C29 CLOSED | [audit-2026-05-02-c29-live-proof](audits/audit-2026-05-02-c29-live-proof.md) |
 | 2026-05-02 | 64/100 unchanged | C29 local MVP proof passed before deployment: authenticated local login succeeded, `/api/admin/system/code` returned the module/flow snapshot, `?module=event_bus` returned exactly one module, `/admin/system/code` returned `200`, post-patch control links were verified, and `npm run build` passed. This local artifact is now historical because the same-day live production proof closed C29. | HISTORICAL SAME-DAY LOCAL BASELINE | [audit-c29-visibility-proof](audits/audit-c29-visibility-proof.md) |
 | 2026-05-01 | 64/100 unchanged | Safe forensic live status reconciliation: local build passed with Edge warnings, production runtime/admin/direct Supabase reads passed, QStash publish passed with partial log lookup, Zoho passed, historical C26 failed rows were still present in `external_delivery_logs`, and the current live health window was `HEALTHY` with `delivery_failures_recent=0`. | CURRENT TRUTH | [audit-2026-05-01-cto-forensic-live-status-reconciliation](audits/audit-2026-05-01-cto-forensic-live-status-reconciliation.md) |
@@ -180,6 +183,7 @@
 
 | Date | Fix | Bible Ref | Status | Link |
 |---|---|---|---|---|
+| 2026-05-02 | C30 Content Version History | Section 32, Section 40 | IMPLEMENTED + DB APPLIED + LOCAL RUNTIME PROVEN | [fix-c30-version-history](fixes/fix-c30-version-history.md) |
 | 2026-05-02 | C29 Code Visibility layer | Section 32, Section 39, Section 40 | DEPLOYED + LIVE PROVEN IN REQUESTED SCOPE | [fix-c29-visibility-layer](fixes/fix-c29-visibility-layer.md) |
 | 2026-05-01 | May 1 forensic truth reconciliation | Section 39, Section 40, Constitution Article 5 | COMPLETE | [fix_018_may1_forensic_truth_reconciliation](fixes/fix_018_may1_forensic_truth_reconciliation.md) |
 | 2026-04-27 | C26 delivery persistence finalization | Section 39, Section 40 | CLOSED IN REQUESTED AUDITED SCOPE | [fix-c26-delivery-persistence-finalization](fixes/fix-c26-delivery-persistence-finalization.md) |
