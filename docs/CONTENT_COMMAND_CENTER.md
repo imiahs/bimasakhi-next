@@ -210,7 +210,7 @@ Every phase MUST have one of these statuses:
   Phase 3:  ⚠️ PARTIAL (image upload broken in production)
   Phase 4:  ⚠️ PARTIAL (city-only, no locality targeting)
   Phase 5:  ⚠️ PARTIAL (CEO cannot add cities/localities)
-  Phase 14: ⚠️ PARTIAL (C29 Code Visibility is live-proven and closed, but Version History and broader RBAC lifecycle proof are still missing)
+  Phase 14: ⚠️ PARTIAL (C29 Code Visibility is live-proven, C30 and P0.4 now both have local runtime proof, but their live deployment proof and broader RBAC lifecycle proof are still missing)
   Phase 21: ⚠️ PARTIAL (alerts never reach CEO, channels not connected)
   Phase 22: 🔄 IN PROGRESS (docs/ structure created)
 ```
@@ -7601,7 +7601,7 @@ PRIORITY R — REMEDIATION FIRST (Fix Audit Findings Before New Work)
     └── 3h: draft_id FK on media_files    ❌ NOT DONE — no migration exists
     📄 Sections: 7, 42
 
-  Phase 14: Super Admin Panel             ⚠️ PARTIAL → 7.5/10 (was 6/10)
+  Phase 14: Super Admin Panel             ⚠️ PARTIAL → 8/10 (was 6/10)
     ├── 14a: Feature Flags + Safe Mode    ✅ COMPLETE
     ├── 14b: Workflow Config              ✅ COMPLETE
     ├── 14c: Audit Log                    ✅ COMPLETE (but no date range filter/search — Stage 6e)
@@ -7609,7 +7609,8 @@ PRIORITY R — REMEDIATION FIRST (Fix Audit Findings Before New Work)
     │   └── 14d-sub: User Mgmt UI         ⚠️ PARTIAL — /admin/users page exists but Invite button locked (read-only)
     ├── 14e: Code Visibility (Layer 4)    ✅ LIVE PROVEN — direct API/page/control-link proof closed C29 in requested live scope
     ├── 14f: Content Version History      🟨 MVP BUILT — migration applied, local save/save/restore proof passed; live deployment proof pending
-    └── 14g: Feature Flag Creation UI     ❌ NOT DONE — can only toggle existing flags, cannot create new ones
+    ├── 14g: Feature Flag Creation UI     ❌ NOT DONE — can only toggle existing flags, cannot create new ones
+    └── 14h: P0.4 Admin Control + UI      ✅ LOCAL PROVEN — `/admin/pages`, `/admin/ccc/drafts`, `/admin/system/observability`, and the page-editor shell passed local API + browser proof; live deployment proof pending
     📄 Sections: 32
 
   Phase 21: External Governance           ⚠️ PARTIAL → 8.5/10 (was 7/10)
@@ -8578,8 +8579,8 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (unchanged on 2026-05-02; C29 is closed live, C30 now has DB + local runtime proof but remains open until live deployment proof, and Phase 25 P0.2 + P0.3 are now closed live while broader phase ergonomics remain open)
-Local Production Build: PASS (npm run build on May 1, 2026; non-blocking Edge Runtime warnings from `jose` remain)
+Overall System Score: 64/100 (unchanged on 2026-05-02; C29 is closed live, C30 and P0.4 now both have local runtime proof but remain open until live deployment proof, and Phase 25 P0.2 + P0.3 are now closed live while broader phase ergonomics remain open)
+Local Production Build: PASS (`npm run build` rerun on May 2, 2026; non-blocking Edge Runtime warnings from `jose` remain)
 Live Runtime: PASS in the audited safe scope; overall phase readiness remains PARTIAL
 System Mode Truth: current live state is `normal` / `HEALTHY`; historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current delivery metrics are zero because health uses a recent 24-hour window
 
@@ -8603,6 +8604,15 @@ Fresh 2026-05-02 live P0.3 proof:
   - Live browser super-admin proof showed the restricted control links present, including `Navigation`, `Features`, `Workflow`, `Users`, `Code`, `Audit`, `Health`, and `Backups`
   - Authenticated `/api/admin/system/code` returned `200` with `modules.length=6` and `flows.length=5`
   - Authenticated `/api/admin/system/code?module=event_bus` returned exactly one `event_bus` module
+
+Fresh 2026-05-02 local P0.4 proof:
+  - Authenticated local admin login returned `200`
+  - `/admin/pages`, `/admin/ccc/drafts`, and `/admin/system/observability` all returned `200`
+  - `/api/admin/pages` passed list, create, slug edit, bulk archive, restore, and soft-delete archive proof with cleanup
+  - `/api/admin/ccc/drafts` passed list, create, slug edit, bulk archive, bulk restore, archive, and archived delete proof with cleanup
+  - `/api/admin/observability` returned real snapshot keys now consumed by the UI: `jobs_processed`, `jobs_failed`, `queue_depth`, `dead_letters`
+  - Parallel load probes across the changed admin pages and APIs all returned `200`
+  - Local browser proof confirmed pages bulk controls, drafts archived lifecycle controls, archived draft editor restore/delete controls, observability telemetry rendering, and page-editor shell rendering
   - Authenticated `/admin/system/code` returned `200` with no runtime error markers
   - All exposed control links returned `200`
   - `delivery_engine.metrics` matched `/api/admin/delivery-logs`

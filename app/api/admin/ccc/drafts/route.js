@@ -4,6 +4,25 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
+function uniqueIds(ids) {
+    return [...new Set((ids || []).filter(Boolean))];
+}
+
+async function syncPageIndexStatus(supabase, pageIndexIds, status) {
+    if (!Array.isArray(pageIndexIds) || pageIndexIds.length === 0) {
+        return;
+    }
+
+    const { error } = await supabase
+        .from('page_index')
+        .update({ status, indexing_status: 'blocked', updated_at: new Date().toISOString() })
+        .in('id', uniqueIds(pageIndexIds));
+
+    if (error) {
+        throw error;
+    }
+}
+
 // GET /api/admin/ccc/drafts — List drafts with filters
 export const GET = withAdminAuth(async (request) => {
     try {
@@ -61,6 +80,96 @@ export const POST = withAdminAuth(async (request) => {
     try {
         const supabase = getServiceSupabase();
         const body = await request.json();
+
+        if (body.action === 'bulk_update_status') {
+            const ids = uniqueIds(body.ids);
+            const nextStatus = String(body.status || '').trim().toLowerCase();
+
+            if (ids.length === 0) {
+                return NextResponse.json({ success: false, error: 'Select at least one draft.' }, { status: 400 });
+            }
+
+            if (!['draft', 'archived'].includes(nextStatus)) {
+                return NextResponse.json({ success: false, error: 'Unsupported bulk status.' }, { status: 400 });
+            }
+
+            const { data: drafts, error: fetchError } = await supabase
+                .from('content_drafts')
+                .select('id, page_index_id, status')
+                .in('id', ids);
+
+            if (fetchError) {
+                return NextResponse.json({ success: false, error: fetchError.message }, { status: 500 });
+            }
+
+            const eligibleDrafts = (drafts || []).filter((draft) => (
+                nextStatus === 'draft' ? draft.status === 'archived' : draft.status !== 'archived'
+            ));
+
+            if (eligibleDrafts.length === 0) {
+                return NextResponse.json({ success: false, error: 'No eligible drafts found for that bulk action.' }, { status: 400 });
+            }
+
+            const pageIndexIds = eligibleDrafts.map((draft) => draft.page_index_id).filter(Boolean);
+            await syncPageIndexStatus(supabase, pageIndexIds, nextStatus === 'draft' ? 'unpublished' : 'archived');
+
+            const { error: updateError } = await supabase
+                .from('content_drafts')
+                .update({
+                    status: nextStatus,
+                    updated_at: new Date().toISOString(),
+                })
+                .in('id', eligibleDrafts.map((draft) => draft.id));
+
+            if (updateError) {
+                return NextResponse.json({ success: false, error: updateError.message }, { status: 500 });
+            }
+
+            return NextResponse.json({
+                success: true,
+                updated: eligibleDrafts.length,
+                skipped: ids.length - eligibleDrafts.length,
+                status: nextStatus,
+            });
+        }
+
+        if (body.action === 'bulk_delete_archived') {
+            const ids = uniqueIds(body.ids);
+
+            if (ids.length === 0) {
+                return NextResponse.json({ success: false, error: 'Select at least one archived draft.' }, { status: 400 });
+            }
+
+            const { data: drafts, error: fetchError } = await supabase
+                .from('content_drafts')
+                .select('id, status')
+                .in('id', ids);
+
+            if (fetchError) {
+                return NextResponse.json({ success: false, error: fetchError.message }, { status: 500 });
+            }
+
+            const deletableIds = (drafts || []).filter((draft) => draft.status === 'archived').map((draft) => draft.id);
+
+            if (deletableIds.length === 0) {
+                return NextResponse.json({ success: false, error: 'Only archived drafts can be deleted.' }, { status: 400 });
+            }
+
+            const { error: deleteError } = await supabase
+                .from('content_drafts')
+                .delete()
+                .in('id', deletableIds);
+
+            if (deleteError) {
+                return NextResponse.json({ success: false, error: deleteError.message }, { status: 500 });
+            }
+
+            return NextResponse.json({
+                success: true,
+                deleted: deletableIds.length,
+                skipped: ids.length - deletableIds.length,
+            });
+        }
 
         if (body.action !== 'create_blank') {
             return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });

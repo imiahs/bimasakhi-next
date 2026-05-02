@@ -7,14 +7,19 @@ export default function CCCDraftEditor() {
     const { id } = useParams();
     const router = useRouter();
     const [draft, setDraft] = useState(null);
+    const [versions, setVersions] = useState([]);
+    const [selectedVersion, setSelectedVersion] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [versionLoading, setVersionLoading] = useState(false);
     const [actionLoading, setActionLoading] = useState(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [rejectNotes, setRejectNotes] = useState('');
+    const [changeSummary, setChangeSummary] = useState('');
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [showVersionModal, setShowVersionModal] = useState(false);
     const [scheduleDate, setScheduleDate] = useState('');
     const [copiedPrompt, setCopiedPrompt] = useState(null);
     const [uploading, setUploading] = useState(false);
@@ -29,6 +34,8 @@ export default function CCCDraftEditor() {
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
             setDraft(data.draft);
+            setVersions(data.versions || []);
+            setSelectedVersion(null);
             setEdits({});
         } catch (err) {
             setError(err.message);
@@ -69,7 +76,7 @@ export default function CCCDraftEditor() {
             const saveRes = await fetch(`/api/admin/ccc/drafts/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ featured_image_url: imageUrl })
+                body: JSON.stringify({ featured_image_url: imageUrl, change_summary: 'Updated featured image' })
             });
             const saveData = await saveRes.json();
             if (!saveData.success) throw new Error(saveData.error);
@@ -91,17 +98,48 @@ export default function CCCDraftEditor() {
             const res = await fetch(`/api/admin/ccc/drafts/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(edits)
+                body: JSON.stringify({ ...edits, change_summary: changeSummary || null })
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.error);
             setSuccess('Changes saved');
+            setChangeSummary('');
             await fetchDraft();
         } catch (err) {
             setError(err.message);
         } finally {
             setSaving(false);
         }
+    };
+
+    const loadVersion = useCallback(async (versionId) => {
+        setVersionLoading(true);
+        setError(null);
+        try {
+            const res = await fetch(`/api/admin/ccc/drafts/${id}?versionId=${versionId}`);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Failed to load version');
+            setSelectedVersion(data.selectedVersion);
+            setShowVersionModal(true);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setVersionLoading(false);
+        }
+    }, [id]);
+
+    const restoreVersion = async (version) => {
+        if (!window.confirm(`Restore version ${version.version_number}? Current draft changes will be preserved as a new version.`)) {
+            return;
+        }
+
+        await handleAction('restore_version', {
+            version_id: version.id,
+            change_summary: `Restored version ${version.version_number}`,
+        });
+        setShowVersionModal(false);
+        setSelectedVersion(null);
+        setChangeSummary('');
     };
 
     const handleAction = async (action, extraFields = {}) => {
@@ -119,6 +157,29 @@ export default function CCCDraftEditor() {
             setSuccess(data.message);
             setShowRejectModal(false);
             await fetchDraft();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleDeleteArchived = async () => {
+        if (!window.confirm('Delete this archived draft permanently? This cannot be undone.')) {
+            return;
+        }
+
+        setActionLoading('delete');
+        setError(null);
+        setSuccess(null);
+
+        try {
+            const res = await fetch(`/api/admin/ccc/drafts/${id}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Failed to delete draft');
+            router.push('/admin/ccc/drafts?status=archived');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -152,6 +213,8 @@ export default function CCCDraftEditor() {
     const canUnpublish = draft.status === 'published' || draft.status === 'approved';
     const canArchive = draft.status !== 'archived';
     const canSchedule = draft.status === 'draft' || draft.status === 'review';
+    const canRestore = draft.status === 'archived';
+    const canDelete = draft.status === 'archived';
 
     return (
         <div className="space-y-6">
@@ -217,6 +280,24 @@ export default function CCCDraftEditor() {
                             {actionLoading === 'archive' ? 'Archiving...' : '📦 Archive'}
                         </button>
                     )}
+                    {canRestore && (
+                        <button
+                            onClick={() => handleAction('restore')}
+                            disabled={!!actionLoading}
+                            className="px-4 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-sm font-medium hover:bg-blue-500/30 transition-colors disabled:opacity-50"
+                        >
+                            {actionLoading === 'restore' ? 'Restoring...' : '↺ Restore Draft'}
+                        </button>
+                    )}
+                    {canDelete && (
+                        <button
+                            onClick={handleDeleteArchived}
+                            disabled={!!actionLoading}
+                            className="px-4 py-2 bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-sm font-medium hover:bg-rose-500/30 transition-colors disabled:opacity-50"
+                        >
+                            {actionLoading === 'delete' ? 'Deleting...' : '🗑 Delete Archived'}
+                        </button>
+                    )}
                     {canApprove && (
                         <button
                             onClick={() => handleAction('approve')}
@@ -240,6 +321,29 @@ export default function CCCDraftEditor() {
                 <div className="space-y-4">
                     <div className="admin-panel rounded-2xl p-5 space-y-4">
                         <h3 className="text-xs uppercase tracking-wider text-slate-500 font-semibold">SEO Metadata</h3>
+
+                        <label className="block">
+                            <span className="text-[10px] uppercase tracking-wider text-slate-500">Page Title</span>
+                            <input
+                                type="text"
+                                value={getField('page_title')}
+                                onChange={(e) => setField('page_title', e.target.value)}
+                                disabled={!isEditable}
+                                className="w-full mt-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-emerald-500/40 disabled:opacity-50"
+                            />
+                        </label>
+
+                        <label className="block">
+                            <span className="text-[10px] uppercase tracking-wider text-slate-500">Slug</span>
+                            <input
+                                type="text"
+                                value={getField('slug')}
+                                onChange={(e) => setField('slug', e.target.value)}
+                                disabled={!isEditable}
+                                className="w-full mt-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 font-mono focus:outline-none focus:border-emerald-500/40 disabled:opacity-50"
+                            />
+                            <span className="mt-1 block text-[10px] text-slate-500">Slug stays editable while the draft is in draft or review.</span>
+                        </label>
 
                         <label className="block">
                             <span className="text-[10px] uppercase tracking-wider text-slate-500">Meta Title</span>
@@ -303,6 +407,18 @@ export default function CCCDraftEditor() {
                 <div className="space-y-4">
                     <div className="admin-panel rounded-2xl p-5">
                         <label className="block mb-4">
+                            <span className="text-[10px] uppercase tracking-wider text-slate-500">Change Summary (optional)</span>
+                            <input
+                                type="text"
+                                value={changeSummary}
+                                onChange={(e) => setChangeSummary(e.target.value)}
+                                disabled={!isEditable}
+                                placeholder="What changed in this save?"
+                                className="w-full mt-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-emerald-500/40 disabled:opacity-50"
+                            />
+                        </label>
+
+                        <label className="block mb-4">
                             <span className="text-[10px] uppercase tracking-wider text-slate-500">Hero Headline (H1)</span>
                             <input
                                 type="text"
@@ -328,6 +444,54 @@ export default function CCCDraftEditor() {
 
                 {/* Right Panel — Preview & FAQ */}
                 <div className="space-y-4">
+                    <div className="admin-panel rounded-2xl p-5">
+                        <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Version History</h3>
+                            <span className="text-[10px] text-slate-500">{versions.length} saved</span>
+                        </div>
+
+                        {versions.length === 0 ? (
+                            <p className="text-[11px] text-slate-500">No saved versions yet. The first save will snapshot the current draft.</p>
+                        ) : (
+                            <div className="space-y-3 max-h-72 overflow-y-auto">
+                                {versions.map((version) => (
+                                    <div key={version.id} className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-3">
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div>
+                                                <p className="text-sm font-medium text-slate-200">Version {version.version_number}</p>
+                                                <p className="text-[10px] text-slate-500 mt-1">
+                                                    {new Date(version.created_at).toLocaleString('en-IN')}
+                                                </p>
+                                                <p className="text-[10px] text-slate-500">Saved by {version.saved_by || 'system'}</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <button
+                                                    onClick={() => loadVersion(version.id)}
+                                                    disabled={versionLoading}
+                                                    className="px-2 py-1 rounded-md bg-white/[0.06] text-[10px] text-slate-300 hover:bg-white/[0.1] disabled:opacity-50"
+                                                >
+                                                    View
+                                                </button>
+                                                {isEditable && (
+                                                    <button
+                                                        onClick={() => restoreVersion(version)}
+                                                        disabled={!!actionLoading}
+                                                        className="px-2 py-1 rounded-md bg-amber-500/15 text-[10px] text-amber-300 hover:bg-amber-500/25 disabled:opacity-50"
+                                                    >
+                                                        Restore
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <p className="text-[11px] text-slate-400 mt-2">
+                                            {version.change_summary || 'No change summary provided.'}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
                     <div className="admin-panel rounded-2xl p-5">
                         <h3 className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">Live Preview</h3>
                         <div className="rounded-lg bg-white/[0.02] border border-white/[0.06] p-4">
@@ -520,8 +684,104 @@ export default function CCCDraftEditor() {
                     </div>
                 </div>
             )}
+
+            {showVersionModal && selectedVersion && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="admin-panel rounded-2xl p-6 w-full max-w-5xl space-y-4 max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 className="text-lg font-semibold text-white">Version {selectedVersion.version_number}</h3>
+                                <p className="text-sm text-slate-400 mt-1">
+                                    Saved by {selectedVersion.saved_by || 'system'} on {new Date(selectedVersion.created_at).toLocaleString('en-IN')}
+                                </p>
+                                <p className="text-xs text-slate-500 mt-2">{selectedVersion.change_summary || 'No change summary provided.'}</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                {isEditable && (
+                                    <button
+                                        onClick={() => restoreVersion(selectedVersion)}
+                                        disabled={!!actionLoading}
+                                        className="px-4 py-2 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-sm font-medium hover:bg-amber-500/30 disabled:opacity-50"
+                                    >
+                                        Restore Version
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => setShowVersionModal(false)}
+                                    className="px-4 py-2 text-sm text-slate-400 hover:text-white"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="grid gap-4 md:grid-cols-2">
+                            {VERSION_DIFF_FIELDS.map(({ key, label }) => {
+                                const previousValue = formatVersionValue(selectedVersion.snapshot?.[key]);
+                                const currentValue = formatVersionValue(draft?.[key]);
+                                const changed = previousValue !== currentValue;
+
+                                if (!changed) {
+                                    return null;
+                                }
+
+                                return (
+                                    <div key={key} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 space-y-3">
+                                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</p>
+                                        <div>
+                                            <p className="text-[10px] uppercase tracking-wider text-amber-400 mb-1">Version</p>
+                                            <pre className="whitespace-pre-wrap break-words rounded-lg bg-black/20 p-3 text-[11px] text-slate-200">{previousValue}</pre>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] uppercase tracking-wider text-emerald-400 mb-1">Current</p>
+                                            <pre className="whitespace-pre-wrap break-words rounded-lg bg-black/20 p-3 text-[11px] text-slate-200">{currentValue}</pre>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {VERSION_DIFF_FIELDS.every(({ key }) => formatVersionValue(selectedVersion.snapshot?.[key]) === formatVersionValue(draft?.[key])) && (
+                            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-sm text-slate-400">
+                                This version matches the current draft for the tracked editable fields.
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
+}
+
+const VERSION_DIFF_FIELDS = [
+    { key: 'page_title', label: 'Page Title' },
+    { key: 'meta_title', label: 'Meta Title' },
+    { key: 'meta_description', label: 'Meta Description' },
+    { key: 'hero_headline', label: 'Hero Headline' },
+    { key: 'body_content', label: 'Body Content' },
+    { key: 'faq_data', label: 'FAQ Data' },
+    { key: 'cta_text', label: 'CTA Text' },
+    { key: 'review_notes', label: 'Review Notes' },
+    { key: 'status', label: 'Status' },
+    { key: 'image_prompts', label: 'Image Prompts' },
+    { key: 'featured_image_url', label: 'Featured Image URL' },
+    { key: 'featured_image_alt', label: 'Featured Image Alt' },
+];
+
+function formatVersionValue(value) {
+    if (value == null) {
+        return '—';
+    }
+
+    if (typeof value === 'string') {
+        return value.trim() ? value : '—';
+    }
+
+    if (Array.isArray(value) || typeof value === 'object') {
+        return JSON.stringify(value, null, 2);
+    }
+
+    return String(value);
 }
 
 function InfoRow({ label, value }) {
