@@ -140,7 +140,7 @@ Recovery path:
 ## Remaining Gap
 
 - P0.2 live production proof passed on 2026-05-02
-- Phase 25 still lacks role visibility rules, drag-drop ordering, preview-before-save, and broader editor ergonomics
+- Phase 25 still lacks drag-drop ordering, preview-before-save, and broader editor ergonomics
 - `components/admin/AdminLayout.jsx` still exists as a legacy surface, but it was intentionally left untouched because it is not the active admin shell
 - the unrelated Observability issue remains out of scope and untouched
 

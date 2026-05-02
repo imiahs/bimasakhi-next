@@ -857,7 +857,7 @@ No admin endpoint, no admin page, no system action should operate without these 
 | Requirement | Implementation |
 |------------|----------------|
 | Every admin API route must verify session | `withAdminAuth()` middleware on every route |
-| Session must be valid Supabase auth token | `verifyAdminSession()` checks token validity |
+| Session must be a valid signed admin JWT | Edge JWT verification in `middleware.js` plus `verifyAdminSession()` checks |
 | Expired sessions must be rejected immediately | 401 response, redirect to `/admin/login` |
 | No API route accessible without auth header | Server-side check, no client-side-only auth |
 
@@ -865,35 +865,33 @@ No admin endpoint, no admin page, no system action should operate without these 
 
 | Requirement | Implementation |
 |------------|----------------|
-| Role check on every sensitive action | `admin_users.role` checked: `super_admin` / `editor` / `agent` |
-| Feature toggles: super_admin only | Role guard on `/admin/control/features` |
-| Code visibility: super_admin only | Role guard on `/admin/system/code` |
-| Content edit: editor + super_admin | Role guard on draft/page edit endpoints |
-| Lead access: agent sees own, admin sees all | Scoped query based on role |
-| Bulk operations: require super_admin | Confirmation + role check |
+| Role model | `admin_users.role` enforced as `super_admin` / `admin` / `editor` / `agent` |
+| Policy source | `lib/auth/adminAccessControl.js` defines one shared module matrix |
+| Page protection | `middleware.js` redirects unauthorized `/admin/*` requests to the role landing page |
+| API protection | `middleware.js` + `withAdminAuth()` return `403` for unauthorized `/api/admin/*` requests |
+| Shell visibility | `context/AdminContext.jsx` + `app/admin/ClientLayout.jsx` filter the active sidebar by role |
+| Agent admin scope | Intentionally profile-only until a safe ownership mapping exists for CRM/business entities |
 
 **Authorization matrix:**
 
 ```
-Action                          super_admin   editor   agent
-──────────────────────────────────────────────────────────────
-Toggle feature flags            ✅            ❌       ❌
-Approve/publish content         ✅            ✅       ❌
-Edit draft content              ✅            ✅       ❌
-View leads (all)                ✅            ❌       ❌
-View leads (own)                ✅            ❌       ✅
-Create bulk job                 ✅            ❌       ❌
-View system logs                ✅            ❌       ❌
-View code                       ✅            ❌       ❌
-Safe Mode toggle                ✅            ❌       ❌
-Delete anything                 ✅            ❌       ❌
+Module / Capability                    super_admin   admin   editor   agent
+─────────────────────────────────────────────────────────────────────────────
+Profile + session                      ✅            ✅      ✅       ✅
+Dashboard / mission control            ✅            ❌      ❌       ❌
+CCC / Pages / Blog / SEO               ✅            ✅      ✅       ❌
+CRM / Leads                            ✅            ✅      ❌       ❌
+Locations / Geo                        ✅            ✅      ✅       ❌
+Analytics                              ✅            ✅      ❌       ❌
+Navigation / Features / Workflow       ✅            ❌      ❌       ❌
+Users / System / Code / Audit          ✅            ❌      ❌       ❌
 ```
 
 **Layer 3: Audit (WHAT DID THEY DO?)**
 
 | Requirement | Implementation |
 |------------|----------------|
-| Every state-changing action logged | `admin_audit_log` table (already defined in Section 32) |
+| Every state-changing action logged | `admin_audit_logs` table (already defined in Section 32) |
 | Log must include: who, what, when, old value, new value | Full JSONB diff stored |
 | Audit log is APPEND-ONLY | No UPDATE or DELETE on audit_log — ever |
 | Audit viewable from admin | `/admin/system/audit` with search + filters |
@@ -7009,7 +7007,7 @@ VERIFICATION:
 ## 45. 🧭 Navigation Management System — Database-Driven Menus
 
 > *"Agar mujhe koi nav menu ko badalna ho, ya koi new lagane ho ya koi sub menu banane ho to kya mai code m ja kar karunga?"*
-> *Production update (2026-05-02): P0.2 now unifies the public header, public footer, and active admin sidebar into one live `navigation_menu` system through `/admin/navigation`, and the unified slice is production-proven.*
+> *Production update (2026-05-02): P0.2 and P0.3 are now live-proven together: one shared `navigation_menu` system controls the menus, and the active admin shell/API surface now enforce role-based visibility and access control.*
 
 ### Current Truth / Remaining Gap
 
@@ -7019,7 +7017,8 @@ VERIFICATION:
 4. Public footer navigation now fetches `/api/navigation?menu=public_footer` at runtime and preserves a hard fallback.
 5. The active admin sidebar in `app/admin/ClientLayout.jsx` now fetches `/api/admin/navigation?menu=admin_sidebar` and preserves the route-registry fallback.
 6. `components/admin/AdminLayout.jsx` remains a legacy hardcoded surface, but it is not the active admin shell.
-7. Role visibility rules, drag-drop ordering, and preview-before-save are still open.
+7. Role-based visibility and access control are now enforced live on both `/admin/*` and `/api/admin/*`.
+8. Drag-drop ordering and preview-before-save are still open.
 
 ### Navigation Architecture
 
@@ -7050,11 +7049,11 @@ VERIFICATION:
 │       -> app/admin/ClientLayout.jsx (admin_sidebar)         │
 │       -> components/layout/Navbar.jsx                       │
 │       -> components/layout/Footer.jsx                       │
+│       -> middleware.js + withAdminAuth() (role enforcement) │
 │                                                            │
 │  Remaining gap:                                             │
-│  1. Role visibility rules                                   │
-│  2. Drag-drop ordering + preview-before-save                │
-│  3. Legacy surface cleanup if it becomes active again       │
+│  1. Drag-drop ordering + preview-before-save                │
+│  2. Legacy surface cleanup if it becomes active again       │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -8572,14 +8571,14 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 22 | System Memory & Traceability | PARTIAL | 70% | Audit scripts/results now include direct DB proof for C24, C25, C32, C33, the April 27 Rule 16 failure baseline, the later same-day PASS rerun, and the later controlled governance cleanup + single-flow proof. The harness cleanup path was repaired so the final Rule 16 artifact now concludes cleanly, but stale log cleanup, cross-links, and ongoing one-truth enforcement still remain. |
 | 23 | Communication System | PARTIAL | 20% | Alert/QStash pieces exist. Full WhatsApp/Telegram/Email/Cliq proof is not complete. |
 | 24 | Media Management | PARTIAL | 40% | Media list read works. Upload and governance proof remain incomplete. |
-| 25 | Navigation Management | PARTIAL | 75% | One shared `navigation_menu` system now drives the public header, public footer, and active admin sidebar live in production. `/admin/navigation` switches across all three menu families, the public consumers fetch their scoped APIs with fallbacks, the active admin shell fetches the DB-backed sidebar with the route-registry fallback preserved, and P0.2 is now closed live in its requested scope. Role visibility, drag-drop ordering, preview-before-save, and broader Section 45 ergonomics remain open. |
+| 25 | Navigation Management | PARTIAL | 80% | One shared `navigation_menu` system now drives the public header, public footer, and active admin sidebar live in production. `/admin/navigation` switches across all three menu families, the public consumers fetch their scoped APIs with fallbacks, the active admin shell fetches the DB-backed sidebar with the route-registry fallback preserved, and P0.2 + P0.3 are now closed live in the requested scope. Drag-drop ordering, preview-before-save, and broader Section 45 ergonomics remain open. |
 | 26 | Unified Content Dashboard | NOT STARTED | 0% | No runtime proof collected. |
 | 27 | Geo Control System | PARTIAL | 35% | Some geo controls exist. Full CEO add city/locality/pincode/generation flow remains incomplete. |
 
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (unchanged on 2026-05-02; C29 is closed live, C30 now has DB + local runtime proof but remains open until live deployment proof, and Phase 25 P0.2 is now closed live while broader phase ergonomics remain open)
+Overall System Score: 64/100 (unchanged on 2026-05-02; C29 is closed live, C30 now has DB + local runtime proof but remains open until live deployment proof, and Phase 25 P0.2 + P0.3 are now closed live while broader phase ergonomics remain open)
 Local Production Build: PASS (npm run build on May 1, 2026; non-blocking Edge Runtime warnings from `jose` remain)
 Live Runtime: PASS in the audited safe scope; overall phase readiness remains PARTIAL
 System Mode Truth: current live state is `normal` / `HEALTHY`; historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current delivery metrics are zero because health uses a recent 24-hour window
@@ -8592,6 +8591,16 @@ Current issue count:
 Fresh 2026-05-02 live C29 proof:
   - `/api/status` reported production version `d0f35c1`
   - Real admin login returned `200`, `success=true`, and `role=super_admin`
+
+Fresh 2026-05-02 live P0.3 proof:
+  - `/api/status` reported production version `63a6d61`
+  - Live role inventory before proof seeding showed only one active `super_admin`; deterministic temporary `admin`, `editor`, and `agent` users were seeded for the audit and then cleaned up
+  - Happy flow passed with `20` allowed page/API pairs returning the expected `200`
+  - Unauthorized edge flow passed with `24` denied page/API pairs returning the expected `307` page redirect and `403` API block
+  - Invalid-session proof passed with `/api/admin/check -> 401` and `/admin/profile -> /admin/login?error=session_expired`
+  - Concurrent multi-role load proof passed with `12/12` successful responses across `super_admin`, `admin`, `editor`, and `agent` sessions
+  - Live browser editor proof showed landing at `/admin/ccc?access=denied`, a sidebar limited to `Profile + Content + Locations`, and a direct `/admin/users` redirect back to `/admin/ccc?access=denied`
+  - Live browser super-admin proof showed the restricted control links present, including `Navigation`, `Features`, `Workflow`, `Users`, `Code`, `Audit`, `Health`, and `Backups`
   - Authenticated `/api/admin/system/code` returned `200` with `modules.length=6` and `flows.length=5`
   - Authenticated `/api/admin/system/code?module=event_bus` returned exactly one `event_bus` module
   - Authenticated `/admin/system/code` returned `200` with no runtime error markers
@@ -8727,5 +8736,5 @@ C22 STATUS: RESOLVED IN PRODUCTION
   - C29: closed in requested live scope on 2026-05-02 via commit `d0f35c1`.
   - C30: deploy and prove Phase 14 Content Version History in live scope.
 
-Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C26, C31, C32, and Rule 16 in the requested audited scope. C26 closure rests on historical no-cleanup persistence proof, while the current live health window is now `HEALTHY`. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL, but both P0.1 route-registry/sidebar rebuild and P0.2 navigation unification are now locally proven. Production proof plus remaining role-visibility, drag-drop, and preview controls still remain. The locked live issue is still C30.
+Runtime Truth Stabilization remains closed for C21, C22, C23, C24, C25, C26, C31, C32, and Rule 16 in the requested audited scope. C26 closure rests on historical no-cleanup persistence proof, while the current live health window is now `HEALTHY`. C33 remains resolved only for the `page_index` truth contradiction. Phase 25 remains PARTIAL, but P0.2 navigation unification and P0.3 role-based visibility/access control are now both deployed and live-proven. The remaining open Phase 25 gaps are drag-drop ordering, preview-before-save, and broader editor ergonomics. The locked live issue is still C30.
 ```

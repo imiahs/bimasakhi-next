@@ -149,7 +149,7 @@ Failure-test verdict: PASS
 - DB proof: COMPLETE
 - revert proof: COMPLETE
 - P0.2 status: COMPLETE / LIVE PROVEN
-- Phase 25 status: still PARTIAL for the broader phase because role visibility, drag-drop ordering, preview-before-save, and broader editor ergonomics remain open
+- Phase 25 status: still PARTIAL for the broader phase because drag-drop ordering, preview-before-save, and broader editor ergonomics remain open
 
 ## Notes
 

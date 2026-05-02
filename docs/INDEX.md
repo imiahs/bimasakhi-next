@@ -10,17 +10,17 @@
 
 | Metric | Value |
 |---|---|
-| **System Score** | 64/100 unchanged (May 2 P0.2 live proof landed; C30 still remains open until its own deployed live proof is captured) |
+| **System Score** | 64/100 unchanged (May 2 P0.2 and P0.3 live proofs landed; C30 still remains open until its own deployed live proof is captured) |
 | **Build Status** | PASS - local production build rerun succeeded on 2026-05-02; non-blocking Edge Runtime warnings from `jose` remain |
 | **System Mode** | NORMAL / HEALTHY in the current live window. Historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current `delivery_failures_recent=0` and `/api/admin/system/health` is `HEALTHY` because delivery health uses a recent 24-hour window |
 | **Open Critical Issues** | 0 |
 | **Open High Issues** | 0 |
 | **Open Medium Issues** | 1 (C30 open) |
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
-| **Last Audit** | 2026-05-02 P0.2 navigation unification live proof: deployed version `a49ef91` was confirmed, header/footer/sidebar temporary labels rendered on the real production UI after reload, forced public navigation API failure preserved fallback menus, DB `menu_key` counts and parent-child integrity passed, and all proof labels were reverted cleanly. |
-| **Last Deployment** | 2026-05-02 Vercel production deploy for P0.2 Navigation Unification; `/api/status.version` confirmed live commit `a49ef91` at `https://bimasakhi.com` |
-| **Last Test Run** | 2026-05-02 authenticated production P0.2 proof: live mutations, fallback failure simulation, DB integrity verification, and revert all passed. |
-| **Current CTO Decision** | P0.2 is deployed and live-proven. Phase 25 remains partial only for the remaining role-visibility / drag-drop / preview controls; C30 remains the locked live issue. |
+| **Last Audit** | 2026-05-02 P0.3 role access live proof: deployed version `63a6d61` was confirmed, allowed page/API pairs passed, denied page/API pairs returned the expected redirect/403, invalid-session handling returned `401` plus `/admin/login?error=session_expired`, concurrent multi-role sessions all returned `200`, the editor browser UI was reduced to `Profile + Content + Locations`, and super-admin retained the restricted control links. |
+| **Last Deployment** | 2026-05-02 Vercel production deploy for P0.3 Role-Based Visibility + Access Control; `/api/status.version` confirmed live commit `63a6d61` at `https://bimasakhi.com` |
+| **Last Test Run** | 2026-05-02 authenticated production P0.3 proof: happy, edge, failure, and load all passed live, and the browser UI confirmed hidden links plus direct-route redirects for restricted roles. |
+| **Current CTO Decision** | P0.3 is deployed and live-proven. Phase 25 remains partial only for drag-drop / preview controls and broader editor ergonomics; C30 remains the locked live issue. |
 
 ---
 ## Phase Status
@@ -41,7 +41,7 @@
 | Phase 22 | System Memory & Traceability | A | PARTIAL | 70% | 30% | Built: docs structure, audit reports, audit scripts/results, and April 27 truth-sync correction. Left: stale log cleanup, cross-links, ongoing one-truth enforcement. |
 | Phase 23 | Communication System | A | NOT STARTED / PARTIAL SCAFFOLD | 20% | 80% | Full WhatsApp/Telegram/Email/Cliq communication system not complete; some alert/integration pieces exist. |
 | Phase 24 | Media Management | A | PARTIAL | 40% | 60% | Media list code/live read exists; full upload/governance proof missing. |
-| Phase 25 | Navigation Management | A | PARTIAL | 75% | 25% | One shared `navigation_menu` system now drives the public header, public footer, and active admin sidebar live in production. `/admin/navigation` switches across all three menu families, the public consumers fetch their scoped APIs with fallbacks, and the active admin shell fetches the DB-backed sidebar with the route-registry fallback preserved. P0.2 is now closed live in the requested scope; role visibility, drag-drop ordering, preview-before-save, and broader Section 45 ergonomics remain open. |
+| Phase 25 | Navigation Management | A | PARTIAL | 80% | 20% | One shared `navigation_menu` system now drives the public header, public footer, and active admin sidebar live in production. `/admin/navigation` switches across all three menu families, the public consumers fetch their scoped APIs with fallbacks, the active admin shell fetches the DB-backed sidebar with the route-registry fallback preserved, and the live shell/API surface now enforces role-based visibility and access control. P0.2 and P0.3 are now closed live in the requested scope; drag-drop ordering, preview-before-save, and broader Section 45 ergonomics remain open. |
 | Phase 26 | Unified Content Dashboard | A | NOT STARTED | 0% | 100% | All content types in one view not proven. |
 | Phase 27 | Geo Control System | A | PARTIAL | 35% | 65% | Some geo controls exist; full CEO add city/locality/pincode/generation flow not complete. |
 | Phase 7 | Download Lead Magnets | B | NOT STARTED | 0% | 100% | Lead-gated download system not proven. |
@@ -58,13 +58,15 @@
 | Phase 19 | Universal Lead Hub | C | NOT STARTED / DB SCAFFOLD | 15% | 85% | Schema exists; full hub not proven. |
 | Phase 20 | System Intelligence Engine | D | NOT STARTED / DB SCAFFOLD | 10% | 90% | Schema/code scaffold only; full engine not proven. |
 
-> **CTO Note:** Runtime Truth Stabilization remains the only correct path. Rule 16 and C26 remain closed in the requested audited scope, but May 1 reconciliation proved that the current live health window is now `HEALTHY`. Historical C26 failed rows remain preserved as ledger truth; they are no longer the current operating state. C21, C22, C23, C24, C25, C26, C31, C32, and C33 remain closed in their requested live scopes, and C29 is now closed in live scope as of 2026-05-02. C30 now has DB migration and authenticated local runtime proof, but it remains open until the deployed production build is proven live. Phase 25 is still PARTIAL, but P0.2 navigation unification is now deployed and live-proven in production while the remaining role-visibility, drag-drop, and preview controls stay open. The locked live issue remains C30.
+> **CTO Note:** Runtime Truth Stabilization remains the only correct path. Rule 16 and C26 remain closed in the requested audited scope, but May 1 reconciliation proved that the current live health window is now `HEALTHY`. Historical C26 failed rows remain preserved as ledger truth; they are no longer the current operating state. C21, C22, C23, C24, C25, C26, C31, C32, and C33 remain closed in their requested live scopes, and C29 is now closed in live scope as of 2026-05-02. C30 now has DB migration and authenticated local runtime proof, but it remains open until the deployed production build is proven live. Phase 25 is still PARTIAL, but P0.2 navigation unification and P0.3 role-based visibility/access control are now both deployed and live-proven in production while the remaining drag-drop, preview, and editor ergonomics stay open. The locked live issue remains C30.
 
 ---
 ## Recent Activity
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-05-02 | AUDIT | P0.3 Role-Based Visibility + Access Control live proof passed: `/api/status` reported `63a6d61`, allowed page/API pairs passed, denied page/API pairs returned the expected redirects and `403`s, invalid-session handling returned `401` plus `/admin/login?error=session_expired`, concurrent multi-role sessions all returned `200`, and browser proof showed editor-side hidden links with super-admin-only control links preserved. | CURRENT TRUTH - P0.3 CLOSED LIVE | [audit-2026-05-02-p0-3-role-access-control-live-proof](audits/audit-2026-05-02-p0-3-role-access-control-live-proof.md) |
+| 2026-05-02 | FIX | P0.3 Role-Based Visibility + Access Control landed and deployed in commit `63a6d61`: one central role policy now drives page guards, API guards, role landings, and shell visibility for `super_admin`, `admin`, `editor`, and `agent`. | DEPLOYED + LIVE PROVEN | [fix-p0-3-role-access-control](fixes/fix-p0-3-role-access-control.md) |
 | 2026-05-02 | AUDIT | P0.2 Navigation Unification live production proof passed: `/api/status` reported `a49ef91`, temporary `Home` / `Contact Us` / `Backups` labels rendered on the real production header/footer/sidebar after reload, forced public navigation API failure preserved fallback menus, DB `menu_key` counts and parent-child integrity passed, and all proof labels were reverted cleanly. | CURRENT TRUTH - P0.2 CLOSED LIVE | [audit-2026-05-02-p0-2-navigation-live-proof](audits/audit-2026-05-02-p0-2-navigation-live-proof.md) |
 | 2026-05-02 | AUDIT | P0.2 Navigation Unification local proof passed: the shared admin control surface switched across header/footer/sidebar menus, temporary `Home` / `Contact Us` / `Backups` label changes propagated to the actual consumers and were reverted, invalid parent rules returned `400`, fallback rendering held under forced public API failure, and warm local load stayed under the chosen threshold. | CURRENT LOCAL PROOF - P0.2 CLOSED IN LOCAL SCOPE | [audit-2026-05-02-p0-2-navigation-unification-proof](audits/audit-2026-05-02-p0-2-navigation-unification-proof.md) |
 | 2026-05-02 | FIX | P0.2 Navigation Unification landed and deployed in commit `a49ef91`: `navigation_menu` now supports `menu_key`, `icon_key`, and `note`; `/admin/navigation` now manages header/footer/sidebar from one surface; `Navbar`, `Footer`, and the active admin shell all read the shared navigation layer with fallbacks preserved. | DEPLOYED + LIVE PROVEN | [fix-p0-2-navigation-unification](fixes/fix-p0-2-navigation-unification.md) |
@@ -190,6 +192,7 @@
 
 | Date | Fix | Bible Ref | Status | Link |
 |---|---|---|---|---|
+| 2026-05-02 | P0.3 Role-Based Visibility + Access Control | Section 14, Section 40, Section 45 | DEPLOYED + LIVE PROVEN | [fix-p0-3-role-access-control](fixes/fix-p0-3-role-access-control.md) |
 | 2026-05-02 | P0.2 Navigation Unification | Section 32, Section 40, Section 45 | DEPLOYED + LIVE PROVEN | [fix-p0-2-navigation-unification](fixes/fix-p0-2-navigation-unification.md) |
 | 2026-05-02 | P0.1 Route Registry and Sidebar Rebuild | Section 32, Section 40, Section 45 | IMPLEMENTED + LOCAL RUNTIME PROVEN | [fix-p0-1-route-registry-sidebar](fixes/fix-p0-1-route-registry-sidebar.md) |
 | 2026-05-02 | C30 Content Version History | Section 32, Section 40 | IMPLEMENTED + DB APPLIED + LOCAL RUNTIME PROVEN | [fix-c30-version-history](fixes/fix-c30-version-history.md) |
