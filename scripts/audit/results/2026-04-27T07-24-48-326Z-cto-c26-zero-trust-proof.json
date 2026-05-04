@@ -1,0 +1,1655 @@
+{
+  "captured_at": "2026-04-27T07:24:48.324Z",
+  "audit_marker": "ZERO_TRUST_C26_1777274596462",
+  "source_filter": "audit_c26_zero_trust",
+  "live_db_snapshot": [
+    {
+      "event_id": "f1d50572-4c9b-4964-a1d4-a0a925b653e5",
+      "delivery_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV",
+      "delivery_status": "failed",
+      "attempt_count": 4,
+      "provider_retry_count": 0,
+      "timestamps": {
+        "published_at": "2026-04-27T07:24:34.965+00:00",
+        "first_provider_event_at": "2026-04-27T07:24:34.934+00:00",
+        "last_provider_event_at": "2026-04-27T07:24:36.693+00:00",
+        "delivered_at": null,
+        "failed_at": "2026-04-27T07:24:36.693+00:00",
+        "last_sync_at": "2026-04-27T07:24:45.187+00:00",
+        "created_at": "2026-04-27T07:24:35.090277+00:00",
+        "updated_at": "2026-04-27T07:24:45.187+00:00"
+      }
+    },
+    {
+      "event_id": "519c55df-d11c-4e29-856b-1782a47d0f6f",
+      "delivery_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9",
+      "delivery_status": "failed",
+      "attempt_count": 4,
+      "provider_retry_count": 0,
+      "timestamps": {
+        "published_at": "2026-04-27T07:24:17.246+00:00",
+        "first_provider_event_at": "2026-04-27T07:24:17.142+00:00",
+        "last_provider_event_at": "2026-04-27T07:24:18.367+00:00",
+        "delivered_at": null,
+        "failed_at": "2026-04-27T07:24:18.367+00:00",
+        "last_sync_at": "2026-04-27T07:24:34.475+00:00",
+        "created_at": "2026-04-27T07:24:17.372293+00:00",
+        "updated_at": "2026-04-27T07:24:34.475+00:00"
+      }
+    },
+    {
+      "event_id": "6173c042-94da-4c98-a8f5-57db35b5b652",
+      "delivery_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ",
+      "delivery_status": "failed",
+      "attempt_count": 4,
+      "provider_retry_count": 0,
+      "timestamps": {
+        "published_at": "2026-04-27T07:23:56.128+00:00",
+        "first_provider_event_at": "2026-04-27T07:23:56.089+00:00",
+        "last_provider_event_at": "2026-04-27T07:23:57.433+00:00",
+        "delivered_at": null,
+        "failed_at": "2026-04-27T07:23:57.433+00:00",
+        "last_sync_at": "2026-04-27T07:24:14.56+00:00",
+        "created_at": "2026-04-27T07:23:56.259234+00:00",
+        "updated_at": "2026-04-27T07:24:14.56+00:00"
+      }
+    },
+    {
+      "event_id": "0cbce63c-9370-4729-9176-375ad4a6d519",
+      "delivery_id": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+      "delivery_status": "failed",
+      "attempt_count": 7,
+      "provider_retry_count": 1,
+      "timestamps": {
+        "published_at": "2026-04-27T07:23:35.483+00:00",
+        "first_provider_event_at": "2026-04-27T07:23:35.394+00:00",
+        "last_provider_event_at": "2026-04-27T07:23:49.965+00:00",
+        "delivered_at": null,
+        "failed_at": "2026-04-27T07:23:49.965+00:00",
+        "last_sync_at": "2026-04-27T07:23:55.601+00:00",
+        "created_at": "2026-04-27T07:23:35.617141+00:00",
+        "updated_at": "2026-04-27T07:23:55.601+00:00"
+      }
+    },
+    {
+      "event_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+      "delivery_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+      "delivery_status": "delivered",
+      "attempt_count": 3,
+      "provider_retry_count": 0,
+      "timestamps": {
+        "published_at": "2026-04-27T07:23:20.664+00:00",
+        "first_provider_event_at": "2026-04-27T07:23:20.584+00:00",
+        "last_provider_event_at": "2026-04-27T07:23:23.11+00:00",
+        "delivered_at": "2026-04-27T07:23:23.11+00:00",
+        "failed_at": null,
+        "last_sync_at": "2026-04-27T07:23:34.896+00:00",
+        "created_at": "2026-04-27T07:23:20.810834+00:00",
+        "updated_at": "2026-04-27T07:23:34.896+00:00"
+      }
+    }
+  ],
+  "event_trace_match": {
+    "event_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+    "event_store": {
+      "id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+      "event_name": "contact_created",
+      "payload": {
+        "queueId": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+        "contactId": "ZERO_TRUST_C26_1777274596462_CONTACT_1_74351d1d-f17d-4b1c-8cf5-59bb19a5e2aa",
+        "proof_index": 1,
+        "audit_marker": "ZERO_TRUST_C26_1777274596462"
+      },
+      "source": "audit_c26_zero_trust",
+      "status": "completed",
+      "priority": "critical",
+      "retry_count": 0,
+      "max_retries": 1,
+      "last_error": null,
+      "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+      "execution_context": {
+        "audit": "c26_zero_trust",
+        "event_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694",
+        "correlation_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694"
+      },
+      "created_at": "2026-04-27T07:23:20.390902+00:00",
+      "updated_at": "2026-04-27T07:23:22.795+00:00",
+      "dispatched_at": "2026-04-27T07:23:20.601+00:00",
+      "completed_at": "2026-04-27T07:23:22.795+00:00",
+      "worker_result": {
+        "zoho_id": "584143000002914001",
+        "contact_id": "ZERO_TRUST_C26_1777274596462_CONTACT_1_74351d1d-f17d-4b1c-8cf5-59bb19a5e2aa",
+        "consistency": true,
+        "correlation_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694"
+      },
+      "correlation_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694"
+    },
+    "delivery_logs": {
+      "id": "8a12ed02-8e85-4510-b58d-6ca2c716aa55",
+      "provider": "qstash",
+      "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+      "status": "delivered",
+      "source": "audit_c26_zero_trust",
+      "event_name": "contact_created",
+      "event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+      "generation_queue_id": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+      "target_url": "https://bimasakhi.com/api/workers/contact-sync",
+      "target_path": "/api/workers/contact-sync",
+      "request_payload": {
+        "queueId": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+        "contactId": "ZERO_TRUST_C26_1777274596462_CONTACT_1_74351d1d-f17d-4b1c-8cf5-59bb19a5e2aa",
+        "_executive": "coo",
+        "_event_name": "contact_created",
+        "audit_marker": "ZERO_TRUST_C26_1777274596462",
+        "_event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+        "_execution_context": {
+          "audit": "c26_zero_trust",
+          "event_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694",
+          "correlation_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694"
+        }
+      },
+      "provider_response": {
+        "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662"
+      },
+      "provider_message": null,
+      "latest_event": {
+        "url": "https://bimasakhi.com/api/workers/contact-sync",
+        "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+        "host": "bimasakhi.com",
+        "path": "/api/workers/contact-sync",
+        "time": 1777274603110,
+        "state": "DELIVERED",
+        "header": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "callerIp": "106.219.152.62",
+        "duration": 2440,
+        "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+        "responseStatus": 200
+      },
+      "attempt_history": [
+        {
+          "url": "https://bimasakhi.com/api/workers/contact-sync",
+          "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+          "host": "bimasakhi.com",
+          "path": "/api/workers/contact-sync",
+          "time": 1777274600584,
+          "state": "CREATED",
+          "header": {
+            "Content-Type": [
+              "application/json"
+            ]
+          },
+          "method": "POST",
+          "callerIp": "106.219.152.62",
+          "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+          "nextDeliveryTime": 1777274600582
+        },
+        {
+          "url": "https://bimasakhi.com/api/workers/contact-sync",
+          "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+          "host": "bimasakhi.com",
+          "path": "/api/workers/contact-sync",
+          "time": 1777274600663,
+          "state": "ACTIVE",
+          "header": {
+            "Content-Type": [
+              "application/json"
+            ]
+          },
+          "method": "POST",
+          "callerIp": "106.219.152.62",
+          "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662"
+        },
+        {
+          "url": "https://bimasakhi.com/api/workers/contact-sync",
+          "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+          "host": "bimasakhi.com",
+          "path": "/api/workers/contact-sync",
+          "time": 1777274603110,
+          "state": "DELIVERED",
+          "header": {
+            "Content-Type": [
+              "application/json"
+            ]
+          },
+          "method": "POST",
+          "callerIp": "106.219.152.62",
+          "duration": 2440,
+          "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+          "responseStatus": 200
+        }
+      ],
+      "attempt_count": 3,
+      "provider_retry_count": 0,
+      "sync_count": 5,
+      "error_payload": null,
+      "sync_error": "message:{\"error\":\"message msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662 not found\"}",
+      "published_at": "2026-04-27T07:23:20.664+00:00",
+      "first_provider_event_at": "2026-04-27T07:23:20.584+00:00",
+      "last_provider_event_at": "2026-04-27T07:23:23.11+00:00",
+      "delivered_at": "2026-04-27T07:23:23.11+00:00",
+      "failed_at": null,
+      "last_sync_at": "2026-04-27T07:23:34.896+00:00",
+      "created_at": "2026-04-27T07:23:20.810834+00:00",
+      "updated_at": "2026-04-27T07:23:34.896+00:00"
+    },
+    "admin_api": {
+      "success": true,
+      "filters": {
+        "status": null,
+        "event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+        "generation_queue_id": null,
+        "message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+        "limit": 5
+      },
+      "sync": null,
+      "metrics": {
+        "delivery_failures_recent": 4,
+        "delivery_stuck_count": 0,
+        "delivery_success_rate": 20,
+        "delivery_terminal_recent": 5,
+        "delivery_delivered_recent": 1
+      },
+      "count": 1,
+      "data": [
+        {
+          "id": "8a12ed02-8e85-4510-b58d-6ca2c716aa55",
+          "provider": "qstash",
+          "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+          "status": "delivered",
+          "source": "audit_c26_zero_trust",
+          "event_name": "contact_created",
+          "event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+          "generation_queue_id": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+          "target_url": "https://bimasakhi.com/api/workers/contact-sync",
+          "target_path": "/api/workers/contact-sync",
+          "request_payload": {
+            "queueId": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+            "contactId": "ZERO_TRUST_C26_1777274596462_CONTACT_1_74351d1d-f17d-4b1c-8cf5-59bb19a5e2aa",
+            "_executive": "coo",
+            "_event_name": "contact_created",
+            "audit_marker": "ZERO_TRUST_C26_1777274596462",
+            "_event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+            "_execution_context": {
+              "audit": "c26_zero_trust",
+              "event_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694",
+              "correlation_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694"
+            }
+          },
+          "provider_response": {
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662"
+          },
+          "provider_message": null,
+          "latest_event": {
+            "url": "https://bimasakhi.com/api/workers/contact-sync",
+            "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+            "host": "bimasakhi.com",
+            "path": "/api/workers/contact-sync",
+            "time": 1777274603110,
+            "state": "DELIVERED",
+            "header": {
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "method": "POST",
+            "callerIp": "106.219.152.62",
+            "duration": 2440,
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+            "responseStatus": 200
+          },
+          "attempt_history": [
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274600584,
+              "state": "CREATED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+              "nextDeliveryTime": 1777274600582
+            },
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274600663,
+              "state": "ACTIVE",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662"
+            },
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274603110,
+              "state": "DELIVERED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "duration": 2440,
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+              "responseStatus": 200
+            }
+          ],
+          "attempt_count": 3,
+          "provider_retry_count": 0,
+          "sync_count": 5,
+          "error_payload": null,
+          "sync_error": "message:{\"error\":\"message msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662 not found\"}",
+          "published_at": "2026-04-27T07:23:20.664+00:00",
+          "first_provider_event_at": "2026-04-27T07:23:20.584+00:00",
+          "last_provider_event_at": "2026-04-27T07:23:23.11+00:00",
+          "delivered_at": "2026-04-27T07:23:23.11+00:00",
+          "failed_at": null,
+          "last_sync_at": "2026-04-27T07:23:34.896+00:00",
+          "created_at": "2026-04-27T07:23:20.810834+00:00",
+          "updated_at": "2026-04-27T07:23:34.896+00:00"
+        }
+      ]
+    },
+    "health_metrics": {
+      "delivery_logs_metrics": {
+        "delivery_failures_recent": 4,
+        "delivery_stuck_count": 0,
+        "delivery_success_rate": 20,
+        "delivery_terminal_recent": 5,
+        "delivery_delivered_recent": 1
+      },
+      "system_health_summary": {
+        "status": "degraded",
+        "hard_failures": [
+          "delivery_failures_recent"
+        ],
+        "warnings": [
+          "delivery_success_rate:20"
+        ]
+      },
+      "system_health_failures": {
+        "errors_1h": 0,
+        "errors_24h": 0,
+        "dlq_depth_recent": 0,
+        "dlq_depth_total": 0,
+        "current_stuck_events": 0,
+        "delivery_failures_recent": 4,
+        "delivery_stuck_count": 0,
+        "stuck_events": [],
+        "has_issues": true
+      },
+      "system_health_metrics": {
+        "leads_24h": 0,
+        "queue_pending": 0,
+        "total_published_pages": 3,
+        "delivery_success_rate": 20,
+        "delivery_terminal_recent": 5,
+        "delivery_delivered_recent": 1
+      }
+    }
+  },
+  "failure_retry_proof": {
+    "event_id": "0cbce63c-9370-4729-9176-375ad4a6d519",
+    "delivery_id": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+    "event_store": {
+      "id": "0cbce63c-9370-4729-9176-375ad4a6d519",
+      "event_name": "lead_hot",
+      "payload": {
+        "leadId": "00000000-0000-0000-0000-634409449807",
+        "queueId": "57e08ab6-74c2-474f-a340-dad37a348ac4",
+        "proof_index": 1,
+        "audit_marker": "ZERO_TRUST_C26_1777274596462"
+      },
+      "source": "audit_c26_zero_trust",
+      "status": "failed",
+      "priority": "critical",
+      "retry_count": 0,
+      "max_retries": 0,
+      "last_error": "Lead not found",
+      "dispatch_message_id": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+      "execution_context": {
+        "audit": "c26_zero_trust",
+        "event_id": "ZERO_TRUST_C26_1777274596462_failure_1_b9046ca3-678a-47ed-8ae1-6855cb8f9f9f",
+        "correlation_id": "ZERO_TRUST_C26_1777274596462_failure_1_b9046ca3-678a-47ed-8ae1-6855cb8f9f9f"
+      },
+      "created_at": "2026-04-27T07:23:35.216486+00:00",
+      "updated_at": "2026-04-27T07:23:49.67+00:00",
+      "dispatched_at": "2026-04-27T07:23:35.41+00:00",
+      "completed_at": null,
+      "worker_result": {
+        "lead_id": "00000000-0000-0000-0000-634409449807",
+        "partial": {
+          "error": "Lead not found",
+          "event": "lead_hot",
+          "steps": [],
+          "leadId": "00000000-0000-0000-0000-634409449807",
+          "executive": "cso"
+        }
+      },
+      "correlation_id": "ZERO_TRUST_C26_1777274596462_failure_1_b9046ca3-678a-47ed-8ae1-6855cb8f9f9f"
+    },
+    "delivery_logs": {
+      "delivery_status": "failed",
+      "attempt_count": 7,
+      "provider_retry_count": 1,
+      "failed_at": "2026-04-27T07:23:49.965+00:00",
+      "last_provider_event_at": "2026-04-27T07:23:49.965+00:00",
+      "attempt_history": [
+        {
+          "state": "CREATED",
+          "time": "2026-04-27T07:23:35.394Z",
+          "response_status": null,
+          "error": null,
+          "next_delivery_time": "2026-04-27T07:23:35.392Z"
+        },
+        {
+          "state": "ACTIVE",
+          "time": "2026-04-27T07:23:35.448Z",
+          "response_status": null,
+          "error": null,
+          "next_delivery_time": null
+        },
+        {
+          "state": "ERROR",
+          "time": "2026-04-27T07:23:36.652Z",
+          "response_status": 500,
+          "error": "HTTP status 500",
+          "next_delivery_time": null
+        },
+        {
+          "state": "RETRY",
+          "time": "2026-04-27T07:23:36.652Z",
+          "response_status": null,
+          "error": null,
+          "next_delivery_time": "2026-04-27T07:23:48.652Z"
+        },
+        {
+          "state": "ACTIVE",
+          "time": "2026-04-27T07:23:48.816Z",
+          "response_status": null,
+          "error": null,
+          "next_delivery_time": null
+        },
+        {
+          "state": "ERROR",
+          "time": "2026-04-27T07:23:49.965Z",
+          "response_status": 500,
+          "error": "HTTP status 500",
+          "next_delivery_time": null
+        },
+        {
+          "state": "FAILED",
+          "time": "2026-04-27T07:23:49.965Z",
+          "response_status": null,
+          "error": null,
+          "next_delivery_time": null
+        }
+      ],
+      "final_status": "failed"
+    }
+  },
+  "provider_match_proof": {
+    "event_id": "0cbce63c-9370-4729-9176-375ad4a6d519",
+    "delivery_id": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+    "provider_status": "FAILED",
+    "db_status": "failed",
+    "provider_latest_event": {
+      "time": 1777274629965,
+      "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+      "state": "FAILED",
+      "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+      "header": {
+        "Content-Type": [
+          "application/json"
+        ]
+      },
+      "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+      "method": "POST",
+      "maxRetries": 1,
+      "callerIp": "106.219.152.62",
+      "host": "bimasakhi.com",
+      "path": "/api/jobs/followup-trigger"
+    }
+  },
+  "no_silent_failure_check": {
+    "audit_scope": {
+      "window": "last_1_hour",
+      "source_filter": "audit_c26_zero_trust",
+      "total_events": 5,
+      "total_delivery_logs": 5,
+      "event_ids": [
+        "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+        "0cbce63c-9370-4729-9176-375ad4a6d519",
+        "6173c042-94da-4c98-a8f5-57db35b5b652",
+        "519c55df-d11c-4e29-856b-1782a47d0f6f",
+        "f1d50572-4c9b-4964-a1d4-a0a925b653e5"
+      ],
+      "delivery_ids": [
+        "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9",
+        "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+        "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV",
+        "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+        "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ"
+      ]
+    },
+    "overall_scope": {
+      "window": "last_1_hour",
+      "scope": "overall",
+      "total_events": 5,
+      "total_delivery_logs": 5
+    }
+  },
+  "live_api_output": {
+    "delivery_logs_trace": {
+      "success": true,
+      "filters": {
+        "status": null,
+        "event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+        "generation_queue_id": null,
+        "message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+        "limit": 5
+      },
+      "sync": null,
+      "metrics": {
+        "delivery_failures_recent": 4,
+        "delivery_stuck_count": 0,
+        "delivery_success_rate": 20,
+        "delivery_terminal_recent": 5,
+        "delivery_delivered_recent": 1
+      },
+      "count": 1,
+      "data": [
+        {
+          "id": "8a12ed02-8e85-4510-b58d-6ca2c716aa55",
+          "provider": "qstash",
+          "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+          "status": "delivered",
+          "source": "audit_c26_zero_trust",
+          "event_name": "contact_created",
+          "event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+          "generation_queue_id": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+          "target_url": "https://bimasakhi.com/api/workers/contact-sync",
+          "target_path": "/api/workers/contact-sync",
+          "request_payload": {
+            "queueId": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+            "contactId": "ZERO_TRUST_C26_1777274596462_CONTACT_1_74351d1d-f17d-4b1c-8cf5-59bb19a5e2aa",
+            "_executive": "coo",
+            "_event_name": "contact_created",
+            "audit_marker": "ZERO_TRUST_C26_1777274596462",
+            "_event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+            "_execution_context": {
+              "audit": "c26_zero_trust",
+              "event_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694",
+              "correlation_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694"
+            }
+          },
+          "provider_response": {
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662"
+          },
+          "provider_message": null,
+          "latest_event": {
+            "url": "https://bimasakhi.com/api/workers/contact-sync",
+            "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+            "host": "bimasakhi.com",
+            "path": "/api/workers/contact-sync",
+            "time": 1777274603110,
+            "state": "DELIVERED",
+            "header": {
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "method": "POST",
+            "callerIp": "106.219.152.62",
+            "duration": 2440,
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+            "responseStatus": 200
+          },
+          "attempt_history": [
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274600584,
+              "state": "CREATED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+              "nextDeliveryTime": 1777274600582
+            },
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274600663,
+              "state": "ACTIVE",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662"
+            },
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274603110,
+              "state": "DELIVERED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "duration": 2440,
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+              "responseStatus": 200
+            }
+          ],
+          "attempt_count": 3,
+          "provider_retry_count": 0,
+          "sync_count": 5,
+          "error_payload": null,
+          "sync_error": "message:{\"error\":\"message msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662 not found\"}",
+          "published_at": "2026-04-27T07:23:20.664+00:00",
+          "first_provider_event_at": "2026-04-27T07:23:20.584+00:00",
+          "last_provider_event_at": "2026-04-27T07:23:23.11+00:00",
+          "delivered_at": "2026-04-27T07:23:23.11+00:00",
+          "failed_at": null,
+          "last_sync_at": "2026-04-27T07:23:34.896+00:00",
+          "created_at": "2026-04-27T07:23:20.810834+00:00",
+          "updated_at": "2026-04-27T07:23:34.896+00:00"
+        }
+      ]
+    },
+    "delivery_logs_latest": {
+      "success": true,
+      "filters": {
+        "status": null,
+        "event_store_id": null,
+        "generation_queue_id": null,
+        "message_id": null,
+        "limit": 5
+      },
+      "sync": null,
+      "metrics": {
+        "delivery_failures_recent": 4,
+        "delivery_stuck_count": 0,
+        "delivery_success_rate": 20,
+        "delivery_terminal_recent": 5,
+        "delivery_delivered_recent": 1
+      },
+      "count": 5,
+      "data": [
+        {
+          "id": "0a3ca4d5-27b4-423c-a98f-7cd4d4b36dfa",
+          "provider": "qstash",
+          "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV",
+          "status": "failed",
+          "source": "audit_c26_zero_trust",
+          "event_name": "lead_hot",
+          "event_store_id": "f1d50572-4c9b-4964-a1d4-a0a925b653e5",
+          "generation_queue_id": "03515e87-b70c-4886-96ac-37ed0b785e3a",
+          "target_url": "https://bimasakhi.com/api/jobs/followup-trigger",
+          "target_path": "/api/jobs/followup-trigger",
+          "request_payload": {
+            "leadId": "00000000-0000-0000-0000-139380706605",
+            "queueId": "03515e87-b70c-4886-96ac-37ed0b785e3a",
+            "_executive": "cso",
+            "_event_name": "lead_hot",
+            "audit_marker": "ZERO_TRUST_C26_1777274596462",
+            "_event_store_id": "f1d50572-4c9b-4964-a1d4-a0a925b653e5",
+            "_execution_context": {
+              "audit": "c26_zero_trust",
+              "event_id": "ZERO_TRUST_C26_1777274596462_failure_4_7832e6bd-b392-49fd-884a-38347bdcc75c",
+              "correlation_id": "ZERO_TRUST_C26_1777274596462_failure_4_7832e6bd-b392-49fd-884a-38347bdcc75c"
+            }
+          },
+          "provider_response": {
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV"
+          },
+          "provider_message": null,
+          "latest_event": {
+            "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+            "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0xMzkzODA3MDY2MDUiLCJxdWV1ZUlkIjoiMDM1MTVlODctYjcwYy00ODg2LTk2YWMtMzdlZDBiNzg1ZTNhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfNF83ODMyZTZiZC1iMzkyLTQ5ZmQtODg0YS0zODM0N2JkY2M3NWMiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV80Xzc4MzJlNmJkLWIzOTItNDlmZC04ODRhLTM4MzQ3YmRjYzc1YyJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6ImYxZDUwNTcyLTRjOWItNDk2NC1hMWQ0LWEwYTkyNWI2NTNlNSJ9",
+            "host": "bimasakhi.com",
+            "path": "/api/jobs/followup-trigger",
+            "time": 1777274676693,
+            "state": "FAILED",
+            "header": {
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "method": "POST",
+            "callerIp": "106.219.152.62",
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV"
+          },
+          "attempt_history": [
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0xMzkzODA3MDY2MDUiLCJxdWV1ZUlkIjoiMDM1MTVlODctYjcwYy00ODg2LTk2YWMtMzdlZDBiNzg1ZTNhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfNF83ODMyZTZiZC1iMzkyLTQ5ZmQtODg0YS0zODM0N2JkY2M3NWMiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV80Xzc4MzJlNmJkLWIzOTItNDlmZC04ODRhLTM4MzQ3YmRjYzc1YyJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6ImYxZDUwNTcyLTRjOWItNDk2NC1hMWQ0LWEwYTkyNWI2NTNlNSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274674934,
+              "state": "CREATED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV",
+              "nextDeliveryTime": 1777274674933
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0xMzkzODA3MDY2MDUiLCJxdWV1ZUlkIjoiMDM1MTVlODctYjcwYy00ODg2LTk2YWMtMzdlZDBiNzg1ZTNhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfNF83ODMyZTZiZC1iMzkyLTQ5ZmQtODg0YS0zODM0N2JkY2M3NWMiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV80Xzc4MzJlNmJkLWIzOTItNDlmZC04ODRhLTM4MzQ3YmRjYzc1YyJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6ImYxZDUwNTcyLTRjOWItNDk2NC1hMWQ0LWEwYTkyNWI2NTNlNSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274675527,
+              "state": "ACTIVE",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV"
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0xMzkzODA3MDY2MDUiLCJxdWV1ZUlkIjoiMDM1MTVlODctYjcwYy00ODg2LTk2YWMtMzdlZDBiNzg1ZTNhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfNF83ODMyZTZiZC1iMzkyLTQ5ZmQtODg0YS0zODM0N2JkY2M3NWMiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV80Xzc4MzJlNmJkLWIzOTItNDlmZC04ODRhLTM4MzQ3YmRjYzc1YyJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6ImYxZDUwNTcyLTRjOWItNDk2NC1hMWQ0LWEwYTkyNWI2NTNlNSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274676693,
+              "error": "HTTP status 500",
+              "state": "ERROR",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "duration": 1161,
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV",
+              "responseBody": "eyJlcnJvciI6IkxlYWQgbm90IGZvdW5kIn0=",
+              "responseStatus": 500,
+              "responseHeaders": {
+                "Date": [
+                  "Mon, 27 Apr 2026 07:24:36 GMT"
+                ],
+                "Vary": [
+                  "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                ],
+                "Server": [
+                  "Vercel"
+                ],
+                "X-Vercel-Id": [
+                  "fra1::iad1::9d6m8-1777274675543-c76c82421757"
+                ],
+                "Content-Type": [
+                  "application/json"
+                ],
+                "Cache-Control": [
+                  "public, max-age=0, must-revalidate"
+                ],
+                "X-Matched-Path": [
+                  "/api/jobs/followup-trigger"
+                ],
+                "X-Vercel-Cache": [
+                  "MISS"
+                ],
+                "Strict-Transport-Security": [
+                  "max-age=63072000"
+                ]
+              }
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC0xMzkzODA3MDY2MDUiLCJxdWV1ZUlkIjoiMDM1MTVlODctYjcwYy00ODg2LTk2YWMtMzdlZDBiNzg1ZTNhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfNF83ODMyZTZiZC1iMzkyLTQ5ZmQtODg0YS0zODM0N2JkY2M3NWMiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV80Xzc4MzJlNmJkLWIzOTItNDlmZC04ODRhLTM4MzQ3YmRjYzc1YyJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6ImYxZDUwNTcyLTRjOWItNDk2NC1hMWQ0LWEwYTkyNWI2NTNlNSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274676693,
+              "state": "FAILED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV"
+            }
+          ],
+          "attempt_count": 4,
+          "provider_retry_count": 0,
+          "sync_count": 3,
+          "error_payload": null,
+          "sync_error": "message:{\"error\":\"message msg_26hZCxZCuWyyTWPmSVBrNC1RADRQaJFN8U755NJ99LeYcejEKBcpNqZSu6ZLUcV not found\"}",
+          "published_at": "2026-04-27T07:24:34.965+00:00",
+          "first_provider_event_at": "2026-04-27T07:24:34.934+00:00",
+          "last_provider_event_at": "2026-04-27T07:24:36.693+00:00",
+          "delivered_at": null,
+          "failed_at": "2026-04-27T07:24:36.693+00:00",
+          "last_sync_at": "2026-04-27T07:24:45.187+00:00",
+          "created_at": "2026-04-27T07:24:35.090277+00:00",
+          "updated_at": "2026-04-27T07:24:45.187+00:00"
+        },
+        {
+          "id": "45ef5dca-12f0-4fd9-ac63-335600e99399",
+          "provider": "qstash",
+          "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9",
+          "status": "failed",
+          "source": "audit_c26_zero_trust",
+          "event_name": "lead_hot",
+          "event_store_id": "519c55df-d11c-4e29-856b-1782a47d0f6f",
+          "generation_queue_id": "020b3175-7934-4090-9c9c-ff6bbc407f1d",
+          "target_url": "https://bimasakhi.com/api/jobs/followup-trigger",
+          "target_path": "/api/jobs/followup-trigger",
+          "request_payload": {
+            "leadId": "00000000-0000-0000-0000-749779793618",
+            "queueId": "020b3175-7934-4090-9c9c-ff6bbc407f1d",
+            "_executive": "cso",
+            "_event_name": "lead_hot",
+            "audit_marker": "ZERO_TRUST_C26_1777274596462",
+            "_event_store_id": "519c55df-d11c-4e29-856b-1782a47d0f6f",
+            "_execution_context": {
+              "audit": "c26_zero_trust",
+              "event_id": "ZERO_TRUST_C26_1777274596462_failure_3_c6ad51b2-4bd3-4691-9f38-331f141a8c18",
+              "correlation_id": "ZERO_TRUST_C26_1777274596462_failure_3_c6ad51b2-4bd3-4691-9f38-331f141a8c18"
+            }
+          },
+          "provider_response": {
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9"
+          },
+          "provider_message": null,
+          "latest_event": {
+            "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+            "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC03NDk3Nzk3OTM2MTgiLCJxdWV1ZUlkIjoiMDIwYjMxNzUtNzkzNC00MDkwLTljOWMtZmY2YmJjNDA3ZjFkIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfM19jNmFkNTFiMi00YmQzLTQ2OTEtOWYzOC0zMzFmMTQxYThjMTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8zX2M2YWQ1MWIyLTRiZDMtNDY5MS05ZjM4LTMzMWYxNDFhOGMxOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjUxOWM1NWRmLWQxMWMtNGUyOS04NTZiLTE3ODJhNDdkMGY2ZiJ9",
+            "host": "bimasakhi.com",
+            "path": "/api/jobs/followup-trigger",
+            "time": 1777274658367,
+            "state": "FAILED",
+            "header": {
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "method": "POST",
+            "callerIp": "106.219.152.62",
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9"
+          },
+          "attempt_history": [
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC03NDk3Nzk3OTM2MTgiLCJxdWV1ZUlkIjoiMDIwYjMxNzUtNzkzNC00MDkwLTljOWMtZmY2YmJjNDA3ZjFkIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfM19jNmFkNTFiMi00YmQzLTQ2OTEtOWYzOC0zMzFmMTQxYThjMTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8zX2M2YWQ1MWIyLTRiZDMtNDY5MS05ZjM4LTMzMWYxNDFhOGMxOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjUxOWM1NWRmLWQxMWMtNGUyOS04NTZiLTE3ODJhNDdkMGY2ZiJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274657142,
+              "state": "CREATED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9",
+              "nextDeliveryTime": 1777274657141
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC03NDk3Nzk3OTM2MTgiLCJxdWV1ZUlkIjoiMDIwYjMxNzUtNzkzNC00MDkwLTljOWMtZmY2YmJjNDA3ZjFkIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfM19jNmFkNTFiMi00YmQzLTQ2OTEtOWYzOC0zMzFmMTQxYThjMTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8zX2M2YWQ1MWIyLTRiZDMtNDY5MS05ZjM4LTMzMWYxNDFhOGMxOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjUxOWM1NWRmLWQxMWMtNGUyOS04NTZiLTE3ODJhNDdkMGY2ZiJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274657230,
+              "state": "ACTIVE",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9"
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC03NDk3Nzk3OTM2MTgiLCJxdWV1ZUlkIjoiMDIwYjMxNzUtNzkzNC00MDkwLTljOWMtZmY2YmJjNDA3ZjFkIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfM19jNmFkNTFiMi00YmQzLTQ2OTEtOWYzOC0zMzFmMTQxYThjMTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8zX2M2YWQ1MWIyLTRiZDMtNDY5MS05ZjM4LTMzMWYxNDFhOGMxOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjUxOWM1NWRmLWQxMWMtNGUyOS04NTZiLTE3ODJhNDdkMGY2ZiJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274658366,
+              "error": "HTTP status 500",
+              "state": "ERROR",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "duration": 1130,
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9",
+              "responseBody": "eyJlcnJvciI6IkxlYWQgbm90IGZvdW5kIn0=",
+              "responseStatus": 500,
+              "responseHeaders": {
+                "Date": [
+                  "Mon, 27 Apr 2026 07:24:18 GMT"
+                ],
+                "Vary": [
+                  "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                ],
+                "Server": [
+                  "Vercel"
+                ],
+                "X-Vercel-Id": [
+                  "fra1::iad1::jwtvt-1777274657249-72de5cd7c059"
+                ],
+                "Content-Type": [
+                  "application/json"
+                ],
+                "Cache-Control": [
+                  "public, max-age=0, must-revalidate"
+                ],
+                "X-Matched-Path": [
+                  "/api/jobs/followup-trigger"
+                ],
+                "X-Vercel-Cache": [
+                  "MISS"
+                ],
+                "Strict-Transport-Security": [
+                  "max-age=63072000"
+                ]
+              }
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC03NDk3Nzk3OTM2MTgiLCJxdWV1ZUlkIjoiMDIwYjMxNzUtNzkzNC00MDkwLTljOWMtZmY2YmJjNDA3ZjFkIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfM19jNmFkNTFiMi00YmQzLTQ2OTEtOWYzOC0zMzFmMTQxYThjMTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8zX2M2YWQ1MWIyLTRiZDMtNDY5MS05ZjM4LTMzMWYxNDFhOGMxOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjUxOWM1NWRmLWQxMWMtNGUyOS04NTZiLTE3ODJhNDdkMGY2ZiJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274658367,
+              "state": "FAILED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9"
+            }
+          ],
+          "attempt_count": 4,
+          "provider_retry_count": 0,
+          "sync_count": 4,
+          "error_payload": null,
+          "sync_error": "message:{\"error\":\"message msg_26hZCxZCuWyyTWPmSVBrNC1RABfnBVscH14JLpS2jfazx4Q3HFw898qjXB9aTw9 not found\"}",
+          "published_at": "2026-04-27T07:24:17.246+00:00",
+          "first_provider_event_at": "2026-04-27T07:24:17.142+00:00",
+          "last_provider_event_at": "2026-04-27T07:24:18.367+00:00",
+          "delivered_at": null,
+          "failed_at": "2026-04-27T07:24:18.367+00:00",
+          "last_sync_at": "2026-04-27T07:24:34.475+00:00",
+          "created_at": "2026-04-27T07:24:17.372293+00:00",
+          "updated_at": "2026-04-27T07:24:34.475+00:00"
+        },
+        {
+          "id": "61cd6a4b-72cc-4f01-9e1f-495073ebd285",
+          "provider": "qstash",
+          "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ",
+          "status": "failed",
+          "source": "audit_c26_zero_trust",
+          "event_name": "lead_hot",
+          "event_store_id": "6173c042-94da-4c98-a8f5-57db35b5b652",
+          "generation_queue_id": "710eba91-3b09-4eb6-96c2-808763bea4a4",
+          "target_url": "https://bimasakhi.com/api/jobs/followup-trigger",
+          "target_path": "/api/jobs/followup-trigger",
+          "request_payload": {
+            "leadId": "00000000-0000-0000-0000-906617277862",
+            "queueId": "710eba91-3b09-4eb6-96c2-808763bea4a4",
+            "_executive": "cso",
+            "_event_name": "lead_hot",
+            "audit_marker": "ZERO_TRUST_C26_1777274596462",
+            "_event_store_id": "6173c042-94da-4c98-a8f5-57db35b5b652",
+            "_execution_context": {
+              "audit": "c26_zero_trust",
+              "event_id": "ZERO_TRUST_C26_1777274596462_failure_2_c2a4fffa-d0a7-4332-81ae-f96bc07a6fe8",
+              "correlation_id": "ZERO_TRUST_C26_1777274596462_failure_2_c2a4fffa-d0a7-4332-81ae-f96bc07a6fe8"
+            }
+          },
+          "provider_response": {
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ"
+          },
+          "provider_message": null,
+          "latest_event": {
+            "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+            "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC05MDY2MTcyNzc4NjIiLCJxdWV1ZUlkIjoiNzEwZWJhOTEtM2IwOS00ZWI2LTk2YzItODA4NzYzYmVhNGE0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMl9jMmE0ZmZmYS1kMGE3LTQzMzItODFhZS1mOTZiYzA3YTZmZTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8yX2MyYTRmZmZhLWQwYTctNDMzMi04MWFlLWY5NmJjMDdhNmZlOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjYxNzNjMDQyLTk0ZGEtNGM5OC1hOGY1LTU3ZGIzNWI1YjY1MiJ9",
+            "host": "bimasakhi.com",
+            "path": "/api/jobs/followup-trigger",
+            "time": 1777274637433,
+            "state": "FAILED",
+            "header": {
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "method": "POST",
+            "callerIp": "106.219.152.62",
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ"
+          },
+          "attempt_history": [
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC05MDY2MTcyNzc4NjIiLCJxdWV1ZUlkIjoiNzEwZWJhOTEtM2IwOS00ZWI2LTk2YzItODA4NzYzYmVhNGE0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMl9jMmE0ZmZmYS1kMGE3LTQzMzItODFhZS1mOTZiYzA3YTZmZTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8yX2MyYTRmZmZhLWQwYTctNDMzMi04MWFlLWY5NmJjMDdhNmZlOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjYxNzNjMDQyLTk0ZGEtNGM5OC1hOGY1LTU3ZGIzNWI1YjY1MiJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274636089,
+              "state": "CREATED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ",
+              "nextDeliveryTime": 1777274636087
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC05MDY2MTcyNzc4NjIiLCJxdWV1ZUlkIjoiNzEwZWJhOTEtM2IwOS00ZWI2LTk2YzItODA4NzYzYmVhNGE0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMl9jMmE0ZmZmYS1kMGE3LTQzMzItODFhZS1mOTZiYzA3YTZmZTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8yX2MyYTRmZmZhLWQwYTctNDMzMi04MWFlLWY5NmJjMDdhNmZlOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjYxNzNjMDQyLTk0ZGEtNGM5OC1hOGY1LTU3ZGIzNWI1YjY1MiJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274636270,
+              "state": "ACTIVE",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ"
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC05MDY2MTcyNzc4NjIiLCJxdWV1ZUlkIjoiNzEwZWJhOTEtM2IwOS00ZWI2LTk2YzItODA4NzYzYmVhNGE0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMl9jMmE0ZmZmYS1kMGE3LTQzMzItODFhZS1mOTZiYzA3YTZmZTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8yX2MyYTRmZmZhLWQwYTctNDMzMi04MWFlLWY5NmJjMDdhNmZlOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjYxNzNjMDQyLTk0ZGEtNGM5OC1hOGY1LTU3ZGIzNWI1YjY1MiJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274637433,
+              "error": "HTTP status 500",
+              "state": "ERROR",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "duration": 1157,
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ",
+              "responseBody": "eyJlcnJvciI6IkxlYWQgbm90IGZvdW5kIn0=",
+              "responseStatus": 500,
+              "responseHeaders": {
+                "Date": [
+                  "Mon, 27 Apr 2026 07:23:57 GMT"
+                ],
+                "Vary": [
+                  "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                ],
+                "Server": [
+                  "Vercel"
+                ],
+                "X-Vercel-Id": [
+                  "fra1::iad1::2rldc-1777274636289-ec38c7c96d36"
+                ],
+                "Content-Type": [
+                  "application/json"
+                ],
+                "Cache-Control": [
+                  "public, max-age=0, must-revalidate"
+                ],
+                "X-Matched-Path": [
+                  "/api/jobs/followup-trigger"
+                ],
+                "X-Vercel-Cache": [
+                  "MISS"
+                ],
+                "Strict-Transport-Security": [
+                  "max-age=63072000"
+                ]
+              }
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC05MDY2MTcyNzc4NjIiLCJxdWV1ZUlkIjoiNzEwZWJhOTEtM2IwOS00ZWI2LTk2YzItODA4NzYzYmVhNGE0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMl9jMmE0ZmZmYS1kMGE3LTQzMzItODFhZS1mOTZiYzA3YTZmZTgiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8yX2MyYTRmZmZhLWQwYTctNDMzMi04MWFlLWY5NmJjMDdhNmZlOCJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjYxNzNjMDQyLTk0ZGEtNGM5OC1hOGY1LTU3ZGIzNWI1YjY1MiJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274637433,
+              "state": "FAILED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ"
+            }
+          ],
+          "attempt_count": 4,
+          "provider_retry_count": 0,
+          "sync_count": 4,
+          "error_payload": null,
+          "sync_error": "message:{\"error\":\"message msg_26hZCxZCuWyyTWPmSVBrNCtiJFHViyjjhQFTboDPUdCUfD3gVYyzRFg82HrVuqJ not found\"}",
+          "published_at": "2026-04-27T07:23:56.128+00:00",
+          "first_provider_event_at": "2026-04-27T07:23:56.089+00:00",
+          "last_provider_event_at": "2026-04-27T07:23:57.433+00:00",
+          "delivered_at": null,
+          "failed_at": "2026-04-27T07:23:57.433+00:00",
+          "last_sync_at": "2026-04-27T07:24:14.56+00:00",
+          "created_at": "2026-04-27T07:23:56.259234+00:00",
+          "updated_at": "2026-04-27T07:24:14.56+00:00"
+        },
+        {
+          "id": "496cf389-6086-4d52-a1af-00cd7edabb7b",
+          "provider": "qstash",
+          "provider_message_id": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+          "status": "failed",
+          "source": "audit_c26_zero_trust",
+          "event_name": "lead_hot",
+          "event_store_id": "0cbce63c-9370-4729-9176-375ad4a6d519",
+          "generation_queue_id": "57e08ab6-74c2-474f-a340-dad37a348ac4",
+          "target_url": "https://bimasakhi.com/api/jobs/followup-trigger",
+          "target_path": "/api/jobs/followup-trigger",
+          "request_payload": {
+            "leadId": "00000000-0000-0000-0000-634409449807",
+            "queueId": "57e08ab6-74c2-474f-a340-dad37a348ac4",
+            "_executive": "cso",
+            "_event_name": "lead_hot",
+            "audit_marker": "ZERO_TRUST_C26_1777274596462",
+            "_event_store_id": "0cbce63c-9370-4729-9176-375ad4a6d519",
+            "_execution_context": {
+              "audit": "c26_zero_trust",
+              "event_id": "ZERO_TRUST_C26_1777274596462_failure_1_b9046ca3-678a-47ed-8ae1-6855cb8f9f9f",
+              "correlation_id": "ZERO_TRUST_C26_1777274596462_failure_1_b9046ca3-678a-47ed-8ae1-6855cb8f9f9f"
+            }
+          },
+          "provider_response": {
+            "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR"
+          },
+          "provider_message": null,
+          "latest_event": {
+            "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+            "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+            "host": "bimasakhi.com",
+            "path": "/api/jobs/followup-trigger",
+            "time": 1777274629965,
+            "state": "FAILED",
+            "header": {
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "method": "POST",
+            "callerIp": "106.219.152.62",
+            "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+            "maxRetries": 1
+          },
+          "attempt_history": [
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274615394,
+              "state": "CREATED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+              "maxRetries": 1,
+              "nextDeliveryTime": 1777274615392
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274615448,
+              "state": "ACTIVE",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+              "maxRetries": 1
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274616652,
+              "error": "HTTP status 500",
+              "state": "ERROR",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "duration": 1198,
+              "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+              "maxRetries": 1,
+              "responseBody": "eyJlcnJvciI6IkxlYWQgbm90IGZvdW5kIn0=",
+              "responseStatus": 500,
+              "responseHeaders": {
+                "Date": [
+                  "Mon, 27 Apr 2026 07:23:36 GMT"
+                ],
+                "Vary": [
+                  "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                ],
+                "Server": [
+                  "Vercel"
+                ],
+                "X-Vercel-Id": [
+                  "fra1::iad1::c4fbl-1777274615463-0fd2de056fea"
+                ],
+                "Content-Type": [
+                  "application/json"
+                ],
+                "Cache-Control": [
+                  "public, max-age=0, must-revalidate"
+                ],
+                "X-Matched-Path": [
+                  "/api/jobs/followup-trigger"
+                ],
+                "X-Vercel-Cache": [
+                  "MISS"
+                ],
+                "Strict-Transport-Security": [
+                  "max-age=63072000"
+                ]
+              }
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274616652,
+              "state": "RETRY",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+              "maxRetries": 1,
+              "nextDeliveryTime": 1777274628652
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274628816,
+              "state": "ACTIVE",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+              "maxRetries": 1
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274629965,
+              "error": "HTTP status 500",
+              "state": "ERROR",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "duration": 1143,
+              "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+              "maxRetries": 1,
+              "responseBody": "eyJlcnJvciI6IkxlYWQgbm90IGZvdW5kIn0=",
+              "responseStatus": 500,
+              "responseHeaders": {
+                "Date": [
+                  "Mon, 27 Apr 2026 07:23:49 GMT"
+                ],
+                "Vary": [
+                  "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"
+                ],
+                "Server": [
+                  "Vercel"
+                ],
+                "X-Vercel-Id": [
+                  "fra1::iad1::tlpt7-1777274628832-793d65957a1e"
+                ],
+                "Content-Type": [
+                  "application/json"
+                ],
+                "Cache-Control": [
+                  "public, max-age=0, must-revalidate"
+                ],
+                "X-Matched-Path": [
+                  "/api/jobs/followup-trigger"
+                ],
+                "X-Vercel-Cache": [
+                  "MISS"
+                ],
+                "Strict-Transport-Security": [
+                  "max-age=63072000"
+                ]
+              }
+            },
+            {
+              "url": "https://bimasakhi.com/api/jobs/followup-trigger",
+              "body": "eyJsZWFkSWQiOiIwMDAwMDAwMC0wMDAwLTAwMDAtMDAwMC02MzQ0MDk0NDk4MDciLCJxdWV1ZUlkIjoiNTdlMDhhYjYtNzRjMi00NzRmLWEzNDAtZGFkMzdhMzQ4YWM0IiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX2ZhaWx1cmVfMV9iOTA0NmNhMy02NzhhLTQ3ZWQtOGFlMS02ODU1Y2I4ZjlmOWYiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfZmFpbHVyZV8xX2I5MDQ2Y2EzLTY3OGEtNDdlZC04YWUxLTY4NTVjYjhmOWY5ZiJ9LCJfZXZlbnRfbmFtZSI6ImxlYWRfaG90IiwiX2V4ZWN1dGl2ZSI6ImNzbyIsIl9ldmVudF9zdG9yZV9pZCI6IjBjYmNlNjNjLTkzNzAtNDcyOS05MTc2LTM3NWFkNGE2ZDUxOSJ9",
+              "host": "bimasakhi.com",
+              "path": "/api/jobs/followup-trigger",
+              "time": 1777274629965,
+              "state": "FAILED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR",
+              "maxRetries": 1
+            }
+          ],
+          "attempt_count": 7,
+          "provider_retry_count": 1,
+          "sync_count": 5,
+          "error_payload": null,
+          "sync_error": "message:{\"error\":\"message msg_7YoJxFpwkEy6sUx4P4FvF3mo3CR8Ddrpw896M8ifugSB2LzVaYqiR not found\"}",
+          "published_at": "2026-04-27T07:23:35.483+00:00",
+          "first_provider_event_at": "2026-04-27T07:23:35.394+00:00",
+          "last_provider_event_at": "2026-04-27T07:23:49.965+00:00",
+          "delivered_at": null,
+          "failed_at": "2026-04-27T07:23:49.965+00:00",
+          "last_sync_at": "2026-04-27T07:23:55.601+00:00",
+          "created_at": "2026-04-27T07:23:35.617141+00:00",
+          "updated_at": "2026-04-27T07:23:55.601+00:00"
+        },
+        {
+          "id": "8a12ed02-8e85-4510-b58d-6ca2c716aa55",
+          "provider": "qstash",
+          "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+          "status": "delivered",
+          "source": "audit_c26_zero_trust",
+          "event_name": "contact_created",
+          "event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+          "generation_queue_id": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+          "target_url": "https://bimasakhi.com/api/workers/contact-sync",
+          "target_path": "/api/workers/contact-sync",
+          "request_payload": {
+            "queueId": "93c2da8b-42a1-493d-aac0-bd30c39edccd",
+            "contactId": "ZERO_TRUST_C26_1777274596462_CONTACT_1_74351d1d-f17d-4b1c-8cf5-59bb19a5e2aa",
+            "_executive": "coo",
+            "_event_name": "contact_created",
+            "audit_marker": "ZERO_TRUST_C26_1777274596462",
+            "_event_store_id": "67705f8d-4c61-4a17-bd6f-ca95cbf5f869",
+            "_execution_context": {
+              "audit": "c26_zero_trust",
+              "event_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694",
+              "correlation_id": "ZERO_TRUST_C26_1777274596462_success_1_c2d7059a-311a-47d3-b924-0e0986934694"
+            }
+          },
+          "provider_response": {
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662"
+          },
+          "provider_message": null,
+          "latest_event": {
+            "url": "https://bimasakhi.com/api/workers/contact-sync",
+            "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+            "host": "bimasakhi.com",
+            "path": "/api/workers/contact-sync",
+            "time": 1777274603110,
+            "state": "DELIVERED",
+            "header": {
+              "Content-Type": [
+                "application/json"
+              ]
+            },
+            "method": "POST",
+            "callerIp": "106.219.152.62",
+            "duration": 2440,
+            "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+            "responseStatus": 200
+          },
+          "attempt_history": [
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274600584,
+              "state": "CREATED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+              "nextDeliveryTime": 1777274600582
+            },
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274600663,
+              "state": "ACTIVE",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662"
+            },
+            {
+              "url": "https://bimasakhi.com/api/workers/contact-sync",
+              "body": "eyJxdWV1ZUlkIjoiOTNjMmRhOGItNDJhMS00OTNkLWFhYzAtYmQzMGMzOWVkY2NkIiwiY29udGFjdElkIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2Ml9DT05UQUNUXzFfNzQzNTFkMWQtZjE3ZC00YjFjLThjZjUtNTliYjE5YTVlMmFhIiwiYXVkaXRfbWFya2VyIjoiWkVST19UUlVTVF9DMjZfMTc3NzI3NDU5NjQ2MiIsIl9leGVjdXRpb25fY29udGV4dCI6eyJhdWRpdCI6ImMyNl96ZXJvX3RydXN0IiwiY29ycmVsYXRpb25faWQiOiJaRVJPX1RSVVNUX0MyNl8xNzc3Mjc0NTk2NDYyX3N1Y2Nlc3NfMV9jMmQ3MDU5YS0zMTFhLTQ3ZDMtYjkyNC0wZTA5ODY5MzQ2OTQiLCJldmVudF9pZCI6IlpFUk9fVFJVU1RfQzI2XzE3NzcyNzQ1OTY0NjJfc3VjY2Vzc18xX2MyZDcwNTlhLTMxMWEtNDdkMy1iOTI0LTBlMDk4NjkzNDY5NCJ9LCJfZXZlbnRfbmFtZSI6ImNvbnRhY3RfY3JlYXRlZCIsIl9leGVjdXRpdmUiOiJjb28iLCJfZXZlbnRfc3RvcmVfaWQiOiI2NzcwNWY4ZC00YzYxLTRhMTctYmQ2Zi1jYTk1Y2JmNWY4NjkifQ==",
+              "host": "bimasakhi.com",
+              "path": "/api/workers/contact-sync",
+              "time": 1777274603110,
+              "state": "DELIVERED",
+              "header": {
+                "Content-Type": [
+                  "application/json"
+                ]
+              },
+              "method": "POST",
+              "callerIp": "106.219.152.62",
+              "duration": 2440,
+              "messageId": "msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662",
+              "responseStatus": 200
+            }
+          ],
+          "attempt_count": 3,
+          "provider_retry_count": 0,
+          "sync_count": 5,
+          "error_payload": null,
+          "sync_error": "message:{\"error\":\"message msg_26hZCxZCuWyyTWPmSVBrNC1RACHqEUFqw91MfHy7LrUj2VbpYJBUoaR35YE9662 not found\"}",
+          "published_at": "2026-04-27T07:23:20.664+00:00",
+          "first_provider_event_at": "2026-04-27T07:23:20.584+00:00",
+          "last_provider_event_at": "2026-04-27T07:23:23.11+00:00",
+          "delivered_at": "2026-04-27T07:23:23.11+00:00",
+          "failed_at": null,
+          "last_sync_at": "2026-04-27T07:23:34.896+00:00",
+          "created_at": "2026-04-27T07:23:20.810834+00:00",
+          "updated_at": "2026-04-27T07:23:34.896+00:00"
+        }
+      ]
+    },
+    "system_health": {
+      "success": true,
+      "timestamp": "2026-04-27T07:24:47.662Z",
+      "version": "47404cc",
+      "environment": "production",
+      "overall_health": "DEGRADED",
+      "summary": {
+        "status": "degraded",
+        "hard_failures": [
+          "delivery_failures_recent"
+        ],
+        "warnings": [
+          "delivery_success_rate:20"
+        ]
+      },
+      "system_mode": {
+        "mode": "normal",
+        "safe_mode": false,
+        "ai_enabled": true,
+        "followup_enabled": true,
+        "crm_auto_routing": true,
+        "queue_paused": true
+      },
+      "control_plane": {
+        "control_plane_source": "system_control_config",
+        "system_mode_source": "system_control_config",
+        "operational_flags_source": "system_control_config",
+        "safe_mode_source": "system_control_config",
+        "conflicting_states_possible": false
+      },
+      "crons": {
+        "alert-scan": {
+          "status": "healthy",
+          "last_run": "2026-04-27T07:20:02.54123+00:00",
+          "age_minutes": 5,
+          "expected_interval": "5m",
+          "required": true
+        },
+        "reconciliation": {
+          "status": "healthy",
+          "last_run": "2026-04-27T07:00:06.911635+00:00",
+          "age_minutes": 25,
+          "expected_interval": "30m",
+          "required": true
+        },
+        "event-retry": {
+          "status": "healthy",
+          "last_run": "2026-04-27T07:20:07.43954+00:00",
+          "age_minutes": 5,
+          "expected_interval": "5m",
+          "required": true
+        },
+        "vendor-health-check": {
+          "status": "healthy",
+          "last_run": "2026-04-27T07:20:05.142881+00:00",
+          "age_minutes": 5,
+          "expected_interval": "5m",
+          "required": true
+        },
+        "morning-brief": {
+          "status": "healthy",
+          "last_run": "2026-04-27T02:00:13.624148+00:00",
+          "age_minutes": 325,
+          "expected_interval": "24h",
+          "required": false
+        }
+      },
+      "alerts": {
+        "active": {
+          "total": 0,
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "open_recent": [],
+        "stale_open_count": 0,
+        "stale_open_sample": [],
+        "unacknowledged_escalations": []
+      },
+      "failures": {
+        "errors_1h": 0,
+        "errors_24h": 0,
+        "dlq_depth_recent": 0,
+        "dlq_depth_total": 0,
+        "current_stuck_events": 0,
+        "delivery_failures_recent": 4,
+        "delivery_stuck_count": 0,
+        "stuck_events": [],
+        "has_issues": true
+      },
+      "metrics": {
+        "leads_24h": 0,
+        "queue_pending": 0,
+        "total_published_pages": 3,
+        "delivery_success_rate": 20,
+        "delivery_terminal_recent": 5,
+        "delivery_delivered_recent": 1
+      }
+    }
+  }
+}

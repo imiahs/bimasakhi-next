@@ -1,0 +1,53 @@
+﻿{
+    "name":  "admin-content-flow-ps",
+    "started_at":  "2026-04-25T19:37:54.3648578Z",
+    "finished_at":  "2026-04-25T19:37:56.5100125Z",
+    "status":  "PARTIAL",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "ADMIN_PASSWORD":  {
+                                                               "present":  true,
+                                                               "masked":  "Haim...vija (20 chars)"
+                                                           },
+                                        "SUPABASE_SERVICE_ROLE_KEY":  {
+                                                                          "present":  true,
+                                                                          "masked":  "sb_s...eZm_ (41 chars)"
+                                                                      }
+                                    },
+                       "timestamp":  "2026-04-25T19:37:54.4263413Z"
+                   },
+                   {
+                       "name":  "draft_insert_direct_db",
+                       "status":  "FAIL",
+                       "evidence":  {
+                                        "body":  "",
+                                        "status":  401,
+                                        "draft_id":  null,
+                                        "error":  "The remote server returned an error: (401) Unauthorized.",
+                                        "slug":  "test_audit_draft-1777145874466"
+                                    },
+                       "timestamp":  "2026-04-25T19:37:55.0461920Z"
+                   },
+                   {
+                       "name":  "admin_login_for_content_api",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "role":  "super_admin"
+                                                 },
+                                        "error":  null,
+                                        "cookie_count":  1
+                                    },
+                       "timestamp":  "2026-04-25T19:37:56.5058634Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}

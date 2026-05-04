@@ -11,13 +11,13 @@ export const GET = withAdminAuth(async (request, user) => {
         // 1. Fetch live metrics from page_index
         const { data: pageIndexData, error: pageError } = await supabase
             .from('page_index')
-            .select('status, crawl_priority');
+            .select('status, indexing_status, crawl_priority');
 
         if (pageError) throw pageError;
 
-        let indexed = 0;
+        let published = 0;
         let pending = 0;
-        let noindex = 0;
+        let blocked = 0;
 
         // Priority distributions
         let pHigh = 0;
@@ -25,9 +25,9 @@ export const GET = withAdminAuth(async (request, user) => {
         let pLow = 0;
 
         pageIndexData.forEach(row => {
-            if (row.status === 'active') indexed++;
-            if (row.status === 'pending_index') pending++;
-            if (row.status === 'disabled' || row.status === 'noindex') noindex++;
+            if (row.status === 'published') published++;
+            if (row.status === 'published' && row.indexing_status === 'pending') pending++;
+            if (row.status === 'published' && row.indexing_status === 'blocked') blocked++;
 
             if (row.crawl_priority === 'high') pHigh++;
             else if (row.crawl_priority === 'low') pLow++;
@@ -42,9 +42,9 @@ export const GET = withAdminAuth(async (request, user) => {
 
         // 2. Fetch or update the snapshot
         const snapshotUpdates = {
-            indexed_pages: indexed,
+            indexed_pages: published,
             pending_pages: pending,
-            noindex_pages: noindex,
+            noindex_pages: blocked,
             priority_high: pHigh,
             priority_medium: pMedium,
             priority_low: pLow,

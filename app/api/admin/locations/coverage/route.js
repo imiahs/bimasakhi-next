@@ -44,7 +44,7 @@ export const GET = withAdminAuth(async () => {
         const { count: activePages } = await supabase
             .from('page_index')
             .select('id', { count: 'exact', head: true })
-            .eq('status', 'active');
+            .eq('status', 'published');
 
         // Localities with pages vs without
         const { count: localitiesWithPages } = await supabase

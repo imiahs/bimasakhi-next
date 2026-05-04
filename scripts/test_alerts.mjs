@@ -24,7 +24,7 @@ async function main() {
             severity: 'info',
             message: 'DEPLOY TEST: Alert system operational',
             data: { source: 'go_live_phase5', timestamp: new Date().toISOString() },
-            status: 'active',
+            status: 'published',
         }),
     });
 

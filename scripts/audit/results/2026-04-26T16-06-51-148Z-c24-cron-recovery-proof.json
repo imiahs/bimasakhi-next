@@ -1,0 +1,60 @@
+{
+  "captured_at": "2026-04-26T16:06:51.1480349Z",
+  "deployment_version": "fcffe61",
+  "qstash_schedule_recovery": {
+    "schedules_before": 4,
+    "schedules_after": 6,
+    "recreated": [
+      {
+        "name": "event-retry",
+        "schedule_id": "scd_5Nf3aEoA776GrqKp1nubmAh1BTSU",
+        "cron": "*/5 * * * *",
+        "url": "https://bimasakhi.com/api/jobs/event-retry"
+      },
+      {
+        "name": "reconciliation",
+        "schedule_id": "scd_7eLCdvVEp1o7rWvdfRCb729r17xu",
+        "cron": "*/30 * * * *",
+        "url": "https://bimasakhi.com/api/jobs/reconciliation"
+      },
+      {
+        "name": "alert-scan",
+        "schedule_id": "scd_5kgABtJUWVnB5mHoCscVCYuooGpB",
+        "cron": "*/5 * * * *",
+        "url": "https://bimasakhi.com/api/jobs/alert-scan"
+      },
+      {
+        "name": "vendor-health-check",
+        "schedule_id": "scd_6JLsqxLgc5n49AW58rfZPicmAZiw",
+        "cron": "*/5 * * * *",
+        "url": "https://bimasakhi.com/api/jobs/vendor-health-check"
+      },
+      {
+        "name": "scheduled-publish",
+        "schedule_id": "scd_7J8DtLe6UoKNbB8gTnag7GrQ89m1",
+        "cron": "0 * * * *",
+        "url": "https://bimasakhi.com/api/jobs/scheduled-publish"
+      },
+      {
+        "name": "morning-brief",
+        "schedule_id": "scd_7oSGND79QuX6QhcdsPqZDD2Tk3WP",
+        "cron": "0 2 * * *",
+        "url": "https://bimasakhi.com/api/jobs/morning-brief"
+      }
+    ]
+  },
+  "forced_execution": {
+    "event_retry_qstash": {
+      "status": 201,
+      "message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACnPRaZfJ1AVuz9HKawNFiprbN7eMQ3MKBL5MTs"
+    },
+    "vendor_health_direct": {
+      "status": 200,
+      "success": true,
+      "supabase_status": "healthy",
+      "supabase_latency_ms": 341,
+      "dlq_depth": 3,
+      "timestamp": "2026-04-26T16:06:51.318Z"
+    }
+  }
+}

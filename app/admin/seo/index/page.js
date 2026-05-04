@@ -2,9 +2,9 @@ import React from 'react';
 import { supabase } from '@/lib/supabase';
 
 export default async function IndexWorkerDashboard() {
-    const { count: activeCount } = await supabase.from('page_index').select('id', { count: 'exact', head: true }).eq('status', 'active');
-    const { count: pendingCount } = await supabase.from('page_index').select('id', { count: 'exact', head: true }).eq('status', 'pending_index');
-    const { count: disabledCount } = await supabase.from('page_index').select('id', { count: 'exact', head: true }).in('status', ['disabled', 'noindex']);
+    const { count: publishedCount } = await supabase.from('page_index').select('id', { count: 'exact', head: true }).eq('status', 'published');
+    const { count: pendingCount } = await supabase.from('page_index').select('id', { count: 'exact', head: true }).eq('status', 'published').eq('indexing_status', 'pending');
+    const { count: blockedCount } = await supabase.from('page_index').select('id', { count: 'exact', head: true }).eq('status', 'published').eq('indexing_status', 'blocked');
 
     const { data: recommendations } = await supabase.from('seo_growth_recommendations').select('*').limit(10).order('created_at', { ascending: false });
 
@@ -14,16 +14,16 @@ export default async function IndexWorkerDashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="admin-panel rounded-xl p-5 border-l-2 border-green-500">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase">Live (Indexed) Pages</h3>
-                    <p className="text-3xl font-bold text-white">{activeCount || 0}</p>
+                    <h3 className="text-xs font-bold text-slate-500 uppercase">Published Pages</h3>
+                    <p className="text-3xl font-bold text-white">{publishedCount || 0}</p>
                 </div>
                 <div className="admin-panel rounded-xl p-5 border-l-2 border-yellow-500">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase">Pending Drip Feed</h3>
+                    <h3 className="text-xs font-bold text-slate-500 uppercase">Pending Indexing</h3>
                     <p className="text-3xl font-bold text-white">{pendingCount || 0}</p>
                 </div>
                 <div className="admin-panel rounded-xl p-5 border-l-2 border-red-500">
-                    <h3 className="text-xs font-bold text-slate-500 uppercase">Disabled / NoIndex</h3>
-                    <p className="text-3xl font-bold text-white">{disabledCount || 0}</p>
+                    <h3 className="text-xs font-bold text-slate-500 uppercase">Blocked From Index</h3>
+                    <p className="text-3xl font-bold text-white">{blockedCount || 0}</p>
                 </div>
             </div>
 

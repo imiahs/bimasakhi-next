@@ -23,7 +23,7 @@ export async function GET(req) {
             .select('page_slug, page_type')
             .eq('city_id', cityId)
             .neq('locality_id', localityId)
-            .eq('status', 'active')
+            .eq('status', 'published')
             .eq('page_type', 'locality_page')
             .limit(3);
 
@@ -40,7 +40,7 @@ export async function GET(req) {
             .select('page_slug')
             .eq('city_id', cityId)
             .eq('page_type', 'city_page')
-            .eq('status', 'active')
+            .eq('status', 'published')
             .limit(1)
             .single();
 
@@ -55,7 +55,7 @@ export async function GET(req) {
         const { data: topPages } = await supabase
             .from('page_index')
             .select('page_slug')
-            .eq('status', 'active')
+            .eq('status', 'published')
             .eq('crawl_priority', 'high')
             .order('crawl_score', { ascending: false })
             .limit(2);

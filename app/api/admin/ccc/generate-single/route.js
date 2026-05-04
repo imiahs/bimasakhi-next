@@ -4,12 +4,29 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
+function buildSinglePagePayload(slug) {
+    const keywordText = slug.replace(/-/g, ' ').trim();
+
+    return {
+        version: 1,
+        source: 'ccc_single_generation',
+        pages: [
+            {
+                slug,
+                keyword_text: keywordText,
+                page_type: 'locality_page',
+                content_level: 'locality_page',
+            },
+        ],
+    };
+}
+
 /**
  * POST /api/admin/ccc/generate-single
  * Fix 2d: Trigger AI generation for a single page by slug.
  * Inserts a job into generation_queue for the pagegen worker to pick up.
  */
-export const POST = withAdminAuth(async (request) => {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const { slug } = await request.json();
 
@@ -34,15 +51,44 @@ export const POST = withAdminAuth(async (request) => {
             }, { status: 409 });
         }
 
+        const { data: existingQueue, error: existingQueueError } = await supabase
+            .from('generation_queue')
+            .select('id, status')
+            .eq('slug', cleanSlug)
+            .in('status', ['pending', 'processing', 'paused'])
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (existingQueueError) {
+            console.error('[Generate Single] Queue lookup error:', existingQueueError);
+            return NextResponse.json({ success: false, error: existingQueueError.message }, { status: 500 });
+        }
+
+        if (existingQueue) {
+            return NextResponse.json({
+                success: false,
+                error: `Generation already queued for "${cleanSlug}" (queue ID: ${existingQueue.id}, status: ${existingQueue.status}).`
+            }, { status: 409 });
+        }
+
+        const payload = buildSinglePagePayload(cleanSlug);
+
         // Insert into generation_queue for pagegen worker
         const { data, error } = await supabase
             .from('generation_queue')
             .insert({
                 slug: cleanSlug,
                 task_type: 'pagegen',
+                payload,
                 status: 'pending',
+                total_items: payload.pages.length,
                 priority: 1,
-                metadata: { source: 'ccc_single_generation', triggered_by: 'admin' },
+                created_by: user?.email || user?.id || 'admin',
+                metadata: {
+                    source: 'ccc_single_generation',
+                    triggered_by: user?.email || user?.id || 'admin',
+                },
             })
             .select('id')
             .single();

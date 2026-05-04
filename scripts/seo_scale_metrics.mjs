@@ -4,7 +4,7 @@ async function getSeoMetrics() {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
     
     // Total pages generated
-    const { count: totalPages } = await supabase.from('page_index').select('id', { count: 'exact', head: true }).eq('status', 'active');
+    const { count: totalPages } = await supabase.from('page_index').select('id', { count: 'exact', head: true }).eq('status', 'published');
     
     // Pages generated today
     const startOfDay = new Date();

@@ -1,0 +1,69 @@
+{
+  "captured_at": "2026-04-26T11:35:16.892Z",
+  "table": "public.admin_users",
+  "columns": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "email",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "password_hash",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "role",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "active",
+      "data_type": "boolean",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "last_login_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "assigned_cities",
+      "data_type": "ARRAY",
+      "is_nullable": "YES"
+    }
+  ],
+  "recorded_migrations": [
+    {
+      "migration_name": "041_real_rbac_admin_users.sql"
+    },
+    {
+      "migration_name": "20260426010000_admin_users_schema_repair.sql"
+    }
+  ]
+}

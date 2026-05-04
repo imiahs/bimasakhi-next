@@ -68,7 +68,7 @@ export const GET = withAdminAuth(async (request, user) => {
         const { count: publishedPages } = await supabase
             .from('page_index')
             .select('id', { count: 'exact', head: true })
-            .eq('status', 'active');
+            .eq('status', 'published');
 
         const totalSeoIndexed = publishedPages || 0;
         // ---------------------------------------------

@@ -1,0 +1,76 @@
+{
+  "id": "2026-05-04T06-15-09-082Z",
+  "created_at": "2026-05-04T06:15:09.085Z",
+  "tables": [
+    {
+      "table": "system_control_config",
+      "file": "system_control_config.json",
+      "rowCount": 1
+    },
+    {
+      "table": "feature_flags",
+      "file": "feature_flags.json",
+      "rowCount": 14
+    },
+    {
+      "table": "workflow_config",
+      "file": "workflow_config.json",
+      "rowCount": 19
+    },
+    {
+      "table": "seo_overrides",
+      "file": "seo_overrides.json",
+      "rowCount": 0
+    },
+    {
+      "table": "content_drafts",
+      "file": "content_drafts.json",
+      "rowCount": 7
+    },
+    {
+      "table": "page_index",
+      "file": "page_index.json",
+      "rowCount": 26
+    },
+    {
+      "table": "location_content",
+      "file": "location_content.json",
+      "rowCount": 24
+    },
+    {
+      "table": "generation_queue",
+      "file": "generation_queue.json",
+      "rowCount": 49
+    },
+    {
+      "table": "leads",
+      "file": "leads.json",
+      "rowCount": 75
+    },
+    {
+      "table": "lead_events",
+      "file": "lead_events.json",
+      "rowCount": 114
+    },
+    {
+      "table": "lead_metadata",
+      "file": "lead_metadata.json",
+      "rowCount": 62
+    },
+    {
+      "table": "job_runs",
+      "file": "job_runs.json",
+      "rowCount": 32
+    },
+    {
+      "table": "job_dead_letters",
+      "file": "job_dead_letters.json",
+      "rowCount": 0
+    },
+    {
+      "table": "event_store",
+      "file": "event_store.json",
+      "rowCount": 129
+    }
+  ]
+}

@@ -78,7 +78,7 @@ export const GET = withAdminAuth(async () => {
             supabase
                 .from('page_index')
                 .select('id', { count: 'exact' })
-                .eq('status', 'active')
+                .eq('status', 'published')
                 .limit(1)
         ));
 

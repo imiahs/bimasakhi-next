@@ -3,8 +3,10 @@
 
 > **Status:** ACTIVE — Governance restructured April 19, 2026  
 > **Owner:** CTO (under CEO authority — Constitution Article 1)  
-> **Last Updated:** May 2, 2026
+> **Last Updated:** May 4, 2026 (re-execution session)
 > **Core Vision:** Transform pagegen from a black-box content generator into India's most powerful programmatic SEO + lead acquisition machine for LIC/financial services — organically, without ads.
+
+> **Stability Stop Order (May 4, 2026):** Deployment remains blocked pending live redeploy proof. All stop-order core runtime paths are now independently verified twice on a fresh dev server: build PASS, publish/live PASS, rejected archive PASS, pagegen worker PASS (1516 words, quality 8.5; AI fallback path also exercised successfully — primary model 429 × 2 → fallback succeeded), CRM scoring fixed and runtime-proven, AI admin pages PASS, SEO override GET/PUT PASS, and the backup surface creates real filesystem snapshots. Live deployment proof is still required before the stop order can be lifted.
 
 ---
 
@@ -2059,7 +2061,7 @@ Phase 3: CONVERT    → Agent guides form filling → Policy sale happens
 
 | System | Status | Code Location |
 |--------|--------|--------------|
-| generation_queue | ✅ Live | `supabase/migrations/018_generation_queue_schema.sql` |
+| generation_queue | ✅ Live | `supabase/migrations/018_generation_queue_schema.sql`, `supabase/migrations/20260416000000_phase_4_6_contract_reconciliation.sql`, `supabase/migrations/20260502100000_p1_generation_queue_schema_fix.sql` |
 | Gemini AI content ("Raj" persona) | ✅ Live | `lib/ai/generateContent.js`, `lib/ai/promptTemplates.js` |
 | SHA256 content fingerprints (dedup) | ✅ Live | `app/api/jobs/pagegen/route.js` → `content_fingerprints` table |
 | cities → localities → pincodes geo DB | ✅ Live | `supabase/migrations/014_locations_schema.sql` |

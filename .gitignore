@@ -66,4 +66,38 @@ vercel-worker-hit.log
 
 # ── Temp tracking / scratch files ──
 _all_tracked.txt
-/docs/
+
+
+# Ignore everything inside docs by default
+docs/*
+
+# Allow SYSTEM TRUTH (MANDATORY)
+!docs/CONTENT_COMMAND_CENTER.md
+!docs/INDEX.md
+
+!docs/audits/
+!docs/audits/**
+
+!docs/fixes/
+!docs/fixes/**
+
+!docs/migrations/
+!docs/migrations/**
+
+# Allow SYSTEM HISTORY (recommended)
+!docs/decisions/
+!docs/decisions/**
+
+!docs/incidents/
+!docs/incidents/**
+
+!docs/deployments/
+!docs/deployments/**
+
+# Optional
+!docs/features/
+!docs/features/**
+
+!docs/tests/
+!docs/tests/**
+*.txt

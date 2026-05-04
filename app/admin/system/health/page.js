@@ -10,6 +10,7 @@ const CRITICALITY_COLORS = {
 const HEALTH_COLORS = {
     healthy: '#22c55e',
     degraded: '#f59e0b',
+    safe_mode: '#f97316',
     down: '#ef4444',
     unknown: '#6b7280',
 };
@@ -27,7 +28,7 @@ export default function VendorHealthPage() {
 
     const fetchHealth = useCallback(async () => {
         try {
-            const res = await fetch('/api/admin/vendor-health', { credentials: 'include' });
+            const res = await fetch('/api/admin/vendor-health', { credentials: 'include', cache: 'no-store' });
             const json = await res.json();
             if (res.ok && !json.error) {
                 setData(json);
@@ -64,7 +65,7 @@ export default function VendorHealthPage() {
         <div style={{ padding: 24, maxWidth: 1200 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                 <h1 style={{ fontSize: 24, fontWeight: 700, color: '#f1f5f9' }}>
-                    Vendor Health Dashboard
+                    System Health Dashboard
                 </h1>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                     {lastRefresh && (
@@ -86,7 +87,13 @@ export default function VendorHealthPage() {
                 padding: 16,
                 borderRadius: 8,
                 marginBottom: 24,
-                background: overall.health === 'healthy' ? '#052e16' : overall.health === 'critical' ? '#450a0a' : '#451a03',
+                background: overall.health === 'healthy'
+                    ? '#052e16'
+                    : overall.health === 'safe_mode'
+                        ? '#431407'
+                        : overall.health === 'critical'
+                            ? '#450a0a'
+                            : '#451a03',
                 border: `1px solid ${HEALTH_COLORS[overall.health] || '#6b7280'}44`,
             }}>
                 <div style={{ display: 'flex', gap: 32, alignItems: 'center', flexWrap: 'wrap' }}>

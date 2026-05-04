@@ -31,6 +31,12 @@ const CRONS = [
         description: 'Alert and runbook evaluation every 5 minutes',
     },
     {
+        name: 'vendor-health-check',
+        url: `${BASE_URL}/api/jobs/vendor-health-check`,
+        cron: '*/5 * * * *',
+        description: 'Vendor telemetry and SLA snapshots every 5 minutes',
+    },
+    {
         name: 'scheduled-publish',
         url: `${BASE_URL}/api/jobs/scheduled-publish`,
         cron: '0 * * * *',

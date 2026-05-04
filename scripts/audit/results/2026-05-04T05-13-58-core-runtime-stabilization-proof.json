@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-05-04T05:13:58Z",
+  "status": "local_runtime_pass",
+  "scope": [
+    "build",
+    "content_publish_live",
+    "rejected_archive",
+    "pagegen_happy_path",
+    "crm_scoring",
+    "ai_admin_pages",
+    "seo_module",
+    "backup_system"
+  ],
+  "build": {
+    "status": "PASS",
+    "compiled_successfully": true,
+    "compile_time_seconds": 101,
+    "lint_and_typecheck": "PASS",
+    "static_pages_generated": 107
+  },
+  "content_publish_live": {
+    "status": "PASS",
+    "evidence_artifact": "scripts/audit/results/2026-05-04T04-36-08-045Z-admin-content-flow.json",
+    "checks": {
+      "admin_login": 200,
+      "draft_read": "PASS",
+      "publish_api": "PASS",
+      "page_index_row": "PASS",
+      "location_content_row": "PASS",
+      "live_url_render": "PASS"
+    }
+  },
+  "rejected_archive": {
+    "status": "PASS",
+    "login_status": 200,
+    "create_status": 200,
+    "reject_status": 200,
+    "archive_status": 200,
+    "final_status": "archived",
+    "cleanup": "completed"
+  },
+  "pagegen_happy_path": {
+    "status": "PASS",
+    "worker_status": 200,
+    "worker_body": {
+      "success": true,
+      "processed": 1,
+      "reviews": 0,
+      "dispatch_deferred": false
+    },
+    "ai_model_path": {
+      "primary_model": "gemini-2.0-flash",
+      "primary_result": "429 quota exceeded twice",
+      "fallback_model": "gemini-2.5-flash-lite",
+      "fallback_result": "success"
+    },
+    "queue_after": {
+      "status": "completed",
+      "progress": 1,
+      "total_items": 1,
+      "retry_count": 0
+    },
+    "draft_row": {
+      "status": "draft",
+      "word_count": 1346,
+      "quality_score": 9.5
+    },
+    "page_row": {
+      "status": "draft",
+      "indexing_status": "blocked"
+    },
+    "location_row": {
+      "word_count": 1346
+    },
+    "cleanup": "synthetic queue/page rows removed; control flags restored"
+  },
+  "crm_scoring": {
+    "status": "PASS",
+    "code_fix": "effective source fallback across marketing_source/source/conversion_source",
+    "runtime_proof": {
+      "organic_score": 65,
+      "website_score": 55
+    }
+  },
+  "ai_admin_pages": {
+    "status": "PASS",
+    "code_fix": "import crypto from 'crypto'",
+    "post_status": 200,
+    "response_shape": "generated blocks returned"
+  },
+  "seo_module": {
+    "status": "PASS",
+    "get_status": 200,
+    "put_status": 200,
+    "cleanup": "temporary override deleted",
+    "note": "degraded signal traced to /api/admin/system background_workers status, not /api/admin/seo"
+  },
+  "backup_system": {
+    "status": "PASS",
+    "create_status": 200,
+    "list_status": 200,
+    "backup_id": "2026-05-04T04-55-55-019Z",
+    "files_count": 15,
+    "size_bytes": 599908,
+    "code_fix": "manual POST snapshot flow added; UI button now calls real API"
+  },
+  "system_status_context": {
+    "status": 200,
+    "overall": "yellow",
+    "statuses": {
+      "supabase": "green",
+      "qstash": "green",
+      "zoho_api": "yellow",
+      "background_workers": "red",
+      "media_pipeline": "green"
+    },
+    "metrics": {
+      "generation_backlog": 0,
+      "recent_job_failures": 12,
+      "dead_letters": 0
+    }
+  }
+}

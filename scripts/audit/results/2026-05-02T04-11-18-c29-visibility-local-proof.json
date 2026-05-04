@@ -1,0 +1,79 @@
+{
+  "mode": "c29_local_visibility_proof",
+  "captured_at": "2026-05-02T04:11:18.1550613+05:30",
+  "verdict": "PASS_LOCAL_PENDING_LIVE",
+  "scope": {
+    "api_first": true,
+    "read_only": true,
+    "static_code_anchors_only": true,
+    "dynamic_scanning": false,
+    "new_tables_added": false,
+    "deployment_performed": false
+  },
+  "implementation": {
+    "helper": "lib/system/codeVisibility.js",
+    "api_route": "app/api/admin/system/code/route.js",
+    "ui_component": "features/admin/system/CodeVisibilityContent.jsx",
+    "ui_page": "app/admin/system/code/page.js",
+    "sidebar": "app/admin/ClientLayout.jsx"
+  },
+  "validation": {
+    "admin_login_local": {
+      "status": 200,
+      "result": "PASS"
+    },
+    "api_snapshot_local": {
+      "status": 200,
+      "success": true,
+      "overall_state": "active",
+      "module_count": 6,
+      "flow_count": 5
+    },
+    "module_filter": {
+      "status": 200,
+      "module": "event_bus",
+      "count": 1,
+      "result": "PASS"
+    },
+    "page_route": {
+      "path": "/admin/system/code",
+      "status": 200,
+      "result": "PASS"
+    },
+    "control_links": {
+      "control_plane": [
+        "/admin/settings",
+        "/admin/control/features",
+        "/admin/control/workflow"
+      ],
+      "generation_engine": [
+        "/admin/ai",
+        "/admin/ccc/bulk",
+        "/admin/settings"
+      ]
+    },
+    "build": {
+      "status": "PASS",
+      "warnings": [
+        "Existing jose Edge Runtime warnings remain non-blocking"
+      ]
+    }
+  },
+  "modules_observed": {
+    "control_plane": "active",
+    "generation_engine": "paused",
+    "event_bus": "idle",
+    "delivery_engine": "idle",
+    "crm_followup": "idle",
+    "recovery_crons": "active"
+  },
+  "limits": [
+    "No production deployment happened in this session",
+    "No remote live C29 proof exists yet",
+    "C29 remains open only for deployment/live closure"
+  ],
+  "status_implication": {
+    "c29": "IMPLEMENTED_AND_LOCALLY_PROVEN_LIVE_PENDING",
+    "c30": "OPEN"
+  }
+}

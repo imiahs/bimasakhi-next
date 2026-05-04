@@ -50,93 +50,18 @@ async function handler(request) {
 
         for (const draft of dueDrafts) {
             try {
-                let pageIndexId = draft.page_index_id;
+                const publishKey = `scheduled:${draft.id}:${draft.scheduled_publish_at}`;
+                const { data: publishResult, error: publishErr } = await supabase.rpc('rule16_publish_draft', {
+                    p_draft_id: draft.id,
+                    p_actor: 'scheduled_publisher',
+                    p_idempotency_key: publishKey,
+                });
 
-                if (pageIndexId) {
-                    // Activate existing page_index
-                    await supabase
-                        .from('page_index')
-                        .update({ status: 'active', updated_at: now })
-                        .eq('id', pageIndexId);
-                } else {
-                    // Check for existing page_index by slug (idempotency)
-                    const { data: existingPage } = await supabase
-                        .from('page_index')
-                        .select('id')
-                        .eq('page_slug', draft.slug)
-                        .maybeSingle();
-
-                    if (existingPage) {
-                        pageIndexId = existingPage.id;
-                        await supabase
-                            .from('page_index')
-                            .update({ status: 'active', updated_at: now })
-                            .eq('id', pageIndexId);
-                    } else {
-                        // Create new page_index
-                        const pageType = inferPageType(draft.slug);
-                        const { data: newPage, error: createErr } = await supabase
-                            .from('page_index')
-                            .insert({
-                                page_slug: draft.slug,
-                                page_type: pageType,
-                                status: 'active',
-                                city_id: draft.city_id || null,
-                                locality_id: draft.locality_id || null,
-                                created_at: now,
-                                updated_at: now
-                            })
-                            .select('id')
-                            .single();
-
-                        if (createErr) throw new Error(`page_index create failed: ${createErr.message}`);
-                        pageIndexId = newPage.id;
-                    }
+                if (publishErr) {
+                    throw new Error(`publish failed: ${publishErr.message}`);
                 }
 
-                // Upsert location_content
-                const contentData = {
-                    page_index_id: pageIndexId,
-                    hero_headline: draft.hero_headline || '',
-                    meta_title: draft.meta_title || '',
-                    meta_description: draft.meta_description || '',
-                    cta_text: draft.cta_text || '',
-                    local_opportunity_description: draft.body_content || '',
-                    faq_data: draft.faq_data || null,
-                    city_id: draft.city_id || null,
-                    locality_id: draft.locality_id || null,
-                    word_count: draft.word_count || 0,
-                    updated_at: now
-                };
-
-                const { data: existingContent } = await supabase
-                    .from('location_content')
-                    .select('id')
-                    .eq('page_index_id', pageIndexId)
-                    .maybeSingle();
-
-                if (existingContent) {
-                    await supabase.from('location_content').update(contentData).eq('page_index_id', pageIndexId);
-                } else {
-                    contentData.created_at = now;
-                    await supabase.from('location_content').insert(contentData);
-                }
-
-                // Update draft status
-                await supabase
-                    .from('content_drafts')
-                    .update({
-                        status: 'published',
-                        page_index_id: pageIndexId,
-                        published_at: now,
-                        scheduled_publish_at: null,
-                        reviewer: 'scheduled_publisher',
-                        reviewed_at: now,
-                        updated_at: now
-                    })
-                    .eq('id', draft.id);
-
-                published.push({ id: draft.id, slug: draft.slug, pageIndexId });
+                published.push({ id: draft.id, slug: draft.slug, pageIndexId: publishResult.page_index_id });
                 console.log(`[ScheduledPublish] Published: ${draft.slug}`);
             } catch (draftErr) {
                 errors.push({ id: draft.id, slug: draft.slug, error: draftErr.message });

@@ -1,0 +1,4939 @@
+[
+  {
+    "id": "0fcf3acb-d6ab-4a82-895e-a773be1cba96",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "b549c555-3592-44d3-9398-bb6d5e76836d",
+      "session_id": "sess_hrv4z572j_1777818669676"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJE83AMPE8nY1RUFemzeymsrZJYAt1rysySc7kf1",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "53e15fbb-014f-4ab7-bda9-9ecca04d57e7",
+      "timestamp": "2026-05-03T14:32:40.725Z",
+      "correlation_id": "98755a3a-3784-4254-930a-fbcee2dcbee4"
+    },
+    "created_at": "2026-05-03T14:32:40.846285+00:00",
+    "updated_at": "2026-05-03T14:32:50.295+00:00",
+    "dispatched_at": "2026-05-03T14:32:42.108+00:00",
+    "completed_at": "2026-05-03T14:32:50.295+00:00",
+    "worker_result": {
+      "lead_id": "b549c555-3592-44d3-9398-bb6d5e76836d",
+      "zoho_id": "584143000002958002",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "98755a3a-3784-4254-930a-fbcee2dcbee4"
+    },
+    "correlation_id": "98755a3a-3784-4254-930a-fbcee2dcbee4"
+  },
+  {
+    "id": "2dd79ea1-2c1e-4b3d-81ec-72679666f258",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "fe58d43d-cd91-4aca-8d13-87b39ea42247",
+      "session_id": "golive-session-1776385723629-7000100001"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RABiTi8v8YX9DNc2wTcJZf47GRaNgbR7bWaHSXBN",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "11dc670e-4fe7-44ba-884d-978bcd773910",
+      "timestamp": "2026-04-17T00:28:49.281Z",
+      "correlation_id": "0a00b94f-86fd-4f5d-ad70-e58048128376"
+    },
+    "created_at": "2026-04-17T00:28:49.49423+00:00",
+    "updated_at": "2026-04-17T00:29:00.204+00:00",
+    "dispatched_at": "2026-04-17T00:28:50.77+00:00",
+    "completed_at": "2026-04-17T00:29:00.204+00:00",
+    "worker_result": {
+      "lead_id": "fe58d43d-cd91-4aca-8d13-87b39ea42247",
+      "zoho_id": "584143000002780002",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "0a00b94f-86fd-4f5d-ad70-e58048128376"
+    },
+    "correlation_id": "0a00b94f-86fd-4f5d-ad70-e58048128376"
+  },
+  {
+    "id": "b5844612-8a07-46ca-962f-ea09d68e1f89",
+    "event_name": "lead_hot",
+    "payload": {
+      "leadId": "00000000-0000-0000-0000-592024065527",
+      "queueId": "bbe6287f-ca89-4f32-bd03-bd2bae29e6d9",
+      "audit_marker": "NO_CLEANUP_C26_1777290436387"
+    },
+    "source": "audit_c26_no_cleanup",
+    "status": "failed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 0,
+    "last_error": "Lead not found",
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFuCNpkBTER4DMEyB3CenTVNcfYhLTboAw3xcHA",
+    "execution_context": {
+      "audit": "c26_no_cleanup",
+      "event_id": "NO_CLEANUP_C26_1777290436387_failure_5f1dddd6-4820-4531-847c-7f81004d9de1",
+      "correlation_id": "NO_CLEANUP_C26_1777290436387_failure_5f1dddd6-4820-4531-847c-7f81004d9de1"
+    },
+    "created_at": "2026-04-27T11:47:32.522486+00:00",
+    "updated_at": "2026-04-27T11:47:47.08+00:00",
+    "dispatched_at": "2026-04-27T11:47:33.535+00:00",
+    "completed_at": null,
+    "worker_result": {
+      "lead_id": "00000000-0000-0000-0000-592024065527",
+      "partial": {
+        "error": "Lead not found",
+        "event": "lead_hot",
+        "steps": [],
+        "leadId": "00000000-0000-0000-0000-592024065527",
+        "executive": "cso"
+      }
+    },
+    "correlation_id": "NO_CLEANUP_C26_1777290436387_failure_5f1dddd6-4820-4531-847c-7f81004d9de1"
+  },
+  {
+    "id": "95780bc9-3db4-4af8-aecc-c9c8b55d6bf9",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "1b45e3ce-c97a-4bce-9c30-3842fec90c4a",
+      "session_id": "golive-session-1776385731395-7000100002"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2UwLR4AuAmQggQmaBhub2tU4QSJdKziYx31Smk",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "6451667a-84df-4c2b-81bf-0ae92419b7b5",
+      "timestamp": "2026-04-17T00:28:54.982Z",
+      "correlation_id": "1add9744-06cd-491f-81a2-3218024f28fd"
+    },
+    "created_at": "2026-04-17T00:28:55.117749+00:00",
+    "updated_at": "2026-04-17T00:29:04.073+00:00",
+    "dispatched_at": "2026-04-17T00:28:56.4+00:00",
+    "completed_at": "2026-04-17T00:29:04.073+00:00",
+    "worker_result": {
+      "lead_id": "1b45e3ce-c97a-4bce-9c30-3842fec90c4a",
+      "zoho_id": "584143000002781001",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "1add9744-06cd-491f-81a2-3218024f28fd"
+    },
+    "correlation_id": "1add9744-06cd-491f-81a2-3218024f28fd"
+  },
+  {
+    "id": "47249e17-2441-4b1b-96cd-3415cb04ed59",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "bf410d0d-293b-4394-a93b-474dea91ff1a",
+      "session_id": "golive-session-1776385737247-7000100003"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3B3hQqUqnzBJiGzRK6ou1hWdKfsNcWZ7SNNzjR",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "dd743fdb-5279-488e-af2a-be5c02807750",
+      "timestamp": "2026-04-17T00:29:02.596Z",
+      "correlation_id": "5a92b09a-4a46-41d3-8549-3d4a65f2b134"
+    },
+    "created_at": "2026-04-17T00:29:02.736504+00:00",
+    "updated_at": "2026-04-17T00:29:11.715+00:00",
+    "dispatched_at": "2026-04-17T00:29:04.037+00:00",
+    "completed_at": "2026-04-17T00:29:11.715+00:00",
+    "worker_result": {
+      "lead_id": "bf410d0d-293b-4394-a93b-474dea91ff1a",
+      "zoho_id": "584143000002736013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "5a92b09a-4a46-41d3-8549-3d4a65f2b134"
+    },
+    "correlation_id": "5a92b09a-4a46-41d3-8549-3d4a65f2b134"
+  },
+  {
+    "id": "5e7b9027-fa9e-4d0d-8556-28b1a2cf88f5",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "b89db60c-9393-48be-8195-8a9317bf8d14",
+      "session_id": "golive-session-1776385750446-7000100005"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx6eRoRet5wZZQXnfC8W6ZHYXv4LGvRMqBdFp4yM",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "79fcd075-c0ac-4eb1-93bd-44dd78ff63e1",
+      "timestamp": "2026-04-17T00:29:13.951Z",
+      "correlation_id": "c50e32e4-0001-4171-aa0b-9bc561a11360"
+    },
+    "created_at": "2026-04-17T00:29:14.085189+00:00",
+    "updated_at": "2026-04-17T00:29:22.287+00:00",
+    "dispatched_at": "2026-04-17T00:29:15.342+00:00",
+    "completed_at": "2026-04-17T00:29:22.287+00:00",
+    "worker_result": {
+      "lead_id": "b89db60c-9393-48be-8195-8a9317bf8d14",
+      "zoho_id": "584143000002729026",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "c50e32e4-0001-4171-aa0b-9bc561a11360"
+    },
+    "correlation_id": "c50e32e4-0001-4171-aa0b-9bc561a11360"
+  },
+  {
+    "id": "0fc2af7d-7828-45d1-9a76-757a1bba3dc9",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "81a1c1a4-2586-449d-a180-919683b8ee17",
+      "session_id": "golive-session-1776384892417-7000100001"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 10,
+    "max_retries": 10,
+    "last_error": "manually_resolved: leads marked completed via forensic audit C2 fix",
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2Vsty7SihovLhpneDg4jNdwLU2hjW1sHpN8h5N",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "71077710-1ee0-4b76-997c-0e955a522cae",
+      "timestamp": "2026-04-17T00:14:57.850Z",
+      "correlation_id": "b1ab5ce1-b596-422f-a44d-a7824f6e1619"
+    },
+    "created_at": "2026-04-17T00:14:57.982542+00:00",
+    "updated_at": "2026-04-18T11:32:21.763+00:00",
+    "dispatched_at": "2026-04-17T00:45:19.019+00:00",
+    "completed_at": null,
+    "worker_result": null,
+    "correlation_id": "b1ab5ce1-b596-422f-a44d-a7824f6e1619"
+  },
+  {
+    "id": "68025615-e783-4eb1-baf5-faf1f77788b4",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "14cee7c3-70a9-497a-8fbe-9843b51c2c71",
+      "session_id": "sess_wk1yn9wwo_1777023800109"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACH39XbK2mF4wCfuuo44A6QsWFzwgqhs8MmCo6U",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "3c5039e4-ad21-438f-b9fb-50cc0b8f95a5",
+      "timestamp": "2026-04-24T09:51:03.890Z",
+      "correlation_id": "cc1e723f-d9b6-4094-9689-f9762c672f3d"
+    },
+    "created_at": "2026-04-24T09:51:04.002482+00:00",
+    "updated_at": "2026-04-24T09:51:15.015+00:00",
+    "dispatched_at": "2026-04-24T09:51:05.593+00:00",
+    "completed_at": "2026-04-24T09:51:15.015+00:00",
+    "worker_result": {
+      "lead_id": "14cee7c3-70a9-497a-8fbe-9843b51c2c71",
+      "zoho_id": "584143000002829002",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "cc1e723f-d9b6-4094-9689-f9762c672f3d"
+    },
+    "correlation_id": "cc1e723f-d9b6-4094-9689-f9762c672f3d"
+  },
+  {
+    "id": "ff64fae5-d376-4295-98e0-eaaaba8065fb",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7cffeb78-2eea-4aba-97c8-d86ead5539f2",
+      "session_id": "golive-session-1776385744708-7000100004"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp37H4qXwyGbZRv2uGK9MQzrKf2HXjmAszPMUCQw",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "06067bcc-7c16-4f2a-90af-e188c80e94c1",
+      "timestamp": "2026-04-17T00:29:08.447Z",
+      "correlation_id": "c61c80d7-e044-4374-b2e2-1d458778c72a"
+    },
+    "created_at": "2026-04-17T00:29:08.579775+00:00",
+    "updated_at": "2026-04-17T00:29:17.018+00:00",
+    "dispatched_at": "2026-04-17T00:29:09.884+00:00",
+    "completed_at": "2026-04-17T00:29:17.018+00:00",
+    "worker_result": {
+      "lead_id": "7cffeb78-2eea-4aba-97c8-d86ead5539f2",
+      "zoho_id": "584143000002776013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "c61c80d7-e044-4374-b2e2-1d458778c72a"
+    },
+    "correlation_id": "c61c80d7-e044-4374-b2e2-1d458778c72a"
+  },
+  {
+    "id": "51b9f0e3-4418-40bf-961f-5ea9d849182b",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "d52c66ca-43cd-491d-a9a1-2dd649ad412d",
+      "session_id": "failure-test-1776385844803"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx4xy8bat9SqPWJyAcervZuz9YuomDUETtoDgeas",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "2171355e-a1ee-4709-9d04-948a270b26b9",
+      "timestamp": "2026-04-17T00:30:48.031Z",
+      "correlation_id": "28322be6-93bc-4b83-b186-41b2eccca491"
+    },
+    "created_at": "2026-04-17T00:30:48.182292+00:00",
+    "updated_at": "2026-04-17T00:30:57.729+00:00",
+    "dispatched_at": "2026-04-17T00:30:49.426+00:00",
+    "completed_at": "2026-04-17T00:30:57.729+00:00",
+    "worker_result": {
+      "lead_id": "d52c66ca-43cd-491d-a9a1-2dd649ad412d",
+      "zoho_id": "584143000002723050",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "28322be6-93bc-4b83-b186-41b2eccca491"
+    },
+    "correlation_id": "28322be6-93bc-4b83-b186-41b2eccca491"
+  },
+  {
+    "id": "71a73469-f9e5-4951-af7d-4636688c0a1e",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "ad302878-2ca3-4607-827e-f472155c0edd",
+      "session_id": "mode-test-1776385973101"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx63fkPpgWbGhtsjxu9NNJfsfF8Rno17YfmbWEUn",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "aae74231-ac2c-4087-a9b9-75334d65b34e",
+      "timestamp": "2026-04-17T00:32:55.726Z",
+      "correlation_id": "3b238a18-8004-4f5b-862e-1fe643d9ebce"
+    },
+    "created_at": "2026-04-17T00:32:55.855125+00:00",
+    "updated_at": "2026-04-17T00:33:04.894+00:00",
+    "dispatched_at": "2026-04-17T00:32:57.155+00:00",
+    "completed_at": "2026-04-17T00:33:04.894+00:00",
+    "worker_result": {
+      "lead_id": "ad302878-2ca3-4607-827e-f472155c0edd",
+      "zoho_id": "584143000002767013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "3b238a18-8004-4f5b-862e-1fe643d9ebce"
+    },
+    "correlation_id": "3b238a18-8004-4f5b-862e-1fe643d9ebce"
+  },
+  {
+    "id": "6854e75f-9327-4853-a822-6d082c0c573f",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "1b6c9c7a-c6ca-4c94-a8cd-e90aed7ecded",
+      "session_id": "mode-test-1776385981050"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEag5ThHkwugZx53Pp6x2GVSsRatKCfvEHivA3A",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "9516e663-f4bb-4eee-b52e-5a567d766805",
+      "timestamp": "2026-04-17T00:33:04.020Z",
+      "correlation_id": "1ee60aa4-140b-4118-aed5-c916de693295"
+    },
+    "created_at": "2026-04-17T00:33:04.178366+00:00",
+    "updated_at": "2026-04-17T00:33:12.846+00:00",
+    "dispatched_at": "2026-04-17T00:33:05.549+00:00",
+    "completed_at": "2026-04-17T00:33:12.846+00:00",
+    "worker_result": {
+      "lead_id": "1b6c9c7a-c6ca-4c94-a8cd-e90aed7ecded",
+      "zoho_id": "584143000002784001",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "1ee60aa4-140b-4118-aed5-c916de693295"
+    },
+    "correlation_id": "1ee60aa4-140b-4118-aed5-c916de693295"
+  },
+  {
+    "id": "f325f430-40f6-48e6-bdd2-6d23d97ea6f2",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "9ff04ad1-cef8-4fd1-8108-3bcc210d03b2",
+      "session_id": "mode-test-1776385989498"
+    },
+    "source": "crm_handler",
+    "status": "skipped",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": "emergency_mode",
+    "dispatch_message_id": null,
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "a6b7d604-0c0f-4994-a71d-a3342047e954",
+      "timestamp": "2026-04-17T00:33:12.418Z",
+      "correlation_id": "59d87127-62cb-4490-80a4-875ece71dcf6"
+    },
+    "created_at": "2026-04-17T00:33:12.55553+00:00",
+    "updated_at": "2026-04-17T00:33:12.939+00:00",
+    "dispatched_at": null,
+    "completed_at": null,
+    "worker_result": null,
+    "correlation_id": "59d87127-62cb-4490-80a4-875ece71dcf6"
+  },
+  {
+    "id": "fb382fe5-cb59-4df6-9ba2-da9f0a2ab98d",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "516bf2ac-dfc2-4270-ba6a-8b4f483740b4",
+      "session_id": "load-1776386258628-10"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx4zUQafoAnw3rLZ2SeKNSMEN5No8HbuCn4nvbDj",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "2563c873-1d6f-4c79-a8c5-39ceee95e0e5",
+      "timestamp": "2026-04-17T00:37:41.348Z",
+      "correlation_id": "7ad79dc8-414c-41db-acb9-f8be0441d693"
+    },
+    "created_at": "2026-04-17T00:37:41.480008+00:00",
+    "updated_at": "2026-04-17T00:37:50.211+00:00",
+    "dispatched_at": "2026-04-17T00:37:42.736+00:00",
+    "completed_at": "2026-04-17T00:37:50.211+00:00",
+    "worker_result": {
+      "lead_id": "516bf2ac-dfc2-4270-ba6a-8b4f483740b4",
+      "zoho_id": "584143000002729038",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "7ad79dc8-414c-41db-acb9-f8be0441d693"
+    },
+    "correlation_id": "7ad79dc8-414c-41db-acb9-f8be0441d693"
+  },
+  {
+    "id": "ed44b8cd-6724-4bc4-856e-ec172073c48a",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "8293678f-4eea-4e00-b216-5264b958ae6e",
+      "session_id": "load-1776386258618-6"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFG2976bhHTWtuaBUnViXuowdimxJcoRbhzkyyJ",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "2e64e990-69f0-47dc-9a7e-7966418f39eb",
+      "timestamp": "2026-04-17T00:37:41.258Z",
+      "correlation_id": "1be3dc8c-bed6-41d0-b14c-525b924dc449"
+    },
+    "created_at": "2026-04-17T00:37:41.390859+00:00",
+    "updated_at": "2026-04-17T00:37:51.026+00:00",
+    "dispatched_at": "2026-04-17T00:37:42.661+00:00",
+    "completed_at": "2026-04-17T00:37:51.026+00:00",
+    "worker_result": {
+      "lead_id": "8293678f-4eea-4e00-b216-5264b958ae6e",
+      "zoho_id": "584143000002786001",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "1be3dc8c-bed6-41d0-b14c-525b924dc449"
+    },
+    "correlation_id": "1be3dc8c-bed6-41d0-b14c-525b924dc449"
+  },
+  {
+    "id": "61674a79-b4cf-4355-bb22-0df958fad81f",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "04fe152f-1c6e-4d5f-b9e2-9c1c68868f34",
+      "session_id": "load-1776386258597-1"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882ANmgY8CRdj8WgfK26viChUoBFBPkTLud6BGYXr",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "4df71465-5fcb-4c6d-b072-ecb0d814f8d8",
+      "timestamp": "2026-04-17T00:37:41.355Z",
+      "correlation_id": "adbccde7-424d-46f7-bbd9-76abe77dfa17"
+    },
+    "created_at": "2026-04-17T00:37:41.500665+00:00",
+    "updated_at": "2026-04-17T00:37:51.107+00:00",
+    "dispatched_at": "2026-04-17T00:37:42.801+00:00",
+    "completed_at": "2026-04-17T00:37:51.107+00:00",
+    "worker_result": {
+      "lead_id": "04fe152f-1c6e-4d5f-b9e2-9c1c68868f34",
+      "zoho_id": "584143000002733026",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "adbccde7-424d-46f7-bbd9-76abe77dfa17"
+    },
+    "correlation_id": "adbccde7-424d-46f7-bbd9-76abe77dfa17"
+  },
+  {
+    "id": "13902223-e5c2-49d4-944e-96ad8b0860c3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "8f2b9b5a-d392-48b3-84c0-dc842beb438f",
+      "session_id": "load-1776386258620-7"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFFjPwKFS5coqCWLeuGastoMq5VM5vEj1EFR6gk",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "868c5616-e175-4d09-a00b-0669ced04841",
+      "timestamp": "2026-04-17T00:37:41.754Z",
+      "correlation_id": "d2b2f4c6-510d-434d-ab8d-d81d4413f145"
+    },
+    "created_at": "2026-04-17T00:37:41.884999+00:00",
+    "updated_at": "2026-04-17T00:37:51.277+00:00",
+    "dispatched_at": "2026-04-17T00:37:42.892+00:00",
+    "completed_at": "2026-04-17T00:37:51.277+00:00",
+    "worker_result": {
+      "lead_id": "8f2b9b5a-d392-48b3-84c0-dc842beb438f",
+      "zoho_id": "584143000002787001",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "d2b2f4c6-510d-434d-ab8d-d81d4413f145"
+    },
+    "correlation_id": "d2b2f4c6-510d-434d-ab8d-d81d4413f145"
+  },
+  {
+    "id": "881eab3d-2a11-491e-9c8e-ef1073e19df2",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "165cdcae-c05d-4306-acc8-9350b01501e3",
+      "session_id": "load-1776386308978-99"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADQB58PDRaqcRvVz3xzZ39SQ2bsFFHwHLeQUQt1",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "4057d238-581f-4f3b-ae81-4c654c6e75ad",
+      "timestamp": "2026-04-17T00:38:31.425Z",
+      "correlation_id": "65cae4fa-047e-40a9-b5f1-5156e6aedd28"
+    },
+    "created_at": "2026-04-17T00:38:31.561352+00:00",
+    "updated_at": "2026-04-17T00:38:40.091+00:00",
+    "dispatched_at": "2026-04-17T00:38:32.838+00:00",
+    "completed_at": "2026-04-17T00:38:40.091+00:00",
+    "worker_result": {
+      "lead_id": "165cdcae-c05d-4306-acc8-9350b01501e3",
+      "zoho_id": "584143000002735169",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "65cae4fa-047e-40a9-b5f1-5156e6aedd28"
+    },
+    "correlation_id": "65cae4fa-047e-40a9-b5f1-5156e6aedd28"
+  },
+  {
+    "id": "c425cae4-2fb9-4515-afc5-e20ce01210b3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "daef4c0a-9baa-4d7b-8431-20e355560182",
+      "session_id": "load-1776386258611-2"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACAH3i6TsB3eh1MF5hrQwnKq5KVo1tHceby5QJa",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "1a70f0f9-be73-47e6-8785-f3bcf4816f8b",
+      "timestamp": "2026-04-17T00:37:42.890Z",
+      "correlation_id": "4dba7066-352b-4f09-a562-74ce690c2904"
+    },
+    "created_at": "2026-04-17T00:37:43.049421+00:00",
+    "updated_at": "2026-04-17T00:37:51.905+00:00",
+    "dispatched_at": "2026-04-17T00:37:44.265+00:00",
+    "completed_at": "2026-04-17T00:37:51.905+00:00",
+    "worker_result": {
+      "lead_id": "daef4c0a-9baa-4d7b-8431-20e355560182",
+      "zoho_id": "584143000002755014",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "4dba7066-352b-4f09-a562-74ce690c2904"
+    },
+    "correlation_id": "4dba7066-352b-4f09-a562-74ce690c2904"
+  },
+  {
+    "id": "13bc1812-c461-47c7-bd7e-a42d7c422210",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "94e21953-91d5-4e4e-b885-b923aa056ddd",
+      "session_id": "load-1776386265880-11"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3mftXtrkX5WRomyJoVcSNYVGCoisjX2qdHiRob",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "c793bfad-f5dd-4495-aed3-f7ce17bbcad3",
+      "timestamp": "2026-04-17T00:37:49.029Z",
+      "correlation_id": "7c7a892d-6ea7-46d3-8765-2bafeea9ec8e"
+    },
+    "created_at": "2026-04-17T00:37:49.168253+00:00",
+    "updated_at": "2026-04-17T00:37:56.858+00:00",
+    "dispatched_at": "2026-04-17T00:37:50.133+00:00",
+    "completed_at": "2026-04-17T00:37:56.858+00:00",
+    "worker_result": {
+      "lead_id": "94e21953-91d5-4e4e-b885-b923aa056ddd",
+      "zoho_id": "584143000002780026",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "7c7a892d-6ea7-46d3-8765-2bafeea9ec8e"
+    },
+    "correlation_id": "7c7a892d-6ea7-46d3-8765-2bafeea9ec8e"
+  },
+  {
+    "id": "cba32999-fd21-4289-a5c2-53730e5dac7e",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "d6ce5418-f458-43f0-af8f-eede804e0b33",
+      "session_id": "load-1776386265885-14"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3218aebkKNfjxSboZyaybj7sEUiDvSiiCHh4XS",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "ae8199ff-e78c-4ca5-aff0-b5c648fe1bf2",
+      "timestamp": "2026-04-17T00:37:48.491Z",
+      "correlation_id": "82fa7556-3a24-4836-aaa1-35dd02116171"
+    },
+    "created_at": "2026-04-17T00:37:48.639058+00:00",
+    "updated_at": "2026-04-17T00:37:57.899+00:00",
+    "dispatched_at": "2026-04-17T00:37:50.135+00:00",
+    "completed_at": "2026-04-17T00:37:57.899+00:00",
+    "worker_result": {
+      "lead_id": "d6ce5418-f458-43f0-af8f-eede804e0b33",
+      "zoho_id": "584143000002786037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "82fa7556-3a24-4836-aaa1-35dd02116171"
+    },
+    "correlation_id": "82fa7556-3a24-4836-aaa1-35dd02116171"
+  },
+  {
+    "id": "7ffc39b2-8096-44c0-a9f9-c47b35f77f23",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "2f19880b-baae-45cf-a1ca-5681095dcd5b",
+      "session_id": "load-1776386276489-38"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RABg9s81nXqRPS4PipciwLnjPBpVAP6t6yMjhW6V",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "45025e14-4f5f-4a2f-acb9-17a02853745f",
+      "timestamp": "2026-04-17T00:37:58.860Z",
+      "correlation_id": "c3b599c2-b2cc-4d99-8094-1668e126e3f2"
+    },
+    "created_at": "2026-04-17T00:37:58.986416+00:00",
+    "updated_at": "2026-04-17T00:38:07.849+00:00",
+    "dispatched_at": "2026-04-17T00:38:00.241+00:00",
+    "completed_at": "2026-04-17T00:38:07.849+00:00",
+    "worker_result": {
+      "lead_id": "2f19880b-baae-45cf-a1ca-5681095dcd5b",
+      "zoho_id": "584143000002788037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "c3b599c2-b2cc-4d99-8094-1668e126e3f2"
+    },
+    "correlation_id": "c3b599c2-b2cc-4d99-8094-1668e126e3f2"
+  },
+  {
+    "id": "da2adf8b-48a0-432e-a49f-01d678e2632f",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "5aee1762-61e3-4bc2-98af-ee3d4ae50f08",
+      "session_id": "load-1776386282830-41"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFnHFQ5N3HbgV7kAzLshnnt8PFFxh4dV2dxeJED",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "cef52d38-2276-43f5-8534-9e1f808ac746",
+      "timestamp": "2026-04-17T00:38:05.696Z",
+      "correlation_id": "7b42dc02-fa5d-4ca0-9152-8b1c6a525391"
+    },
+    "created_at": "2026-04-17T00:38:05.84362+00:00",
+    "updated_at": "2026-04-17T00:38:14.574+00:00",
+    "dispatched_at": "2026-04-17T00:38:07.137+00:00",
+    "completed_at": "2026-04-17T00:38:14.574+00:00",
+    "worker_result": {
+      "lead_id": "5aee1762-61e3-4bc2-98af-ee3d4ae50f08",
+      "zoho_id": "584143000002784037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "7b42dc02-fa5d-4ca0-9152-8b1c6a525391"
+    },
+    "correlation_id": "7b42dc02-fa5d-4ca0-9152-8b1c6a525391"
+  },
+  {
+    "id": "9dde3f0f-36c3-4e4f-b89e-efc5840b5c5d",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "c49f1da8-799c-4f35-bcea-d81902e7e9e7",
+      "session_id": "load-1776386287769-52"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFEGHyoiBbdwE4h3SRCYxM9sLqhYhH1uHk5YJXV",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "3c6cca5b-32f0-4b80-8d0f-c3d1f32c41ab",
+      "timestamp": "2026-04-17T00:38:10.112Z",
+      "correlation_id": "29dfdfe7-ea8c-4461-b34b-34a67975a22c"
+    },
+    "created_at": "2026-04-17T00:38:10.253827+00:00",
+    "updated_at": "2026-04-17T00:38:17.833+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.518+00:00",
+    "completed_at": "2026-04-17T00:38:17.833+00:00",
+    "worker_result": {
+      "lead_id": "c49f1da8-799c-4f35-bcea-d81902e7e9e7",
+      "zoho_id": "584143000002776085",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "29dfdfe7-ea8c-4461-b34b-34a67975a22c"
+    },
+    "correlation_id": "29dfdfe7-ea8c-4461-b34b-34a67975a22c"
+  },
+  {
+    "id": "a3ce91bf-11ed-4ad9-9c72-36d6357dfa39",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "ff70d2c4-ea0f-4448-9be1-d9ee2a810406",
+      "session_id": "load-1776386287769-51"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3nLkBvYoJNZmt7m1RCFxGtPB5ex9WrXHtvy2LR",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "998cbf22-1b7c-49e6-8da3-bf2d32a1b2b6",
+      "timestamp": "2026-04-17T00:38:10.303Z",
+      "correlation_id": "3c28f7b7-5eee-4149-8179-2b7bc63e0880"
+    },
+    "created_at": "2026-04-17T00:38:10.442046+00:00",
+    "updated_at": "2026-04-17T00:38:19.968+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.678+00:00",
+    "completed_at": "2026-04-17T00:38:19.968+00:00",
+    "worker_result": {
+      "lead_id": "ff70d2c4-ea0f-4448-9be1-d9ee2a810406",
+      "zoho_id": "584143000002781061",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "3c28f7b7-5eee-4149-8179-2b7bc63e0880"
+    },
+    "correlation_id": "3c28f7b7-5eee-4149-8179-2b7bc63e0880"
+  },
+  {
+    "id": "41ec46ac-cddb-47b1-9208-45e719956ff3",
+    "event_name": "contact_created",
+    "payload": {
+      "queueId": "e9598cd8-0850-48cd-8abc-23f1aa86a632",
+      "contactId": "NO_CLEANUP_C26_1777291086368_CONTACT_7d478ba0-2754-4035-bf3d-38d0c47878c5",
+      "audit_marker": "NO_CLEANUP_C26_1777291086368"
+    },
+    "source": "audit_c26_no_cleanup",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 1,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJE6yWvT16DbYfg8tjDdccrY1FCes6ehZdQ3Aik9",
+    "execution_context": {
+      "audit": "c26_no_cleanup",
+      "event_id": "NO_CLEANUP_C26_1777291086368_success_66e61e54-6fe4-41e1-a489-a172e1ee1f4f",
+      "correlation_id": "NO_CLEANUP_C26_1777291086368_success_66e61e54-6fe4-41e1-a489-a172e1ee1f4f"
+    },
+    "created_at": "2026-04-27T11:58:08.35286+00:00",
+    "updated_at": "2026-04-27T11:58:12.728+00:00",
+    "dispatched_at": "2026-04-27T11:58:10.048+00:00",
+    "completed_at": "2026-04-27T11:58:12.728+00:00",
+    "worker_result": {
+      "zoho_id": "584143000002925001",
+      "contact_id": "NO_CLEANUP_C26_1777291086368_CONTACT_7d478ba0-2754-4035-bf3d-38d0c47878c5",
+      "consistency": true,
+      "correlation_id": "NO_CLEANUP_C26_1777291086368_success_66e61e54-6fe4-41e1-a489-a172e1ee1f4f"
+    },
+    "correlation_id": "NO_CLEANUP_C26_1777291086368_success_66e61e54-6fe4-41e1-a489-a172e1ee1f4f"
+  },
+  {
+    "id": "3f554905-3c31-4d54-8f38-8adc1ee498af",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "fe358eea-689c-4ce1-a38e-e0b24d718e2f",
+      "session_id": "load-1776386258617-5"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFF5YaodFZz2X8FBwdAsmomQf3f81h1GeXyMSX4",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "2b60d286-a62f-4756-b32e-d606753862bd",
+      "timestamp": "2026-04-17T00:37:42.974Z",
+      "correlation_id": "8486928a-70e0-4602-b0c7-eec368c703e4"
+    },
+    "created_at": "2026-04-17T00:37:43.106173+00:00",
+    "updated_at": "2026-04-17T00:37:51.804+00:00",
+    "dispatched_at": "2026-04-17T00:37:44.377+00:00",
+    "completed_at": "2026-04-17T00:37:51.804+00:00",
+    "worker_result": {
+      "lead_id": "fe358eea-689c-4ce1-a38e-e0b24d718e2f",
+      "zoho_id": "584143000002788001",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "8486928a-70e0-4602-b0c7-eec368c703e4"
+    },
+    "correlation_id": "8486928a-70e0-4602-b0c7-eec368c703e4"
+  },
+  {
+    "id": "1353d237-6dc7-4506-9bfb-1bc14a11dce9",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "2d443b1f-c5e7-4766-a614-af18cd7e052a",
+      "session_id": "load-1776386258621-8"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829mmf1wwU5UkegtirSPsvScdDokMA9QWeCKrYGA",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "d0605697-f6f0-457e-8f08-f5b665568637",
+      "timestamp": "2026-04-17T00:37:43.026Z",
+      "correlation_id": "3130fe93-c140-4513-a14e-f4772e35d4c0"
+    },
+    "created_at": "2026-04-17T00:37:43.157219+00:00",
+    "updated_at": "2026-04-17T00:37:52.212+00:00",
+    "dispatched_at": "2026-04-17T00:37:44.438+00:00",
+    "completed_at": "2026-04-17T00:37:52.212+00:00",
+    "worker_result": {
+      "lead_id": "2d443b1f-c5e7-4766-a614-af18cd7e052a",
+      "zoho_id": "584143000002776025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "3130fe93-c140-4513-a14e-f4772e35d4c0"
+    },
+    "correlation_id": "3130fe93-c140-4513-a14e-f4772e35d4c0"
+  },
+  {
+    "id": "9e57d79b-3d27-46bd-8d8f-7c450503d516",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "0d00058f-3291-49fd-8fe9-b1b92f990d62",
+      "session_id": "load-1776386258623-9"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2ZwNdVprvCwYLQG9ZcuXc7uDHumaADCKofKSD6",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "6e1b4949-af75-425a-ad6a-7d4ceee82bf6",
+      "timestamp": "2026-04-17T00:37:43.209Z",
+      "correlation_id": "5270dda2-f42b-4940-b72b-82e950bcf7ca"
+    },
+    "created_at": "2026-04-17T00:37:43.350358+00:00",
+    "updated_at": "2026-04-17T00:37:52.458+00:00",
+    "dispatched_at": "2026-04-17T00:37:44.56+00:00",
+    "completed_at": "2026-04-17T00:37:52.458+00:00",
+    "worker_result": {
+      "lead_id": "0d00058f-3291-49fd-8fe9-b1b92f990d62",
+      "zoho_id": "584143000002735013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "5270dda2-f42b-4940-b72b-82e950bcf7ca"
+    },
+    "correlation_id": "5270dda2-f42b-4940-b72b-82e950bcf7ca"
+  },
+  {
+    "id": "e10c058c-d8e7-4e4b-afdf-9a019a41c8ee",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7a46758d-4233-4663-bb88-180cb08d9bf2",
+      "session_id": "load-1776386265886-15"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829ssJPpdGcr27LCjN6yGG3Pjmd6x7HrbjQ9psxc",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "58c9df38-7704-4cc2-8c3a-059273dc1bfc",
+      "timestamp": "2026-04-17T00:37:48.882Z",
+      "correlation_id": "0c9da529-aee9-41a0-8a78-bf5822c163ca"
+    },
+    "created_at": "2026-04-17T00:37:49.055086+00:00",
+    "updated_at": "2026-04-17T00:37:56.533+00:00",
+    "dispatched_at": "2026-04-17T00:37:50.272+00:00",
+    "completed_at": "2026-04-17T00:37:56.533+00:00",
+    "worker_result": {
+      "lead_id": "7a46758d-4233-4663-bb88-180cb08d9bf2",
+      "zoho_id": "584143000002776037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "0c9da529-aee9-41a0-8a78-bf5822c163ca"
+    },
+    "correlation_id": "0c9da529-aee9-41a0-8a78-bf5822c163ca"
+  },
+  {
+    "id": "d198da80-b07e-4e43-971d-f6d66e8bab72",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "3fb537c2-0709-4857-b372-897e61658d85",
+      "session_id": "load-1776386265884-13"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx6AiKaDBbzGdqHRBFtYKAFsUavwuUaTeaV8cSGs",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "0ad3b333-51fd-45f2-9cc5-21d87bf783a2",
+      "timestamp": "2026-04-17T00:37:49.128Z",
+      "correlation_id": "821b4b12-b1bf-4bf2-ae50-9f716c3dcbdd"
+    },
+    "created_at": "2026-04-17T00:37:49.276296+00:00",
+    "updated_at": "2026-04-17T00:37:57.015+00:00",
+    "dispatched_at": "2026-04-17T00:37:50.474+00:00",
+    "completed_at": "2026-04-17T00:37:57.015+00:00",
+    "worker_result": {
+      "lead_id": "3fb537c2-0709-4857-b372-897e61658d85",
+      "zoho_id": "584143000002786013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "821b4b12-b1bf-4bf2-ae50-9f716c3dcbdd"
+    },
+    "correlation_id": "821b4b12-b1bf-4bf2-ae50-9f716c3dcbdd"
+  },
+  {
+    "id": "50e02569-34a2-463d-be9a-f67b16c7bf84",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "ffba61f4-6a59-4fdc-90ef-56e5d89270e7",
+      "session_id": "load-1776386265889-19"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEjDAFTa8sKGGYqr9ip5kCHie9GjqCbKY9nZsS2",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "f201f7ee-4816-4301-b7a9-b923997b0226",
+      "timestamp": "2026-04-17T00:37:48.512Z",
+      "correlation_id": "406343f8-8035-46da-b73a-bf7baaedaea9"
+    },
+    "created_at": "2026-04-17T00:37:48.64322+00:00",
+    "updated_at": "2026-04-17T00:37:57.138+00:00",
+    "dispatched_at": "2026-04-17T00:37:49.942+00:00",
+    "completed_at": "2026-04-17T00:37:57.138+00:00",
+    "worker_result": {
+      "lead_id": "ffba61f4-6a59-4fdc-90ef-56e5d89270e7",
+      "zoho_id": "584143000002723062",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "406343f8-8035-46da-b73a-bf7baaedaea9"
+    },
+    "correlation_id": "406343f8-8035-46da-b73a-bf7baaedaea9"
+  },
+  {
+    "id": "336fd568-73a0-4f59-8c41-1f5782dc2785",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "215ce882-0dba-41b1-9d08-c36b7de80d7d",
+      "session_id": "load-1776386271568-30"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEjraoR5tZxSkyURybVpewA2SP4QLsPoqmAWaFJ",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "bcfc8e43-0639-4cd8-8979-517eb237eff4",
+      "timestamp": "2026-04-17T00:37:54.011Z",
+      "correlation_id": "a72777c6-d4c3-4842-8b32-2374543e89f5"
+    },
+    "created_at": "2026-04-17T00:37:54.152365+00:00",
+    "updated_at": "2026-04-17T00:38:04.278+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.509+00:00",
+    "completed_at": "2026-04-17T00:38:04.278+00:00",
+    "worker_result": {
+      "lead_id": "215ce882-0dba-41b1-9d08-c36b7de80d7d",
+      "zoho_id": "584143000002776049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "a72777c6-d4c3-4842-8b32-2374543e89f5"
+    },
+    "correlation_id": "a72777c6-d4c3-4842-8b32-2374543e89f5"
+  },
+  {
+    "id": "3bdf2e77-ff2f-47c8-9175-4eaf50350f79",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "8a2b6122-a88f-4f96-994f-c8b1e7baee09",
+      "session_id": "load-1776386276485-34"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3f2mY2Ar2NXTQFJtYTTwqUVBhphSY1FKPrFVv8",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "162442d7-7b3f-4115-b266-bdb6d8e1c5de",
+      "timestamp": "2026-04-17T00:37:58.901Z",
+      "correlation_id": "cbd381b9-4296-410d-ba05-7d948c286008"
+    },
+    "created_at": "2026-04-17T00:37:59.033214+00:00",
+    "updated_at": "2026-04-17T00:38:08.418+00:00",
+    "dispatched_at": "2026-04-17T00:38:00.233+00:00",
+    "completed_at": "2026-04-17T00:38:08.418+00:00",
+    "worker_result": {
+      "lead_id": "8a2b6122-a88f-4f96-994f-c8b1e7baee09",
+      "zoho_id": "584143000002767037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "cbd381b9-4296-410d-ba05-7d948c286008"
+    },
+    "correlation_id": "cbd381b9-4296-410d-ba05-7d948c286008"
+  },
+  {
+    "id": "41df0059-758c-4cac-9a02-258e726d9364",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "fce606d7-d6f2-4c09-8bf8-fe3886fa6dcd",
+      "session_id": "load-1776386308976-96"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx6A34bPufSakkK2F6xpn61C39PSYjL7j2VmnGxz",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "96a958f6-4478-484a-8b94-9e2257bbc510",
+      "timestamp": "2026-04-17T00:38:31.423Z",
+      "correlation_id": "98c25550-b75a-436a-821d-56a39da394ed"
+    },
+    "created_at": "2026-04-17T00:38:31.570031+00:00",
+    "updated_at": "2026-04-17T00:38:40.077+00:00",
+    "dispatched_at": "2026-04-17T00:38:32.874+00:00",
+    "completed_at": "2026-04-17T00:38:40.077+00:00",
+    "worker_result": {
+      "lead_id": "fce606d7-d6f2-4c09-8bf8-fe3886fa6dcd",
+      "zoho_id": "584143000002755086",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "98c25550-b75a-436a-821d-56a39da394ed"
+    },
+    "correlation_id": "98c25550-b75a-436a-821d-56a39da394ed"
+  },
+  {
+    "id": "bf329135-0201-4795-ab63-4dd83ec2a908",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "ecb1f39f-8e87-4a7b-83ab-f3fbba0766fb",
+      "session_id": "sess_l5w4e54nj_1777107454872"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829invxxCK3ZWuFFPnpM3M6EfAi9vznu8WUMiDUW",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "3408871f-c9b2-45b8-8a3f-8157fd675b4a",
+      "timestamp": "2026-04-25T09:01:24.535Z",
+      "correlation_id": "c22308f4-e721-4ad2-b9c4-df71669e25e9"
+    },
+    "created_at": "2026-04-25T09:01:24.66698+00:00",
+    "updated_at": "2026-04-25T09:01:35.498+00:00",
+    "dispatched_at": "2026-04-25T09:01:25.949+00:00",
+    "completed_at": "2026-04-25T09:01:35.498+00:00",
+    "worker_result": {
+      "lead_id": "ecb1f39f-8e87-4a7b-83ab-f3fbba0766fb",
+      "zoho_id": "584143000002853002",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "c22308f4-e721-4ad2-b9c4-df71669e25e9"
+    },
+    "correlation_id": "c22308f4-e721-4ad2-b9c4-df71669e25e9"
+  },
+  {
+    "id": "659c3396-7891-4d65-9c38-862bc97c6ae3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "09952e30-af72-4f77-b4e7-38263bcae063",
+      "session_id": "load-1776386258616-4"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2akZg3X69AhEGtqoeV2vK24yDnLP6EJPQhTgY5",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "26d92e74-548f-4a44-a73e-36c0b85d1ff0",
+      "timestamp": "2026-04-17T00:37:43.901Z",
+      "correlation_id": "9b633bcf-e290-44a8-b610-2093b08418ae"
+    },
+    "created_at": "2026-04-17T00:37:44.105428+00:00",
+    "updated_at": "2026-04-17T00:37:52.366+00:00",
+    "dispatched_at": "2026-04-17T00:37:45.297+00:00",
+    "completed_at": "2026-04-17T00:37:52.366+00:00",
+    "worker_result": {
+      "lead_id": "09952e30-af72-4f77-b4e7-38263bcae063",
+      "zoho_id": "584143000002731013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "9b633bcf-e290-44a8-b610-2093b08418ae"
+    },
+    "correlation_id": "9b633bcf-e290-44a8-b610-2093b08418ae"
+  },
+  {
+    "id": "61fd6d2c-71f1-4ada-bd78-b3bd3f938c9e",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "1bcb0f19-14b8-4c66-ad6f-b499e1e3e6ae",
+      "session_id": "load-1776386265890-20"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx5X23DRSH6obx21cYeSSt6pmNZFp7xT3NUw7N17",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "02365a76-c33d-4e97-968f-c264baccb8dd",
+      "timestamp": "2026-04-17T00:37:48.945Z",
+      "correlation_id": "9cbd53a3-d78c-4715-8d18-2ea00b1aa383"
+    },
+    "created_at": "2026-04-17T00:37:49.076464+00:00",
+    "updated_at": "2026-04-17T00:37:56.787+00:00",
+    "dispatched_at": "2026-04-17T00:37:50.149+00:00",
+    "completed_at": "2026-04-17T00:37:56.787+00:00",
+    "worker_result": {
+      "lead_id": "1bcb0f19-14b8-4c66-ad6f-b499e1e3e6ae",
+      "zoho_id": "584143000002767025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "9cbd53a3-d78c-4715-8d18-2ea00b1aa383"
+    },
+    "correlation_id": "9cbd53a3-d78c-4715-8d18-2ea00b1aa383"
+  },
+  {
+    "id": "0f9417e5-fe7a-4c87-9e71-da000c9a438f",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "1f7b60f0-46f2-447a-9cc0-e234083b34c3",
+      "session_id": "load-1776386265887-16"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFtFUtWQx2fx6gshHmcPCf7bbw7KPseMTAQw9Uf",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "70208bc5-d0ae-4300-b7f9-9986b1c1f7e8",
+      "timestamp": "2026-04-17T00:37:48.515Z",
+      "correlation_id": "84c0ef2a-b079-4c27-9dbd-88789e020538"
+    },
+    "created_at": "2026-04-17T00:37:48.666132+00:00",
+    "updated_at": "2026-04-17T00:37:57.297+00:00",
+    "dispatched_at": "2026-04-17T00:37:49.909+00:00",
+    "completed_at": "2026-04-17T00:37:57.297+00:00",
+    "worker_result": {
+      "lead_id": "1f7b60f0-46f2-447a-9cc0-e234083b34c3",
+      "zoho_id": "584143000002786025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "84c0ef2a-b079-4c27-9dbd-88789e020538"
+    },
+    "correlation_id": "84c0ef2a-b079-4c27-9dbd-88789e020538"
+  },
+  {
+    "id": "dbf9e8a2-47f0-4969-b276-a9a22de35555",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "56ec9bc9-cebc-49c2-8835-7fa18d83d9a8",
+      "session_id": "load-1776386265887-17"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFov7ZdEdwpNXrUUurRhjh9mTqjKBwLsoJPpthW",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "415d1365-17b8-4120-83cf-0954c4adc80e",
+      "timestamp": "2026-04-17T00:37:49.779Z",
+      "correlation_id": "31370fd0-4b30-4648-8030-f3babb362872"
+    },
+    "created_at": "2026-04-17T00:37:49.915825+00:00",
+    "updated_at": "2026-04-17T00:37:57.987+00:00",
+    "dispatched_at": "2026-04-17T00:37:50.916+00:00",
+    "completed_at": "2026-04-17T00:37:57.987+00:00",
+    "worker_result": {
+      "lead_id": "56ec9bc9-cebc-49c2-8835-7fa18d83d9a8",
+      "zoho_id": "584143000002735037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "31370fd0-4b30-4648-8030-f3babb362872"
+    },
+    "correlation_id": "31370fd0-4b30-4648-8030-f3babb362872"
+  },
+  {
+    "id": "8dcd38ce-a056-4316-bd12-5738816e11d7",
+    "event_name": "delivery_probe_failure",
+    "payload": {
+      "target": "missing_route",
+      "probeId": "NO_ROUTE_834539194747",
+      "queueId": "42757dd4-57b1-40bd-b4b2-acb938e203d3",
+      "audit_marker": "NO_CLEANUP_C26_1777291086368"
+    },
+    "source": "audit_c26_no_cleanup",
+    "status": "failed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 0,
+    "last_error": "stuck: no completion ACK after 15 minutes",
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEjsdHjc6QBoq5A5rWS94E2X1iieBE7nXSTS5j6",
+    "execution_context": {
+      "audit": "c26_no_cleanup",
+      "event_id": "NO_CLEANUP_C26_1777291086368_failure_94123d3a-55dd-4a70-b772-4d2ed587fc34",
+      "correlation_id": "NO_CLEANUP_C26_1777291086368_failure_94123d3a-55dd-4a70-b772-4d2ed587fc34"
+    },
+    "created_at": "2026-04-27T11:58:20.934054+00:00",
+    "updated_at": "2026-04-27T12:15:01.29+00:00",
+    "dispatched_at": "2026-04-27T11:58:21.945+00:00",
+    "completed_at": null,
+    "worker_result": null,
+    "correlation_id": "NO_CLEANUP_C26_1777291086368_failure_94123d3a-55dd-4a70-b772-4d2ed587fc34"
+  },
+  {
+    "id": "1948614f-8954-4d45-a389-12a123f5563c",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "d51f4e89-fb4b-4b60-a741-5da91e025632",
+      "session_id": "load-1776386258614-3"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJE83xTDWPsNvAHuLQPgSYmq45LASurYa1S3XWsG",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "40f7af3d-082f-4e99-8bb1-0da70b608998",
+      "timestamp": "2026-04-17T00:37:41.431Z",
+      "correlation_id": "d307d76d-14bc-4c93-a76e-8b78955c49c1"
+    },
+    "created_at": "2026-04-17T00:37:41.577576+00:00",
+    "updated_at": "2026-04-17T00:37:50.735+00:00",
+    "dispatched_at": "2026-04-17T00:37:42.804+00:00",
+    "completed_at": "2026-04-17T00:37:50.735+00:00",
+    "worker_result": {
+      "lead_id": "d51f4e89-fb4b-4b60-a741-5da91e025632",
+      "zoho_id": "584143000002780014",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "d307d76d-14bc-4c93-a76e-8b78955c49c1"
+    },
+    "correlation_id": "d307d76d-14bc-4c93-a76e-8b78955c49c1"
+  },
+  {
+    "id": "8575d8a3-574a-478a-a42d-2fe9fd1fec95",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "69f3db91-63ca-4455-b03e-8a21c5daa565",
+      "session_id": "load-1776386265883-12"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2YHzbzsXEitMBWMPuJpDLeVzLg1jaSQQGAoUhy",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "972afc6f-0aec-49c2-a54c-382201a7d52c",
+      "timestamp": "2026-04-17T00:37:48.535Z",
+      "correlation_id": "7e59c51f-1bd3-4b5d-8617-0569e51fa134"
+    },
+    "created_at": "2026-04-17T00:37:48.680908+00:00",
+    "updated_at": "2026-04-17T00:37:56.392+00:00",
+    "dispatched_at": "2026-04-17T00:37:49.97+00:00",
+    "completed_at": "2026-04-17T00:37:56.392+00:00",
+    "worker_result": {
+      "lead_id": "69f3db91-63ca-4455-b03e-8a21c5daa565",
+      "zoho_id": "584143000002736025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "7e59c51f-1bd3-4b5d-8617-0569e51fa134"
+    },
+    "correlation_id": "7e59c51f-1bd3-4b5d-8617-0569e51fa134"
+  },
+  {
+    "id": "c186c510-ff99-4b30-94e7-7f2398410f88",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "3e9b36c3-45c2-47cc-bdff-6773e528c7fe",
+      "session_id": "load-1776386265888-18"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829rEQkWb9DXavwsztk1AemG3ybUXs4uVUdzgZuT",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "86e76d7b-ff13-42ea-aab9-88e2b2a5a515",
+      "timestamp": "2026-04-17T00:37:48.568Z",
+      "correlation_id": "08c0e896-0678-43d2-921f-cb536332ca10"
+    },
+    "created_at": "2026-04-17T00:37:48.703547+00:00",
+    "updated_at": "2026-04-17T00:37:57.377+00:00",
+    "dispatched_at": "2026-04-17T00:37:49.993+00:00",
+    "completed_at": "2026-04-17T00:37:57.377+00:00",
+    "worker_result": {
+      "lead_id": "3e9b36c3-45c2-47cc-bdff-6773e528c7fe",
+      "zoho_id": "584143000002735025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "08c0e896-0678-43d2-921f-cb536332ca10"
+    },
+    "correlation_id": "08c0e896-0678-43d2-921f-cb536332ca10"
+  },
+  {
+    "id": "1d5c27e0-4159-461e-a488-59673b73dba4",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "b19d641a-a20f-4f8e-90f9-99c0e6218b5d",
+      "session_id": "load-1776386271566-26"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFvg7v8EXs431w9wTENYSsjhppwmZY8Hm2Mg5DC",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "ce65013b-09d9-42e5-ad1b-9776334e33c2",
+      "timestamp": "2026-04-17T00:37:53.939Z",
+      "correlation_id": "2b2275ce-a261-4aa5-8206-26dfed278656"
+    },
+    "created_at": "2026-04-17T00:37:54.070853+00:00",
+    "updated_at": "2026-04-17T00:38:01.686+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.345+00:00",
+    "completed_at": "2026-04-17T00:38:01.686+00:00",
+    "worker_result": {
+      "lead_id": "b19d641a-a20f-4f8e-90f9-99c0e6218b5d",
+      "zoho_id": "584143000002755026",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "2b2275ce-a261-4aa5-8206-26dfed278656"
+    },
+    "correlation_id": "2b2275ce-a261-4aa5-8206-26dfed278656"
+  },
+  {
+    "id": "afaf8fc2-bb8b-46a5-bf48-c7cca61a1abe",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "4e5255bb-6410-4779-b654-e9d3199e7b39",
+      "session_id": "load-1776386271567-29"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx5cg2Q9fFHqRX2gkhtZFZPGEbRLtQpGXDWoyJFB",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "71f08de0-3249-4689-aafd-b1a5f4c5d5c8",
+      "timestamp": "2026-04-17T00:37:54.112Z",
+      "correlation_id": "2c70fcb4-5757-4ff6-a968-2d82689b1b66"
+    },
+    "created_at": "2026-04-17T00:37:54.242697+00:00",
+    "updated_at": "2026-04-17T00:38:02.592+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.534+00:00",
+    "completed_at": "2026-04-17T00:38:02.592+00:00",
+    "worker_result": {
+      "lead_id": "4e5255bb-6410-4779-b654-e9d3199e7b39",
+      "zoho_id": "584143000002788013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "2c70fcb4-5757-4ff6-a968-2d82689b1b66"
+    },
+    "correlation_id": "2c70fcb4-5757-4ff6-a968-2d82689b1b66"
+  },
+  {
+    "id": "45540331-3e89-4255-b763-1a80d98e8d7d",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "2970393a-b37e-41b4-b7a4-70eb8a746e39",
+      "session_id": "load-1776386271565-23"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3ju4X68PG261z36Rhh7ZnnR6eow8ENK9hoohSQ",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "838dbc24-14df-4112-82b0-28a80a989960",
+      "timestamp": "2026-04-17T00:37:53.903Z",
+      "correlation_id": "9e70abad-b927-44f1-a33a-d2897ba2b1f2"
+    },
+    "created_at": "2026-04-17T00:37:54.041476+00:00",
+    "updated_at": "2026-04-17T00:38:03.099+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.329+00:00",
+    "completed_at": "2026-04-17T00:38:03.099+00:00",
+    "worker_result": {
+      "lead_id": "2970393a-b37e-41b4-b7a4-70eb8a746e39",
+      "zoho_id": "584143000002787013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "9e70abad-b927-44f1-a33a-d2897ba2b1f2"
+    },
+    "correlation_id": "9e70abad-b927-44f1-a33a-d2897ba2b1f2"
+  },
+  {
+    "id": "7f683f04-6854-4266-a503-1ad78e8b2b53",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "14ef5289-2e0d-4630-b822-50083cdb8dae",
+      "session_id": "load-1776386276487-36"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882Av133EW91pd6YTpQj768CG4fZ2ecxuey2Kaoiz",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "3011ae4c-f106-4310-9008-8b72571554fd",
+      "timestamp": "2026-04-17T00:37:58.799Z",
+      "correlation_id": "0b87dcd0-2f06-4280-9d0b-564c864e8125"
+    },
+    "created_at": "2026-04-17T00:37:58.936743+00:00",
+    "updated_at": "2026-04-17T00:38:08.12+00:00",
+    "dispatched_at": "2026-04-17T00:38:00.208+00:00",
+    "completed_at": "2026-04-17T00:38:08.12+00:00",
+    "worker_result": {
+      "lead_id": "14ef5289-2e0d-4630-b822-50083cdb8dae",
+      "zoho_id": "584143000002787037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "0b87dcd0-2f06-4280-9d0b-564c864e8125"
+    },
+    "correlation_id": "0b87dcd0-2f06-4280-9d0b-564c864e8125"
+  },
+  {
+    "id": "e7195c21-d161-4c68-9bff-f54ff06640a3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "f34298c1-d9d6-4a87-8c1f-6e67b9b38474",
+      "session_id": "load-1776386276488-37"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACKD4JLX91AAnVMrBQMoCKrBRwMoybnifGoYkFL",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "c8ad6515-f6d7-4977-85a3-a79f0c5adfea",
+      "timestamp": "2026-04-17T00:38:00.497Z",
+      "correlation_id": "7386dfb5-35d1-427f-95c2-53c42b295a64"
+    },
+    "created_at": "2026-04-17T00:38:00.647198+00:00",
+    "updated_at": "2026-04-17T00:38:09.279+00:00",
+    "dispatched_at": "2026-04-17T00:38:02.092+00:00",
+    "completed_at": "2026-04-17T00:38:09.279+00:00",
+    "worker_result": {
+      "lead_id": "f34298c1-d9d6-4a87-8c1f-6e67b9b38474",
+      "zoho_id": "584143000002781025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "7386dfb5-35d1-427f-95c2-53c42b295a64"
+    },
+    "correlation_id": "7386dfb5-35d1-427f-95c2-53c42b295a64"
+  },
+  {
+    "id": "9f5d6843-029d-4267-9584-a6d65b7d6b60",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7e04602f-13fe-4250-8ac2-6a81fbc3d0d2",
+      "session_id": "load-1776386271565-21"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx5XHwLPKwdo4m2MK5hnRS47vjmFSaCTX5d8TzFv",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "a965b484-de45-4e96-8b7a-b92f5d87b635",
+      "timestamp": "2026-04-17T00:37:53.881Z",
+      "correlation_id": "d7a3c208-fe7b-4ec5-a929-5d72df80debe"
+    },
+    "created_at": "2026-04-17T00:37:54.024925+00:00",
+    "updated_at": "2026-04-17T00:38:01.859+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.358+00:00",
+    "completed_at": "2026-04-17T00:38:01.859+00:00",
+    "worker_result": {
+      "lead_id": "7e04602f-13fe-4250-8ac2-6a81fbc3d0d2",
+      "zoho_id": "584143000002736037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "d7a3c208-fe7b-4ec5-a929-5d72df80debe"
+    },
+    "correlation_id": "d7a3c208-fe7b-4ec5-a929-5d72df80debe"
+  },
+  {
+    "id": "a2f266f3-6ba7-4bcf-99bc-e6b1e96ee550",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "4dd2cff0-29ff-4c2b-b871-a4154a38175d",
+      "session_id": "load-1776386271567-28"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882B4w21nidcKkBddXhXm9Sc3Ap8FDASqPVA2cUaA",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "58a430f9-bca4-4d54-8098-b43474ebaa75",
+      "timestamp": "2026-04-17T00:37:54.420Z",
+      "correlation_id": "4ab3aff4-7e08-4430-9e77-517f0535d35b"
+    },
+    "created_at": "2026-04-17T00:37:54.557238+00:00",
+    "updated_at": "2026-04-17T00:38:02.867+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.755+00:00",
+    "completed_at": "2026-04-17T00:38:02.867+00:00",
+    "worker_result": {
+      "lead_id": "4dd2cff0-29ff-4c2b-b871-a4154a38175d",
+      "zoho_id": "584143000002731025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "4ab3aff4-7e08-4430-9e77-517f0535d35b"
+    },
+    "correlation_id": "4ab3aff4-7e08-4430-9e77-517f0535d35b"
+  },
+  {
+    "id": "175832b6-af89-4fe1-b155-720da1329d79",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "40b69ed1-b4f2-4c5d-8c92-60c22c65b38a",
+      "session_id": "load-1776386271567-27"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882AxhMTCEm8BvHg1cZrttR9hBCJhn9FrPccmbw58",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "88dc6065-c47d-4085-92e7-13613e50b3ec",
+      "timestamp": "2026-04-17T00:37:53.977Z",
+      "correlation_id": "d15670fd-a86e-4768-b7b0-acc53d058908"
+    },
+    "created_at": "2026-04-17T00:37:54.102986+00:00",
+    "updated_at": "2026-04-17T00:38:02.954+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.343+00:00",
+    "completed_at": "2026-04-17T00:38:02.954+00:00",
+    "worker_result": {
+      "lead_id": "40b69ed1-b4f2-4c5d-8c92-60c22c65b38a",
+      "zoho_id": "584143000002729050",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "d15670fd-a86e-4768-b7b0-acc53d058908"
+    },
+    "correlation_id": "d15670fd-a86e-4768-b7b0-acc53d058908"
+  },
+  {
+    "id": "995a956d-493f-4a54-b4b4-0feb7cadce4d",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "31bf6c6b-3f3e-496c-92c5-14cf3fb07e66",
+      "session_id": "load-1776386271565-22"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp36c6DuB1xMiS4H2H9zXaqncMuihbaKaiG68Q3t",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "e849a060-db24-4a32-b32c-b80c942268a3",
+      "timestamp": "2026-04-17T00:37:53.867Z",
+      "correlation_id": "a95274fd-a007-496c-a917-77190c18df53"
+    },
+    "created_at": "2026-04-17T00:37:54.016091+00:00",
+    "updated_at": "2026-04-17T00:38:05.026+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.319+00:00",
+    "completed_at": "2026-04-17T00:38:05.026+00:00",
+    "worker_result": {
+      "lead_id": "31bf6c6b-3f3e-496c-92c5-14cf3fb07e66",
+      "zoho_id": "584143000002786049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "a95274fd-a007-496c-a917-77190c18df53"
+    },
+    "correlation_id": "a95274fd-a007-496c-a917-77190c18df53"
+  },
+  {
+    "id": "575a965b-90c9-4134-809d-1ca9da4992c5",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "295e8c7a-5f89-4be1-9810-98f0f740bb99",
+      "session_id": "load-1776386271566-25"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp1wHB2Stko1xMkiVtL8zN6gaCYZn8nvQ8emqque",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "a921830a-6ed7-489a-ade4-b3b952fcd48b",
+      "timestamp": "2026-04-17T00:37:53.830Z",
+      "correlation_id": "9ca8ae09-aafa-4a0d-8076-c0191de6805f"
+    },
+    "created_at": "2026-04-17T00:37:53.960523+00:00",
+    "updated_at": "2026-04-17T00:38:05.086+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.32+00:00",
+    "completed_at": "2026-04-17T00:38:05.086+00:00",
+    "worker_result": {
+      "lead_id": "295e8c7a-5f89-4be1-9810-98f0f740bb99",
+      "zoho_id": "584143000002735061",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "9ca8ae09-aafa-4a0d-8076-c0191de6805f"
+    },
+    "correlation_id": "9ca8ae09-aafa-4a0d-8076-c0191de6805f"
+  },
+  {
+    "id": "fbc4d5ea-547b-4e07-a160-589bbebf127d",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "796b0d9f-d9a2-4e37-85d3-f62c097aa478",
+      "session_id": "load-1776386276487-35"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACqCwvZ3askgVx37iuCAdDpx4sWaHhfwRS3VLor",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "e2aa453e-98e9-4788-833d-30322a8b8735",
+      "timestamp": "2026-04-17T00:37:59.100Z",
+      "correlation_id": "d68c528c-f86a-4d1c-bc39-4c1f94bff5dd"
+    },
+    "created_at": "2026-04-17T00:37:59.238677+00:00",
+    "updated_at": "2026-04-17T00:38:08.489+00:00",
+    "dispatched_at": "2026-04-17T00:38:00.446+00:00",
+    "completed_at": "2026-04-17T00:38:08.489+00:00",
+    "worker_result": {
+      "lead_id": "796b0d9f-d9a2-4e37-85d3-f62c097aa478",
+      "zoho_id": "584143000002784013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "d68c528c-f86a-4d1c-bc39-4c1f94bff5dd"
+    },
+    "correlation_id": "d68c528c-f86a-4d1c-bc39-4c1f94bff5dd"
+  },
+  {
+    "id": "2512406b-699c-493f-928a-4d15e3b14e52",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "34bf82eb-1dfb-4390-aa31-fb862e2462c3",
+      "session_id": "load-1776386276490-39"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx5a8K3mqEB1LKoWrLqv6BQZarqyGGDagm2Tt9nk",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "0e7301bb-e449-47e4-b565-512fb6f23cb4",
+      "timestamp": "2026-04-17T00:38:00.448Z",
+      "correlation_id": "9e1bfd9c-9df4-4520-9e0d-a7d0efcae644"
+    },
+    "created_at": "2026-04-17T00:38:00.629252+00:00",
+    "updated_at": "2026-04-17T00:38:09.238+00:00",
+    "dispatched_at": "2026-04-17T00:38:01.9+00:00",
+    "completed_at": "2026-04-17T00:38:09.238+00:00",
+    "worker_result": {
+      "lead_id": "34bf82eb-1dfb-4390-aa31-fb862e2462c3",
+      "zoho_id": "584143000002781013",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "9e1bfd9c-9df4-4520-9e0d-a7d0efcae644"
+    },
+    "correlation_id": "9e1bfd9c-9df4-4520-9e0d-a7d0efcae644"
+  },
+  {
+    "id": "3bcbec30-970b-430d-b11a-ace1ecfbf0b1",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "4c272b2d-26c0-42d0-be02-e6db52c8133d",
+      "session_id": "load-1776386282835-48"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFt6p2QvmwhyTW3VoHFdFSKkLC8pHCtwMdx89rP",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "1a3c24df-81d7-4a3b-8c6c-105780613b51",
+      "timestamp": "2026-04-17T00:38:05.252Z",
+      "correlation_id": "c16eb1e1-7d39-4bfc-8291-a23db36b1d90"
+    },
+    "created_at": "2026-04-17T00:38:05.401452+00:00",
+    "updated_at": "2026-04-17T00:38:13.332+00:00",
+    "dispatched_at": "2026-04-17T00:38:06.73+00:00",
+    "completed_at": "2026-04-17T00:38:13.332+00:00",
+    "worker_result": {
+      "lead_id": "4c272b2d-26c0-42d0-be02-e6db52c8133d",
+      "zoho_id": "584143000002776073",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "c16eb1e1-7d39-4bfc-8291-a23db36b1d90"
+    },
+    "correlation_id": "c16eb1e1-7d39-4bfc-8291-a23db36b1d90"
+  },
+  {
+    "id": "5b9abe38-0fd4-4a13-a780-b9576e7d09e7",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "e0fbceec-f553-4858-8b74-0e27b80f7f73",
+      "session_id": "load-1776386276492-40"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADTpRGQMoUSMBQ2HXWhsko63UrWcLM4nRH6zQLa",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "b172bff1-e758-42ce-9584-a92ea16237ee",
+      "timestamp": "2026-04-17T00:37:58.977Z",
+      "correlation_id": "0f988811-4618-423a-8335-d431ca11f22e"
+    },
+    "created_at": "2026-04-17T00:37:59.114642+00:00",
+    "updated_at": "2026-04-17T00:38:07.847+00:00",
+    "dispatched_at": "2026-04-17T00:38:00.38+00:00",
+    "completed_at": "2026-04-17T00:38:07.847+00:00",
+    "worker_result": {
+      "lead_id": "e0fbceec-f553-4858-8b74-0e27b80f7f73",
+      "zoho_id": "584143000002787025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "0f988811-4618-423a-8335-d431ca11f22e"
+    },
+    "correlation_id": "0f988811-4618-423a-8335-d431ca11f22e"
+  },
+  {
+    "id": "fa044294-c051-4b56-a72d-435b00756569",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "a1b5e5aa-065d-43ca-8183-1ab2af9bfbd7",
+      "session_id": "load-1776386304328-87"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADwHRGjo656gKKLEpajbKaf61YfXnyjo3wEqVDm",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "c97ce0fa-0ef9-47fe-b019-e22dccfaa24a",
+      "timestamp": "2026-04-17T00:38:26.787Z",
+      "correlation_id": "f4e649a9-9292-45df-8087-85cd7fe79704"
+    },
+    "created_at": "2026-04-17T00:38:26.923483+00:00",
+    "updated_at": "2026-04-17T00:38:35.567+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.262+00:00",
+    "completed_at": "2026-04-17T00:38:35.567+00:00",
+    "worker_result": {
+      "lead_id": "a1b5e5aa-065d-43ca-8183-1ab2af9bfbd7",
+      "zoho_id": "584143000002755050",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "f4e649a9-9292-45df-8087-85cd7fe79704"
+    },
+    "correlation_id": "f4e649a9-9292-45df-8087-85cd7fe79704"
+  },
+  {
+    "id": "1495dc71-cacd-44b9-838b-2e456fb6d7d3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7c212030-471c-463a-a063-6c5a9b19b904",
+      "session_id": "load-1776386308973-91"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACkULXssw3bHpCnEKg711zSsNVJijQZmznaDGET",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "6e9cb1f3-f43f-4100-abbd-94917d384384",
+      "timestamp": "2026-04-17T00:38:31.301Z",
+      "correlation_id": "2c11f75d-7b7b-4be0-a6c4-57a4ffd538b0"
+    },
+    "created_at": "2026-04-17T00:38:31.433701+00:00",
+    "updated_at": "2026-04-17T00:38:40.332+00:00",
+    "dispatched_at": "2026-04-17T00:38:32.789+00:00",
+    "completed_at": "2026-04-17T00:38:40.332+00:00",
+    "worker_result": {
+      "lead_id": "7c212030-471c-463a-a063-6c5a9b19b904",
+      "zoho_id": "584143000002733062",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "2c11f75d-7b7b-4be0-a6c4-57a4ffd538b0"
+    },
+    "correlation_id": "2c11f75d-7b7b-4be0-a6c4-57a4ffd538b0"
+  },
+  {
+    "id": "559f44d7-aab5-4f03-8f74-ffbadfc18abd",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "c16f0874-875d-4a2a-b751-2f06beb5c80a",
+      "session_id": "load-1776386308975-93"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADQKLtyiy4N7ajHXVQnScHrbTYbfy6qPC6egrUe",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "eebb3098-cef0-42c4-ac4a-6a3bc0928524",
+      "timestamp": "2026-04-17T00:38:32.055Z",
+      "correlation_id": "39ff96e2-78d4-4156-b8b3-8461ce0865bd"
+    },
+    "created_at": "2026-04-17T00:38:32.185892+00:00",
+    "updated_at": "2026-04-17T00:38:40.663+00:00",
+    "dispatched_at": "2026-04-17T00:38:33.214+00:00",
+    "completed_at": "2026-04-17T00:38:40.663+00:00",
+    "worker_result": {
+      "lead_id": "c16f0874-875d-4a2a-b751-2f06beb5c80a",
+      "zoho_id": "584143000002767073",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "39ff96e2-78d4-4156-b8b3-8461ce0865bd"
+    },
+    "correlation_id": "39ff96e2-78d4-4156-b8b3-8461ce0865bd"
+  },
+  {
+    "id": "7c6cc7c3-b1ee-4ce4-951a-f1ff6b9f35d9",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "89695394-5173-465b-9d54-0e9b124afdbe",
+      "session_id": "load-1776386282832-43"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp31rb9YNxZxcZrc3xzWhLRi3T2V9d2asYwLVnTa",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "a58d63a2-f9c4-43f9-83db-aa41dc805d56",
+      "timestamp": "2026-04-17T00:38:05.238Z",
+      "correlation_id": "1e771252-8c8b-4c39-acff-15d0d5967409"
+    },
+    "created_at": "2026-04-17T00:38:05.369999+00:00",
+    "updated_at": "2026-04-17T00:38:14.019+00:00",
+    "dispatched_at": "2026-04-17T00:38:06.648+00:00",
+    "completed_at": "2026-04-17T00:38:14.019+00:00",
+    "worker_result": {
+      "lead_id": "89695394-5173-465b-9d54-0e9b124afdbe",
+      "zoho_id": "584143000002735085",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "1e771252-8c8b-4c39-acff-15d0d5967409"
+    },
+    "correlation_id": "1e771252-8c8b-4c39-acff-15d0d5967409"
+  },
+  {
+    "id": "9abadb16-56a0-4d16-b016-fb75d7472624",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "b4dbe737-8225-4dfa-98b1-b7181834324a",
+      "session_id": "load-1776386287770-55"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEbM6JsMmpJ6spfjQzyBWebFxfcDmod69BPKcBk",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "5afaaf54-2916-4508-924d-4abe6db95330",
+      "timestamp": "2026-04-17T00:38:10.190Z",
+      "correlation_id": "b7f8e343-9272-4f47-8fb8-0afba1f263fe"
+    },
+    "created_at": "2026-04-17T00:38:10.324657+00:00",
+    "updated_at": "2026-04-17T00:38:18.412+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.547+00:00",
+    "completed_at": "2026-04-17T00:38:18.412+00:00",
+    "worker_result": {
+      "lead_id": "b4dbe737-8225-4dfa-98b1-b7181834324a",
+      "zoho_id": "584143000002781037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "b7f8e343-9272-4f47-8fb8-0afba1f263fe"
+    },
+    "correlation_id": "b7f8e343-9272-4f47-8fb8-0afba1f263fe"
+  },
+  {
+    "id": "6445c68b-7ba1-4ce2-9726-5cd597f1917f",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "68e5cfd2-adcf-4f94-9eb4-b1b68247eb15",
+      "session_id": "load-1776386287770-58"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADTHXFBLVt1E6C6D8hWa7jka2eyip4xuaFs9S7F",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "09f7376a-7aff-4f6e-a042-77eb63180227",
+      "timestamp": "2026-04-17T00:38:10.483Z",
+      "correlation_id": "5096c95e-5b12-4f16-80c9-2eac13102dd8"
+    },
+    "created_at": "2026-04-17T00:38:10.607488+00:00",
+    "updated_at": "2026-04-17T00:38:19.09+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.766+00:00",
+    "completed_at": "2026-04-17T00:38:19.09+00:00",
+    "worker_result": {
+      "lead_id": "68e5cfd2-adcf-4f94-9eb4-b1b68247eb15",
+      "zoho_id": "584143000002784049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "5096c95e-5b12-4f16-80c9-2eac13102dd8"
+    },
+    "correlation_id": "5096c95e-5b12-4f16-80c9-2eac13102dd8"
+  },
+  {
+    "id": "87047b79-d784-4891-b791-1b5bb5565813",
+    "event_name": "contact_created",
+    "payload": {
+      "queueId": "c0bbc8bf-61e3-4fd3-a39d-9f7e006b32ab",
+      "contactId": "NO_CLEANUP_C26_1777291210307_CONTACT_0cd5183d-65db-41c4-a82d-13993ebcd768",
+      "audit_marker": "NO_CLEANUP_C26_1777291210307"
+    },
+    "source": "audit_c26_no_cleanup",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 1,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADVLNDgK1ths87dAhfc6HHxHybYyyion6m3R4xp",
+    "execution_context": {
+      "audit": "c26_no_cleanup",
+      "event_id": "NO_CLEANUP_C26_1777291210307_success_7a2f492e-7792-46f2-90cc-9b0889a07a70",
+      "correlation_id": "NO_CLEANUP_C26_1777291210307_success_7a2f492e-7792-46f2-90cc-9b0889a07a70"
+    },
+    "created_at": "2026-04-27T12:00:12.667081+00:00",
+    "updated_at": "2026-04-27T12:00:15.887+00:00",
+    "dispatched_at": "2026-04-27T12:00:14.256+00:00",
+    "completed_at": "2026-04-27T12:00:15.887+00:00",
+    "worker_result": {
+      "zoho_id": "584143000002914014",
+      "contact_id": "NO_CLEANUP_C26_1777291210307_CONTACT_0cd5183d-65db-41c4-a82d-13993ebcd768",
+      "consistency": true,
+      "correlation_id": "NO_CLEANUP_C26_1777291210307_success_7a2f492e-7792-46f2-90cc-9b0889a07a70"
+    },
+    "correlation_id": "NO_CLEANUP_C26_1777291210307_success_7a2f492e-7792-46f2-90cc-9b0889a07a70"
+  },
+  {
+    "id": "c67bcf0e-5b39-41fd-95a1-c1313e9177e6",
+    "event_name": "delivery_probe_failure",
+    "payload": {
+      "target": "missing_route",
+      "probeId": "NO_ROUTE_571744592312",
+      "queueId": "1b86e178-2f2d-4d56-81a8-4342ccc638a1",
+      "audit_marker": "NO_CLEANUP_C26_1777291210307"
+    },
+    "source": "audit_c26_no_cleanup",
+    "status": "failed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 0,
+    "last_error": "stuck: no completion ACK after 15 minutes",
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACk45ZisFKYTasjKo6CSKBQRfFzo34uPYGRbiS4",
+    "execution_context": {
+      "audit": "c26_no_cleanup",
+      "event_id": "NO_CLEANUP_C26_1777291210307_failure_2c9d6841-4b1e-49ee-88e0-a8c89a60eea5",
+      "correlation_id": "NO_CLEANUP_C26_1777291210307_failure_2c9d6841-4b1e-49ee-88e0-a8c89a60eea5"
+    },
+    "created_at": "2026-04-27T12:00:30.621956+00:00",
+    "updated_at": "2026-04-27T12:20:03.071+00:00",
+    "dispatched_at": "2026-04-27T12:00:31.554+00:00",
+    "completed_at": null,
+    "worker_result": null,
+    "correlation_id": "NO_CLEANUP_C26_1777291210307_failure_2c9d6841-4b1e-49ee-88e0-a8c89a60eea5"
+  },
+  {
+    "id": "e36c21e8-54d9-43b1-acc5-3df67a5391d4",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "e742c011-0507-40e7-a2b2-570dbfc91df2",
+      "session_id": "load-1776386308974-92"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp35nUCNCzbZQjpbXzzzWNQQqaUmDfVFjWJiFJZf",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "e9a40c45-1eea-417c-8164-38fd1b472294",
+      "timestamp": "2026-04-17T00:38:31.437Z",
+      "correlation_id": "824dc09d-d2a3-48bb-b60a-dbd8f28e57a9"
+    },
+    "created_at": "2026-04-17T00:38:31.571166+00:00",
+    "updated_at": "2026-04-17T00:38:39.837+00:00",
+    "dispatched_at": "2026-04-17T00:38:32.916+00:00",
+    "completed_at": "2026-04-17T00:38:39.837+00:00",
+    "worker_result": {
+      "lead_id": "e742c011-0507-40e7-a2b2-570dbfc91df2",
+      "zoho_id": "584143000002731037",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "824dc09d-d2a3-48bb-b60a-dbd8f28e57a9"
+    },
+    "correlation_id": "824dc09d-d2a3-48bb-b60a-dbd8f28e57a9"
+  },
+  {
+    "id": "73c29f7b-511f-4821-81ac-53d7d9c3a4c8",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "8093a1ef-925e-402f-9bba-09fe5c8fb847",
+      "session_id": "load-1776386308975-94"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882AS1MJjfoYeRzgU61K4BNmMXF7Aq5FZuH3y28eB",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "142a740f-88b0-4761-9cd8-4d695a8258e7",
+      "timestamp": "2026-04-17T00:38:31.360Z",
+      "correlation_id": "9510a0a7-006e-4dae-97fa-275bbdcbe44b"
+    },
+    "created_at": "2026-04-17T00:38:31.525344+00:00",
+    "updated_at": "2026-04-17T00:38:39.913+00:00",
+    "dispatched_at": "2026-04-17T00:38:32.799+00:00",
+    "completed_at": "2026-04-17T00:38:39.913+00:00",
+    "worker_result": {
+      "lead_id": "8093a1ef-925e-402f-9bba-09fe5c8fb847",
+      "zoho_id": "584143000002736097",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "9510a0a7-006e-4dae-97fa-275bbdcbe44b"
+    },
+    "correlation_id": "9510a0a7-006e-4dae-97fa-275bbdcbe44b"
+  },
+  {
+    "id": "9bda2070-fdfa-4208-a49b-d383b013dee4",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "c7fae1ae-e29c-475b-94a4-469c476045f2",
+      "session_id": "load-1776386276484-32"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACk5BWWifhuYHoXMxy8U1pc7vPknctrWYVmAc3B",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "5cd89b9c-f35b-4a73-8e46-6fb2411e36b4",
+      "timestamp": "2026-04-17T00:37:59.119Z",
+      "correlation_id": "d4753464-c64c-4c67-996b-036c6a19648e"
+    },
+    "created_at": "2026-04-17T00:37:59.291159+00:00",
+    "updated_at": "2026-04-17T00:38:06.927+00:00",
+    "dispatched_at": "2026-04-17T00:38:00.5+00:00",
+    "completed_at": "2026-04-17T00:38:06.927+00:00",
+    "worker_result": {
+      "lead_id": "c7fae1ae-e29c-475b-94a4-469c476045f2",
+      "zoho_id": "584143000002723074",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "d4753464-c64c-4c67-996b-036c6a19648e"
+    },
+    "correlation_id": "d4753464-c64c-4c67-996b-036c6a19648e"
+  },
+  {
+    "id": "6803c092-c7ab-4728-902f-5f85e8ebf6e5",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "d77bcaaa-bbe9-4e13-99cb-85ef3e1c5f31",
+      "session_id": "load-1776386276482-31"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEj5MNYqWYCU35VyEfGvtRNhCyCS5x5SZVCp1VF",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "4febd811-155e-4a60-880a-e4e1b0f176eb",
+      "timestamp": "2026-04-17T00:37:58.809Z",
+      "correlation_id": "4ee9838e-32a9-44e8-84d1-c2e706c32090"
+    },
+    "created_at": "2026-04-17T00:37:58.949677+00:00",
+    "updated_at": "2026-04-17T00:38:07.69+00:00",
+    "dispatched_at": "2026-04-17T00:38:00.297+00:00",
+    "completed_at": "2026-04-17T00:38:07.69+00:00",
+    "worker_result": {
+      "lead_id": "d77bcaaa-bbe9-4e13-99cb-85ef3e1c5f31",
+      "zoho_id": "584143000002788025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "4ee9838e-32a9-44e8-84d1-c2e706c32090"
+    },
+    "correlation_id": "4ee9838e-32a9-44e8-84d1-c2e706c32090"
+  },
+  {
+    "id": "54e29008-85f4-47fb-a33b-46be9a8df203",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "3804241e-e797-4682-a73e-5f78e9c12065",
+      "session_id": "load-1776386282836-50"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882B5BkRASkKhcQ8SRNu1vhD4ixvB3nYvLvYbjfF4",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "378ad9d6-1440-4aa0-882b-7bf7baa257ee",
+      "timestamp": "2026-04-17T00:38:05.289Z",
+      "correlation_id": "8cacfb70-b918-43d9-806f-6a36fc939382"
+    },
+    "created_at": "2026-04-17T00:38:05.451396+00:00",
+    "updated_at": "2026-04-17T00:38:13.156+00:00",
+    "dispatched_at": "2026-04-17T00:38:06.73+00:00",
+    "completed_at": "2026-04-17T00:38:13.156+00:00",
+    "worker_result": {
+      "lead_id": "3804241e-e797-4682-a73e-5f78e9c12065",
+      "zoho_id": "584143000002729062",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "8cacfb70-b918-43d9-806f-6a36fc939382"
+    },
+    "correlation_id": "8cacfb70-b918-43d9-806f-6a36fc939382"
+  },
+  {
+    "id": "8febf5b9-9918-4268-b4fb-a53a97644362",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "22506018-3ccf-4ef1-9e21-c7e0576b49dd",
+      "session_id": "load-1776386282836-49"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3moEr5TFFFLrUwUJB5nnkRhiYtZ2EGP57QsAEt",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "b3a0d43c-a30c-49f9-8a98-b49e53574ec6",
+      "timestamp": "2026-04-17T00:38:05.251Z",
+      "correlation_id": "6e4d039f-7829-4ab9-bd94-d58e0a55b75b"
+    },
+    "created_at": "2026-04-17T00:38:05.388652+00:00",
+    "updated_at": "2026-04-17T00:38:13.221+00:00",
+    "dispatched_at": "2026-04-17T00:38:06.689+00:00",
+    "completed_at": "2026-04-17T00:38:13.221+00:00",
+    "worker_result": {
+      "lead_id": "22506018-3ccf-4ef1-9e21-c7e0576b49dd",
+      "zoho_id": "584143000002786061",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "6e4d039f-7829-4ab9-bd94-d58e0a55b75b"
+    },
+    "correlation_id": "6e4d039f-7829-4ab9-bd94-d58e0a55b75b"
+  },
+  {
+    "id": "d2dd68bd-cebf-4cda-8515-2a51b443b46c",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "40991ccc-8dba-449c-9b48-b589fddb2da3",
+      "session_id": "load-1776386287770-54"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829sSbCPvkNPGS9xyXyFRHuczyryZd34oTaoKZmD",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "4d07e9c3-d038-490a-b6e1-e37dffb1ac04",
+      "timestamp": "2026-04-17T00:38:10.438Z",
+      "correlation_id": "51cd3fb5-b138-466a-9e1a-cf022a4f1ce8"
+    },
+    "created_at": "2026-04-17T00:38:10.586991+00:00",
+    "updated_at": "2026-04-17T00:38:19.015+00:00",
+    "dispatched_at": "2026-04-17T00:38:12+00:00",
+    "completed_at": "2026-04-17T00:38:19.015+00:00",
+    "worker_result": {
+      "lead_id": "40991ccc-8dba-449c-9b48-b589fddb2da3",
+      "zoho_id": "584143000002781049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "51cd3fb5-b138-466a-9e1a-cf022a4f1ce8"
+    },
+    "correlation_id": "51cd3fb5-b138-466a-9e1a-cf022a4f1ce8"
+  },
+  {
+    "id": "cb9a5200-ef7b-4da1-a280-d7961ab2e921",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "a495a70d-6eee-4ccc-8f54-66c6d3cb832a",
+      "session_id": "load-1776386287771-59"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFHdSyN6TwsSzRMHJHfP6fj4NBA2bU7i2EuRrb2",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "2489a7b4-1edb-4f1f-98ae-fce38ae073c6",
+      "timestamp": "2026-04-17T00:38:10.141Z",
+      "correlation_id": "f7681619-416a-42b2-8d71-71b3af9094e4"
+    },
+    "created_at": "2026-04-17T00:38:10.275555+00:00",
+    "updated_at": "2026-04-17T00:38:19.329+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.543+00:00",
+    "completed_at": "2026-04-17T00:38:19.329+00:00",
+    "worker_result": {
+      "lead_id": "a495a70d-6eee-4ccc-8f54-66c6d3cb832a",
+      "zoho_id": "584143000002735097",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "f7681619-416a-42b2-8d71-71b3af9094e4"
+    },
+    "correlation_id": "f7681619-416a-42b2-8d71-71b3af9094e4"
+  },
+  {
+    "id": "61630209-dad0-4e29-a2cb-04d846d57bc6",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "6e233ef4-d884-4e26-ac1a-789c41d5ef7f",
+      "session_id": "load-1776386271566-24"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx4QvURs41Rn6jHSvGYPJUeWNcPpTsnq4cHxFknn",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "4e5f1a8f-bf62-4bb5-9439-763e6dcac45e",
+      "timestamp": "2026-04-17T00:37:54.016Z",
+      "correlation_id": "f83ab6cc-6ac7-4912-985d-44be2f1aa580"
+    },
+    "created_at": "2026-04-17T00:37:54.156568+00:00",
+    "updated_at": "2026-04-17T00:38:02.777+00:00",
+    "dispatched_at": "2026-04-17T00:37:55.368+00:00",
+    "completed_at": "2026-04-17T00:38:02.777+00:00",
+    "worker_result": {
+      "lead_id": "6e233ef4-d884-4e26-ac1a-789c41d5ef7f",
+      "zoho_id": "584143000002735049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "f83ab6cc-6ac7-4912-985d-44be2f1aa580"
+    },
+    "correlation_id": "f83ab6cc-6ac7-4912-985d-44be2f1aa580"
+  },
+  {
+    "id": "5214a11b-7e8c-416b-a800-10cf0b462fee",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "47686bec-1192-482b-9e65-c3c2f2d5ff90",
+      "session_id": "load-1776386308977-98"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882B4NvgK8c2onH49FRV5kthr3Jgr3VJtYH7B14cT",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "af6b12f2-4f7d-448d-ba2b-3d77039a8e07",
+      "timestamp": "2026-04-17T00:38:31.449Z",
+      "correlation_id": "31e9b276-c91c-4e8a-ae49-7f4b43dad30f"
+    },
+    "created_at": "2026-04-17T00:38:31.591812+00:00",
+    "updated_at": "2026-04-17T00:38:39.818+00:00",
+    "dispatched_at": "2026-04-17T00:38:32.841+00:00",
+    "completed_at": "2026-04-17T00:38:39.818+00:00",
+    "worker_result": {
+      "lead_id": "47686bec-1192-482b-9e65-c3c2f2d5ff90",
+      "zoho_id": "584143000002755074",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "31e9b276-c91c-4e8a-ae49-7f4b43dad30f"
+    },
+    "correlation_id": "31e9b276-c91c-4e8a-ae49-7f4b43dad30f"
+  },
+  {
+    "id": "d53785b3-6b33-4124-a082-bde5ad8ca076",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "02e53dbd-2fbe-4db2-ad39-a724dcfaf740",
+      "session_id": "load-1776386308976-95"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACkjNMaSZekLvMTooGs8MdaRrFMfEArJo3TsbNq",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "8ff4a2fe-ff37-41f7-9db0-96139b67455e",
+      "timestamp": "2026-04-17T00:38:31.402Z",
+      "correlation_id": "943a4ee6-c4f4-4fdf-b764-c8d5baa8b5e8"
+    },
+    "created_at": "2026-04-17T00:38:31.554806+00:00",
+    "updated_at": "2026-04-17T00:38:40.115+00:00",
+    "dispatched_at": "2026-04-17T00:38:32.796+00:00",
+    "completed_at": "2026-04-17T00:38:40.115+00:00",
+    "worker_result": {
+      "lead_id": "02e53dbd-2fbe-4db2-ad39-a724dcfaf740",
+      "zoho_id": "584143000002780098",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "943a4ee6-c4f4-4fdf-b764-c8d5baa8b5e8"
+    },
+    "correlation_id": "943a4ee6-c4f4-4fdf-b764-c8d5baa8b5e8"
+  },
+  {
+    "id": "4e6cc29f-8d64-43cf-be6c-992c92e9f4d9",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7edaf1ac-e399-45b2-9bd0-256f5ac60e79",
+      "session_id": "load-1776386276485-33"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3dSKjgHmm82K3D7bgjrEJstY6MbiC9JmoyGGvR",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "4a287c44-4c6f-43b5-83b1-781f644ffbea",
+      "timestamp": "2026-04-17T00:37:58.813Z",
+      "correlation_id": "02680fe4-2b30-4505-8dab-90399c780c10"
+    },
+    "created_at": "2026-04-17T00:37:58.958766+00:00",
+    "updated_at": "2026-04-17T00:38:08.447+00:00",
+    "dispatched_at": "2026-04-17T00:38:00.212+00:00",
+    "completed_at": "2026-04-17T00:38:08.447+00:00",
+    "worker_result": {
+      "lead_id": "7edaf1ac-e399-45b2-9bd0-256f5ac60e79",
+      "zoho_id": "584143000002776061",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "02680fe4-2b30-4505-8dab-90399c780c10"
+    },
+    "correlation_id": "02680fe4-2b30-4505-8dab-90399c780c10"
+  },
+  {
+    "id": "d3bfabe1-8d5d-4326-b1de-cb022401bf3c",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "00e6f333-149f-4dcd-9085-f768c8d6861c",
+      "session_id": "load-1776386282832-42"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3Ao4oq9HSPyHsQMPGM1jBjYoUmsYmqSkmENQYi",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "c8e92507-70db-419e-86b5-bd5ed8e6633e",
+      "timestamp": "2026-04-17T00:38:05.236Z",
+      "correlation_id": "7ba38aa9-d4f3-4c8c-9b25-c4edfcedaee8"
+    },
+    "created_at": "2026-04-17T00:38:05.398172+00:00",
+    "updated_at": "2026-04-17T00:38:13.398+00:00",
+    "dispatched_at": "2026-04-17T00:38:06.687+00:00",
+    "completed_at": "2026-04-17T00:38:13.398+00:00",
+    "worker_result": {
+      "lead_id": "00e6f333-149f-4dcd-9085-f768c8d6861c",
+      "zoho_id": "584143000002735073",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "7ba38aa9-d4f3-4c8c-9b25-c4edfcedaee8"
+    },
+    "correlation_id": "7ba38aa9-d4f3-4c8c-9b25-c4edfcedaee8"
+  },
+  {
+    "id": "80b1aa94-60a0-4de1-899c-bb86cefd60c6",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "00de38e0-36ec-41fd-8693-be481f4977d9",
+      "session_id": "load-1776386282835-47"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACtbVu4GsdCXiHDnnc1aqhe1ziDumjdNFEvd1UY",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "3ddb9f67-e05a-447d-9aaf-074bd1f61f06",
+      "timestamp": "2026-04-17T00:38:05.210Z",
+      "correlation_id": "af1e8b8b-4736-4694-b074-667609e895fa"
+    },
+    "created_at": "2026-04-17T00:38:05.351414+00:00",
+    "updated_at": "2026-04-17T00:38:13.699+00:00",
+    "dispatched_at": "2026-04-17T00:38:06.671+00:00",
+    "completed_at": "2026-04-17T00:38:13.699+00:00",
+    "worker_result": {
+      "lead_id": "00de38e0-36ec-41fd-8693-be481f4977d9",
+      "zoho_id": "584143000002780038",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "af1e8b8b-4736-4694-b074-667609e895fa"
+    },
+    "correlation_id": "af1e8b8b-4736-4694-b074-667609e895fa"
+  },
+  {
+    "id": "e033bd2b-6559-46d7-bd44-df69f3c57e70",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "562c4b31-3456-43b1-abe9-2f473c7d4994",
+      "session_id": "load-1776386287770-56"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3Biq7cbWFDM5QnqYUaVd8dNDdHDpLFETyKZdzS",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "0719bcd9-e099-402d-aea1-010f35290123",
+      "timestamp": "2026-04-17T00:38:10.178Z",
+      "correlation_id": "aaa123e0-806c-4472-8920-1db5f0be9ece"
+    },
+    "created_at": "2026-04-17T00:38:10.330861+00:00",
+    "updated_at": "2026-04-17T00:38:19.404+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.597+00:00",
+    "completed_at": "2026-04-17T00:38:19.404+00:00",
+    "worker_result": {
+      "lead_id": "562c4b31-3456-43b1-abe9-2f473c7d4994",
+      "zoho_id": "584143000002735109",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "aaa123e0-806c-4472-8920-1db5f0be9ece"
+    },
+    "correlation_id": "aaa123e0-806c-4472-8920-1db5f0be9ece"
+  },
+  {
+    "id": "5a4115b3-3b2c-4f76-9257-cf466c4f23f8",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "e22c2952-0ede-4934-9aea-04301c2545f3",
+      "session_id": "load-1776386292665-65"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFL4UxWUyJdJTEn7MqSjQRE3uf3Jh4RiebupYrf",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "3033b949-c167-4486-afaa-60f7e7823769",
+      "timestamp": "2026-04-17T00:38:15.032Z",
+      "correlation_id": "5bc49fa0-110d-4259-9270-a0c38202f6dd"
+    },
+    "created_at": "2026-04-17T00:38:15.164491+00:00",
+    "updated_at": "2026-04-17T00:38:23.484+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.382+00:00",
+    "completed_at": "2026-04-17T00:38:23.484+00:00",
+    "worker_result": {
+      "lead_id": "e22c2952-0ede-4934-9aea-04301c2545f3",
+      "zoho_id": "584143000002788049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "5bc49fa0-110d-4259-9270-a0c38202f6dd"
+    },
+    "correlation_id": "5bc49fa0-110d-4259-9270-a0c38202f6dd"
+  },
+  {
+    "id": "2db3d2c5-6a08-4d1b-bd5e-11e8e2551adc",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "d7a8c192-13d9-4413-97a3-f9fbde3253d8",
+      "session_id": "load-1776386292662-61"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEjzrRUkJ7gLaKv3UspAgXe3hZ63kRz5vdA4uwa",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "54e4c540-c9bb-46b7-8313-0d914e59d002",
+      "timestamp": "2026-04-17T00:38:14.940Z",
+      "correlation_id": "42985a27-d7bd-4ef0-9cb3-bc1416254c92"
+    },
+    "created_at": "2026-04-17T00:38:15.071059+00:00",
+    "updated_at": "2026-04-17T00:38:23.67+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.338+00:00",
+    "completed_at": "2026-04-17T00:38:23.67+00:00",
+    "worker_result": {
+      "lead_id": "d7a8c192-13d9-4413-97a3-f9fbde3253d8",
+      "zoho_id": "584143000002781073",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "42985a27-d7bd-4ef0-9cb3-bc1416254c92"
+    },
+    "correlation_id": "42985a27-d7bd-4ef0-9cb3-bc1416254c92"
+  },
+  {
+    "id": "fa901770-38fe-4374-8e89-e48cc2937f21",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "c8efeaab-5ec3-4c24-8c7b-7bdda48e5869",
+      "session_id": "load-1776386304328-86"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx511TNyHwgDiYo2tvksfCxts75fQ6hvPtQwA7Cq",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "a6b3d767-cfc7-4152-ba88-625b5c5886de",
+      "timestamp": "2026-04-17T00:38:26.930Z",
+      "correlation_id": "69422d06-dda3-4c5b-951b-9a4777d1fb39"
+    },
+    "created_at": "2026-04-17T00:38:27.073547+00:00",
+    "updated_at": "2026-04-17T00:38:35.248+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.273+00:00",
+    "completed_at": "2026-04-17T00:38:35.248+00:00",
+    "worker_result": {
+      "lead_id": "c8efeaab-5ec3-4c24-8c7b-7bdda48e5869",
+      "zoho_id": "584143000002735157",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "69422d06-dda3-4c5b-951b-9a4777d1fb39"
+    },
+    "correlation_id": "69422d06-dda3-4c5b-951b-9a4777d1fb39"
+  },
+  {
+    "id": "36268d87-057f-4c37-b654-20440c5262e9",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "5f6b18ad-bade-4b33-b5de-14077d7f550d",
+      "session_id": "load-1776386304327-83"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADPeBJmue5XYPcUh4cHnxwDqeuAdteZFVz3ZGLR",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "255e3f95-a64c-4fe7-88dd-357d9f57cbd7",
+      "timestamp": "2026-04-17T00:38:26.620Z",
+      "correlation_id": "f0c6858b-a353-4c4c-bae8-9d2dba197fe7"
+    },
+    "created_at": "2026-04-17T00:38:27.185058+00:00",
+    "updated_at": "2026-04-17T00:38:35.365+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.378+00:00",
+    "completed_at": "2026-04-17T00:38:35.365+00:00",
+    "worker_result": {
+      "lead_id": "5f6b18ad-bade-4b33-b5de-14077d7f550d",
+      "zoho_id": "584143000002736085",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "f0c6858b-a353-4c4c-bae8-9d2dba197fe7"
+    },
+    "correlation_id": "f0c6858b-a353-4c4c-bae8-9d2dba197fe7"
+  },
+  {
+    "id": "1db355ff-f35a-4fe1-ace8-68b13ffdfdfa",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "3405cc9a-12f8-4092-a3a6-da1fc1ba4294",
+      "session_id": "load-1776386308977-97"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx4wdyQVk48UBynzjCwGrkHrPNGifQdBmEB75GND",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "fc9ce2fb-9020-49e5-a50b-1861fb09d89b",
+      "timestamp": "2026-04-17T00:38:31.660Z",
+      "correlation_id": "2631f544-f4ae-44cb-8f39-59d01a8a803e"
+    },
+    "created_at": "2026-04-17T00:38:31.792524+00:00",
+    "updated_at": "2026-04-17T00:38:40.469+00:00",
+    "dispatched_at": "2026-04-17T00:38:33.026+00:00",
+    "completed_at": "2026-04-17T00:38:40.469+00:00",
+    "worker_result": {
+      "lead_id": "3405cc9a-12f8-4092-a3a6-da1fc1ba4294",
+      "zoho_id": "584143000002784085",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "2631f544-f4ae-44cb-8f39-59d01a8a803e"
+    },
+    "correlation_id": "2631f544-f4ae-44cb-8f39-59d01a8a803e"
+  },
+  {
+    "id": "2c67df4a-105c-4b02-a7e6-38f9d191725e",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "d2d8d807-400d-4d26-8a0b-573b975f9508",
+      "session_id": "load-1776386282834-45"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp36snrEDnH12MccmQ2hmmBNvouP2Zs3eDTf4SAg",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "f2a09eda-afeb-496b-aa7c-cfa512a67bb2",
+      "timestamp": "2026-04-17T00:38:05.388Z",
+      "correlation_id": "b51532c6-ae21-4c94-91a5-fc7adb92c8bb"
+    },
+    "created_at": "2026-04-17T00:38:05.538378+00:00",
+    "updated_at": "2026-04-17T00:38:14.06+00:00",
+    "dispatched_at": "2026-04-17T00:38:06.752+00:00",
+    "completed_at": "2026-04-17T00:38:14.06+00:00",
+    "worker_result": {
+      "lead_id": "d2d8d807-400d-4d26-8a0b-573b975f9508",
+      "zoho_id": "584143000002736049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "b51532c6-ae21-4c94-91a5-fc7adb92c8bb"
+    },
+    "correlation_id": "b51532c6-ae21-4c94-91a5-fc7adb92c8bb"
+  },
+  {
+    "id": "a6adf108-a23b-4084-be81-cb1ed3df5574",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "e8b343e4-ded6-4908-9562-2bbbf9de9c61",
+      "session_id": "load-1776386287770-57"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2UFqPP6Yr3cVGhvSTGa3AoBfGTpis6N3Ntaahw",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "b22ec874-e597-4044-8e4b-dbbc36a66e81",
+      "timestamp": "2026-04-17T00:38:10.175Z",
+      "correlation_id": "562cccc0-3c01-44e3-9ddf-ba22f0f46b9a"
+    },
+    "created_at": "2026-04-17T00:38:10.308678+00:00",
+    "updated_at": "2026-04-17T00:38:18.853+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.593+00:00",
+    "completed_at": "2026-04-17T00:38:18.853+00:00",
+    "worker_result": {
+      "lead_id": "e8b343e4-ded6-4908-9562-2bbbf9de9c61",
+      "zoho_id": "584143000002767061",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "562cccc0-3c01-44e3-9ddf-ba22f0f46b9a"
+    },
+    "correlation_id": "562cccc0-3c01-44e3-9ddf-ba22f0f46b9a"
+  },
+  {
+    "id": "6f99621d-9745-4d3f-9a1e-ec86c6b62d86",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "932563bb-4537-46e2-af9f-f4716bd3f2c2",
+      "session_id": "load-1776386304329-89"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEaPrAqiCsmsYmTAjx3UStgMeQaycMEStz3azFV",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "145f572a-b8fe-4b8a-9add-e5126ab365eb",
+      "timestamp": "2026-04-17T00:38:26.561Z",
+      "correlation_id": "a0931f58-fa0f-410b-b057-a5f5b550e8a5"
+    },
+    "created_at": "2026-04-17T00:38:26.693801+00:00",
+    "updated_at": "2026-04-17T00:38:35.463+00:00",
+    "dispatched_at": "2026-04-17T00:38:27.965+00:00",
+    "completed_at": "2026-04-17T00:38:35.463+00:00",
+    "worker_result": {
+      "lead_id": "932563bb-4537-46e2-af9f-f4716bd3f2c2",
+      "zoho_id": "584143000002733050",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "a0931f58-fa0f-410b-b057-a5f5b550e8a5"
+    },
+    "correlation_id": "a0931f58-fa0f-410b-b057-a5f5b550e8a5"
+  },
+  {
+    "id": "f87b445f-c258-47df-aac1-9157a0147823",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "c386dfda-7088-4143-9c1f-712ad6da9c0e",
+      "session_id": "load-1776386304330-90"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2ThLgmr6zx8wViFgHMSVv95191b2SjriqQFHtv",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "c2ca6ef5-2c4d-4336-9e39-3409021b0536",
+      "timestamp": "2026-04-17T00:38:26.718Z",
+      "correlation_id": "e01d5c99-cd0f-4373-94e4-e217d0a8a7fd"
+    },
+    "created_at": "2026-04-17T00:38:26.852879+00:00",
+    "updated_at": "2026-04-17T00:38:35.619+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.102+00:00",
+    "completed_at": "2026-04-17T00:38:35.619+00:00",
+    "worker_result": {
+      "lead_id": "c386dfda-7088-4143-9c1f-712ad6da9c0e",
+      "zoho_id": "584143000002784073",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "e01d5c99-cd0f-4373-94e4-e217d0a8a7fd"
+    },
+    "correlation_id": "e01d5c99-cd0f-4373-94e4-e217d0a8a7fd"
+  },
+  {
+    "id": "8a4eaf82-7301-450f-9cc2-ebbcd627b19e",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "faa92086-3ab9-4337-8cac-222eee2391a5",
+      "session_id": "load-1776386282834-46"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADT1wNNRoozQ7VFuZzv2af73yAMX9ScpyS5ef9N",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "b30904fa-d12c-4923-aebf-31101412a518",
+      "timestamp": "2026-04-17T00:38:05.622Z",
+      "correlation_id": "28384bb7-ea95-412e-bbde-f7445440e4a9"
+    },
+    "created_at": "2026-04-17T00:38:05.760142+00:00",
+    "updated_at": "2026-04-17T00:38:14.027+00:00",
+    "dispatched_at": "2026-04-17T00:38:06.968+00:00",
+    "completed_at": "2026-04-17T00:38:14.027+00:00",
+    "worker_result": {
+      "lead_id": "faa92086-3ab9-4337-8cac-222eee2391a5",
+      "zoho_id": "584143000002784025",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "28384bb7-ea95-412e-bbde-f7445440e4a9"
+    },
+    "correlation_id": "28384bb7-ea95-412e-bbde-f7445440e4a9"
+  },
+  {
+    "id": "dd8f7afa-9737-4d2b-bc0c-cf22d0a7b7f1",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "a9cf85e0-ff17-4c56-8df1-3d13d7773843",
+      "session_id": "load-1776386304328-84"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829nZvzLQXVf9NHJyAcwMxxwD4VtNGTMd5q71pn9",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "e0bb756f-6ffc-4bd0-bc2c-3ece49539c88",
+      "timestamp": "2026-04-17T00:38:26.949Z",
+      "correlation_id": "a85a2f7d-ef91-49b7-b99b-92479819351c"
+    },
+    "created_at": "2026-04-17T00:38:27.107771+00:00",
+    "updated_at": "2026-04-17T00:38:35.597+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.413+00:00",
+    "completed_at": "2026-04-17T00:38:35.597+00:00",
+    "worker_result": {
+      "lead_id": "a9cf85e0-ff17-4c56-8df1-3d13d7773843",
+      "zoho_id": "584143000002755051",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "a85a2f7d-ef91-49b7-b99b-92479819351c"
+    },
+    "correlation_id": "a85a2f7d-ef91-49b7-b99b-92479819351c"
+  },
+  {
+    "id": "80cd872b-a682-48df-90f0-1ba5f06152ec",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "6a1f5bd5-5ae4-4b4f-9881-9b229389a1d0",
+      "session_id": "load-1776386308978-100"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3mwiaKHY71Fqp6yT1A29H58WW1BkcqfYsoDk87",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "da48d050-f1c6-4461-9c78-a10c0c6d75f8",
+      "timestamp": "2026-04-17T00:38:31.467Z",
+      "correlation_id": "b5c9c6c9-813c-454f-87c0-ba889afbb3f5"
+    },
+    "created_at": "2026-04-17T00:38:31.595895+00:00",
+    "updated_at": "2026-04-17T00:38:40.643+00:00",
+    "dispatched_at": "2026-04-17T00:38:32.998+00:00",
+    "completed_at": "2026-04-17T00:38:40.643+00:00",
+    "worker_result": {
+      "lead_id": "6a1f5bd5-5ae4-4b4f-9881-9b229389a1d0",
+      "zoho_id": "584143000002731049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "b5c9c6c9-813c-454f-87c0-ba889afbb3f5"
+    },
+    "correlation_id": "b5c9c6c9-813c-454f-87c0-ba889afbb3f5"
+  },
+  {
+    "id": "7c28efdf-5efd-4711-abc4-36e2f3135caf",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "56c278ee-762b-4036-98c1-9131ec28cdfa",
+      "session_id": "load-1776386292667-68"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx668bVQCTzRNEwNixa26fUBw7tECTuMN4T5CPDo",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "123afbdf-6758-4336-90f1-c10c3ce75790",
+      "timestamp": "2026-04-17T00:38:15.019Z",
+      "correlation_id": "58657eb8-943e-49bb-a123-843e06b51d64"
+    },
+    "created_at": "2026-04-17T00:38:15.158261+00:00",
+    "updated_at": "2026-04-17T00:38:23.374+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.37+00:00",
+    "completed_at": "2026-04-17T00:38:23.374+00:00",
+    "worker_result": {
+      "lead_id": "56c278ee-762b-4036-98c1-9131ec28cdfa",
+      "zoho_id": "584143000002780062",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "58657eb8-943e-49bb-a123-843e06b51d64"
+    },
+    "correlation_id": "58657eb8-943e-49bb-a123-843e06b51d64"
+  },
+  {
+    "id": "cff691a1-1716-4940-9004-930cc2b0c04f",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "2e73bb3a-f87b-45ba-b138-f2b54113028d",
+      "session_id": "load-1776386292668-69"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RABgRbskqXnHaFbeRjuokvCQipDN8Lce8WYynvhZ",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "1b5e4b0e-a6fb-40ee-a66d-040c94931f60",
+      "timestamp": "2026-04-17T00:38:15.160Z",
+      "correlation_id": "613cb119-5dca-4d76-9a76-7132acb8dbef"
+    },
+    "created_at": "2026-04-17T00:38:15.309918+00:00",
+    "updated_at": "2026-04-17T00:38:23.407+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.504+00:00",
+    "completed_at": "2026-04-17T00:38:23.407+00:00",
+    "worker_result": {
+      "lead_id": "2e73bb3a-f87b-45ba-b138-f2b54113028d",
+      "zoho_id": "584143000002729074",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "613cb119-5dca-4d76-9a76-7132acb8dbef"
+    },
+    "correlation_id": "613cb119-5dca-4d76-9a76-7132acb8dbef"
+  },
+  {
+    "id": "35fd9fee-3414-4bc2-a9e5-949b4287efcf",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "662ea5f0-fee3-4522-8448-5f6b5ebb8521",
+      "session_id": "load-1776386298200-74"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp4DLSRqo4YZsdtLNmD3Xucr7d1Fme3v6jEPqAgS",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "b0bc6d90-3dc3-42ae-834b-10d7b926e65f",
+      "timestamp": "2026-04-17T00:38:20.557Z",
+      "correlation_id": "0186cff1-8c27-4686-81b8-2067bcd8d53e"
+    },
+    "created_at": "2026-04-17T00:38:20.690863+00:00",
+    "updated_at": "2026-04-17T00:38:28.288+00:00",
+    "dispatched_at": "2026-04-17T00:38:21.885+00:00",
+    "completed_at": "2026-04-17T00:38:28.288+00:00",
+    "worker_result": {
+      "lead_id": "662ea5f0-fee3-4522-8448-5f6b5ebb8521",
+      "zoho_id": "584143000002784061",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "0186cff1-8c27-4686-81b8-2067bcd8d53e"
+    },
+    "correlation_id": "0186cff1-8c27-4686-81b8-2067bcd8d53e"
+  },
+  {
+    "id": "ecd375b4-ef7e-4ba9-90f0-f5ed2f852ef9",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "c20fb9b5-be06-493c-8986-c42cdcadbf49",
+      "session_id": "load-1776386298201-75"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx4No8cBrEs5x47kXUKx1P6QqRB823iLuV5mnkTZ",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "e368ff8e-0867-4faf-b5c2-8f54cc0928a1",
+      "timestamp": "2026-04-17T00:38:20.894Z",
+      "correlation_id": "7ac1d242-a47e-4a4b-9734-758a3b80552b"
+    },
+    "created_at": "2026-04-17T00:38:21.03277+00:00",
+    "updated_at": "2026-04-17T00:38:29.2+00:00",
+    "dispatched_at": "2026-04-17T00:38:22.351+00:00",
+    "completed_at": "2026-04-17T00:38:29.2+00:00",
+    "worker_result": {
+      "lead_id": "c20fb9b5-be06-493c-8986-c42cdcadbf49",
+      "zoho_id": "584143000002776097",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "7ac1d242-a47e-4a4b-9734-758a3b80552b"
+    },
+    "correlation_id": "7ac1d242-a47e-4a4b-9734-758a3b80552b"
+  },
+  {
+    "id": "64537d6c-025d-4aa2-bd68-17b54f9bcb68",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "d417ea76-6b3e-4139-bcfb-8b58779029e9",
+      "session_id": "load-1776386304326-81"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFBRb8LofA2sD1HHeqHAETTHndASgpX6UEa3VSJ",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "88d957e0-a9eb-4421-b35a-a7ad19d98148",
+      "timestamp": "2026-04-17T00:38:26.815Z",
+      "correlation_id": "7d7730b2-196b-46cb-a224-a318faf4dd33"
+    },
+    "created_at": "2026-04-17T00:38:26.958202+00:00",
+    "updated_at": "2026-04-17T00:38:35.674+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.211+00:00",
+    "completed_at": "2026-04-17T00:38:35.674+00:00",
+    "worker_result": {
+      "lead_id": "d417ea76-6b3e-4139-bcfb-8b58779029e9",
+      "zoho_id": "584143000002788061",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "7d7730b2-196b-46cb-a224-a318faf4dd33"
+    },
+    "correlation_id": "7d7730b2-196b-46cb-a224-a318faf4dd33"
+  },
+  {
+    "id": "e47911ca-f8c5-464f-912b-e78a15c9ac5d",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "75fcb4b1-5884-4d4a-85cf-4d1652ba5812",
+      "session_id": "sess_gczrq8efb_1776391967653"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2aKTJB83au1n7JYqenYvvZDTxKNhZ21s5uoM1P",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "ff9aa2fb-681d-4e01-8655-5c5015441b78",
+      "timestamp": "2026-04-17T02:14:30.076Z",
+      "correlation_id": "41e97817-8c31-400e-935c-05d6ac4e3b19"
+    },
+    "created_at": "2026-04-17T02:14:30.201602+00:00",
+    "updated_at": "2026-04-17T02:14:39.695+00:00",
+    "dispatched_at": "2026-04-17T02:14:31.468+00:00",
+    "completed_at": "2026-04-17T02:14:39.695+00:00",
+    "worker_result": {
+      "lead_id": "75fcb4b1-5884-4d4a-85cf-4d1652ba5812",
+      "zoho_id": "584143000002755099",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "41e97817-8c31-400e-935c-05d6ac4e3b19"
+    },
+    "correlation_id": "41e97817-8c31-400e-935c-05d6ac4e3b19"
+  },
+  {
+    "id": "1ba14f95-367e-423f-b4da-eb424a6c9a39",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7ff87716-ab8d-45e0-9e0e-9df051b3b93e",
+      "session_id": "load-1776386282833-44"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RAC9kv7C6hiCNwd8jytiKKFrMMM1JBixJ8hdpArG",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "71976307-d387-4e17-a9e3-011a080481b9",
+      "timestamp": "2026-04-17T00:38:05.252Z",
+      "correlation_id": "cdbe18a0-68da-41ef-ae9f-57713241814b"
+    },
+    "created_at": "2026-04-17T00:38:05.825628+00:00",
+    "updated_at": "2026-04-17T00:38:13.758+00:00",
+    "dispatched_at": "2026-04-17T00:38:07.196+00:00",
+    "completed_at": "2026-04-17T00:38:13.758+00:00",
+    "worker_result": {
+      "lead_id": "7ff87716-ab8d-45e0-9e0e-9df051b3b93e",
+      "zoho_id": "584143000002767049",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "cdbe18a0-68da-41ef-ae9f-57713241814b"
+    },
+    "correlation_id": "cdbe18a0-68da-41ef-ae9f-57713241814b"
+  },
+  {
+    "id": "db96e982-630f-4c6d-bd54-255e336f6ef5",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "5da56722-1618-4c76-9e68-78fab9500926",
+      "session_id": "load-1776386287771-60"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx5bK2QQ8UKdbzHfRtJVsj4NHtbhzfPqqdxhz5c9",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "0698c085-18ba-4225-882e-ae7ea1d7a71a",
+      "timestamp": "2026-04-17T00:38:10.232Z",
+      "correlation_id": "5f3ebd5f-80c3-4e8f-af00-bf8dd691ca82"
+    },
+    "created_at": "2026-04-17T00:38:10.433831+00:00",
+    "updated_at": "2026-04-17T00:38:18.764+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.682+00:00",
+    "completed_at": "2026-04-17T00:38:18.764+00:00",
+    "worker_result": {
+      "lead_id": "5da56722-1618-4c76-9e68-78fab9500926",
+      "zoho_id": "584143000002733038",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "5f3ebd5f-80c3-4e8f-af00-bf8dd691ca82"
+    },
+    "correlation_id": "5f3ebd5f-80c3-4e8f-af00-bf8dd691ca82"
+  },
+  {
+    "id": "d6fb1041-31f5-483b-9c8e-c21cee81d805",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "f36e777e-dd7d-4721-909a-13bb17af25d7",
+      "session_id": "load-1776386298199-71"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882B5SY2wDDKqV2aKno7zBJuqhvPycoLwkvFN5kEA",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "f98867bc-1b9f-4f63-a750-988dbb3113ef",
+      "timestamp": "2026-04-17T00:38:20.572Z",
+      "correlation_id": "e61ee902-8a67-48f2-9fc2-7bd7619bf7b9"
+    },
+    "created_at": "2026-04-17T00:38:20.6991+00:00",
+    "updated_at": "2026-04-17T00:38:28.839+00:00",
+    "dispatched_at": "2026-04-17T00:38:21.939+00:00",
+    "completed_at": "2026-04-17T00:38:28.839+00:00",
+    "worker_result": {
+      "lead_id": "f36e777e-dd7d-4721-909a-13bb17af25d7",
+      "zoho_id": "584143000002780074",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "e61ee902-8a67-48f2-9fc2-7bd7619bf7b9"
+    },
+    "correlation_id": "e61ee902-8a67-48f2-9fc2-7bd7619bf7b9"
+  },
+  {
+    "id": "079344a7-fbb6-4f0e-b186-8f5c9f97b66f",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "0e56a8eb-184d-4f42-a719-7c87b03f1d82",
+      "session_id": "load-1776386304327-82"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829sAo2wyTKgp2bnJFa4kFS3AWNFz75Ei52Zy8nj",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "5ad730f5-2d23-483b-9fb0-101a1e77f276",
+      "timestamp": "2026-04-17T00:38:26.726Z",
+      "correlation_id": "162da846-b438-476a-8cac-f77c37c39320"
+    },
+    "created_at": "2026-04-17T00:38:26.881473+00:00",
+    "updated_at": "2026-04-17T00:38:35.531+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.136+00:00",
+    "completed_at": "2026-04-17T00:38:35.531+00:00",
+    "worker_result": {
+      "lead_id": "0e56a8eb-184d-4f42-a719-7c87b03f1d82",
+      "zoho_id": "584143000002781085",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "162da846-b438-476a-8cac-f77c37c39320"
+    },
+    "correlation_id": "162da846-b438-476a-8cac-f77c37c39320"
+  },
+  {
+    "id": "4b7e1987-9684-47f2-9c80-6a131436bf85",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7f0f0855-3780-4015-b98a-2e8572f0c9f2",
+      "session_id": "load-1776386304328-88"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3726MiejLGm5fy6UrxnL7x94eAwAV9Uo5cK7vL",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "5a30766b-9d31-4099-9b83-a9b5386b4829",
+      "timestamp": "2026-04-17T00:38:26.788Z",
+      "correlation_id": "e035961d-7a2e-4d16-a146-58a83bda63ac"
+    },
+    "created_at": "2026-04-17T00:38:26.96443+00:00",
+    "updated_at": "2026-04-17T00:38:35.743+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.194+00:00",
+    "completed_at": "2026-04-17T00:38:35.743+00:00",
+    "worker_result": {
+      "lead_id": "7f0f0855-3780-4015-b98a-2e8572f0c9f2",
+      "zoho_id": "584143000002788073",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "e035961d-7a2e-4d16-a146-58a83bda63ac"
+    },
+    "correlation_id": "e035961d-7a2e-4d16-a146-58a83bda63ac"
+  },
+  {
+    "id": "9f42ce22-52c9-4180-b7a4-5289ce04e69d",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "d7c0334e-005e-4fd4-a201-0728d2111a57",
+      "session_id": "load-1776386287770-53"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3kiABSCUJS5nZWE5YGMhuUg3ek3PDGyJ4CRCwN",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "b2349abc-a0af-40c0-ba52-34a9881ba23d",
+      "timestamp": "2026-04-17T00:38:10.123Z",
+      "correlation_id": "6b11436b-b16f-4eb7-b0c9-b1b8b26f68d1"
+    },
+    "created_at": "2026-04-17T00:38:10.271055+00:00",
+    "updated_at": "2026-04-17T00:38:18.956+00:00",
+    "dispatched_at": "2026-04-17T00:38:11.641+00:00",
+    "completed_at": "2026-04-17T00:38:18.956+00:00",
+    "worker_result": {
+      "lead_id": "d7c0334e-005e-4fd4-a201-0728d2111a57",
+      "zoho_id": "584143000002723086",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "6b11436b-b16f-4eb7-b0c9-b1b8b26f68d1"
+    },
+    "correlation_id": "6b11436b-b16f-4eb7-b0c9-b1b8b26f68d1"
+  },
+  {
+    "id": "8e2af998-944a-47b7-921f-7e8ba83f73d3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "c87245ce-4c6a-4587-a359-a6f53d2bf054",
+      "session_id": "load-1776386292663-62"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFuBLeU7cWiSBH27FFL62QUQRdHRUJrEiks6yHi",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "e0a5e23a-28af-4b0b-88dd-dc5743cce07d",
+      "timestamp": "2026-04-17T00:38:15.033Z",
+      "correlation_id": "bbc74c47-9c01-419d-88e3-f2d311a95a91"
+    },
+    "created_at": "2026-04-17T00:38:15.175049+00:00",
+    "updated_at": "2026-04-17T00:38:23.418+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.363+00:00",
+    "completed_at": "2026-04-17T00:38:23.418+00:00",
+    "worker_result": {
+      "lead_id": "c87245ce-4c6a-4587-a359-a6f53d2bf054",
+      "zoho_id": "584143000002723098",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "bbc74c47-9c01-419d-88e3-f2d311a95a91"
+    },
+    "correlation_id": "bbc74c47-9c01-419d-88e3-f2d311a95a91"
+  },
+  {
+    "id": "55c38761-62c4-4461-bc40-9c4834a54cd0",
+    "event_name": "contact_created",
+    "payload": {
+      "contactId": "CNT-1776431591902"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFmtZDURz85R4YwTyEhKuZ1Qnkv5MxhRbuNtVcV",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "2620fb8c-6fee-4f05-b1b0-3702ce9ee44d",
+      "timestamp": "2026-04-17T13:13:12.808Z",
+      "correlation_id": "a340dae8-495c-4f11-bbe9-299005abf4b5"
+    },
+    "created_at": "2026-04-17T13:13:13.665121+00:00",
+    "updated_at": "2026-04-17T13:13:20.208+00:00",
+    "dispatched_at": "2026-04-17T13:13:15.897+00:00",
+    "completed_at": "2026-04-17T13:13:20.208+00:00",
+    "worker_result": {
+      "zoho_id": "584143000002798002",
+      "contact_id": "CNT-1776431591902",
+      "consistency": true,
+      "correlation_id": "a340dae8-495c-4f11-bbe9-299005abf4b5"
+    },
+    "correlation_id": "a340dae8-495c-4f11-bbe9-299005abf4b5"
+  },
+  {
+    "id": "7c1d2bbe-a850-41c2-b4c3-244d077caee8",
+    "event_name": "contact_created",
+    "payload": {
+      "queueId": "2f875ca6-4d7c-4587-ad99-4acac34af166",
+      "contactId": "NO_CLEANUP_C26_1777289717631_CONTACT_5f26c1a8-5258-464b-a7d3-32cc19b8d68b",
+      "audit_marker": "NO_CLEANUP_C26_1777289717631"
+    },
+    "source": "audit_c26_no_cleanup",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 1,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882ASqrejkh3Wu8hq6dComvmSpdxMuzA4UTMkijE1",
+    "execution_context": {
+      "audit": "c26_no_cleanup",
+      "event_id": "NO_CLEANUP_C26_1777289717631_success_f128e2ae-c4b1-4308-b4b3-5b620c658f5f",
+      "correlation_id": "NO_CLEANUP_C26_1777289717631_success_f128e2ae-c4b1-4308-b4b3-5b620c658f5f"
+    },
+    "created_at": "2026-04-27T11:35:20.387663+00:00",
+    "updated_at": "2026-04-27T11:35:24.435+00:00",
+    "dispatched_at": "2026-04-27T11:35:21.949+00:00",
+    "completed_at": "2026-04-27T11:35:24.435+00:00",
+    "worker_result": {
+      "zoho_id": "584143000002918002",
+      "contact_id": "NO_CLEANUP_C26_1777289717631_CONTACT_5f26c1a8-5258-464b-a7d3-32cc19b8d68b",
+      "consistency": true,
+      "correlation_id": "NO_CLEANUP_C26_1777289717631_success_f128e2ae-c4b1-4308-b4b3-5b620c658f5f"
+    },
+    "correlation_id": "NO_CLEANUP_C26_1777289717631_success_f128e2ae-c4b1-4308-b4b3-5b620c658f5f"
+  },
+  {
+    "id": "8a0b3022-e5e9-404d-85fa-a6f88fc73eae",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "3d055acf-1e23-4fdb-9228-c3645c982110",
+      "session_id": "load-1776386304328-85"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3B3hjkYj7vB2MPcQSoh5cWP36jQWUgsfcxHVzU",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "b7c67b0c-ad06-41c3-a96b-7fb2e57bf8f4",
+      "timestamp": "2026-04-17T00:38:26.817Z",
+      "correlation_id": "566f90bc-012e-496a-a588-508665060e9c"
+    },
+    "created_at": "2026-04-17T00:38:26.947567+00:00",
+    "updated_at": "2026-04-17T00:38:35.273+00:00",
+    "dispatched_at": "2026-04-17T00:38:28.331+00:00",
+    "completed_at": "2026-04-17T00:38:35.273+00:00",
+    "worker_result": {
+      "lead_id": "3d055acf-1e23-4fdb-9228-c3645c982110",
+      "zoho_id": "584143000002736073",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "566f90bc-012e-496a-a588-508665060e9c"
+    },
+    "correlation_id": "566f90bc-012e-496a-a588-508665060e9c"
+  },
+  {
+    "id": "4e95beed-9248-4ba2-a886-3f8782de166a",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "e5228abd-c684-418f-ac04-7eb1e0a9eec3",
+      "session_id": "golive-session-1776384899122-7000100002"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 10,
+    "max_retries": 10,
+    "last_error": "manually_resolved: leads marked completed via forensic audit C2 fix",
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829nZsEirxSoCqDEReeXhgE8uj2PkPs7BVHb6qWk",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "bda30ace-eac3-4f3e-a827-607b23fd2b38",
+      "timestamp": "2026-04-17T00:15:02.982Z",
+      "correlation_id": "aa5c0e5e-5594-482a-867d-b9f7a8f2e99f"
+    },
+    "created_at": "2026-04-17T00:15:03.112366+00:00",
+    "updated_at": "2026-04-18T11:32:21.763+00:00",
+    "dispatched_at": "2026-04-17T00:45:20.95+00:00",
+    "completed_at": null,
+    "worker_result": null,
+    "correlation_id": "aa5c0e5e-5594-482a-867d-b9f7a8f2e99f"
+  },
+  {
+    "id": "b4fadd43-07d3-4aed-a2a8-ffbcd5831f5a",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7c823af8-f58c-49e4-82ab-7856ea0e47d1",
+      "session_id": "golive-session-1776384904290-7000100003"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 10,
+    "max_retries": 10,
+    "last_error": "manually_resolved: leads marked completed via forensic audit C2 fix",
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACBmt3bJUsfyC1oJKS1J3HcAUo24NbTZvrYp91E",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "2b1200a0-708f-4b53-9d8b-18ad9ed6cf09",
+      "timestamp": "2026-04-17T00:15:08.038Z",
+      "correlation_id": "a600e496-15b3-412b-9907-70c174c8dd7d"
+    },
+    "created_at": "2026-04-17T00:15:08.16104+00:00",
+    "updated_at": "2026-04-18T11:32:21.763+00:00",
+    "dispatched_at": "2026-04-17T00:45:22.446+00:00",
+    "completed_at": null,
+    "worker_result": null,
+    "correlation_id": "a600e496-15b3-412b-9907-70c174c8dd7d"
+  },
+  {
+    "id": "bc33f3fc-02a5-49d4-8eaf-d05b5f1949d3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "7eab503a-e433-49d9-b491-d36ebefcda5b",
+      "session_id": "golive-session-1776384909306-7000100004"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 10,
+    "max_retries": 10,
+    "last_error": "manually_resolved: leads marked completed via forensic audit C2 fix",
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2RGYWjpCZbSYpDjo734JntqKqk1EiWbcyGYN8w",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "b703f12b-d26a-4fb4-aedf-22ff5dbf33e0",
+      "timestamp": "2026-04-17T00:15:13.396Z",
+      "correlation_id": "6cf1093c-3577-40f9-9b61-3d5ff063b58d"
+    },
+    "created_at": "2026-04-17T00:15:13.531376+00:00",
+    "updated_at": "2026-04-18T11:32:21.763+00:00",
+    "dispatched_at": "2026-04-17T00:45:23.954+00:00",
+    "completed_at": null,
+    "worker_result": null,
+    "correlation_id": "6cf1093c-3577-40f9-9b61-3d5ff063b58d"
+  },
+  {
+    "id": "89312d11-f43b-4d70-bb76-7296c6d86482",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "86daefba-457c-48f8-9ed3-3cae2d597fc2",
+      "session_id": "golive-session-1776384914674-7000100005"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 10,
+    "max_retries": 10,
+    "last_error": "manually_resolved: leads marked completed via forensic audit C2 fix",
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2Rxp21mjPvKoJq3Jy8T4gitYXdsbezK3CvdTV5",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "bfc8b827-c3c6-403f-97d3-7f20da28bf16",
+      "timestamp": "2026-04-17T00:15:18.391Z",
+      "correlation_id": "d4487877-31a1-4984-9443-b9ef3f59f0b5"
+    },
+    "created_at": "2026-04-17T00:15:18.528695+00:00",
+    "updated_at": "2026-04-18T11:32:21.763+00:00",
+    "dispatched_at": "2026-04-17T01:00:41.77+00:00",
+    "completed_at": null,
+    "worker_result": null,
+    "correlation_id": "d4487877-31a1-4984-9443-b9ef3f59f0b5"
+  },
+  {
+    "id": "d975d319-eb12-4110-a67b-5b23958f6cf4",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "1e146b7a-6222-43f1-ab8d-f861672294ec",
+      "session_id": "load-1776386292668-70"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp2TikjEvuei2LYhgur4fM9BKVkNwWXj9PmAVRrF",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "ccc60bba-e1d3-4792-a69a-3e33502e0a19",
+      "timestamp": "2026-04-17T00:38:15.123Z",
+      "correlation_id": "1df23017-5346-43dc-95b0-72d3a3d9a180"
+    },
+    "created_at": "2026-04-17T00:38:15.279009+00:00",
+    "updated_at": "2026-04-17T00:38:22.891+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.578+00:00",
+    "completed_at": "2026-04-17T00:38:22.891+00:00",
+    "worker_result": {
+      "lead_id": "1e146b7a-6222-43f1-ab8d-f861672294ec",
+      "zoho_id": "584143000002780050",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "1df23017-5346-43dc-95b0-72d3a3d9a180"
+    },
+    "correlation_id": "1df23017-5346-43dc-95b0-72d3a3d9a180"
+  },
+  {
+    "id": "badb9b53-cb2a-4cc5-8252-127f199b3d31",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "e9672379-00fa-4af4-ad55-7211dd1baa40",
+      "session_id": "load-1776386292666-66"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACC2cYXJJbwbyfAheFK1C2x39BAn9FgmQuXZKWB",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "80076b67-8bfc-4ffa-8ba0-3b9277a2c075",
+      "timestamp": "2026-04-17T00:38:15.005Z",
+      "correlation_id": "e6412c61-0ae5-4667-8fbd-02d06fefcac5"
+    },
+    "created_at": "2026-04-17T00:38:15.136861+00:00",
+    "updated_at": "2026-04-17T00:38:24.001+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.36+00:00",
+    "completed_at": "2026-04-17T00:38:24.001+00:00",
+    "worker_result": {
+      "lead_id": "e9672379-00fa-4af4-ad55-7211dd1baa40",
+      "zoho_id": "584143000002735121",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "e6412c61-0ae5-4667-8fbd-02d06fefcac5"
+    },
+    "correlation_id": "e6412c61-0ae5-4667-8fbd-02d06fefcac5"
+  },
+  {
+    "id": "e7bbefd1-b34a-4ff0-a86f-577255e26f3e",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "18f61b85-7aa3-4a6b-a4f6-a1406eae2df9",
+      "session_id": "load-1776386298202-78"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB882Ax2ABDSahM5bED1pUMudJCR4mU5D7b5bNkzGqa",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "3b55f0ac-4820-492c-a53d-5f5f6ab23595",
+      "timestamp": "2026-04-17T00:38:20.659Z",
+      "correlation_id": "318ec036-5fe2-44ae-9b0e-e16197fccb7c"
+    },
+    "created_at": "2026-04-17T00:38:20.82079+00:00",
+    "updated_at": "2026-04-17T00:38:29.156+00:00",
+    "dispatched_at": "2026-04-17T00:38:22.053+00:00",
+    "completed_at": "2026-04-17T00:38:29.156+00:00",
+    "worker_result": {
+      "lead_id": "18f61b85-7aa3-4a6b-a4f6-a1406eae2df9",
+      "zoho_id": "584143000002780086",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "318ec036-5fe2-44ae-9b0e-e16197fccb7c"
+    },
+    "correlation_id": "318ec036-5fe2-44ae-9b0e-e16197fccb7c"
+  },
+  {
+    "id": "74f611f7-9db5-4710-b1d8-bd5c8b65c094",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "004a4577-aa57-41c6-9235-0771cad6de3a",
+      "session_id": "load-1776386298199-72"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACsd8Nj98JoMjoQuS7fjrZtiKY5EMjKeLD1ywZX",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "05d45191-25ac-430a-a0cf-514cd3cfb454",
+      "timestamp": "2026-04-17T00:38:20.545Z",
+      "correlation_id": "df52377d-d87f-48d7-9d40-26ace5b86b8a"
+    },
+    "created_at": "2026-04-17T00:38:20.692155+00:00",
+    "updated_at": "2026-04-17T00:38:29.2+00:00",
+    "dispatched_at": "2026-04-17T00:38:21.896+00:00",
+    "completed_at": "2026-04-17T00:38:29.2+00:00",
+    "worker_result": {
+      "lead_id": "004a4577-aa57-41c6-9235-0771cad6de3a",
+      "zoho_id": "584143000002786073",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "df52377d-d87f-48d7-9d40-26ace5b86b8a"
+    },
+    "correlation_id": "df52377d-d87f-48d7-9d40-26ace5b86b8a"
+  },
+  {
+    "id": "6a910b86-fd67-4f8d-96e4-48a1fe337e7c",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "2ccff77d-fd27-44e7-8215-d93a4ea3eebc",
+      "session_id": "sess_f75c9noxo_1776651762553"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADTiRBvRXX1zD7K9MytfKyeay5coZKe8rLDvu6x",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "c3924960-30ba-41b3-8e63-676c9664d231",
+      "timestamp": "2026-04-20T02:25:05.677Z",
+      "correlation_id": "cc7338dc-6ca6-4c49-9fe9-2220471ec174"
+    },
+    "created_at": "2026-04-20T02:25:05.811979+00:00",
+    "updated_at": "2026-04-20T02:25:15.857+00:00",
+    "dispatched_at": "2026-04-20T02:25:07.119+00:00",
+    "completed_at": "2026-04-20T02:25:15.857+00:00",
+    "worker_result": {
+      "lead_id": "2ccff77d-fd27-44e7-8215-d93a4ea3eebc",
+      "zoho_id": "584143000002815002",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "cc7338dc-6ca6-4c49-9fe9-2220471ec174"
+    },
+    "correlation_id": "cc7338dc-6ca6-4c49-9fe9-2220471ec174"
+  },
+  {
+    "id": "e4045fd0-f666-4f20-b9f4-74cbe9dcd0a1",
+    "event_name": "lead_hot",
+    "payload": {
+      "leadId": "00000000-0000-0000-0000-068206471542",
+      "queueId": "01feafbd-e3ce-4d53-af8c-0a266e1828e1",
+      "audit_marker": "NO_CLEANUP_C26_1777289717631"
+    },
+    "source": "audit_c26_no_cleanup",
+    "status": "failed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 0,
+    "last_error": "Lead not found",
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACD84MHQat35DyJPhhg7q9wDfmeF4LjJ5tK1ttg",
+    "execution_context": {
+      "audit": "c26_no_cleanup",
+      "event_id": "NO_CLEANUP_C26_1777289717631_failure_2ddc4edf-17da-4b46-84d2-d9bedccec682",
+      "correlation_id": "NO_CLEANUP_C26_1777289717631_failure_2ddc4edf-17da-4b46-84d2-d9bedccec682"
+    },
+    "created_at": "2026-04-27T11:35:30.879357+00:00",
+    "updated_at": "2026-04-27T11:38:16.619+00:00",
+    "dispatched_at": "2026-04-27T11:35:31.793+00:00",
+    "completed_at": null,
+    "worker_result": {
+      "lead_id": "00000000-0000-0000-0000-068206471542",
+      "partial": {
+        "error": "Lead not found",
+        "event": "lead_hot",
+        "steps": [],
+        "leadId": "00000000-0000-0000-0000-068206471542",
+        "executive": "cso"
+      }
+    },
+    "correlation_id": "NO_CLEANUP_C26_1777289717631_failure_2ddc4edf-17da-4b46-84d2-d9bedccec682"
+  },
+  {
+    "id": "e9b81726-426a-4469-a888-43e796c68406",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "02a154a5-486a-424f-a5a8-7ff2ce2f1839",
+      "session_id": "load-1776386292664-63"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RADwoe6Yx1Krbq8ZiCAxmRGSWMUwsQYe7kq27KhF",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "a17dcd41-2d5b-439c-ba7b-72a489a484ab",
+      "timestamp": "2026-04-17T00:38:15.228Z",
+      "correlation_id": "f6796f72-fdeb-4674-9374-b59649c26a9c"
+    },
+    "created_at": "2026-04-17T00:38:15.37241+00:00",
+    "updated_at": "2026-04-17T00:38:23.591+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.706+00:00",
+    "completed_at": "2026-04-17T00:38:23.591+00:00",
+    "worker_result": {
+      "lead_id": "02a154a5-486a-424f-a5a8-7ff2ce2f1839",
+      "zoho_id": "584143000002736061",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "f6796f72-fdeb-4674-9374-b59649c26a9c"
+    },
+    "correlation_id": "f6796f72-fdeb-4674-9374-b59649c26a9c"
+  },
+  {
+    "id": "c033734f-d207-4496-b5d5-761795846487",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "c9005c0d-af87-4fdd-a40b-3e6571972927",
+      "session_id": "load-1776386292665-64"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACA2i7faAKKsJ9gTwUzWKCQstTsBjPKcoEYhNgm",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "4ab007c2-e19d-42c0-ba9a-408fa205827c",
+      "timestamp": "2026-04-17T00:38:15.182Z",
+      "correlation_id": "f4ff5573-0035-4cb4-94f2-4b0dbad31b45"
+    },
+    "created_at": "2026-04-17T00:38:15.319883+00:00",
+    "updated_at": "2026-04-17T00:38:23.849+00:00",
+    "dispatched_at": "2026-04-17T00:38:16.517+00:00",
+    "completed_at": "2026-04-17T00:38:23.849+00:00",
+    "worker_result": {
+      "lead_id": "c9005c0d-af87-4fdd-a40b-3e6571972927",
+      "zoho_id": "584143000002723110",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "f4ff5573-0035-4cb4-94f2-4b0dbad31b45"
+    },
+    "correlation_id": "f4ff5573-0035-4cb4-94f2-4b0dbad31b45"
+  },
+  {
+    "id": "b2208507-8648-4e81-b1a6-4920db3b07e3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "ac4b7fd7-5bbc-4622-bf57-f83cb6f40589",
+      "session_id": "load-1776386292667-67"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJFuyPpUJJ44hcdKB1TqWeLP3s3BV2tpiE7281jD",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "9b2dbf51-6be2-4b91-94ae-e7dd36edb346",
+      "timestamp": "2026-04-17T00:38:15.995Z",
+      "correlation_id": "0a85b1e7-956a-4f45-908e-d651588a13d1"
+    },
+    "created_at": "2026-04-17T00:38:16.155985+00:00",
+    "updated_at": "2026-04-17T00:38:24.063+00:00",
+    "dispatched_at": "2026-04-17T00:38:17.524+00:00",
+    "completed_at": "2026-04-17T00:38:24.063+00:00",
+    "worker_result": {
+      "lead_id": "ac4b7fd7-5bbc-4622-bf57-f83cb6f40589",
+      "zoho_id": "584143000002735122",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "0a85b1e7-956a-4f45-908e-d651588a13d1"
+    },
+    "correlation_id": "0a85b1e7-956a-4f45-908e-d651588a13d1"
+  },
+  {
+    "id": "fa5726f3-457a-4b18-a568-c159ffd1da9b",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "aa33c547-8654-4f21-bf4c-5fd76bd88670",
+      "session_id": "load-1776386298203-79"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp39TLvmXBgCuaZ4sa8CgMJnbfJ8drnaJi4LeTYK",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "eef8de3e-a936-46f6-beb4-668c32bbdcae",
+      "timestamp": "2026-04-17T00:38:20.467Z",
+      "correlation_id": "f3ced833-0f4e-450c-9424-557de951e2a0"
+    },
+    "created_at": "2026-04-17T00:38:20.595501+00:00",
+    "updated_at": "2026-04-17T00:38:28.194+00:00",
+    "dispatched_at": "2026-04-17T00:38:21.805+00:00",
+    "completed_at": "2026-04-17T00:38:28.194+00:00",
+    "worker_result": {
+      "lead_id": "aa33c547-8654-4f21-bf4c-5fd76bd88670",
+      "zoho_id": "584143000002729086",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "f3ced833-0f4e-450c-9424-557de951e2a0"
+    },
+    "correlation_id": "f3ced833-0f4e-450c-9424-557de951e2a0"
+  },
+  {
+    "id": "983d26e6-ff0b-4011-9c15-3f9355601fa1",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "8e04d1d5-1b32-41ed-a755-1fa110eff616",
+      "session_id": "load-1776386298202-77"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNB8829qptYCauCVJdXTh6EoFwZh6yrdenxr845xEByQ",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "3ff288e8-a926-455c-9bfc-ec76ae3398a1",
+      "timestamp": "2026-04-17T00:38:20.520Z",
+      "correlation_id": "734d3349-77fb-4c16-9088-d48a8e531933"
+    },
+    "created_at": "2026-04-17T00:38:20.673926+00:00",
+    "updated_at": "2026-04-17T00:38:28.779+00:00",
+    "dispatched_at": "2026-04-17T00:38:21.917+00:00",
+    "completed_at": "2026-04-17T00:38:28.779+00:00",
+    "worker_result": {
+      "lead_id": "8e04d1d5-1b32-41ed-a755-1fa110eff616",
+      "zoho_id": "584143000002723122",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "734d3349-77fb-4c16-9088-d48a8e531933"
+    },
+    "correlation_id": "734d3349-77fb-4c16-9088-d48a8e531933"
+  },
+  {
+    "id": "7efaba28-d3f1-4e24-b352-af841ed7b15e",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "e3f98352-d382-4c96-a251-667bcbafbda1",
+      "session_id": "load-1776386298202-76"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp3BjY19HQ5X4RQbpVddoCniAyf4ZarqKtPsrnW4",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "810fdf6d-6a06-4634-bd91-b76f53be594c",
+      "timestamp": "2026-04-17T00:38:20.713Z",
+      "correlation_id": "fe0b9343-cd0c-4d88-80e0-8c0366f0eb32"
+    },
+    "created_at": "2026-04-17T00:38:20.851565+00:00",
+    "updated_at": "2026-04-17T00:38:28.88+00:00",
+    "dispatched_at": "2026-04-17T00:38:22.207+00:00",
+    "completed_at": "2026-04-17T00:38:28.88+00:00",
+    "worker_result": {
+      "lead_id": "e3f98352-d382-4c96-a251-667bcbafbda1",
+      "zoho_id": "584143000002735145",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "fe0b9343-cd0c-4d88-80e0-8c0366f0eb32"
+    },
+    "correlation_id": "fe0b9343-cd0c-4d88-80e0-8c0366f0eb32"
+  },
+  {
+    "id": "99454325-dec0-45ae-9eeb-5f0a8cfe7517",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "af2012e5-ac29-4389-87e5-42bc0c587b49",
+      "session_id": "sess_deep6bkjv_1776849973531"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx65jMRw8uJjP8RUUszdu6nYVqZdT5Edh4xDhGvB",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "deb15fcc-b06a-4d1b-a10a-27058a9065c2",
+      "timestamp": "2026-04-22T09:27:57.476Z",
+      "correlation_id": "e46f2006-9d2c-4256-b788-f597f3970495"
+    },
+    "created_at": "2026-04-22T09:27:57.611331+00:00",
+    "updated_at": "2026-04-22T09:28:07.843+00:00",
+    "dispatched_at": "2026-04-22T09:27:58.827+00:00",
+    "completed_at": "2026-04-22T09:28:07.843+00:00",
+    "worker_result": {
+      "lead_id": "af2012e5-ac29-4389-87e5-42bc0c587b49",
+      "zoho_id": "584143000002823004",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "e46f2006-9d2c-4256-b788-f597f3970495"
+    },
+    "correlation_id": "e46f2006-9d2c-4256-b788-f597f3970495"
+  },
+  {
+    "id": "f08b49ec-f533-41bd-a863-a6a55cb1a9a9",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "fed74407-6d30-4b18-9d40-b81c8f4f1924",
+      "session_id": "load-1776386298203-80"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy5zBp1yt8rExnb2fYqd2Gms4QhjJwPpsfdc9LnXBF5h",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "463448ac-eb80-47a5-b68f-8f2dfa69002b",
+      "timestamp": "2026-04-17T00:38:20.532Z",
+      "correlation_id": "71a075ab-b505-4c08-b0be-a18235d71246"
+    },
+    "created_at": "2026-04-17T00:38:20.660684+00:00",
+    "updated_at": "2026-04-17T00:38:29.035+00:00",
+    "dispatched_at": "2026-04-17T00:38:21.901+00:00",
+    "completed_at": "2026-04-17T00:38:29.035+00:00",
+    "worker_result": {
+      "lead_id": "fed74407-6d30-4b18-9d40-b81c8f4f1924",
+      "zoho_id": "584143000002755038",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "71a075ab-b505-4c08-b0be-a18235d71246"
+    },
+    "correlation_id": "71a075ab-b505-4c08-b0be-a18235d71246"
+  },
+  {
+    "id": "b5dc61b9-6954-4c41-ba8c-a6928b0ca7a3",
+    "event_name": "lead_created",
+    "payload": {
+      "leadId": "94e0c7d6-a5c5-456b-a64a-5df24de2c817",
+      "session_id": "load-1776386298200-73"
+    },
+    "source": "crm_handler",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 10,
+    "last_error": null,
+    "dispatch_message_id": "msg_7YoJxFpwkEy6sUx66vXW7NYM56r64omwof9tPFpf6neEZVdjaW22N",
+    "execution_context": {
+      "cost": {
+        "ai_calls": 0,
+        "ai_tokens": 0,
+        "estimated_usd": 0
+      },
+      "source": "crm_handler",
+      "retries": 0,
+      "event_id": "e0edacf2-64cf-40d2-b927-90144f9847bb",
+      "timestamp": "2026-04-17T00:38:22.182Z",
+      "correlation_id": "a55dcfc8-99de-44e8-ab84-6c6e098d02ee"
+    },
+    "created_at": "2026-04-17T00:38:22.333069+00:00",
+    "updated_at": "2026-04-17T00:38:29.906+00:00",
+    "dispatched_at": "2026-04-17T00:38:23.689+00:00",
+    "completed_at": "2026-04-17T00:38:29.906+00:00",
+    "worker_result": {
+      "lead_id": "94e0c7d6-a5c5-456b-a64a-5df24de2c817",
+      "zoho_id": "584143000002786085",
+      "consistency": true,
+      "sync_action": "insert",
+      "correlation_id": "a55dcfc8-99de-44e8-ab84-6c6e098d02ee"
+    },
+    "correlation_id": "a55dcfc8-99de-44e8-ab84-6c6e098d02ee"
+  },
+  {
+    "id": "4dcc9d32-48e5-4ba3-906e-c6de5e50d9be",
+    "event_name": "contact_created",
+    "payload": {
+      "queueId": "1d2616df-3364-4e35-a9f8-bbf626f9cc4c",
+      "contactId": "NO_CLEANUP_C26_1777290436387_CONTACT_37504da0-d614-464b-a8fc-fcb0d68ddf74",
+      "audit_marker": "NO_CLEANUP_C26_1777290436387"
+    },
+    "source": "audit_c26_no_cleanup",
+    "status": "completed",
+    "priority": "critical",
+    "retry_count": 0,
+    "max_retries": 1,
+    "last_error": null,
+    "dispatch_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACpvHX9xai1rZfGiWPcw3hmqbNMctxKmexttRU8",
+    "execution_context": {
+      "audit": "c26_no_cleanup",
+      "event_id": "NO_CLEANUP_C26_1777290436387_success_2e43ec90-05fa-4f28-8f06-23f2ee7d6c7f",
+      "correlation_id": "NO_CLEANUP_C26_1777290436387_success_2e43ec90-05fa-4f28-8f06-23f2ee7d6c7f"
+    },
+    "created_at": "2026-04-27T11:47:18.935732+00:00",
+    "updated_at": "2026-04-27T11:47:23.406+00:00",
+    "dispatched_at": "2026-04-27T11:47:20.6+00:00",
+    "completed_at": "2026-04-27T11:47:23.406+00:00",
+    "worker_result": {
+      "zoho_id": "584143000002895013",
+      "contact_id": "NO_CLEANUP_C26_1777290436387_CONTACT_37504da0-d614-464b-a8fc-fcb0d68ddf74",
+      "consistency": true,
+      "correlation_id": "NO_CLEANUP_C26_1777290436387_success_2e43ec90-05fa-4f28-8f06-23f2ee7d6c7f"
+    },
+    "correlation_id": "NO_CLEANUP_C26_1777290436387_success_2e43ec90-05fa-4f28-8f06-23f2ee7d6c7f"
+  }
+]

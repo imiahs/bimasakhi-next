@@ -1,0 +1,85 @@
+{
+  "name": "p1-p3-stabilization-slice",
+  "timestamp": "2026-05-04T07:36:53",
+  "status": "PARTIAL",
+  "scope": [
+    "P1 generation_queue schema drift",
+    "P2 FAQ editor gap",
+    "P3 single-page generation queue contract"
+  ],
+  "p1": {
+    "drift_before": {
+      "repo_migrations": 79,
+      "live_schema_migrations": 78,
+      "repo_only": [
+        "20260502100000_p1_generation_queue_schema_fix.sql"
+      ]
+    },
+    "targeted_apply": {
+      "migration": "20260502100000_p1_generation_queue_schema_fix.sql",
+      "result": "SUCCESS",
+      "schema_cache_reload_requested": true
+    },
+    "drift_after": {
+      "repo_migrations": 79,
+      "live_schema_migrations": 79,
+      "result": "No migration drift detected"
+    },
+    "replay_check": {
+      "result": "SKIPPED_ALREADY_EXECUTED",
+      "schema_cache_reload_requested": true
+    },
+    "insert_probe": {
+      "result": "PASS",
+      "row": {
+        "slug": "p1-schema-probe-1777860006522",
+        "metadata": {
+          "source": "p1_probe"
+        },
+        "priority": 1
+      },
+      "cleanup": "cleanup-ok"
+    }
+  },
+  "p2": {
+    "faq_editor_ui": "implemented",
+    "preview_uses_unsaved_faq_state": true,
+    "file_validation": "No errors found",
+    "publish_archive_db_probe": {
+      "result": "PASS",
+      "publish_state": {
+        "draft_status": "published",
+        "page_status": "published",
+        "indexing_status": "pending"
+      },
+      "archive_state": {
+        "draft_status": "archived",
+        "page_status": "archived",
+        "indexing_status": "blocked"
+      },
+      "cleanup": "cleanup-ok"
+    }
+  },
+  "p3": {
+    "single_generate_route": {
+      "payload_pages_contract": "implemented",
+      "duplicate_pending_queue_guard": true
+    },
+    "queue_payload_probe": {
+      "result": "PASS",
+      "row": {
+        "slug": "p3-single-gen-probe-1777860313255",
+        "keyword_text": "p3 single gen probe 1777860313255",
+        "pages_length": 1
+      },
+      "cleanup": "cleanup-ok"
+    }
+  },
+  "remaining_open": [
+    "P2 API/browser publish/archive revalidation",
+    "P3 bulk planner controlled-mode confusion",
+    "P4 lead scoring and CRM actions",
+    "P5 failed queue action layer revalidation",
+    "P6 SEO/backup/automation/AI stabilization"
+  ]
+}

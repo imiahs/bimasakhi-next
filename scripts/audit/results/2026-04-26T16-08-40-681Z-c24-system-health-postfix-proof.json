@@ -1,0 +1,409 @@
+﻿{
+    "captured_at":  "2026-04-26T16:08:40.6210639Z",
+    "login":  {
+                  "status":  200,
+                  "ok":  true,
+                  "cookie_count":  1
+              },
+    "api_status":  {
+                       "status":  200,
+                       "body":  {
+                                    "status":  "ok",
+                                    "overall_health":  "HEALTHY",
+                                    "version":  "fcffe61",
+                                    "environment":  "production",
+                                    "checks":  {
+                                                   "db":  "ok",
+                                                   "qstash_configured":  true,
+                                                   "redis_configured":  true,
+                                                   "system_mode":  "normal"
+                                               },
+                                    "feature_flags":  {
+                                                          "ai_enabled":  false,
+                                                          "followup_enabled":  true,
+                                                          "crm_auto_routing":  true,
+                                                          "queue_paused":  false
+                                                      },
+                                    "timestamp":  "2026-04-26T16:08:39.211Z"
+                                }
+                   },
+    "api_admin_system_health":  {
+                                    "status":  200,
+                                    "body":  {
+                                                 "success":  true,
+                                                 "timestamp":  "2026-04-26T16:08:39.625Z",
+                                                 "version":  "fcffe61",
+                                                 "environment":  "production",
+                                                 "overall_health":  "HEALTHY",
+                                                 "summary":  {
+                                                                 "status":  "ok",
+                                                                 "hard_failures":  [
+
+                                                                                   ],
+                                                                 "warnings":  [
+                                                                                  "historical_dead_letters:3"
+                                                                              ]
+                                                             },
+                                                 "system_mode":  {
+                                                                     "mode":  "normal",
+                                                                     "safe_mode":  false,
+                                                                     "ai_enabled":  false,
+                                                                     "followup_enabled":  true,
+                                                                     "crm_auto_routing":  true,
+                                                                     "queue_paused":  false
+                                                                 },
+                                                 "control_plane":  {
+                                                                       "system_mode_source":  "system_control_config",
+                                                                       "operational_flags_source":  "system_control_config",
+                                                                       "safe_mode_source":  "feature_flags",
+                                                                       "linked_issue":  "C32",
+                                                                       "normalized_for_health":  true
+                                                                   },
+                                                 "crons":  {
+                                                               "alert-scan":  {
+                                                                                  "status":  "healthy",
+                                                                                  "last_run":  "2026-04-26T16:05:03.529058+00:00",
+                                                                                  "age_minutes":  4,
+                                                                                  "expected_interval":  "5m",
+                                                                                  "required":  true
+                                                                              },
+                                                               "reconciliation":  {
+                                                                                      "status":  "healthy",
+                                                                                      "last_run":  "2026-04-26T16:00:11.566185+00:00",
+                                                                                      "age_minutes":  8,
+                                                                                      "expected_interval":  "30m",
+                                                                                      "required":  true
+                                                                                  },
+                                                               "event-retry":  {
+                                                                                   "status":  "healthy",
+                                                                                   "last_run":  "2026-04-26T16:06:49.960602+00:00",
+                                                                                   "age_minutes":  2,
+                                                                                   "expected_interval":  "5m",
+                                                                                   "required":  true
+                                                                               },
+                                                               "vendor-health-check":  {
+                                                                                           "status":  "healthy",
+                                                                                           "last_run":  "2026-04-26T16:06:51.195707+00:00",
+                                                                                           "age_minutes":  2,
+                                                                                           "expected_interval":  "5m",
+                                                                                           "required":  true
+                                                                                       },
+                                                               "morning-brief":  {
+                                                                                     "status":  "unknown",
+                                                                                     "last_run":  null,
+                                                                                     "age_minutes":  null,
+                                                                                     "expected_interval":  "24h",
+                                                                                     "required":  false
+                                                                                 }
+                                                           },
+                                                 "alerts":  {
+                                                                "active":  {
+                                                                               "total":  0,
+                                                                               "critical":  0,
+                                                                               "high":  0,
+                                                                               "medium":  0,
+                                                                               "low":  0
+                                                                           },
+                                                                "open_recent":  [
+
+                                                                                ],
+                                                                "stale_open_count":  0,
+                                                                "stale_open_sample":  [
+
+                                                                                      ],
+                                                                "unacknowledged_escalations":  [
+
+                                                                                               ]
+                                                            },
+                                                 "failures":  {
+                                                                  "errors_1h":  0,
+                                                                  "errors_24h":  0,
+                                                                  "dlq_depth_recent":  0,
+                                                                  "dlq_depth_total":  3,
+                                                                  "current_stuck_events":  0,
+                                                                  "stuck_events":  [
+
+                                                                                   ],
+                                                                  "has_issues":  false
+                                                              },
+                                                 "metrics":  {
+                                                                 "leads_24h":  0,
+                                                                 "queue_pending":  2,
+                                                                 "total_published_pages":  0
+                                                             }
+                                             }
+                                },
+    "api_admin_vendor_health":  {
+                                    "status":  200,
+                                    "body":  {
+                                                 "overall":  {
+                                                                 "health":  "healthy",
+                                                                 "system_mode":  "normal",
+                                                                 "vendor_count":  5,
+                                                                 "critical_count":  3,
+                                                                 "circuits_open":  0
+                                                             },
+                                                 "system_health":  {
+                                                                       "success":  true,
+                                                                       "timestamp":  "2026-04-26T16:08:40.260Z",
+                                                                       "version":  "fcffe61",
+                                                                       "environment":  "production",
+                                                                       "overall_health":  "HEALTHY",
+                                                                       "summary":  {
+                                                                                       "status":  "ok",
+                                                                                       "hard_failures":  [
+
+                                                                                                         ],
+                                                                                       "warnings":  [
+                                                                                                        "historical_dead_letters:3"
+                                                                                                    ]
+                                                                                   },
+                                                                       "system_mode":  {
+                                                                                           "mode":  "normal",
+                                                                                           "safe_mode":  false,
+                                                                                           "ai_enabled":  false,
+                                                                                           "followup_enabled":  true,
+                                                                                           "crm_auto_routing":  true,
+                                                                                           "queue_paused":  false
+                                                                                       },
+                                                                       "control_plane":  {
+                                                                                             "system_mode_source":  "system_control_config",
+                                                                                             "operational_flags_source":  "system_control_config",
+                                                                                             "safe_mode_source":  "feature_flags",
+                                                                                             "linked_issue":  "C32",
+                                                                                             "normalized_for_health":  true
+                                                                                         },
+                                                                       "crons":  {
+                                                                                     "alert-scan":  {
+                                                                                                        "status":  "healthy",
+                                                                                                        "last_run":  "2026-04-26T16:05:03.529058+00:00",
+                                                                                                        "age_minutes":  4,
+                                                                                                        "expected_interval":  "5m",
+                                                                                                        "required":  true
+                                                                                                    },
+                                                                                     "reconciliation":  {
+                                                                                                            "status":  "healthy",
+                                                                                                            "last_run":  "2026-04-26T16:00:11.566185+00:00",
+                                                                                                            "age_minutes":  8,
+                                                                                                            "expected_interval":  "30m",
+                                                                                                            "required":  true
+                                                                                                        },
+                                                                                     "event-retry":  {
+                                                                                                         "status":  "healthy",
+                                                                                                         "last_run":  "2026-04-26T16:06:49.960602+00:00",
+                                                                                                         "age_minutes":  2,
+                                                                                                         "expected_interval":  "5m",
+                                                                                                         "required":  true
+                                                                                                     },
+                                                                                     "vendor-health-check":  {
+                                                                                                                 "status":  "healthy",
+                                                                                                                 "last_run":  "2026-04-26T16:06:51.195707+00:00",
+                                                                                                                 "age_minutes":  2,
+                                                                                                                 "expected_interval":  "5m",
+                                                                                                                 "required":  true
+                                                                                                             },
+                                                                                     "morning-brief":  {
+                                                                                                           "status":  "unknown",
+                                                                                                           "last_run":  null,
+                                                                                                           "age_minutes":  null,
+                                                                                                           "expected_interval":  "24h",
+                                                                                                           "required":  false
+                                                                                                       }
+                                                                                 },
+                                                                       "alerts":  {
+                                                                                      "active":  {
+                                                                                                     "total":  0,
+                                                                                                     "critical":  0,
+                                                                                                     "high":  0,
+                                                                                                     "medium":  0,
+                                                                                                     "low":  0
+                                                                                                 },
+                                                                                      "open_recent":  [
+
+                                                                                                      ],
+                                                                                      "stale_open_count":  0,
+                                                                                      "stale_open_sample":  [
+
+                                                                                                            ],
+                                                                                      "unacknowledged_escalations":  [
+
+                                                                                                                     ]
+                                                                                  },
+                                                                       "failures":  {
+                                                                                        "errors_1h":  0,
+                                                                                        "errors_24h":  0,
+                                                                                        "dlq_depth_recent":  0,
+                                                                                        "dlq_depth_total":  3,
+                                                                                        "current_stuck_events":  0,
+                                                                                        "stuck_events":  [
+
+                                                                                                         ],
+                                                                                        "has_issues":  false
+                                                                                    },
+                                                                       "metrics":  {
+                                                                                       "leads_24h":  0,
+                                                                                       "queue_pending":  2,
+                                                                                       "total_published_pages":  0
+                                                                                   }
+                                                                   },
+                                                 "vendors":  [
+                                                                 {
+                                                                     "id":  "409a3132-9210-4010-ae4c-37b788e0475d",
+                                                                     "vendor":  "vercel",
+                                                                     "purpose":  "Hosting + Serverless Functions + Edge",
+                                                                     "criticality":  "critical",
+                                                                     "cb_failure_threshold":  5,
+                                                                     "cb_reset_timeout_seconds":  30,
+                                                                     "cb_window_minutes":  2,
+                                                                     "sla_response_warning_ms":  500,
+                                                                     "sla_response_critical_ms":  2000,
+                                                                     "sla_error_rate_warning":  0.01,
+                                                                     "sla_error_rate_critical":  0.05,
+                                                                     "retry_max_attempts":  2,
+                                                                     "retry_base_delay_ms":  1000,
+                                                                     "retry_backoff_multiplier":  2,
+                                                                     "circuit_state":  "closed",
+                                                                     "circuit_opened_at":  null,
+                                                                     "last_health_check":  null,
+                                                                     "health_status":  "unknown",
+                                                                     "created_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "updated_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "live_circuit_state":  "closed",
+                                                                     "live_failure_count":  0
+                                                                 },
+                                                                 {
+                                                                     "id":  "f4365118-f517-4584-9795-d8ed76d9cc64",
+                                                                     "vendor":  "qstash",
+                                                                     "purpose":  "Async Job Queue + Scheduling",
+                                                                     "criticality":  "critical",
+                                                                     "cb_failure_threshold":  5,
+                                                                     "cb_reset_timeout_seconds":  30,
+                                                                     "cb_window_minutes":  2,
+                                                                     "sla_response_warning_ms":  5000,
+                                                                     "sla_response_critical_ms":  30000,
+                                                                     "sla_error_rate_warning":  0.01,
+                                                                     "sla_error_rate_critical":  0.05,
+                                                                     "retry_max_attempts":  3,
+                                                                     "retry_base_delay_ms":  1000,
+                                                                     "retry_backoff_multiplier":  2,
+                                                                     "circuit_state":  "closed",
+                                                                     "circuit_opened_at":  null,
+                                                                     "last_health_check":  null,
+                                                                     "health_status":  "unknown",
+                                                                     "created_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "updated_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "live_circuit_state":  "closed",
+                                                                     "live_failure_count":  0
+                                                                 },
+                                                                 {
+                                                                     "id":  "12e1fd3d-4430-43be-908e-69ffe1b4bb62",
+                                                                     "vendor":  "supabase",
+                                                                     "purpose":  "Database + Auth + Storage",
+                                                                     "criticality":  "critical",
+                                                                     "cb_failure_threshold":  5,
+                                                                     "cb_reset_timeout_seconds":  30,
+                                                                     "cb_window_minutes":  2,
+                                                                     "sla_response_warning_ms":  100,
+                                                                     "sla_response_critical_ms":  500,
+                                                                     "sla_error_rate_warning":  0.01,
+                                                                     "sla_error_rate_critical":  0.05,
+                                                                     "retry_max_attempts":  2,
+                                                                     "retry_base_delay_ms":  1000,
+                                                                     "retry_backoff_multiplier":  2,
+                                                                     "circuit_state":  "closed",
+                                                                     "circuit_opened_at":  null,
+                                                                     "last_health_check":  "2026-04-26T16:06:49.636+00:00",
+                                                                     "health_status":  "healthy",
+                                                                     "created_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "updated_at":  "2026-04-26T16:06:49.636+00:00",
+                                                                     "live_circuit_state":  "closed",
+                                                                     "live_failure_count":  0
+                                                                 },
+                                                                 {
+                                                                     "id":  "e7eb48c8-911c-46cd-ae09-883917d80f3a",
+                                                                     "vendor":  "zoho",
+                                                                     "purpose":  "CRM + Cliq Alerts + Email",
+                                                                     "criticality":  "important",
+                                                                     "cb_failure_threshold":  5,
+                                                                     "cb_reset_timeout_seconds":  60,
+                                                                     "cb_window_minutes":  5,
+                                                                     "sla_response_warning_ms":  2000,
+                                                                     "sla_response_critical_ms":  5000,
+                                                                     "sla_error_rate_warning":  0.05,
+                                                                     "sla_error_rate_critical":  0.1,
+                                                                     "retry_max_attempts":  3,
+                                                                     "retry_base_delay_ms":  2000,
+                                                                     "retry_backoff_multiplier":  2,
+                                                                     "circuit_state":  "closed",
+                                                                     "circuit_opened_at":  null,
+                                                                     "last_health_check":  null,
+                                                                     "health_status":  "unknown",
+                                                                     "created_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "updated_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "live_circuit_state":  "closed",
+                                                                     "live_failure_count":  0
+                                                                 },
+                                                                 {
+                                                                     "id":  "832334c1-e19b-457f-98c2-6b348b7a280a",
+                                                                     "vendor":  "gemini",
+                                                                     "purpose":  "AI Content Generation",
+                                                                     "criticality":  "important",
+                                                                     "cb_failure_threshold":  3,
+                                                                     "cb_reset_timeout_seconds":  60,
+                                                                     "cb_window_minutes":  5,
+                                                                     "sla_response_warning_ms":  10000,
+                                                                     "sla_response_critical_ms":  30000,
+                                                                     "sla_error_rate_warning":  0.05,
+                                                                     "sla_error_rate_critical":  0.1,
+                                                                     "retry_max_attempts":  2,
+                                                                     "retry_base_delay_ms":  2000,
+                                                                     "retry_backoff_multiplier":  3,
+                                                                     "circuit_state":  "closed",
+                                                                     "circuit_opened_at":  null,
+                                                                     "last_health_check":  null,
+                                                                     "health_status":  "unknown",
+                                                                     "created_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "updated_at":  "2026-04-18T13:20:37.425028+00:00",
+                                                                     "live_circuit_state":  "closed",
+                                                                     "live_failure_count":  0
+                                                                 }
+                                                             ],
+                                                 "sla_summary":  {
+                                                                     "supabase":  {
+                                                                                      "count":  1,
+                                                                                      "total_ms":  341,
+                                                                                      "warnings":  1,
+                                                                                      "criticals":  0,
+                                                                                      "avg_ms":  341
+                                                                                  },
+                                                                     "internal":  {
+                                                                                      "count":  2,
+                                                                                      "total_ms":  3,
+                                                                                      "warnings":  0,
+                                                                                      "criticals":  0,
+                                                                                      "avg_ms":  2
+                                                                                  }
+                                                                 },
+                                                 "dlq_pending":  3,
+                                                 "unacked_alerts":  0,
+                                                 "timestamp":  "2026-04-26T16:08:40.812Z"
+                                             }
+                                },
+    "invariants":  {
+                       "public_overall_health":  "HEALTHY",
+                       "admin_overall_health":  "HEALTHY",
+                       "vendor_overall_health":  "healthy",
+                       "public_admin_match":  true,
+                       "admin_vendor_match":  true,
+                       "event_retry_status":  "healthy",
+                       "event_retry_last_run":  "2026-04-26T16:06:49.960602+00:00",
+                       "vendor_health_status":  "healthy",
+                       "vendor_health_last_run":  "2026-04-26T16:06:51.195707+00:00",
+                       "hard_failures":  [
+
+                                         ],
+                       "warnings":  [
+                                        "historical_dead_letters:3"
+                                    ]
+                   }
+}

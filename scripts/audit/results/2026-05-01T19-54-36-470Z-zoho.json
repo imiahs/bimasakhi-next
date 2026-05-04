@@ -1,0 +1,63 @@
+{
+  "name": "zoho",
+  "started_at": "2026-05-01T19:54:35.196Z",
+  "finished_at": "2026-05-01T19:54:36.469Z",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "env_presence_masked",
+      "status": "INFO",
+      "evidence": {
+        "ZOHO_CLIENT_ID": {
+          "present": true,
+          "masked": "1000...T4PC (35 chars)"
+        },
+        "ZOHO_CLIENT_SECRET": {
+          "present": true,
+          "masked": "165b...c7cd (42 chars)"
+        },
+        "ZOHO_REFRESH_TOKEN": {
+          "present": true,
+          "masked": "1000...3a1d (70 chars)"
+        },
+        "ZOHO_API_DOMAIN": {
+          "present": true,
+          "masked": "http...s.in (23 chars)"
+        }
+      },
+      "timestamp": "2026-05-01T19:54:35.201Z"
+    },
+    {
+      "name": "zoho_access_token_refresh",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "token_present": true,
+        "response_keys": [
+          "access_token",
+          "scope",
+          "api_domain",
+          "token_type",
+          "expires_in"
+        ],
+        "error": null
+      },
+      "timestamp": "2026-05-01T19:54:35.852Z"
+    },
+    {
+      "name": "zoho_test_lead_upsert",
+      "status": "PASS",
+      "evidence": {
+        "status": 200,
+        "crm_status": "success",
+        "action": "insert",
+        "zoho_id_present": true,
+        "marker": "TEST_AUDIT_ZOHO_1777665275852",
+        "response_code": "SUCCESS",
+        "message": "record added"
+      },
+      "timestamp": "2026-05-01T19:54:36.469Z"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,150 @@
+{
+  "name": "cto-forensic-live-status-reconciliation",
+  "executed_at": "2026-05-01T20:04:50.881Z",
+  "mode": "safe_live_reconciliation",
+  "verdict": "PARTIAL",
+  "scope": {
+    "fresh_checks": [
+      "npm run build",
+      "scripts/audit/audit-vercel-runtime.mjs",
+      "scripts/audit/audit-admin-systems-read.ps1",
+      "scripts/audit/audit-supabase-direct-rest-read.ps1",
+      "scripts/audit/audit-qstash.mjs",
+      "scripts/audit/audit-zoho.mjs",
+      "live read: /api/admin/delivery-logs",
+      "direct REST read: external_delivery_logs"
+    ],
+    "excluded_high_risk_scripts": [
+      "scripts/audit/audit-admin-content-flow.mjs",
+      "scripts/audit/audit-supabase-data-integrity.mjs",
+      "scripts/audit/audit-production-admin-db.ps1"
+    ]
+  },
+  "artifacts": {
+    "vercel_runtime": "scripts/audit/results/2026-05-01T19-50-05-599Z-vercel-runtime.json",
+    "admin_systems_read": "scripts/audit/results/2026-05-01T19-52-29-351Z-admin-systems-read-ps.json",
+    "supabase_direct_rest": "scripts/audit/results/2026-05-01T19-52-41-316Z-supabase-direct-rest-read-ps.json",
+    "qstash": "scripts/audit/results/2026-05-01T19-54-27-712Z-qstash.json",
+    "zoho": "scripts/audit/results/2026-05-01T19-54-36-470Z-zoho.json"
+  },
+  "services": {
+    "local_build": {
+      "status": "PASS",
+      "warnings": [
+        "jose/dist/webapi/lib/deflate.js uses CompressionStream in Edge Runtime",
+        "jose/dist/webapi/lib/deflate.js uses DecompressionStream in Edge Runtime"
+      ]
+    },
+    "vercel_runtime": {
+      "status": "PASS",
+      "version": "47404cc",
+      "overall_health": "HEALTHY",
+      "environment": "production",
+      "routes_passed": [
+        "/api/status",
+        "/api/test",
+        "/api/navigation",
+        "/sitemap.xml",
+        "/",
+        "/why"
+      ],
+      "admin_login": "PASS"
+    },
+    "admin_read_surfaces": {
+      "status": "PASS",
+      "endpoints_passed": [
+        "/api/admin/ccc/drafts?limit=5",
+        "/api/admin/ccc/bulk",
+        "/api/admin/media",
+        "/api/admin/logs",
+        "/api/admin/audit-log?limit=5",
+        "/api/admin/feature-flags",
+        "/api/admin/workflow-config",
+        "/api/admin/users",
+        "/api/admin/locations/cities",
+        "/api/admin/system/health"
+      ]
+    },
+    "supabase_direct_rest": {
+      "status": "PASS",
+      "system_mode": "normal",
+      "ai_enabled": true,
+      "followup_enabled": true,
+      "job_dead_letters_recent_rows": 0
+    },
+    "qstash": {
+      "status": "PARTIAL",
+      "publish_test_message": "PASS",
+      "message_id": "msg_7YoJxFpwkEy5zBp3jdp5pXZXsDxQLbGAj26cC4xt41SpozrGPPzin",
+      "log_lookup": "PARTIAL",
+      "reason": "logs endpoint returned 200 but did not include the new message id in the sampled payload"
+    },
+    "zoho": {
+      "status": "PASS",
+      "oauth_refresh": "PASS",
+      "test_lead_upsert": "PASS",
+      "marker": "TEST_AUDIT_ZOHO_1777665275852"
+    },
+    "delivery_truth": {
+      "status": "RECONCILED",
+      "current_delivery_metrics": {
+        "delivery_failures_recent": 0,
+        "delivery_stuck_count": 0,
+        "delivery_success_rate": 100,
+        "delivery_terminal_recent": 0,
+        "delivery_delivered_recent": 0
+      },
+      "historical_failed_rows": [
+        {
+          "event_store_id": "c67bcf0e-5b39-41fd-95a1-c1313e9177e6",
+          "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNC1RACk45ZisFKYTasjKo6CSKBQRfFzo34uPYGRbiS4",
+          "status": "failed",
+          "target_path": "/api/jobs/c26-no-cleanup-missing-route",
+          "provider_retry_count": 2,
+          "failed_at": "2026-04-27T12:03:26.819+00:00",
+          "last_provider_event_at": "2026-04-27T12:03:26.819+00:00"
+        },
+        {
+          "event_store_id": "8dcd38ce-a056-4316-bd12-5738816e11d7",
+          "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEjsdHjc6QBoq5A5rWS94E2X1iieBE7nXSTS5j6",
+          "status": "failed",
+          "target_path": "/api/jobs/c26-no-cleanup-missing-route",
+          "provider_retry_count": 2,
+          "failed_at": "2026-04-27T12:01:17.623+00:00",
+          "last_provider_event_at": "2026-04-27T12:01:17.623+00:00"
+        }
+      ],
+      "current_health_interpretation": "HEALTHY because getDeliveryHealthMetrics evaluates a recent 24-hour window, not all retained historical failure rows"
+    }
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "id": "doc_truth_drift_current_system_mode",
+      "summary": "CCC and INDEX still claimed a current no-cleanup DEGRADED state even though May 1 live health was HEALTHY.",
+      "status": "resolved_in_docs"
+    },
+    {
+      "severity": "medium",
+      "id": "qstash_log_visibility_partial",
+      "summary": "QStash publish succeeded, but current provider log lookup remained partial.",
+      "status": "open"
+    },
+    {
+      "severity": "medium",
+      "id": "phase14_c29_c30_still_open",
+      "summary": "Code Visibility Layer 4 and Content Version History remain unimplemented or unproven.",
+      "status": "open"
+    },
+    {
+      "severity": "low",
+      "id": "local_build_edge_runtime_warnings",
+      "summary": "Local build passes but still warns on Edge Runtime compatibility for jose deflate helpers.",
+      "status": "open"
+    }
+  ],
+  "open_items": [
+    "C29",
+    "C30"
+  ]
+}

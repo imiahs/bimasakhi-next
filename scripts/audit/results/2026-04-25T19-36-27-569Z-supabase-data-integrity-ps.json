@@ -1,0 +1,70 @@
+﻿{
+    "name":  "supabase-data-integrity-ps",
+    "started_at":  "2026-04-25T19:36:26.8849384Z",
+    "finished_at":  "2026-04-25T19:36:27.5376039Z",
+    "status":  "PARTIAL",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "SUPABASE_URL":  {
+                                                             "present":  true,
+                                                             "masked":  "http...e.co (40 chars)"
+                                                         },
+                                        "NEXT_PUBLIC_SUPABASE_URL":  {
+                                                                         "present":  true,
+                                                                         "masked":  "http...e.co (40 chars)"
+                                                                     },
+                                        "SUPABASE_SERVICE_ROLE_KEY":  {
+                                                                          "present":  true,
+                                                                          "masked":  "sb_s...eZm_ (41 chars)"
+                                                                      },
+                                        "SUPABASE_ENABLED":  {
+                                                                 "present":  true,
+                                                                 "masked":  "**** (4 chars)"
+                                                             }
+                                    },
+                       "timestamp":  "2026-04-25T19:36:26.9771449Z"
+                   },
+                   {
+                       "name":  "db_query_system_control_config",
+                       "status":  "FAIL",
+                       "evidence":  {
+                                        "ok":  false,
+                                        "status":  null,
+                                        "error":  "Unable to connect to the remote server"
+                                    },
+                       "timestamp":  "2026-04-25T19:36:27.3316680Z"
+                   },
+                   {
+                       "name":  "insert_test_observability_log",
+                       "status":  "FAIL",
+                       "evidence":  {
+                                        "marker":  "TEST_AUDIT_SUPABASE_1777145787331",
+                                        "status":  null,
+                                        "error":  "Unable to connect to the remote server",
+                                        "body":  null,
+                                        "inserted_id":  null
+                                    },
+                       "timestamp":  "2026-04-25T19:36:27.5049623Z"
+                   },
+                   {
+                       "name":  "rule16_partial_write_simulation",
+                       "status":  "FAIL",
+                       "evidence":  {
+                                        "verdict":  "NO_PARTIAL_WRITE_OBSERVED_OR_INCONCLUSIVE",
+                                        "forced_child_status":  null,
+                                        "forced_child_insert_failed":  null,
+                                        "forced_child_error":  null,
+                                        "page_inserted":  false,
+                                        "page_id":  null,
+                                        "orphan_page_remains":  false
+                                    },
+                       "timestamp":  "2026-04-25T19:36:27.5229412Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}

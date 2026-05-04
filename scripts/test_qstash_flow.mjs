@@ -16,7 +16,7 @@ async function runTest() {
     // 1. Insert Queue
     console.log("-> Inserting Test Queue...");
     const slug = 'ai-qstash-test-' + Date.now();
-    const { data: pIdx } = await supabase.from('page_index').insert({ page_slug: slug, status: 'processing', page_type: 'locality_page' }).select('id').single();
+    const { data: pIdx } = await supabase.from('page_index').insert({ page_slug: slug, status: 'draft', page_type: 'locality_page' }).select('id').single();
     
     if (pIdx) {
         const { error: qErr } = await supabase.from('generation_queue').insert({ status: 'pending', payload: { pages: [{ slug, keyword_text: "LIC Fast Track Testing" }] } });

@@ -1,0 +1,167 @@
+﻿{
+    "name":  "control-plane-truth-unification-ps",
+    "started_at":  "2026-04-26T17:00:54.7384965Z",
+    "finished_at":  "2026-04-26T17:00:58.7577266Z",
+    "status":  "PASS",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "SUPABASE_URL":  {
+                                                             "present":  true,
+                                                             "masked":  "http...e.co (40 chars)"
+                                                         },
+                                        "NEXT_PUBLIC_SUPABASE_URL":  {
+                                                                         "present":  true,
+                                                                         "masked":  "http...e.co (40 chars)"
+                                                                     },
+                                        "SUPABASE_SERVICE_ROLE_KEY":  {
+                                                                          "present":  true,
+                                                                          "masked":  "sb_s...eZm_ (41 chars)"
+                                                                      },
+                                        "ADMIN_PASSWORD":  {
+                                                               "present":  true,
+                                                               "masked":  "Haim...vija (20 chars)"
+                                                           }
+                                    },
+                       "timestamp":  "2026-04-26T17:00:54.7405098Z"
+                   },
+                   {
+                       "name":  "direct_rest_control_plane_row",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "rest_uri":  "https://litucwmzwhpqfgyahpcl.supabase.co/rest/v1/system_control_config?select=singleton_key,system_mode,safe_mode,ai_enabled,queue_paused,crm_auto_routing,followup_enabled,pagegen_enabled,bulk_generation_enabled,updated_at\u0026limit=1",
+                                        "error":  null,
+                                        "control_columns_present":  true,
+                                        "row":  {
+                                                    "singleton_key":  true,
+                                                    "system_mode":  "normal",
+                                                    "safe_mode":  false,
+                                                    "ai_enabled":  false,
+                                                    "queue_paused":  false,
+                                                    "crm_auto_routing":  true,
+                                                    "followup_enabled":  true,
+                                                    "pagegen_enabled":  false,
+                                                    "bulk_generation_enabled":  false,
+                                                    "updated_at":  "2026-04-26T16:49:57.409037+00:00"
+                                                },
+                                        "method":  "GET",
+                                        "status":  200,
+                                        "transport":  "curl.exe via Invoke-CurlJsonRequest",
+                                        "auth_mode":  "SUPABASE_SERVICE_ROLE_KEY"
+                                    },
+                       "timestamp":  "2026-04-26T17:00:55.1293490Z"
+                   },
+                   {
+                       "name":  "direct_rest_legacy_control_keys_absent",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "rest_uri":  "https://litucwmzwhpqfgyahpcl.supabase.co/rest/v1/feature_flags?select=key,value,restricted\u0026key=in.(safe_mode,pagegen_enabled,bulk_generation_enabled)\u0026order=key.asc",
+                                        "error":  null,
+                                        "method":  "GET",
+                                        "status":  200,
+                                        "transport":  "curl.exe via Invoke-CurlJsonRequest",
+                                        "auth_mode":  "SUPABASE_SERVICE_ROLE_KEY",
+                                        "rows":  [
+
+                                                 ],
+                                        "row_count":  0
+                                    },
+                       "timestamp":  "2026-04-26T17:00:55.3746506Z"
+                   },
+                   {
+                       "name":  "admin_login",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "error":  null,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "role":  "super_admin"
+                                                 },
+                                        "cookie_count":  1
+                                    },
+                       "timestamp":  "2026-04-26T17:00:56.6533226Z"
+                   },
+                   {
+                       "name":  "admin_feature_flags_single_source",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "canonical_keys":  {
+                                                               "safe_mode":  {
+                                                                                 "count":  1,
+                                                                                 "source":  "system_control_config",
+                                                                                 "value":  false,
+                                                                                 "rest_value":  false,
+                                                                                 "value_matches_rest":  true
+                                                                             },
+                                                               "pagegen_enabled":  {
+                                                                                       "count":  1,
+                                                                                       "source":  "system_control_config",
+                                                                                       "value":  false,
+                                                                                       "rest_value":  false,
+                                                                                       "value_matches_rest":  true
+                                                                                   },
+                                                               "bulk_generation_enabled":  {
+                                                                                               "count":  1,
+                                                                                               "source":  "system_control_config",
+                                                                                               "value":  false,
+                                                                                               "rest_value":  false,
+                                                                                               "value_matches_rest":  true
+                                                                                           }
+                                                           },
+                                        "error":  null,
+                                        "success":  true
+                                    },
+                       "timestamp":  "2026-04-26T17:00:57.4875887Z"
+                   },
+                   {
+                       "name":  "admin_system_health_single_source",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "error":  null,
+                                        "control_plane":  {
+                                                              "control_plane_source":  "system_control_config",
+                                                              "system_mode_source":  "system_control_config",
+                                                              "operational_flags_source":  "system_control_config",
+                                                              "safe_mode_source":  "system_control_config",
+                                                              "conflicting_states_possible":  false
+                                                          },
+                                        "success":  true
+                                    },
+                       "timestamp":  "2026-04-26T17:00:58.7409771Z"
+                   },
+                   {
+                       "name":  "control_plane_truth_unification_verdict",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "runtime_control_keys":  [
+                                                                     "safe_mode",
+                                                                     "pagegen_enabled",
+                                                                     "bulk_generation_enabled"
+                                                                 ],
+                                        "canonical_source":  "system_control_config",
+                                        "conflicting_states_possible":  false,
+                                        "all_required_checks_passed":  true,
+                                        "required_checks":  [
+                                                                "direct_rest_control_plane_row",
+                                                                "direct_rest_legacy_control_keys_absent",
+                                                                "admin_login",
+                                                                "admin_feature_flags_single_source",
+                                                                "admin_system_health_single_source"
+                                                            ],
+                                        "legacy_duplicate_keys_absent":  true
+                                    },
+                       "timestamp":  "2026-04-26T17:00:58.7567229Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}

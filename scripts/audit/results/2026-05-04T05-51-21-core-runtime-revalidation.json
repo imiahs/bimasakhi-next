@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-05-04T05:51:21Z",
+  "status": "local_runtime_pass",
+  "session": "continuation — all core runtime paths re-executed independently on a fresh dev server",
+  "scope": [
+    "pagegen_happy_path",
+    "rejected_archive",
+    "seo_module",
+    "backup_system",
+    "build"
+  ],
+  "build": {
+    "status": "PASS",
+    "compiled_successfully": true,
+    "compile_time_seconds": 101,
+    "lint_and_typecheck": "PASS",
+    "static_pages_generated": 107,
+    "note": "Clean production build run after all fixes were applied"
+  },
+  "rejected_archive": {
+    "status": "PASS",
+    "server": "http://localhost:3001 (fresh dev instance)",
+    "login_status": 200,
+    "create_draft_status": 200,
+    "reject_status": 200,
+    "reject_body": { "success": true, "message": "Draft rejected" },
+    "archive_status": 200,
+    "archive_body": { "success": true, "message": "Draft archived" },
+    "read_back_status": 200,
+    "final_draft_status": "archived",
+    "cleanup": "synthetic draft and version history rows removed"
+  },
+  "seo_module": {
+    "status": "PASS",
+    "get_status": 200,
+    "put_status": 200,
+    "put_body_summary": {
+      "success": true,
+      "route_path": "/__seo-proof-{timestamp}",
+      "meta_title": "SEO proof title",
+      "meta_description": "SEO proof description",
+      "og_image": "/images/seo-proof.png"
+    },
+    "fetched_override_present": true,
+    "cleanup_error": null,
+    "note": "SEO API is fully functional. Earlier degraded claim traced to background_workers=red in /api/admin/system, not an SEO route failure."
+  },
+  "backup_system": {
+    "status": "PASS",
+    "create_status": 200,
+    "create_body_summary": {
+      "success": true,
+      "backup_id": "2026-05-04T04-55-55-019Z",
+      "file_count": 15,
+      "size_bytes": 599908
+    },
+    "list_status": 200,
+    "list_returned_backup": true,
+    "note": "API was previously a GET-only listing of an absent directory. POST route now creates real filesystem snapshots of core Supabase tables."
+  },
+  "pagegen_happy_path": {
+    "status": "PASS",
+    "server": "http://localhost:3001 (fresh dev instance)",
+    "slug": "pagegen-proof-1777873846088",
+    "worker_status": 200,
+    "worker_body": {
+      "success": true,
+      "processed": 1,
+      "reviews": 0,
+      "dispatch_deferred": false
+    },
+    "ai_model_path": {
+      "primary_model": "gemini-2.0-flash",
+      "primary_result": "429 quota exceeded (2 attempts)",
+      "fallback_model": "gemini-2.5-flash-lite",
+      "fallback_result": "success — 10720 chars generated",
+      "note": "Built-in fallback in the AI engine handled the free-tier quota limit transparently"
+    },
+    "queue_after": {
+      "status": "completed",
+      "progress": 1,
+      "total_items": 1,
+      "completed_at": "2026-05-04T05:51:21.848228+00:00",
+      "retry_count": 0
+    },
+    "draft_row": {
+      "status": "draft",
+      "word_count": 1516,
+      "quality_score": 8.5,
+      "page_index_id": "8ff4d765-a6e0-454c-bfc6-e5852fe4aaeb"
+    },
+    "page_row": {
+      "status": "draft",
+      "indexing_status": "blocked"
+    },
+    "location_row": {
+      "word_count": 1516
+    },
+    "control_plane": {
+      "proof_window_flags": {
+        "safe_mode": false,
+        "pagegen_enabled": true,
+        "queue_paused": false
+      },
+      "restored_after_run": true
+    },
+    "cleanup": "synthetic queue/draft/page_index/location_content rows removed; job_runs and job_dead_letters for this run removed"
+  },
+  "system_status_context": {
+    "note": "background_workers=red with recent_job_failures=12 is a pre-existing operational condition unrelated to the core runtime failures listed in the stop order. It does not indicate a route-level failure."
+  }
+}

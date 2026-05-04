@@ -1,0 +1,602 @@
+[
+  {
+    "id": "7d154b42-c63c-4e43-85e0-d979a0a8595c",
+    "job_class": "lead_processing",
+    "payload": {
+      "source": "contact_page",
+      "test_id": "20260414021431",
+      "event_id": "22847433-d515-4017-b9f7-a3d75365dbcc",
+      "contact_id": "unknown",
+      "session_id": "phase4-live-20260414021431",
+      "lead_source": "contact_page"
+    },
+    "status": "done",
+    "started_at": "2026-04-13T20:44:46.914+00:00",
+    "finished_at": "2026-04-13T20:44:47.467+00:00",
+    "failure_reason": null,
+    "worker_id": null,
+    "created_at": "2026-04-13T20:44:46.914+00:00",
+    "job_id": null,
+    "completed_at": null,
+    "error": null
+  },
+  {
+    "id": "29b7c2b6-86a2-4b37-a767-6a4d35c46b5f",
+    "job_class": "lead_processing",
+    "payload": {
+      "source": "contact_page",
+      "test_id": "20260414021453",
+      "event_id": "13fce7b5-e222-47c8-817d-0af139fbf7ba",
+      "contact_id": "failure-test",
+      "session_id": "phase4-fail-20260414021453",
+      "lead_source": "contact_page"
+    },
+    "status": "failed",
+    "started_at": "2026-04-13T20:44:56.955+00:00",
+    "finished_at": "2026-04-13T20:44:57.485+00:00",
+    "failure_reason": "Intentional worker failure for live verification",
+    "worker_id": null,
+    "created_at": "2026-04-13T20:44:56.955+00:00",
+    "job_id": null,
+    "completed_at": null,
+    "error": null
+  },
+  {
+    "id": "c823cd95-4521-40da-aa91-c8bd15e41eb2",
+    "job_class": "lead_processing",
+    "payload": {
+      "source": "contact_page",
+      "test_id": "20260414021453",
+      "event_id": "13fce7b5-e222-47c8-817d-0af139fbf7ba",
+      "contact_id": "failure-test",
+      "session_id": "phase4-fail-20260414021453",
+      "lead_source": "contact_page"
+    },
+    "status": "failed",
+    "started_at": "2026-04-13T20:45:01.496+00:00",
+    "finished_at": "2026-04-13T20:45:02.098+00:00",
+    "failure_reason": "Intentional worker failure for live verification",
+    "worker_id": null,
+    "created_at": "2026-04-13T20:45:01.496+00:00",
+    "job_id": null,
+    "completed_at": null,
+    "error": null
+  },
+  {
+    "id": "a1498c47-60d2-4d02-a023-bf5fea601f9f",
+    "job_class": "lead_processing",
+    "payload": {
+      "source": "contact_page",
+      "test_id": "20260414021453",
+      "event_id": "13fce7b5-e222-47c8-817d-0af139fbf7ba",
+      "contact_id": "failure-test",
+      "session_id": "phase4-fail-20260414021453",
+      "lead_source": "contact_page"
+    },
+    "status": "failed",
+    "started_at": "2026-04-13T20:45:05.811+00:00",
+    "finished_at": "2026-04-13T20:45:06.362+00:00",
+    "failure_reason": "Intentional worker failure for live verification",
+    "worker_id": null,
+    "created_at": "2026-04-13T20:45:05.811+00:00",
+    "job_id": null,
+    "completed_at": null,
+    "error": null
+  },
+  {
+    "id": "8b278e09-24bf-40af-ba61-bd3f23d4a3fd",
+    "job_class": "lead_processing",
+    "payload": {
+      "source": "cto_audit",
+      "test_id": "audit-success-20260414111132",
+      "event_id": "8334cd77-02bb-4357-98b1-815cc31e94e6",
+      "contact_id": "unknown",
+      "session_id": "ctoaudit-success-20260414111132",
+      "lead_source": "contact_page"
+    },
+    "status": "done",
+    "started_at": "2026-04-14T05:41:43.656+00:00",
+    "finished_at": "2026-04-14T05:41:44.201+00:00",
+    "failure_reason": null,
+    "worker_id": null,
+    "created_at": "2026-04-14T05:41:43.656+00:00",
+    "job_id": null,
+    "completed_at": null,
+    "error": null
+  },
+  {
+    "id": "7d097e73-137a-4d08-b0c2-7957d290e1a2",
+    "job_class": "lead_processing",
+    "payload": {
+      "source": "cto_audit",
+      "test_id": "audit-fail-20260414111246",
+      "event_id": "edae486b-dbcd-4075-95b2-106b2e1d7e15",
+      "contact_id": "failure-test",
+      "session_id": "ctoaudit-fail-20260414111246",
+      "lead_source": "contact_page"
+    },
+    "status": "failed",
+    "started_at": "2026-04-14T05:42:54.253+00:00",
+    "finished_at": "2026-04-14T05:42:54.74+00:00",
+    "failure_reason": "Intentional worker failure for live verification",
+    "worker_id": null,
+    "created_at": "2026-04-14T05:42:54.253+00:00",
+    "job_id": null,
+    "completed_at": null,
+    "error": null
+  },
+  {
+    "id": "01479c1e-a5f1-4376-86f8-deb05f6abb46",
+    "job_class": "lead_processing",
+    "payload": {
+      "source": "cto_audit",
+      "test_id": "audit-fail-20260414111246",
+      "event_id": "edae486b-dbcd-4075-95b2-106b2e1d7e15",
+      "contact_id": "failure-test",
+      "session_id": "ctoaudit-fail-20260414111246",
+      "lead_source": "contact_page"
+    },
+    "status": "failed",
+    "started_at": "2026-04-14T05:42:57.644+00:00",
+    "finished_at": "2026-04-14T05:42:58.128+00:00",
+    "failure_reason": "Intentional worker failure for live verification",
+    "worker_id": null,
+    "created_at": "2026-04-14T05:42:57.644+00:00",
+    "job_id": null,
+    "completed_at": null,
+    "error": null
+  },
+  {
+    "id": "d5cb4ac9-43ce-4f21-997d-8d874a081c7a",
+    "job_class": "lead_processing",
+    "payload": {
+      "source": "cto_audit",
+      "test_id": "audit-fail-20260414111246",
+      "event_id": "edae486b-dbcd-4075-95b2-106b2e1d7e15",
+      "contact_id": "failure-test",
+      "session_id": "ctoaudit-fail-20260414111246",
+      "lead_source": "contact_page"
+    },
+    "status": "failed",
+    "started_at": "2026-04-14T05:43:00.513+00:00",
+    "finished_at": "2026-04-14T05:43:01.016+00:00",
+    "failure_reason": "Intentional worker failure for live verification",
+    "worker_id": null,
+    "created_at": "2026-04-14T05:43:00.513+00:00",
+    "job_id": null,
+    "completed_at": null,
+    "error": null
+  },
+  {
+    "id": "9785cf53-b677-4002-b715-e0cc6cc275e3",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "61e156da-158c-4639-8a5d-a48cbe92e9f4",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-16T19:07:50.11+00:00",
+    "finished_at": "2026-04-16T19:08:17.636+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-16T19:07:50.296816+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-16T19:08:17.636+00:00",
+    "error": null
+  },
+  {
+    "id": "540b68e7-ded7-4738-9fd3-74eab4496ec6",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "461572c8-b772-4e07-b041-774e86cf37c6",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "failed",
+    "started_at": "2026-04-16T19:34:32.469+00:00",
+    "finished_at": "2026-04-16T19:34:44.269+00:00",
+    "failure_reason": "AI returned no content for lic-agent-in-connaught-place-delhi",
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-16T19:34:33.036842+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-16T19:34:44.269+00:00",
+    "error": "AI returned no content for lic-agent-in-connaught-place-delhi"
+  },
+  {
+    "id": "ebb3d829-cd65-4371-9e08-f2602ebe40b3",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "8ca4fdba-2e8b-4df6-8cab-14fe600c9cbd",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-16T19:34:31.628+00:00",
+    "finished_at": "2026-04-16T19:35:00.451+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-16T19:34:31.785592+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-16T19:35:00.451+00:00",
+    "error": null
+  },
+  {
+    "id": "d65b7542-6d29-4dd1-8ab6-ddac6cbf66c4",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "461572c8-b772-4e07-b041-774e86cf37c6",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-16T19:34:59.686+00:00",
+    "finished_at": "2026-04-16T19:35:29.861+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-16T19:35:00.34451+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-16T19:35:29.861+00:00",
+    "error": null
+  },
+  {
+    "id": "da1a5bcb-5586-4b02-93e1-1af89180e946",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "c6bd1d31-3d1d-4232-ab0d-096eaa7ae0e5",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-17T06:43:56.47+00:00",
+    "finished_at": "2026-04-17T06:44:20.087+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-17T06:43:56.61343+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-17T06:44:20.087+00:00",
+    "error": null
+  },
+  {
+    "id": "ab63d859-9310-4cc4-ae6b-01a99bb5e407",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "5f7f29ec-55bb-4042-9544-f6a64f9d28cb",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-17T06:44:25.189+00:00",
+    "finished_at": "2026-04-17T06:44:56.366+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-17T06:44:25.337454+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-17T06:44:56.366+00:00",
+    "error": null
+  },
+  {
+    "id": "7374d87b-35ef-4e9e-b482-e0548ab55a81",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "2daea6f8-ea4e-45b4-8efd-df9126fd934b",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-18T04:13:05.576+00:00",
+    "finished_at": "2026-04-18T04:13:30.652+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-18T04:13:05.728351+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-18T04:13:30.652+00:00",
+    "error": null
+  },
+  {
+    "id": "62988e55-1739-4b44-8b30-3e87ae183428",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "20b6a7a8-984d-4747-8fce-f4b76f62256a",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-20T02:38:20.035+00:00",
+    "finished_at": "2026-04-20T02:38:45.773+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-20T02:38:20.192955+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-20T02:38:45.773+00:00",
+    "error": null
+  },
+  {
+    "id": "12737669-e07d-4b4a-9f04-1e27e83bcccb",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "0a2b03fa-bae1-4804-bbdf-18bcee1e3962",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-26T18:04:52.92+00:00",
+    "finished_at": "2026-04-26T18:04:54.044+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-26T18:04:53.051367+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-26T18:04:54.044+00:00",
+    "error": null
+  },
+  {
+    "id": "b430ac03-4f5b-472d-9247-37457388e904",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "5cc4f906-826f-44ad-a795-1e5c910c7f0f",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-26T18:13:07.486+00:00",
+    "finished_at": "2026-04-26T18:13:08.543+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-26T18:13:07.610003+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-26T18:13:08.543+00:00",
+    "error": null
+  },
+  {
+    "id": "5d070bcd-d2ef-432e-a78d-cb7ad56a7a69",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "a4512c75-369f-4505-b2e5-9ea71dd85444",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "failed",
+    "started_at": "2026-04-26T18:13:06.267+00:00",
+    "finished_at": "2026-04-26T18:13:29.036+00:00",
+    "failure_reason": "page persistence failed for rule16-bulk-idempotent-1777227144837-b0cf8cf0: insert or update on table \"content_drafts\" violates foreign key constraint \"content_drafts_generation_queue_id_fkey\"",
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-26T18:13:06.389673+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-26T18:13:29.036+00:00",
+    "error": "page persistence failed for rule16-bulk-idempotent-1777227144837-b0cf8cf0: insert or update on table \"content_drafts\" violates foreign key constraint \"content_drafts_generation_queue_id_fkey\""
+  },
+  {
+    "id": "1e05a046-5bf5-4824-87aa-95cd89646da1",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "67869bd5-c5a0-49e2-85c0-d3789a65451a",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "failed",
+    "started_at": "2026-04-26T18:13:04.936+00:00",
+    "finished_at": "2026-04-26T18:13:31.777+00:00",
+    "failure_reason": "page persistence failed for rule16-bulk-fail-1777227144837-b0cf8cf0: insert or update on table \"content_drafts\" violates foreign key constraint \"content_drafts_generation_queue_id_fkey\"",
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-26T18:13:05.088541+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-26T18:13:31.777+00:00",
+    "error": "page persistence failed for rule16-bulk-fail-1777227144837-b0cf8cf0: insert or update on table \"content_drafts\" violates foreign key constraint \"content_drafts_generation_queue_id_fkey\""
+  },
+  {
+    "id": "211a492b-1609-43b9-b709-e5c1084eaf2a",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "1dccdf78-e43e-4478-98d6-be9f6c6d61e4",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:53:27.55+00:00",
+    "finished_at": "2026-04-27T03:53:56.382+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:53:27.663782+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:53:56.382+00:00",
+    "error": null
+  },
+  {
+    "id": "e28ede0d-5618-4559-842f-ace388c7d1f8",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "01565e80-16e6-42ba-b73e-102f13721e82",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:53:59.121+00:00",
+    "finished_at": "2026-04-27T03:54:24.476+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:53:59.237086+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:54:24.476+00:00",
+    "error": null
+  },
+  {
+    "id": "1516f990-ae2b-4dc7-a9fb-c9a5024f93df",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "a66bc5f0-b52f-4869-a52e-cdc72466f6c4",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:54:42.467+00:00",
+    "finished_at": "2026-04-27T03:54:43.465+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:54:42.58252+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:54:43.465+00:00",
+    "error": null
+  },
+  {
+    "id": "4af1e8aa-d91e-4912-b784-c42ae3cca354",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "701ab4b4-96a2-4432-bd29-85cb419528f4",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:54:58.151+00:00",
+    "finished_at": "2026-04-27T03:55:23.415+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:54:58.268861+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:55:23.415+00:00",
+    "error": null
+  },
+  {
+    "id": "8fe9c1ef-3e57-4115-96cf-ddb82d7d31df",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "462b3529-5720-418a-ae39-1a2a174af517",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:55:32.538+00:00",
+    "finished_at": "2026-04-27T03:55:56.998+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:55:32.654204+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:55:56.998+00:00",
+    "error": null
+  },
+  {
+    "id": "2ba9d7ce-55f3-40d4-97d7-0dcff451d7ac",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "701ab4b4-96a2-4432-bd29-85cb419528f4",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:55:03.96+00:00",
+    "finished_at": "2026-04-27T03:55:29.915+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:55:04.105068+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:55:29.915+00:00",
+    "error": null
+  },
+  {
+    "id": "9cfe8c57-a232-457c-8e44-e6fdb2e14fee",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "462b3529-5720-418a-ae39-1a2a174af517",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:55:26.191+00:00",
+    "finished_at": "2026-04-27T03:55:52.246+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:55:26.354709+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:55:52.246+00:00",
+    "error": null
+  },
+  {
+    "id": "99cdb315-c4b8-4694-b98d-cb5cf84be24e",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "f2527e43-6753-4b3c-bb62-e679ee9e8b17",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:55:54.924+00:00",
+    "finished_at": "2026-04-27T03:55:55.926+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:55:55.083461+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:55:55.926+00:00",
+    "error": null
+  },
+  {
+    "id": "beb97d8e-1481-4167-97fe-d8752eafd16f",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "fb20471d-b914-4290-9717-fa6c201d8a95",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-04-27T03:58:00.705+00:00",
+    "finished_at": "2026-04-27T03:58:24.187+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:58:00.826782+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:58:24.187+00:00",
+    "error": null
+  },
+  {
+    "id": "291f3a27-f561-430b-b374-15573c69710a",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "fb20471d-b914-4290-9717-fa6c201d8a95",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "failed",
+    "started_at": "2026-04-27T03:58:18.16+00:00",
+    "finished_at": "2026-04-27T03:58:43.414+00:00",
+    "failure_reason": "AI JSON parse failed for rule16-bulk-fail-1777262242418-718d3157: Expected ',' or '}' after property value in JSON at position 7517 (line 3 column 7417)",
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-04-27T03:58:18.289947+00:00",
+    "job_id": null,
+    "completed_at": "2026-04-27T03:58:43.414+00:00",
+    "error": "AI JSON parse failed for rule16-bulk-fail-1777262242418-718d3157: Expected ',' or '}' after property value in JSON at position 7517 (line 3 column 7417)"
+  },
+  {
+    "id": "d5190bc6-710d-49b4-a40c-417bfec42beb",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "57a1a0f5-167d-46fc-aad9-68d18d546343",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-05-04T06:13:33.835+00:00",
+    "finished_at": "2026-05-04T06:14:03.209+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-05-04T06:13:33.916005+00:00",
+    "job_id": null,
+    "completed_at": "2026-05-04T06:14:03.209+00:00",
+    "error": null
+  },
+  {
+    "id": "9392ea23-23a0-4d32-9471-6d5148e8fc07",
+    "job_class": "pagegen",
+    "payload": {
+      "queue_id": "f3ac00b5-3c3e-461e-9494-0dbe23a587dc",
+      "task_type": "pagegen",
+      "payload_version": 1
+    },
+    "status": "completed",
+    "started_at": "2026-05-04T06:14:33.306+00:00",
+    "finished_at": "2026-05-04T06:15:02.362+00:00",
+    "failure_reason": null,
+    "worker_id": "pagegen-worker",
+    "created_at": "2026-05-04T06:14:33.401509+00:00",
+    "job_id": null,
+    "completed_at": "2026-05-04T06:15:02.362+00:00",
+    "error": null
+  }
+]

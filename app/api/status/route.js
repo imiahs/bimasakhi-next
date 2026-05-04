@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getSystemMode } from '@/lib/system/systemModes';
 import { getAllFeatureFlags } from '@/lib/system/featureFlags';
+import { getSystemHealthSnapshot, systemHealthToStatus } from '@/lib/system/systemHealth';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +22,7 @@ export async function GET() {
         system_mode: 'unknown',
     };
     let healthy = true;
+    let overallHealth = 'DEGRADED';
 
     // 1. Database connectivity
     try {
@@ -51,10 +53,18 @@ export async function GET() {
         flags = await getAllFeatureFlags();
     } catch { /* non-fatal */ }
 
-    const status = healthy ? 'ok' : 'degraded';
+    try {
+        const snapshot = await getSystemHealthSnapshot();
+        overallHealth = snapshot.overall_health;
+    } catch {
+        overallHealth = healthy ? 'HEALTHY' : 'DEGRADED';
+    }
+
+    const status = healthy ? systemHealthToStatus(overallHealth) : 'degraded';
 
     return NextResponse.json({
         status,
+        overall_health: overallHealth,
         version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'local',
         environment: process.env.VERCEL_ENV || process.env.NODE_ENV || 'development',
         checks,

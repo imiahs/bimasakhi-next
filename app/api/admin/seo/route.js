@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { getServiceSupabase } from '@/utils/supabase';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
@@ -10,11 +11,11 @@ export const GET = withAdminAuth(async (request, user) => {
         const { data, error } = await supabase
             .from('seo_overrides')
             .select('*')
-            .order('page_path', { ascending: true });
+            .order('route_path', { ascending: true });
 
         if (error) throw error;
 
-        return NextResponse.json({ overrides: data });
+        return NextResponse.json({ overrides: (data || []).map((override) => ({ ...override, page_path: override.route_path })) });
     } catch (error) {
         console.error('API /admin/seo GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch SEO metadata overrides' }, { status: 500 });
@@ -27,54 +28,31 @@ export const PUT = withAdminAuth(async (request, user) => {
         const supabase = getServiceSupabase();
         const payload = await request.json();
 
-        const { page_path, meta_title, meta_description, og_image } = payload;
+        const { page_path, meta_title, meta_description, canonical_url, robots_setting, og_image } = payload;
         if (!page_path) return NextResponse.json({ error: 'Missing page_path' }, { status: 400 });
 
-        // Check if exists
-        const { data: existing } = await supabase
+        const updateKey = crypto
+            .createHash('sha256')
+            .update(JSON.stringify({ page_path, meta_title, meta_description, canonical_url, robots_setting, og_image }))
+            .digest('hex');
+
+        const { error } = await supabase.rpc('rule16_upsert_seo_override', {
+            p_route_path: page_path,
+            p_updates: { meta_title, meta_description, canonical_url, robots_setting, og_image },
+            p_idempotency_key: updateKey,
+        });
+
+        if (error) throw error;
+
+        const { data, error: refetchErr } = await supabase
             .from('seo_overrides')
-            .select('id')
-            .eq('page_path', page_path)
+            .select('*')
+            .eq('route_path', page_path)
             .single();
 
-        let result;
-        if (existing) {
-            // Phase 18: Data Versioning Hook (Snapshot before update)
-            const { data: currentSeo, error: fetchErr } = await supabase
-                .from('seo_overrides')
-                .select('*')
-                .eq('id', existing.id)
-                .single();
+        if (refetchErr) throw refetchErr;
 
-            if (!fetchErr && currentSeo) {
-                await supabase.from('seo_versions').insert({
-                    seo_id: currentSeo.id,
-                    route: currentSeo.page_path,
-                    title: currentSeo.meta_title || '',
-                    description: currentSeo.meta_description || '',
-                    og_title: currentSeo.meta_title || '',
-                    og_description: currentSeo.meta_description || '',
-                    keywords: ''
-                });
-            }
-
-            result = await supabase
-                .from('seo_overrides')
-                .update({ meta_title, meta_description, og_image })
-                .eq('id', existing.id)
-                .select()
-                .single();
-        } else {
-            result = await supabase
-                .from('seo_overrides')
-                .insert({ page_path, meta_title, meta_description, og_image })
-                .select()
-                .single();
-        }
-
-        if (result.error) throw result.error;
-
-        return NextResponse.json({ success: true, override: result.data });
+        return NextResponse.json({ success: true, override: { ...data, page_path: data.route_path } });
     } catch (error) {
         console.error('API /admin/seo PUT error:', error);
         return NextResponse.json({ error: 'Failed to save SEO metadata override' }, { status: 500 });

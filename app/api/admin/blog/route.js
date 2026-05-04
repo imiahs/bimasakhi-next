@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { getServiceSupabase } from '@/utils/supabase';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
@@ -69,33 +70,26 @@ export const PUT = withAdminAuth(async (request, user) => {
 
         if (!id) return NextResponse.json({ error: 'Missing post ID' }, { status: 400 });
 
-        // Phase 18: Data Versioning Hook (Snapshot before update)
-        const { data: currentPost, error: fetchErr } = await supabase
+        const updateKey = crypto
+            .createHash('sha256')
+            .update(JSON.stringify({ postId: id, updates }))
+            .digest('hex');
+
+        const { error } = await supabase.rpc('rule16_update_blog_post', {
+            p_post_id: id,
+            p_updates: updates,
+            p_idempotency_key: updateKey,
+        });
+
+        if (error) throw error;
+
+        const { data, error: refetchErr } = await supabase
             .from('blog_posts')
             .select('*')
             .eq('id', id)
             .single();
 
-        if (!fetchErr && currentPost) {
-            await supabase.from('blog_post_versions').insert({
-                post_id: currentPost.id,
-                title: currentPost.title,
-                content: currentPost.content,
-                meta_title: currentPost.meta_title,
-                meta_description: currentPost.meta_description,
-                author: currentPost.author,
-                status: currentPost.status
-            });
-        }
-
-        const { data, error } = await supabase
-            .from('blog_posts')
-            .update(updates)
-            .eq('id', id)
-            .select()
-            .single();
-
-        if (error) throw error;
+        if (refetchErr) throw refetchErr;
 
         return NextResponse.json({ success: true, post: data });
     } catch (error) {

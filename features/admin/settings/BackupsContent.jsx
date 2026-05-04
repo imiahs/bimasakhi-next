@@ -29,9 +29,8 @@ const BackupsContent = () => {
     const triggerBackup = async () => {
         setGenerating(true);
         try {
-            // Simulated placeholder delay for backup system decoupling
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            const data = { success: true, message: 'Simulated backup generation' };
+            const res = await fetch('/api/admin/backups', { method: 'POST' });
+            const data = await res.json();
             if (data.success) {
                 alert('Backup generated successfully!');
                 fetchBackups();

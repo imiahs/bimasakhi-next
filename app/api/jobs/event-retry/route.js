@@ -5,6 +5,8 @@ import { getRetryableEvents, incrementRetry, markDispatched, markFailed, markStu
 import { getTrigger } from '@/lib/events/triggerMap';
 import { getSystemMode } from '@/lib/system/systemModes';
 import { executePagegenJob } from '@/app/api/jobs/pagegen/route';
+import { recordExternalDelivery } from '@/lib/queue/deliveryTruth';
+import { safeLog } from '@/lib/safeLogger.js';
 
 export const maxDuration = 60;
 
@@ -127,13 +129,35 @@ async function handler(request) {
             const baseUrl = process.env.NODE_ENV === 'production'
                 ? 'https://bimasakhi.com'
                 : (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
+            const targetUrl = `${baseUrl}${trigger.endpoint}`;
 
             const result = await client.publishJSON({
-                url: `${baseUrl}${trigger.endpoint}`,
+                url: targetUrl,
                 body: retryPayload,
             });
 
             await markDispatched(event.id, result.messageId);
+            try {
+                await recordExternalDelivery({
+                    messageId: result.messageId,
+                    source: 'retry_daemon',
+                    eventName: event.event_name,
+                    eventStoreId: event.id,
+                    generationQueueId: event.payload?.queueId || event.payload?.queue_id || null,
+                    targetUrl,
+                    targetPath: trigger.endpoint,
+                    requestPayload: retryPayload,
+                    providerResponse: result,
+                });
+            } catch (deliveryError) {
+                await safeLog('QSTASH_DELIVERY_TRUTH_WRITE_FAILED', deliveryError.message, {
+                    source: 'retry_daemon',
+                    event_name: event.event_name,
+                    event_store_id: event.id,
+                    message_id: result.messageId,
+                    target_url: targetUrl,
+                });
+            }
             results.retried++;
 
             // Log retry success

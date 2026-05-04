@@ -1,0 +1,16 @@
+[
+  {
+    "id": "f8b85506-13bb-4789-b821-5f252dfb155c",
+    "singleton_key": true,
+    "ai_enabled": true,
+    "queue_paused": true,
+    "batch_size": 10,
+    "crm_auto_routing": true,
+    "followup_enabled": true,
+    "updated_at": "2026-05-03T19:33:12.845+00:00",
+    "system_mode": "normal",
+    "safe_mode": false,
+    "pagegen_enabled": true,
+    "bulk_generation_enabled": false
+  }
+]

@@ -23,6 +23,8 @@ export default function CCCDraftEditor() {
     const [scheduleDate, setScheduleDate] = useState('');
     const [copiedPrompt, setCopiedPrompt] = useState(null);
     const [uploading, setUploading] = useState(false);
+    const [faqEditorValue, setFaqEditorValue] = useState('[]');
+    const [faqEditorError, setFaqEditorError] = useState(null);
 
     // Editable fields
     const [edits, setEdits] = useState({});
@@ -37,6 +39,8 @@ export default function CCCDraftEditor() {
             setVersions(data.versions || []);
             setSelectedVersion(null);
             setEdits({});
+            setFaqEditorValue(formatFaqEditorValue(data.draft?.faq_data));
+            setFaqEditorError(null);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -49,6 +53,32 @@ export default function CCCDraftEditor() {
     const getField = (field) => edits[field] !== undefined ? edits[field] : (draft?.[field] || '');
     const setField = (field, value) => setEdits(prev => ({ ...prev, [field]: value }));
     const hasEdits = Object.keys(edits).length > 0;
+    const faqPreviewData = Array.isArray(edits.faq_data)
+        ? edits.faq_data
+        : Array.isArray(draft?.faq_data)
+            ? draft.faq_data
+            : [];
+
+    const handleFaqEditorChange = (value) => {
+        setFaqEditorValue(value);
+
+        try {
+            const parsedValue = value.trim() ? JSON.parse(value) : [];
+            if (!Array.isArray(parsedValue)) {
+                throw new Error('FAQ data must be a JSON array');
+            }
+
+            setFaqEditorError(null);
+            setEdits((prev) => ({ ...prev, faq_data: parsedValue }));
+        } catch (err) {
+            setFaqEditorError(err.message);
+            setEdits((prev) => {
+                const next = { ...prev };
+                delete next.faq_data;
+                return next;
+            });
+        }
+    };
 
     const copyToClipboard = async (text, key) => {
         try {
@@ -91,6 +121,11 @@ export default function CCCDraftEditor() {
 
     const saveEdits = async () => {
         if (!hasEdits) return;
+        if (faqEditorError) {
+            setError('Fix FAQ JSON before saving');
+            return;
+        }
+
         setSaving(true);
         setError(null);
         setSuccess(null);
@@ -238,7 +273,7 @@ export default function CCCDraftEditor() {
                     {hasEdits && isEditable && (
                         <button
                             onClick={saveEdits}
-                            disabled={saving}
+                            disabled={saving || !!faqEditorError}
                             className="px-4 py-2 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-lg text-sm font-medium hover:bg-blue-500/30 transition-colors disabled:opacity-50"
                         >
                             {saving ? 'Saving...' : 'Save Changes'}
@@ -439,6 +474,21 @@ export default function CCCDraftEditor() {
                                 className="w-full mt-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-emerald-500/40 disabled:opacity-50 resize-y font-mono leading-relaxed"
                             />
                         </label>
+
+                        <label className="block mt-4">
+                            <span className="text-[10px] uppercase tracking-wider text-slate-500">FAQ Data (JSON)</span>
+                            <textarea
+                                value={faqEditorValue}
+                                onChange={(e) => handleFaqEditorChange(e.target.value)}
+                                disabled={!isEditable}
+                                rows={12}
+                                className="w-full mt-1 px-3 py-2 bg-white/[0.04] border border-white/[0.08] rounded-lg text-sm text-slate-200 focus:outline-none focus:border-emerald-500/40 disabled:opacity-50 resize-y font-mono leading-relaxed"
+                            />
+                            <span className="mt-1 block text-[10px] text-slate-500">Use an array of objects like [{'{"question":"...","answer":"..."}'}]</span>
+                            {faqEditorError && (
+                                <span className="mt-1 block text-[10px] text-rose-400">{faqEditorError}</span>
+                            )}
+                        </label>
                     </div>
                 </div>
 
@@ -501,13 +551,13 @@ export default function CCCDraftEditor() {
                         </div>
                     </div>
 
-                    {draft.faq_data && Array.isArray(draft.faq_data) && draft.faq_data.length > 0 && (
+                    {faqPreviewData.length > 0 && (
                         <div className="admin-panel rounded-2xl p-5">
                             <h3 className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-3">
-                                FAQ ({draft.faq_data.length})
+                                FAQ ({faqPreviewData.length})
                             </h3>
                             <div className="space-y-3 max-h-64 overflow-y-auto">
-                                {draft.faq_data.map((faq, i) => (
+                                {faqPreviewData.map((faq, i) => (
                                     <div key={i} className="border-b border-white/[0.04] pb-2 last:border-0">
                                         <p className="text-xs font-medium text-slate-200">{faq.question || faq.name || `Q${i + 1}`}</p>
                                         <p className="text-[11px] text-slate-400 mt-1 line-clamp-2">
@@ -782,6 +832,10 @@ function formatVersionValue(value) {
     }
 
     return String(value);
+}
+
+function formatFaqEditorValue(value) {
+    return JSON.stringify(Array.isArray(value) ? value : [], null, 2);
 }
 
 function InfoRow({ label, value }) {

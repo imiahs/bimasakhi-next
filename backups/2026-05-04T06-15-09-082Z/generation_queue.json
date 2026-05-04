@@ -1,0 +1,1323 @@
+[
+  {
+    "id": "b94d2e84-e328-40af-9c62-51fd75abc439",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-bima-sakhi-career-agency-in-governance-test-delhi-20260427-0526",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in Governance Test Delhi",
+          "content_level": "locality_page",
+          "locality_name": "Governance Test"
+        }
+      ],
+      "version": 1,
+      "priority": 1,
+      "created_by": "governance_test"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-27T05:32:14.798829+00:00",
+    "completed_at": "2026-04-27T05:33:20.587244+00:00",
+    "priority": 1,
+    "created_by": "governance_test",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "01feafbd-e3ce-4d53-af8c-0a266e1828e1",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "no_cleanup_c26_1777289717631-failure",
+          "keyword_text": "NO_CLEANUP_C26_1777289717631 failure"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 1,
+    "created_at": "2026-04-27T11:35:30.723835+00:00",
+    "completed_at": "2026-04-27T11:35:31.184+00:00",
+    "priority": 1,
+    "created_by": "audit_c26_no_cleanup",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "42757dd4-57b1-40bd-b4b2-acb938e203d3",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "no_cleanup_c26_1777291086368-failure",
+          "keyword_text": "NO_CLEANUP_C26_1777291086368 failure"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 1,
+    "created_at": "2026-04-27T11:58:20.764922+00:00",
+    "completed_at": "2026-04-27T11:58:21.315+00:00",
+    "priority": 1,
+    "created_by": "audit_c26_no_cleanup",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "57a1a0f5-167d-46fc-aad9-68d18d546343",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "e2e-pipeline-1777875209394",
+          "page_type": "locality_page",
+          "keyword_text": "LIC agent opportunity 1777875210881",
+          "content_level": "locality_page"
+        }
+      ],
+      "source": "e2e_proof",
+      "version": 1
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-05-04T06:13:30.988207+00:00",
+    "completed_at": "2026-05-04T06:14:03.208781+00:00",
+    "priority": 1,
+    "created_by": "e2e-proof",
+    "metadata": {},
+    "slug": "e2e-pipeline-1777875209394"
+  },
+  {
+    "id": "701ab4b4-96a2-4432-bd29-85cb419528f4",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "rule16-bulk-fail-1777262058246-19f141c9",
+          "page_type": "locality_page",
+          "bulk_job_id": "c64cecba-280b-41de-b86a-a058d6d5a06e",
+          "keyword_text": "Bima Sakhi Bulk Fail 1777262058246-19f141c9",
+          "content_level": "locality_page"
+        }
+      ],
+      "bulk_job_id": "c64cecba-280b-41de-b86a-a058d6d5a06e",
+      "intent_type": "locality",
+      "base_keyword": "bima sakhi opportunity"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-27T03:54:40.100273+00:00",
+    "completed_at": "2026-04-27T03:55:29.756048+00:00",
+    "priority": 1,
+    "created_by": "rule16_audit",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "462b3529-5720-418a-ae39-1a2a174af517",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "rule16-bulk-idempotent-1777262058246-19f141c9",
+          "page_type": "locality_page",
+          "bulk_job_id": "a478d808-5f2f-4d61-88b4-f57f8e54f3e8",
+          "keyword_text": "Bima Sakhi Bulk Idempotent 1777262058246-19f141c9",
+          "content_level": "locality_page"
+        }
+      ],
+      "bulk_job_id": "a478d808-5f2f-4d61-88b4-f57f8e54f3e8",
+      "intent_type": "locality",
+      "base_keyword": "bima sakhi opportunity"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-27T03:54:52.54079+00:00",
+    "completed_at": "2026-04-27T03:55:56.874563+00:00",
+    "priority": 1,
+    "created_by": "rule16_audit",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "f2527e43-6753-4b3c-bb62-e679ee9e8b17",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "rule16-bulk-existing-1777262058246-19f141c9",
+          "page_type": "locality_page",
+          "bulk_job_id": "6c87192a-071d-4211-bdae-df7d3c574575",
+          "keyword_text": "Bima Sakhi in Audit 1777262058246-19f141c9",
+          "content_level": "locality_page"
+        }
+      ],
+      "bulk_job_id": "6c87192a-071d-4211-bdae-df7d3c574575",
+      "intent_type": "locality",
+      "base_keyword": "bima sakhi opportunity"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-27T03:54:53.048263+00:00",
+    "completed_at": "2026-04-27T03:55:55.801657+00:00",
+    "priority": 1,
+    "created_by": "rule16_audit",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "98341304-d833-4e5d-9511-3de91fc241b8",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "fast-test-2",
+          "keyword_text": "LIC Agent Job Delhi"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-20T16:59:06.25801+00:00",
+    "completed_at": null,
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "cf900f6a-024d-45ed-b76f-ead4b4811f88",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "fast-test-2",
+          "keyword_text": "LIC Agent Job Delhi"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-20T17:02:05.281+00:00",
+    "completed_at": null,
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "830ecd53-97c4-4ef9-84ab-e7dd57db1558",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "fast-test-2",
+          "keyword_text": "LIC Agent Job Delhi"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-20T17:03:17.677169+00:00",
+    "completed_at": null,
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "d4fff6e7-d088-44de-a20a-f90637659d5f",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-delhi-1774042384169",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-20T21:33:04.311515+00:00",
+    "completed_at": null,
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "1d2616df-3364-4e35-a9f8-bbf626f9cc4c",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "no_cleanup_c26_1777290436387-success",
+          "keyword_text": "NO_CLEANUP_C26_1777290436387 success"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 1,
+    "created_at": "2026-04-27T11:47:18.548473+00:00",
+    "completed_at": "2026-04-27T11:47:18.275+00:00",
+    "priority": 1,
+    "created_by": "audit_c26_no_cleanup",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "c0bbc8bf-61e3-4fd3-a39d-9f7e006b32ab",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "no_cleanup_c26_1777291210307-success",
+          "keyword_text": "NO_CLEANUP_C26_1777291210307 success"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 1,
+    "created_at": "2026-04-27T12:00:12.340456+00:00",
+    "completed_at": "2026-04-27T12:00:12.367+00:00",
+    "priority": 1,
+    "created_by": "audit_c26_no_cleanup",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "1ee80038-45de-4431-a16d-0c8b1524d3ae",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-delhi-1774042583355",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-20T21:36:23.517195+00:00",
+    "completed_at": "2026-03-29T18:18:34.487+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "020107f0-c114-407f-b76d-8a099449fbbd",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-delhi-1774042729016",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-20T21:38:49.136566+00:00",
+    "completed_at": "2026-03-29T18:22:58.202+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "f3ac00b5-3c3e-461e-9494-0dbe23a587dc",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "e2e-repeat-1777875209394",
+          "page_type": "locality_page",
+          "keyword_text": "LIC agent opportunity 1777875272145",
+          "content_level": "locality_page"
+        }
+      ],
+      "source": "e2e_proof",
+      "version": 1
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-05-04T06:14:32.235303+00:00",
+    "completed_at": "2026-05-04T06:15:02.330556+00:00",
+    "priority": 1,
+    "created_by": "e2e-proof",
+    "metadata": {},
+    "slug": "e2e-repeat-1777875209394"
+  },
+  {
+    "id": "67e4ade3-fa76-4a22-9eef-525100f19483",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-delhi-1774089108518",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-21T10:31:48.635954+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "802a2a73-7291-4223-95f6-726aa3e12d4e",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-delhi-1774090243076",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-21T10:50:43.20628+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "9dce11dc-808e-46e4-a229-ea0590c8736c",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-delhi-1774090601891",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-21T10:56:42.020971+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "86d96b88-8d4e-420f-a3d3-0b4306dfaab6",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-mumbai-1774216858247",
+          "city_id": "14302609-1e39-41a0-8f66-ca1cf1c1b634",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Mumbai",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-22T22:00:58.399477+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "9611a767-611d-4059-b322-b668351a00cf",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-faridabad-1774284775865",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Faridabad",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-23T16:52:56.008537+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "6045a427-3f3e-4b04-b4c2-c759561014fd",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-south-delhi-1774701179526",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in South Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-28T12:32:59.650505+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "5af7968c-7544-4d59-9802-a379c92eaf5a",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-south-delhi-1774712929769",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in South Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-28T15:48:49.912464+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "f294f186-25e6-49e9-9ca5-d2c660283959",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-central-delhi-1774722483729",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Central Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-28T18:28:03.850636+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "af883a80-eb07-4c65-9e52-a776751ea622",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-delhi-1774042419283",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-20T21:33:39.427584+00:00",
+    "completed_at": "2026-03-29T06:52:20.22+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "1dccdf78-e43e-4478-98d6-be9f6c6d61e4",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "rule16-bulk-fail-1777261968288-cf92f28d",
+          "page_type": "locality_page",
+          "bulk_job_id": "1ed0c381-f39f-455e-90fc-895b30d4f897",
+          "keyword_text": "Bima Sakhi Bulk Fail 1777261968288-cf92f28d",
+          "content_level": "locality_page"
+        }
+      ],
+      "bulk_job_id": "1ed0c381-f39f-455e-90fc-895b30d4f897",
+      "intent_type": "locality",
+      "base_keyword": "bima sakhi opportunity"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-27T03:53:09.553896+00:00",
+    "completed_at": "2026-04-27T03:53:56.215828+00:00",
+    "priority": 1,
+    "created_by": "rule16_audit",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "01565e80-16e6-42ba-b73e-102f13721e82",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "rule16-bulk-idempotent-1777261968288-cf92f28d",
+          "page_type": "locality_page",
+          "bulk_job_id": "c452c308-3747-4c91-8166-97dfe50a6c44",
+          "keyword_text": "Bima Sakhi Bulk Idempotent 1777261968288-cf92f28d",
+          "content_level": "locality_page"
+        }
+      ],
+      "bulk_job_id": "c452c308-3747-4c91-8166-97dfe50a6c44",
+      "intent_type": "locality",
+      "base_keyword": "bima sakhi opportunity"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-27T03:53:21.980472+00:00",
+    "completed_at": "2026-04-27T03:54:24.346804+00:00",
+    "priority": 1,
+    "created_by": "rule16_audit",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "61e156da-158c-4639-8a5d-a48cbe92e9f4",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-step7d-active-1776366460235-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in step7d-active-1776366460235 Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T19:07:47.808571+00:00",
+    "completed_at": "2026-04-16T19:08:17.38+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "a66bc5f0-b52f-4869-a52e-cdc72466f6c4",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "rule16-bulk-existing-1777261968288-cf92f28d",
+          "page_type": "locality_page",
+          "bulk_job_id": "b5b3716d-1bb4-44d1-b7e3-5a6352a23a61",
+          "keyword_text": "Bima Sakhi in Audit 1777261968288-cf92f28d",
+          "content_level": "locality_page"
+        }
+      ],
+      "bulk_job_id": "b5b3716d-1bb4-44d1-b7e3-5a6352a23a61",
+      "intent_type": "locality",
+      "base_keyword": "bima sakhi opportunity"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-27T03:53:22.440177+00:00",
+    "completed_at": "2026-04-27T03:54:43.333765+00:00",
+    "priority": 1,
+    "created_by": "rule16_audit",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "3cd6f99f-5d71-4482-9fc5-d9560b630f32",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-central-delhi-1774722867463",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Central Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-28T18:34:27.603889+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "1e80f78b-c503-482e-ac31-57ca43185b6e",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-central-delhi-1774731743883",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Central Delhi",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-03-28T21:02:24.04541+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "f4b732f1-30f8-4a5d-be81-fcb6b522d045",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-faridabad-1775058570163",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Faridabad",
+          "content_level": "city"
+        }
+      ]
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-01T15:49:30.347972+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": "crm_auto",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "a6815335-4a34-4154-a7f8-f3477e9b0976",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-bima-sakhi-career-agency-in-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ],
+      "version": 1,
+      "priority": 1,
+      "created_by": "crm_auto"
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T07:32:27.636766+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "93b8bccd-698e-4bfc-8358-44ad29fd7bfa",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-connaught-place-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in Connaught Place Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T07:32:28.416135+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "ae1abcb2-7e3d-4c8e-9e55-b27aa11d082a",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-new-delhi-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in New Delhi Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T14:58:42.212376+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "bbe6287f-ca89-4f32-bd03-bd2bae29e6d9",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "no_cleanup_c26_1777290436387-failure",
+          "keyword_text": "NO_CLEANUP_C26_1777290436387 failure"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 1,
+    "created_at": "2026-04-27T11:47:32.25932+00:00",
+    "completed_at": "2026-04-27T11:47:32.76+00:00",
+    "priority": 1,
+    "created_by": "audit_c26_no_cleanup",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "1b86e178-2f2d-4d56-81a8-4342ccc638a1",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "no_cleanup_c26_1777291210307-failure",
+          "keyword_text": "NO_CLEANUP_C26_1777291210307 failure"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 1,
+    "created_at": "2026-04-27T12:00:30.503939+00:00",
+    "completed_at": "2026-04-27T12:00:31.008+00:00",
+    "priority": 1,
+    "created_by": "audit_c26_no_cleanup",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "8e9c539f-7ec8-47bd-9702-bfa41e6c12e6",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-delhi-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in Delhi Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T15:31:00.789875+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "8ab9473a-cf98-48fe-964c-066764a85170",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-step7d-locality-1776365982500-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in step7d-locality-1776365982500 Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T18:59:53.344362+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "01a087a2-0786-47cd-9747-15668dcdca43",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-forensic-1776367339918-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in forensic-1776367339918 Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "failed",
+    "progress": 0,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T19:22:25.223496+00:00",
+    "completed_at": "2026-04-16T19:33:23.101+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "d2663217-d84a-4892-8c36-cb4175404504",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-bima-sakhi-career-agency-in-kolkata",
+          "city_id": "0c62c83a-84c6-4074-a99e-60b3c53a6b13",
+          "city_name": "Kolkata",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Kolkata",
+          "content_level": "city"
+        }
+      ],
+      "version": 1,
+      "priority": 1,
+      "created_by": "crm_auto"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-17T00:15:12.742821+00:00",
+    "completed_at": "2026-04-27T04:47:19.84066+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "20b6a7a8-984d-4747-8fce-f4b76f62256a",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-bima-sakhi-career-agency-in-bangalore",
+          "city_id": "ba203abc-4d16-4449-87f1-0339b7c1fa21",
+          "city_name": "Bangalore",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Bangalore",
+          "content_level": "city"
+        }
+      ],
+      "version": 1,
+      "priority": 1,
+      "created_by": "crm_auto"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-17T00:15:07.368805+00:00",
+    "completed_at": "2026-04-20T02:38:45.525+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "8ca4fdba-2e8b-4df6-8cab-14fe600c9cbd",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-bima-sakhi-career-agency-in-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Delhi",
+          "content_level": "city"
+        }
+      ],
+      "version": 1,
+      "priority": 1,
+      "created_by": "crm_auto"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T19:34:26.986868+00:00",
+    "completed_at": "2026-04-16T19:35:00.188+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "461572c8-b772-4e07-b041-774e86cf37c6",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-connaught-place-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in Connaught Place Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 1,
+    "max_retries": 3,
+    "created_at": "2026-04-16T19:34:27.845687+00:00",
+    "completed_at": "2026-04-16T19:35:29.19+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "2f875ca6-4d7c-4587-ad99-4acac34af166",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "no_cleanup_c26_1777289717631-success",
+          "keyword_text": "NO_CLEANUP_C26_1777289717631 success"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 1,
+    "created_at": "2026-04-27T11:35:20.030569+00:00",
+    "completed_at": "2026-04-27T11:35:19.705+00:00",
+    "priority": 1,
+    "created_by": "audit_c26_no_cleanup",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "e9598cd8-0850-48cd-8abc-23f1aa86a632",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "no_cleanup_c26_1777291086368-success",
+          "keyword_text": "NO_CLEANUP_C26_1777291086368 success"
+        }
+      ]
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 1,
+    "created_at": "2026-04-27T11:58:08.009778+00:00",
+    "completed_at": "2026-04-27T11:58:08.339+00:00",
+    "priority": 1,
+    "created_by": "audit_c26_no_cleanup",
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "c6bd1d31-3d1d-4232-ab0d-096eaa7ae0e5",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-karol-bagh-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in Karol Bagh Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T20:10:55.761227+00:00",
+    "completed_at": "2026-04-17T06:44:19.824+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "5f7f29ec-55bb-4042-9544-f6a64f9d28cb",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-agent-in-test-delhi",
+          "city_id": "c1f12e8d-355e-45c4-a36b-834ef471d05c",
+          "city_name": "Delhi",
+          "page_type": "locality_page",
+          "keyword_text": "LIC Bima Sakhi Career Agency opportunity in Test Delhi",
+          "content_level": "locality"
+        }
+      ],
+      "version": 1,
+      "priority": 2,
+      "created_by": "crm_auto"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-16T20:29:19.500098+00:00",
+    "completed_at": "2026-04-17T06:44:56.12+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  },
+  {
+    "id": "2daea6f8-ea4e-45b4-8efd-df9126fd934b",
+    "task_type": "pagegen",
+    "payload": {
+      "pages": [
+        {
+          "slug": "lic-bima-sakhi-career-agency-in-mumbai",
+          "city_id": "14302609-1e39-41a0-8f66-ca1cf1c1b634",
+          "city_name": "Mumbai",
+          "page_type": "city_page",
+          "keyword_text": "LIC Agent Job in Mumbai",
+          "content_level": "city"
+        }
+      ],
+      "version": 1,
+      "priority": 1,
+      "created_by": "crm_auto"
+    },
+    "status": "completed",
+    "progress": 1,
+    "total_items": 1,
+    "retry_count": 0,
+    "max_retries": 3,
+    "created_at": "2026-04-17T00:14:57.123724+00:00",
+    "completed_at": "2026-04-18T04:13:30.409+00:00",
+    "priority": 1,
+    "created_by": null,
+    "metadata": {},
+    "slug": null
+  }
+]

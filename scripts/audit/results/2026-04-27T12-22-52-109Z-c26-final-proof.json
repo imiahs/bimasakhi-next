@@ -1,0 +1,85 @@
+{
+  "captured_at": "2026-04-27T12:22:52.109Z",
+  "source_artifact": "scripts/audit/results/2026-04-27T12-04-41-032Z-cto-c26-no-cleanup-proof.json",
+  "verdict": "PASS",
+  "closure_basis": "no_cleanup_persistence",
+  "failure_event_summary": {
+    "event_id": "8dcd38ce-a056-4316-bd12-5738816e11d7",
+    "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEjsdHjc6QBoq5A5rWS94E2X1iieBE7nXSTS5j6",
+    "event_name": "delivery_probe_failure",
+    "target_path": "/api/jobs/c26-no-cleanup-missing-route",
+    "provider_terminal_state": "FAILED",
+    "provider_error_status": 404
+  },
+  "retry_lifecycle": {
+    "waited_seconds": 365,
+    "before_wait": {
+      "status": "active",
+      "provider_retry_count": 1,
+      "latest_event_state": "RETRY"
+    },
+    "after_wait": {
+      "status": "failed",
+      "provider_retry_count": 2,
+      "latest_event_state": "FAILED"
+    },
+    "timeline": [
+      {
+        "time": "2026-04-27T11:58:23.253Z",
+        "state": "ERROR",
+        "response_status": 404
+      },
+      {
+        "time": "2026-04-27T11:58:23.254Z",
+        "state": "RETRY"
+      },
+      {
+        "time": "2026-04-27T11:58:35.218Z",
+        "state": "ERROR",
+        "response_status": 404
+      },
+      {
+        "time": "2026-04-27T11:58:35.219Z",
+        "state": "RETRY"
+      },
+      {
+        "time": "2026-04-27T12:01:17.622Z",
+        "state": "ERROR",
+        "response_status": 404
+      },
+      {
+        "time": "2026-04-27T12:01:17.623Z",
+        "state": "FAILED"
+      }
+    ]
+  },
+  "final_db_state": {
+    "row_id": "bd32b118-b513-4545-950b-3f020d3cab38",
+    "event_store_id": "8dcd38ce-a056-4316-bd12-5738816e11d7",
+    "provider_message_id": "msg_26hZCxZCuWyyTWPmSVBrNCtiJEjsdHjc6QBoq5A5rWS94E2X1iieBE7nXSTS5j6",
+    "status": "failed",
+    "attempt_count": 10,
+    "provider_retry_count": 2,
+    "failed_at": "2026-04-27T12:01:17.623+00:00",
+    "last_sync_at": "2026-04-27T12:04:38.191+00:00",
+    "latest_event_state": "FAILED"
+  },
+  "health_impact": {
+    "delivery_logs_api": {
+      "delivery_failures_recent": 2,
+      "delivery_stuck_count": 0,
+      "delivery_success_rate": 71.43,
+      "delivery_terminal_recent": 7,
+      "delivery_delivered_recent": 5
+    },
+    "system_health_api": {
+      "overall_health": "DEGRADED",
+      "hard_failures": [
+        "delivery_failures_recent"
+      ],
+      "warnings": [
+        "delivery_success_rate:71.43"
+      ]
+    }
+  }
+}

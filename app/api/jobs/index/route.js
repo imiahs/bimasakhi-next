@@ -11,13 +11,16 @@ export async function POST(request) {
 
     const supabase = getServiceSupabase();
     try {
-        // Drip feed logic: bump 200 pending_index to active 
+        // Canonical indexing logic: mark 200 published pages as indexed.
         const { data: toIndex } = await supabase.from('page_index')
-            .select('id').eq('status', 'pending_index').limit(200);
+            .select('id')
+            .eq('status', 'published')
+            .eq('indexing_status', 'pending')
+            .limit(200);
 
         if (toIndex && toIndex.length > 0) {
             const ids = toIndex.map(p => p.id);
-            await supabase.from('page_index').update({ status: 'active', indexed_at: new Date().toISOString() }).in('id', ids);
+            await supabase.from('page_index').update({ indexing_status: 'indexed', indexed_at: new Date().toISOString() }).in('id', ids);
             return NextResponse.json({ success: true, indexed: ids.length });
         }
         return NextResponse.json({ success: true, message: 'No pages pending index.' });

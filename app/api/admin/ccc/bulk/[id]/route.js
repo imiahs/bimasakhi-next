@@ -6,11 +6,13 @@
  * PATCH: Update job (start/pause/resume/cancel)
  */
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
-import { enqueuePageGeneration } from '@/lib/queue/publisher';
 import { checkSafeMode, isSystemEnabled } from '@/lib/featureFlags';
+import { getSystemConfig } from '@/lib/systemConfig';
 import { isValidUUID } from '@/lib/observability';
+import { dispatchPagegenOutbox } from '@/lib/events/dispatchPagegenOutbox';
 
 export const dynamic = 'force-dynamic';
 
@@ -95,6 +97,11 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                     return NextResponse.json({ success: false, error: 'Page generation is disabled' }, { status: 403 });
                 }
 
+                const systemConfig = await getSystemConfig();
+                if (systemConfig.queue_paused) {
+                    return NextResponse.json({ success: false, error: 'Queue is paused — job cannot be started until the queue is unpaused in the control panel' }, { status: 403 });
+                }
+
                 // Build page list from targeting
                 const pages = await buildPageList(supabase, job);
 
@@ -102,55 +109,48 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                     return NextResponse.json({ success: false, error: 'No pages to generate from targeting criteria' }, { status: 400 });
                 }
 
-                // Create generation_queue entry with page list
-                const { data: queueEntry, error: queueErr } = await supabase
-                    .from('generation_queue')
-                    .insert({
-                        task_type: 'pagegen',
-                        payload: {
-                            pages,
-                            bulk_job_id: id,
-                            base_keyword: job.base_keyword,
-                            intent_type: job.intent_type,
-                        },
-                        status: 'pending',
-                        total_items: pages.length,
-                        progress: 0,
-                        priority: 1,
-                        created_by: user?.email || 'admin',
-                    })
-                    .select('id')
-                    .single();
+                const startKey = crypto
+                    .createHash('sha256')
+                    .update(JSON.stringify({ jobId: id, pages }))
+                    .digest('hex');
 
-                if (queueErr) {
-                    return NextResponse.json({ success: false, error: `Queue creation failed: ${queueErr.message}` }, { status: 500 });
+                const { data: startResult, error: startErr } = await supabase.rpc('rule16_start_bulk_generation_job', {
+                    p_job_id: id,
+                    p_pages: pages,
+                    p_actor: user?.email || 'admin',
+                    p_idempotency_key: startKey,
+                });
+
+                if (startErr) {
+                    return NextResponse.json({ success: false, error: `Queue creation failed: ${startErr.message}` }, { status: 500 });
                 }
 
-                // Update bulk job status
-                await supabase
-                    .from('bulk_generation_jobs')
-                    .update({
-                        status: 'running',
-                        total_pages: pages.length,
-                        started_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString(),
-                    })
-                    .eq('id', id);
-
-                // Dispatch first page via QStash
-                await enqueuePageGeneration({ queueId: queueEntry.id });
+                const dispatchResult = await dispatchPagegenOutbox(
+                    startResult.event_store_id,
+                    { queueId: startResult.queue_id },
+                    { job_id: id, queue_id: startResult.queue_id, source: 'bulk_start' }
+                );
 
                 await supabase.from('observability_logs').insert({
                     level: 'INFO',
                     message: `Bulk job started: "${job.name}" — ${pages.length} pages queued`,
                     source: 'bulk_planner',
-                    metadata: { job_id: id, queue_id: queueEntry.id, page_count: pages.length },
+                    metadata: {
+                        job_id: id,
+                        queue_id: startResult.queue_id,
+                        page_count: pages.length,
+                        event_store_id: startResult.event_store_id,
+                        dispatch_deferred: !dispatchResult.success,
+                    },
                 }).catch(() => {});
 
                 return NextResponse.json({
                     success: true,
-                    message: `Job started — ${pages.length} pages queued`,
-                    queue_id: queueEntry.id,
+                    message: dispatchResult.success
+                        ? `Job started — ${pages.length} pages queued`
+                        : `Job started — ${pages.length} pages queued, immediate dispatch deferred to retry daemon`,
+                    queue_id: startResult.queue_id,
+                    dispatch_deferred: !dispatchResult.success,
                 });
             }
 
@@ -174,6 +174,27 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
             case 'resume': {
                 if (job.status !== 'paused') {
                     return NextResponse.json({ success: false, error: 'Can only resume paused jobs' }, { status: 400 });
+                }
+
+                // Safety checks — same gates as start
+                const resumeSafeMode = await checkSafeMode();
+                if (resumeSafeMode) {
+                    return NextResponse.json({ success: false, error: 'System is in safe mode' }, { status: 403 });
+                }
+
+                const resumeBulkEnabled = await isSystemEnabled('bulk_generation_enabled');
+                if (!resumeBulkEnabled) {
+                    return NextResponse.json({ success: false, error: 'Bulk generation is disabled' }, { status: 403 });
+                }
+
+                const resumePagegenEnabled = await isSystemEnabled('pagegen_enabled');
+                if (!resumePagegenEnabled) {
+                    return NextResponse.json({ success: false, error: 'Page generation is disabled' }, { status: 403 });
+                }
+
+                const resumeConfig = await getSystemConfig();
+                if (resumeConfig.queue_paused) {
+                    return NextResponse.json({ success: false, error: 'Queue is paused — job cannot be resumed until the queue is unpaused in the control panel' }, { status: 403 });
                 }
 
                 await supabase

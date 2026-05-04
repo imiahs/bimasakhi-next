@@ -1,0 +1,42 @@
+{
+  "captured_at": "2026-04-26T11:27:05.140Z",
+  "table": "public.admin_users",
+  "row_count": 1,
+  "columns": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "email",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "password_hash",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "role",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "active",
+      "data_type": "boolean",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    }
+  ]
+}

@@ -8,6 +8,7 @@
  */
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
+import { getDeliveryHealthMetrics, syncPendingExternalDeliveries } from '@/lib/queue/deliveryTruth';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,6 +61,19 @@ export async function POST(req) {
         status: process.env.QSTASH_TOKEN ? 'configured' : 'not_configured',
         latency_ms: 0,
     };
+
+    let deliverySync = null;
+    let deliveryMetrics = null;
+    if (process.env.QSTASH_TOKEN) {
+        try {
+            deliverySync = await syncPendingExternalDeliveries({ limit: 25, staleMinutes: 2 });
+            deliveryMetrics = await getDeliveryHealthMetrics();
+            results.qstash.delivery_sync = deliverySync;
+            results.qstash.delivery_metrics = deliveryMetrics;
+        } catch (err) {
+            results.qstash.delivery_sync = { success: false, error: err.message };
+        }
+    }
 
     // ─── CHECK 3: Zoho (config check) ───
     results.zoho = {
@@ -125,12 +139,50 @@ export async function POST(req) {
         });
     } catch { /* non-fatal */ }
 
+    if (deliveryMetrics) {
+        try {
+            const supabase = getServiceSupabase();
+            await supabase.from('sla_snapshots').insert([
+                {
+                    service: 'qstash',
+                    metric: 'delivery_failures_recent',
+                    value: deliveryMetrics.delivery_failures_recent,
+                    threshold_warning: 1,
+                    threshold_critical: 3,
+                    status: deliveryMetrics.delivery_failures_recent >= 3 ? 'critical' : deliveryMetrics.delivery_failures_recent >= 1 ? 'warning' : 'normal',
+                    sample_size: deliveryMetrics.delivery_terminal_recent || 0,
+                    window_minutes: 1440,
+                },
+                {
+                    service: 'qstash',
+                    metric: 'delivery_stuck_count',
+                    value: deliveryMetrics.delivery_stuck_count,
+                    threshold_warning: 1,
+                    threshold_critical: 5,
+                    status: deliveryMetrics.delivery_stuck_count >= 5 ? 'critical' : deliveryMetrics.delivery_stuck_count >= 1 ? 'warning' : 'normal',
+                    sample_size: deliveryMetrics.delivery_terminal_recent || 0,
+                    window_minutes: 15,
+                },
+                {
+                    service: 'qstash',
+                    metric: 'delivery_success_rate',
+                    value: deliveryMetrics.delivery_success_rate,
+                    threshold_warning: 99,
+                    threshold_critical: 95,
+                    status: deliveryMetrics.delivery_success_rate < 95 ? 'critical' : deliveryMetrics.delivery_success_rate < 99 ? 'warning' : 'normal',
+                    sample_size: deliveryMetrics.delivery_terminal_recent || 0,
+                    window_minutes: 1440,
+                },
+            ]);
+        } catch { /* non-fatal */ }
+    }
+
     // Log summary
     try {
         const supabase = getServiceSupabase();
         await supabase.from('observability_logs').insert({
             level: 'INFO',
-            message: `Vendor health check: supabase=${results.supabase.status}, dlq=${dlqDepth}`,
+            message: `Vendor health check: supabase=${results.supabase.status}, dlq=${dlqDepth}, delivery_failures=${deliveryMetrics?.delivery_failures_recent || 0}`,
             source: 'vendor_health_check',
             metadata: results,
         });
@@ -142,6 +194,7 @@ export async function POST(req) {
         success: true,
         checks: results,
         dlq_depth: dlqDepth,
+        delivery: deliveryMetrics,
         duration_ms: totalDuration,
         timestamp: new Date().toISOString(),
     });

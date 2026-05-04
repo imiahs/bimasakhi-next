@@ -1,0 +1,198 @@
+﻿{
+    "name":  "admin-content-flow-ps",
+    "started_at":  "2026-04-25T19:39:51.0850534Z",
+    "finished_at":  "2026-04-25T19:39:59.6492451Z",
+    "status":  "PARTIAL",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "ADMIN_PASSWORD":  {
+                                                               "present":  true,
+                                                               "masked":  "Haim...vija (20 chars)"
+                                                           },
+                                        "SUPABASE_SERVICE_ROLE_KEY":  {
+                                                                          "present":  true,
+                                                                          "masked":  "sb_s...eZm_ (41 chars)"
+                                                                      }
+                                    },
+                       "timestamp":  "2026-04-25T19:39:51.1734335Z"
+                   },
+                   {
+                       "name":  "admin_login_for_content_api",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "role":  "super_admin"
+                                                 },
+                                        "error":  null,
+                                        "cookie_count":  1
+                                    },
+                       "timestamp":  "2026-04-25T19:39:52.1557826Z"
+                   },
+                   {
+                       "name":  "draft_create_admin_api",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "draft_id":  "a39630e2-f242-4636-b8e7-069e4ca53496",
+                                        "error":  null,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "draft":  {
+                                                                   "id":  "a39630e2-f242-4636-b8e7-069e4ca53496",
+                                                                   "slug":  "new-page-1777145992848"
+                                                               }
+                                                 }
+                                    },
+                       "timestamp":  "2026-04-25T19:39:53.3597217Z"
+                   },
+                   {
+                       "name":  "draft_update_admin_api",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "message":  "Draft updated"
+                                                 },
+                                        "error":  null,
+                                        "note":  "API does not expose slug update, so generated draft slug is used for publish test."
+                                    },
+                       "timestamp":  "2026-04-25T19:39:54.7646300Z"
+                   },
+                   {
+                       "name":  "draft_api_read",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "draft":  {
+                                                                   "id":  "a39630e2-f242-4636-b8e7-069e4ca53496",
+                                                                   "generation_queue_id":  null,
+                                                                   "page_index_id":  null,
+                                                                   "city_id":  null,
+                                                                   "locality_id":  null,
+                                                                   "slug":  "new-page-1777145992848",
+                                                                   "page_title":  "TEST_AUDIT_ Draft Runtime Audit",
+                                                                   "meta_title":  "TEST_AUDIT_ Meta Title",
+                                                                   "meta_description":  "TEST_AUDIT_ Meta Description",
+                                                                   "hero_headline":  "TEST_AUDIT_ Draft Runtime Audit",
+                                                                   "body_content":  "\u003cp\u003eTEST_AUDIT_ body content for live audit.\u003c/p\u003e",
+                                                                   "faq_data":  null,
+                                                                   "cta_text":  "Apply Now",
+                                                                   "word_count":  0,
+                                                                   "quality_score":  null,
+                                                                   "status":  "draft",
+                                                                   "review_notes":  null,
+                                                                   "reviewer":  null,
+                                                                   "reviewed_at":  null,
+                                                                   "ai_model":  "manual",
+                                                                   "generation_time_ms":  null,
+                                                                   "created_at":  "2026-04-25T19:39:53.428662+00:00",
+                                                                   "updated_at":  "2026-04-25T19:39:54.719+00:00",
+                                                                   "published_at":  null,
+                                                                   "image_prompts":  {
+
+                                                                                     },
+                                                                   "featured_image_url":  null,
+                                                                   "bulk_job_id":  null,
+                                                                   "featured_image_alt":  null,
+                                                                   "scheduled_publish_at":  null
+                                                               }
+                                                 },
+                                        "error":  null,
+                                        "actual_slug":  "new-page-1777145992848"
+                                    },
+                       "timestamp":  "2026-04-25T19:39:55.5243714Z"
+                   },
+                   {
+                       "name":  "publish_api_approve",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "message":  "Published â page is live at /new-page-1777145992848",
+                                                     "pageIndexId":  "b4b1d7e6-a8d2-4bd6-87b6-7016a5983239"
+                                                 },
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-04-25T19:39:57.8870743Z"
+                   },
+                   {
+                       "name":  "publish_admin_api_verify_draft_status",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "body":  {
+                                                     "success":  true,
+                                                     "draft":  {
+                                                                   "id":  "a39630e2-f242-4636-b8e7-069e4ca53496",
+                                                                   "generation_queue_id":  null,
+                                                                   "page_index_id":  "b4b1d7e6-a8d2-4bd6-87b6-7016a5983239",
+                                                                   "city_id":  null,
+                                                                   "locality_id":  null,
+                                                                   "slug":  "new-page-1777145992848",
+                                                                   "page_title":  "TEST_AUDIT_ Draft Runtime Audit",
+                                                                   "meta_title":  "TEST_AUDIT_ Meta Title",
+                                                                   "meta_description":  "TEST_AUDIT_ Meta Description",
+                                                                   "hero_headline":  "TEST_AUDIT_ Draft Runtime Audit",
+                                                                   "body_content":  "\u003cp\u003eTEST_AUDIT_ body content for live audit.\u003c/p\u003e",
+                                                                   "faq_data":  null,
+                                                                   "cta_text":  "Apply Now",
+                                                                   "word_count":  0,
+                                                                   "quality_score":  null,
+                                                                   "status":  "published",
+                                                                   "review_notes":  null,
+                                                                   "reviewer":  "8f8d471e-edc0-4eca-a3ce-4ac53787dad3",
+                                                                   "reviewed_at":  "2026-04-25T19:39:56.502+00:00",
+                                                                   "ai_model":  "manual",
+                                                                   "generation_time_ms":  null,
+                                                                   "created_at":  "2026-04-25T19:39:53.428662+00:00",
+                                                                   "updated_at":  "2026-04-25T19:39:56.502+00:00",
+                                                                   "published_at":  "2026-04-25T19:39:56.502+00:00",
+                                                                   "image_prompts":  {
+
+                                                                                     },
+                                                                   "featured_image_url":  null,
+                                                                   "bulk_job_id":  null,
+                                                                   "featured_image_alt":  null,
+                                                                   "scheduled_publish_at":  null
+                                                               }
+                                                 },
+                                        "published_at":  "2026-04-25T19:39:56.502+00:00",
+                                        "draft_status":  "published",
+                                        "ok":  true,
+                                        "page_index_id_present":  true,
+                                        "error":  null,
+                                        "status":  200
+                                    },
+                       "timestamp":  "2026-04-25T19:39:58.5805535Z"
+                   },
+                   {
+                       "name":  "published_live_url_render",
+                       "status":  "FAIL",
+                       "evidence":  {
+                                        "error":  null,
+                                        "body_sample":  "\u003c!DOCTYPE html\u003e\u003chtml lang=\"en\"\u003e\u003chead\u003e\u003cmeta charSet=\"utf-8\"/\u003e\u003cmeta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/\u003e\u003clink rel=\"stylesheet\" href=\"/_next/static/css/d7100252593a3d57.css\" data-precedence=\"next\"/\u003e\u003clink rel=\"stylesheet\" href=\"/_next/static/css/3a9b146b96336eca.css\" data-precedence=\"next\"/\u003e\u003clink rel=\"stylesheet\" href=\"/_next",
+                                        "contains_marker":  false,
+                                        "ok":  true,
+                                        "status":  200,
+                                        "actual_slug":  "new-page-1777145992848"
+                                    },
+                       "timestamp":  "2026-04-25T19:39:59.6415676Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}

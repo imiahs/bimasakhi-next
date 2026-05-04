@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { generateAiContent } from '@/lib/ai';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 

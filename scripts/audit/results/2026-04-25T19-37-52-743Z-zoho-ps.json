@@ -1,0 +1,90 @@
+﻿{
+    "name":  "zoho-ps",
+    "started_at":  "2026-04-25T19:37:50.6513926Z",
+    "finished_at":  "2026-04-25T19:37:52.7234939Z",
+    "status":  "PASS",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "ZOHO_CLIENT_ID":  {
+                                                               "present":  true,
+                                                               "masked":  "1000...T4PC (35 chars)"
+                                                           },
+                                        "ZOHO_CLIENT_SECRET":  {
+                                                                   "present":  true,
+                                                                   "masked":  "165b...c7cd (42 chars)"
+                                                               },
+                                        "ZOHO_REFRESH_TOKEN":  {
+                                                                   "present":  true,
+                                                                   "masked":  "1000...3a1d (70 chars)"
+                                                               },
+                                        "ZOHO_API_DOMAIN":  {
+                                                                "present":  true,
+                                                                "masked":  "http...s.in (23 chars)"
+                                                            }
+                                    },
+                       "timestamp":  "2026-04-25T19:37:50.8164143Z"
+                   },
+                   {
+                       "name":  "zoho_access_token_refresh",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "token_present":  true,
+                                        "status":  200,
+                                        "error":  null,
+                                        "response_keys":  [
+                                                              "access_token",
+                                                              "scope",
+                                                              "api_domain",
+                                                              "token_type",
+                                                              "expires_in"
+                                                          ]
+                                    },
+                       "timestamp":  "2026-04-25T19:37:51.7648378Z"
+                   },
+                   {
+                       "name":  "zoho_test_lead_upsert",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "message":  "record added",
+                                        "action":  "insert",
+                                        "marker":  "TEST_AUDIT_ZOHO_1777145871764",
+                                        "crm_status":  "success",
+                                        "error":  null,
+                                        "zoho_id_present":  true,
+                                        "body":  {
+                                                     "data":  [
+                                                                  {
+                                                                      "code":  "SUCCESS",
+                                                                      "duplicate_field":  null,
+                                                                      "action":  "insert",
+                                                                      "details":  {
+                                                                                      "Modified_Time":  "2026-04-26T01:07:52+05:30",
+                                                                                      "Modified_By":  {
+                                                                                                          "name":  "Pratibha Kumari",
+                                                                                                          "id":  "584143000000294001"
+                                                                                                      },
+                                                                                      "Created_Time":  "2026-04-26T01:07:52+05:30",
+                                                                                      "id":  "584143000002863002",
+                                                                                      "Created_By":  {
+                                                                                                         "name":  "Pratibha Kumari",
+                                                                                                         "id":  "584143000000294001"
+                                                                                                     }
+                                                                                  },
+                                                                      "message":  "record added",
+                                                                      "status":  "success"
+                                                                  }
+                                                              ]
+                                                 },
+                                        "code":  "SUCCESS",
+                                        "status":  200
+                                    },
+                       "timestamp":  "2026-04-25T19:37:52.7091002Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}

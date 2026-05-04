@@ -1,0 +1,141 @@
+{
+  "audit": "controlled_governance_cleanup_single_flow",
+  "status": "PASS",
+  "timestamp": "2026-04-27T05:40:21Z",
+  "authority": "CONTROLLED TEST MODE governance execution",
+  "baseline": {
+    "system_score": "64/100 unchanged",
+    "open_issues": ["C26", "C29", "C30"],
+    "api_status_before": {
+      "overall_health": "DEGRADED",
+      "queue_paused": true,
+      "ai_enabled": true,
+      "followup_enabled": true,
+      "crm_auto_routing": true
+    },
+    "api_admin_system_health_before": {
+      "overall_health": "DEGRADED",
+      "hard_failures": ["recent_dead_letters"],
+      "dlq_depth_recent": 5,
+      "dlq_depth_total": 8,
+      "current_stuck_events": 0,
+      "queue_pending": 4
+    },
+    "db_before": {
+      "control_row": {
+        "system_mode": "normal",
+        "safe_mode": false,
+        "ai_enabled": true,
+        "followup_enabled": true,
+        "crm_auto_routing": true,
+        "queue_paused": true,
+        "pagegen_enabled": true,
+        "bulk_generation_enabled": true,
+        "batch_size": 1
+      },
+      "dlq_total": 8,
+      "queue_problem_total": 21,
+      "event_problem_total": 0
+    }
+  },
+  "step1_cleanup": {
+    "actions": {
+      "bulk_generation_enabled_set_to": false,
+      "queue_pending_rows_cleared": true,
+      "dead_letters_discarded": 8
+    },
+    "discarded_dead_letter_ids": [
+      "539aa9ae-2deb-4f71-9ea5-86db079bb85f",
+      "98db60ed-a0f3-4dbd-be59-be7a4d869d56",
+      "63c2be65-ab65-42bb-887c-48cc064fedcf",
+      "0c6d421b-6736-440e-a39d-7c6c8455795e",
+      "d659404c-aa4c-49b2-9d87-9a8989a6e0e2",
+      "d3849f29-2f1b-4476-9550-3549b33e52fc",
+      "9af38925-c1b5-47b9-8ad0-846bda81355f",
+      "27e875b0-75d1-45c0-b921-e12ae52bbe58"
+    ],
+    "db_after": {
+      "control_row": {
+        "system_mode": "normal",
+        "safe_mode": false,
+        "ai_enabled": true,
+        "followup_enabled": true,
+        "crm_auto_routing": true,
+        "queue_paused": true,
+        "pagegen_enabled": true,
+        "bulk_generation_enabled": false,
+        "batch_size": 1
+      },
+      "dlq_total": 0,
+      "queue_by_status": {
+        "completed": 21,
+        "failed": 17
+      },
+      "event_problem_total": 0,
+      "failed_job_runs_total": 12
+    },
+    "api_after": {
+      "api_status": "HEALTHY",
+      "api_admin_system_health": "HEALTHY",
+      "dlq_depth_recent": 0,
+      "dlq_depth_total": 0,
+      "current_stuck_events": 0,
+      "queue_pending": 0
+    }
+  },
+  "step2_single_flow": {
+    "slug": "lic-bima-sakhi-career-agency-in-governance-test-delhi-20260427-0526",
+    "queue_id": "b94d2e84-e328-40af-9c62-51fd75abc439",
+    "draft_id": "9d3585f6-11bf-436b-9c4d-35793623cf72",
+    "page_index_id": "5217d760-77cf-4f2c-8c2f-93316311e113",
+    "job_run_id": "8b9b3120-cdde-401e-abd8-37f2ec09de2e",
+    "generation": {
+      "queue_status": "completed",
+      "progress": 1,
+      "retry_count": 0,
+      "draft_status_after_generation": "draft",
+      "word_count": 1583,
+      "quality_score": 9.5,
+      "ai_model": "gemini-2.0-flash",
+      "dead_letters": 0,
+      "event_rows": 0,
+      "retry_logs": 0,
+      "generation_logs": [
+        {
+          "event_type": "page_generated",
+          "message": "Generated lic-bima-sakhi-career-agency-in-governance-test-delhi-20260427-0526"
+        }
+      ]
+    },
+    "publish": {
+      "status": "PASS",
+      "draft_status": "published",
+      "page_status": "published",
+      "indexing_status": "pending",
+      "live_page_status": 200,
+      "live_page_contains_slug": true,
+      "sitemap_localities_status": 200,
+      "sitemap_localities_contains_slug": true,
+      "sitemap_latest_status": 200,
+      "sitemap_latest_contains_slug": true
+    },
+    "final_cleanup": {
+      "temporary_proof_page_archived": true,
+      "draft_status": "archived",
+      "page_status": "archived",
+      "indexing_status": "blocked",
+      "post_archive_live_page_status": 404,
+      "api_status": "HEALTHY",
+      "queue_paused": true,
+      "bulk_generation_enabled": false,
+      "batch_size": 1
+    }
+  },
+  "verdict": {
+    "step1_cleanup_passed": true,
+    "step2_single_flow_passed": true,
+    "documentation_required": true,
+    "score_changed": false,
+    "open_issue_delta": 0
+  }
+}

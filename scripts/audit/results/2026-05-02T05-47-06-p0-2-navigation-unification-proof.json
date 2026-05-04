@@ -1,0 +1,182 @@
+{
+  "artifact": "P0.2 Navigation Unification Local Proof",
+  "date": "2026-05-02",
+  "capturedAt": "2026-05-02T05:47:06Z",
+  "verdict": "PASS_LOCAL_P0_2_NAVIGATION_UNIFICATION",
+  "scope": [
+    "Public header",
+    "Public footer",
+    "Active admin sidebar",
+    "Unified admin navigation control surface"
+  ],
+  "implementation": {
+    "migration": "supabase/migrations/20260502093000_p0_2_navigation_unification.sql",
+    "sharedTable": "public.navigation_menu",
+    "sharedDiscriminator": "menu_key",
+    "menuCounts": {
+      "public_header_admin_list": 12,
+      "public_header_public_roots": 10,
+      "public_footer_admin_list": 13,
+      "public_footer_public_roots": 3,
+      "admin_sidebar_admin_list": 57
+    },
+    "controlSurface": {
+      "route": "/admin/navigation",
+      "menuButtons": [
+        "Public Header",
+        "Public Footer",
+        "Admin Sidebar"
+      ]
+    }
+  },
+  "happyFlow": {
+    "editorSwitching": {
+      "publicHeader": true,
+      "publicFooter": true,
+      "adminSidebar": true
+    },
+    "authCheck": {
+      "status": 200,
+      "authenticated": true,
+      "role": "super_admin"
+    },
+    "temporaryMutation": {
+      "header": {
+        "id": "0a161887-2d6f-44c1-9f45-dad619b6ed17",
+        "from": "Home",
+        "to": "Home P0.2",
+        "revertedTo": "Home"
+      },
+      "footer": {
+        "id": "ac8cd266-e6b6-40d3-adab-5bc2ebe95442",
+        "from": "Contact Us",
+        "to": "Contact Us P0.2",
+        "revertedTo": "Contact Us"
+      },
+      "sidebar": {
+        "id": "16751676-c072-4f13-a54f-c4263fbd64c2",
+        "from": "Backups",
+        "to": "Backups P0.2",
+        "revertedTo": "Backups"
+      }
+    },
+    "uiProof": {
+      "headerUpdated": true,
+      "footerUpdated": true,
+      "sidebarUpdated": true,
+      "headerUpdatedLabel": "Home P0.2",
+      "footerUpdatedLabel": "Contact Us P0.2",
+      "sidebarUpdatedLabel": "Backups P0.2"
+    },
+    "revertProof": {
+      "publicHeaderReverted": true,
+      "publicFooterReverted": true,
+      "adminSidebarApiReverted": true
+    }
+  },
+  "edgeCase": {
+    "headerNestedTools": {
+      "childCount": 2,
+      "childNames": [
+        "LIC Income Calculator",
+        "LIC Commission Calculator"
+      ]
+    },
+    "crossMenuParentReject": {
+      "status": 400,
+      "error": "Parent item must exist in the same menu."
+    },
+    "invalidSidebarGroupReject": {
+      "status": 400,
+      "error": "Footer and admin sidebar children must use a top-level group parent."
+    }
+  },
+  "failureCase": {
+    "forcedPublicApiAbort": true,
+    "loadingCleared": true,
+    "fallbackHeaderPresent": true,
+    "fallbackFooterPresent": true
+  },
+  "loadBehavior": {
+    "steadyStateThresholdMs": 5000,
+    "coldPass": {
+      "public_header": {
+        "runs": 5,
+        "minMs": 1129.1,
+        "avgMs": 7213.38,
+        "maxMs": 30449.5,
+        "statuses": [200, 200, 200, 200, 200],
+        "counts": [10, 10, 10, 10, 10]
+      },
+      "public_footer": {
+        "runs": 5,
+        "minMs": 742.7,
+        "avgMs": 4527.38,
+        "maxMs": 18352.1,
+        "statuses": [200, 200, 200, 200, 200],
+        "counts": [3, 3, 3, 3, 3]
+      },
+      "admin_sidebar": {
+        "runs": 5,
+        "minMs": 785.6,
+        "avgMs": 11860.78,
+        "maxMs": 54302.9,
+        "statuses": [200, 200, 200, 200, 200],
+        "counts": [57, 57, 57, 57, 57]
+      }
+    },
+    "warmPass": {
+      "public_header": {
+        "runs": 3,
+        "timings": [4439.4, 831, 772],
+        "avgMs": 2014.13,
+        "maxMs": 4439.4
+      },
+      "public_footer": {
+        "runs": 3,
+        "timings": [742.8, 581.7, 534.1],
+        "avgMs": 619.53,
+        "maxMs": 742.8
+      },
+      "admin_sidebar": {
+        "runs": 3,
+        "timings": [570.6, 636.6, 1142.1],
+        "avgMs": 783.1,
+        "maxMs": 1142.1
+      }
+    },
+    "steadyStatePass": true,
+    "note": "Cold local-dev compile spikes were observed, but warm steady-state stayed under the chosen local threshold and response counts remained stable."
+  },
+  "apiProof": {
+    "public_navigation": {
+      "status": 200,
+      "success": true,
+      "count": 10
+    },
+    "public_footer_navigation": {
+      "status": 200,
+      "success": true,
+      "count": 3
+    },
+    "admin_navigation": {
+      "public_header": 12,
+      "public_footer": 13,
+      "admin_sidebar": 57
+    }
+  },
+  "dbState": {
+    "migrationAppliedLocally": true,
+    "migrationRunner": "targeted pg script",
+    "repoWideMigrationRunnerUsed": false,
+    "seedCountsAfterMigration": {
+      "admin_sidebar": 57,
+      "public_footer": 13
+    },
+    "temporaryLabelsReverted": true
+  },
+  "notes": [
+    "VS Code browser snapshots occasionally lagged on admin-route transitions, but direct DOM reads and authenticated fetches from the same session confirmed the admin shell and sidebar state.",
+    "The pre-existing Observability issue remained out of scope and untouched."
+  ]
+}

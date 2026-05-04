@@ -1,0 +1,49 @@
+﻿{
+    "name":  "qstash-ps",
+    "started_at":  "2026-04-26T10:27:00.0279354Z",
+    "finished_at":  "2026-04-26T10:27:27.4937929Z",
+    "status":  "PASS",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "QSTASH_TOKEN":  {
+                                                             "present":  true,
+                                                             "masked":  "eyJV...In0= (128 chars)"
+                                                         }
+                                    },
+                       "timestamp":  "2026-04-26T10:27:00.0897731Z"
+                   },
+                   {
+                       "name":  "publish_test_message",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "body":  {
+                                                     "messageId":  "msg_7YoJxFpwkEy5zBp2aCd6LfjopN9d3L5xJpz1VAx9KwSkEtn1xK8VT"
+                                                 },
+                                        "target_url":  "https://bimasakhi.com/api/test",
+                                        "marker":  "TEST_AUDIT_QSTASH_1777199220112",
+                                        "error":  null,
+                                        "message_id":  "msg_7YoJxFpwkEy5zBp2aCd6LfjopN9d3L5xJpz1VAx9KwSkEtn1xK8VT",
+                                        "status":  201
+                                    },
+                       "timestamp":  "2026-04-26T10:27:01.5254667Z"
+                   },
+                   {
+                       "name":  "delivery_log_lookup",
+                       "status":  "PARTIAL",
+                       "evidence":  {
+                                        "logs_api_ok":  true,
+                                        "status":  200,
+                                        "error":  null,
+                                        "body_sample":  "{\r\n    \"cursor\":  \"1777154700068-0\",\r\n    \"events\":  [\r\n                   {\r\n                       \"time\":  1777199103666,\r\n                       \"messageId\":  \"msg_7YoJxFpwkEy6sUx4wEBN5rWA6jjivcKdbr7gH1XTed41UH2Cz3m6S\",\r\n                       \"state\":  \"DELIVERED\",\r\n                       \"url\":  \"https://bimasakhi.com/api/jobs/alert-scan\",\r\n                       \"scheduleId\":  \"scd_76EcoofGdjojXYtiKN6mjTVwE1Bw\",\r\n                       \"header\":  {\r\n                                      \"Content-Type\":  [\r\n                                                           \"application/json\"\r\n                                                       ]\r\n                                  },\r\n      ",
+                                        "message_id_found":  false
+                                    },
+                       "timestamp":  "2026-04-26T10:27:27.4907918Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}

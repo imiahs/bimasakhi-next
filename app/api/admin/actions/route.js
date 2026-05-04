@@ -6,6 +6,8 @@ import { logSystemAction } from '@/lib/systemConfig';
 import { getEventStoreStats, markDispatched, markFailed, incrementRetry, getEventTimeline, getStuckEvents } from '@/lib/events/eventStore';
 import { getTrigger } from '@/lib/events/triggerMap';
 import { executeRunbook, RUNBOOKS } from '@/lib/monitoring/runbooks';
+import { recordExternalDelivery } from '@/lib/queue/deliveryTruth';
+import { safeLog } from '@/lib/safeLogger.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -371,20 +373,44 @@ export const POST = withAdminAuth(async (request, user) => {
                 const baseUrl = process.env.NODE_ENV === 'production'
                     ? 'https://bimasakhi.com'
                     : (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
+                const targetUrl = `${baseUrl}${trigger.endpoint}`;
+                const dispatchPayload = {
+                    ...evt.payload,
+                    _execution_context: evt.execution_context,
+                    _event_name: evt.event_name,
+                    _executive: trigger.executive,
+                    _event_store_id: event_store_id,
+                    _admin_retry: true,
+                };
 
                 const result = await client.publishJSON({
-                    url: `${baseUrl}${trigger.endpoint}`,
-                    body: {
-                        ...evt.payload,
-                        _execution_context: evt.execution_context,
-                        _event_name: evt.event_name,
-                        _executive: trigger.executive,
-                        _event_store_id: event_store_id,
-                        _admin_retry: true,
-                    },
+                    url: targetUrl,
+                    body: dispatchPayload,
                 });
 
                 await markDispatched(event_store_id, result.messageId);
+
+                try {
+                    await recordExternalDelivery({
+                        messageId: result.messageId,
+                        source: 'admin_retry_event_store',
+                        eventName: evt.event_name,
+                        eventStoreId: event_store_id,
+                        generationQueueId: evt.payload?.queueId || evt.payload?.queue_id || null,
+                        targetUrl,
+                        targetPath: trigger.endpoint,
+                        requestPayload: dispatchPayload,
+                        providerResponse: result,
+                    });
+                } catch (deliveryError) {
+                    await safeLog('QSTASH_DELIVERY_TRUTH_WRITE_FAILED', deliveryError.message, {
+                        source: 'admin_retry_event_store',
+                        event_name: evt.event_name,
+                        event_store_id: event_store_id,
+                        message_id: result.messageId,
+                        target_url: targetUrl,
+                    });
+                }
 
                 await logSystemAction('ADMIN_RETRY_EVENT_STORE', {
                     event_store_id,
@@ -418,16 +444,38 @@ export const POST = withAdminAuth(async (request, user) => {
                 const baseUrl = process.env.NODE_ENV === 'production'
                     ? 'https://bimasakhi.com'
                     : (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
+                const targetUrl = `${baseUrl}${trigger.endpoint}`;
+                const dispatchPayload = {
+                    ...(eventPayload || {}),
+                    _event_name: event_name,
+                    _executive: trigger.executive,
+                    _force_dispatch: true,
+                };
 
                 const result = await client.publishJSON({
-                    url: `${baseUrl}${trigger.endpoint}`,
-                    body: {
-                        ...(eventPayload || {}),
-                        _event_name: event_name,
-                        _executive: trigger.executive,
-                        _force_dispatch: true,
-                    },
+                    url: targetUrl,
+                    body: dispatchPayload,
                 });
+
+                try {
+                    await recordExternalDelivery({
+                        messageId: result.messageId,
+                        source: 'admin_force_dispatch',
+                        eventName: event_name,
+                        generationQueueId: eventPayload?.queueId || eventPayload?.queue_id || null,
+                        targetUrl,
+                        targetPath: trigger.endpoint,
+                        requestPayload: dispatchPayload,
+                        providerResponse: result,
+                    });
+                } catch (deliveryError) {
+                    await safeLog('QSTASH_DELIVERY_TRUTH_WRITE_FAILED', deliveryError.message, {
+                        source: 'admin_force_dispatch',
+                        event_name,
+                        message_id: result.messageId,
+                        target_url: targetUrl,
+                    });
+                }
 
                 await logSystemAction('ADMIN_FORCE_DISPATCH', {
                     event_name,

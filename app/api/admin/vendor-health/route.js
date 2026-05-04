@@ -8,40 +8,33 @@ import { NextResponse } from 'next/server';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 import { getAllVendorStates, getSlaSummary } from '@/lib/vendorResilience';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
-import { getSystemMode } from '@/lib/system/systemModes';
+import { getSystemHealthSnapshot, normalizeHealthForUi } from '@/lib/system/systemHealth';
 
 async function handler() {
     const supabase = getServiceSupabase();
 
     // Parallel fetches
-    const [vendors, slaSummary, systemMode, dlqResult, alertsResult] = await Promise.all([
+    const [vendors, slaSummary, systemHealth, dlqResult, alertsResult] = await Promise.all([
         getAllVendorStates(),
         getSlaSummary(),
-        getSystemMode(),
+        getSystemHealthSnapshot(),
         supabase.from('job_dead_letters').select('*', { count: 'exact', head: true }),
         supabase.from('alert_deliveries')
             .select('*', { count: 'exact', head: true })
             .eq('acknowledged', false),
     ]);
 
-    // Compute overall health
     const criticalVendors = vendors.filter(v => v.criticality === 'critical');
-    const anyCircuitOpen = vendors.some(v => v.live_circuit_state === 'open');
-    const anyDown = vendors.some(v => v.health_status === 'down');
-
-    let overallHealth = 'healthy';
-    if (anyDown) overallHealth = 'critical';
-    else if (anyCircuitOpen) overallHealth = 'degraded';
-    else if (systemMode !== 'normal') overallHealth = 'degraded';
 
     return NextResponse.json({
         overall: {
-            health: overallHealth,
-            system_mode: systemMode,
+            health: normalizeHealthForUi(systemHealth.overall_health),
+            system_mode: systemHealth.system_mode.mode,
             vendor_count: vendors.length,
             critical_count: criticalVendors.length,
             circuits_open: vendors.filter(v => v.live_circuit_state === 'open').length,
         },
+        system_health: systemHealth,
         vendors,
         sla_summary: slaSummary,
         dlq_pending: dlqResult.count || 0,

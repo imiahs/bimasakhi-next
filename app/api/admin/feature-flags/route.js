@@ -63,8 +63,16 @@ export const PUT = withAdminAuth(async (request, user) => {
         const body = await request.json();
         const { key, label, description, category, value, restricted } = body;
 
+        const reservedControlPlaneKeys = ['safe_mode', 'pagegen_enabled', 'bulk_generation_enabled'];
+
         if (!key || !label) {
             return NextResponse.json({ error: 'key and label are required' }, { status: 400 });
+        }
+
+        if (reservedControlPlaneKeys.includes(key)) {
+            return NextResponse.json({
+                error: `${key} is a canonical control-plane key and must be managed via system_control_config`,
+            }, { status: 400 });
         }
 
         if (!/^[a-z0-9_]+$/.test(key)) {

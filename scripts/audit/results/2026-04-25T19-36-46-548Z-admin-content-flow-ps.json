@@ -1,0 +1,50 @@
+﻿{
+    "name":  "admin-content-flow-ps",
+    "started_at":  "2026-04-25T19:36:45.8142961Z",
+    "finished_at":  "2026-04-25T19:36:46.5143941Z",
+    "status":  "PARTIAL",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "ADMIN_PASSWORD":  {
+                                                               "present":  true,
+                                                               "masked":  "Haim...vija (20 chars)"
+                                                           },
+                                        "SUPABASE_SERVICE_ROLE_KEY":  {
+                                                                          "present":  true,
+                                                                          "masked":  "sb_s...eZm_ (41 chars)"
+                                                                      }
+                                    },
+                       "timestamp":  "2026-04-25T19:36:45.9089445Z"
+                   },
+                   {
+                       "name":  "draft_insert_direct_db",
+                       "status":  "FAIL",
+                       "evidence":  {
+                                        "body":  null,
+                                        "status":  null,
+                                        "draft_id":  null,
+                                        "error":  "Unable to connect to the remote server",
+                                        "slug":  "test_audit_draft-1777145805961"
+                                    },
+                       "timestamp":  "2026-04-25T19:36:46.4588619Z"
+                   },
+                   {
+                       "name":  "admin_login_for_content_api",
+                       "status":  "FAIL",
+                       "evidence":  {
+                                        "ok":  false,
+                                        "status":  null,
+                                        "body":  null,
+                                        "error":  "Unable to connect to the remote server",
+                                        "cookie_count":  0
+                                    },
+                       "timestamp":  "2026-04-25T19:36:46.5068872Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}

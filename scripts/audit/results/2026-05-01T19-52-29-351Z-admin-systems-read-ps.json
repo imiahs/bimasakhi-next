@@ -1,0 +1,157 @@
+﻿{
+    "name":  "admin-systems-read-ps",
+    "started_at":  "2026-05-01T19:52:18.4094720Z",
+    "finished_at":  "2026-05-01T19:52:29.3300424Z",
+    "status":  "PASS",
+    "checks":  [
+                   {
+                       "name":  "env_presence_masked",
+                       "status":  "INFO",
+                       "evidence":  {
+                                        "ADMIN_PASSWORD":  {
+                                                               "present":  true,
+                                                               "masked":  "Haim...vija (20 chars)"
+                                                           }
+                                    },
+                       "timestamp":  "2026-05-01T19:52:18.5034585Z"
+                   },
+                   {
+                       "name":  "admin_login",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "body":  {
+                                                     "success":  true,
+                                                     "role":  "super_admin"
+                                                 },
+                                        "error":  null,
+                                        "cookie_count":  1
+                                    },
+                       "timestamp":  "2026-05-01T19:52:20.6710155Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_drafts",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/ccc/drafts?limit=5",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"drafts\":  [\r\n                   {\r\n                       \"id\":  \"9d3585f6-11bf-436b-9c4d-35793623cf72\",\r\n                       \"slug\":  \"lic-bima-sakhi-career-agency-in-governance-test-delhi-20260427-0526\",\r\n                       \"page_title\":  \"Delhi ki Mahilaon ke Liye: LIC Bima Sakhi Baniye, Azaadi Paiye!\",\r\n                       \"hero_headline\":  \"Delhi ki Mahilaon ke Liye: LIC Bima Sakhi Baniye, Azaadi Paiye!\",\r\n                       \"meta_title\":  \"LIC Bima Sakhi Career Delhi: Earn â¹50K/Month!\",\r\n                       \"word_count\":  1583,\r\n                       \"quality_score\":  9.5,\r\n                       \"status\":  \"archived\",\r\n               ",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:21.5094595Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_bulk",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/ccc/bulk",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"id\":  \"6c87192a-071d-4211-bdae-df7d3c574575\",\r\n                     \"name\":  \"rule16 bulk 1777262058246-19f141c9\",\r\n                     \"description\":  \"rule16 audit bulk job\",\r\n                     \"intent_type\":  \"locality\",\r\n                     \"scope\":  \"locality\",\r\n                     \"city_ids\":  [\r\n\r\n                                  ],\r\n                     \"locality_ids\":  [\r\n\r\n                                      ],\r\n                     \"pincode_list\":  [\r\n\r\n                                      ],\r\n                     \"base_keyword\":  \"bima sakhi opportunity\",\r\n                     \"keyword_v",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:22.3962639Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_media",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/media",
+                                        "body_sample":  "{\r\n    \"media\":  [\r\n\r\n              ]\r\n}",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:23.3346314Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_logs",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/logs",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"logs\":  [\r\n                 {\r\n                     \"id\":  \"obs_7f96a116-47c1-4fdd-a5d9-c4cab81b9719\",\r\n                     \"type\":  \"INFO\",\r\n                     \"message\":  \"Vendor health check: supabase=healthy, dlq=0, delivery_failures=0\",\r\n                     \"metadata\":  {\r\n                                      \"zoho\":  {\r\n                                                   \"status\":  \"configured\",\r\n                                                   \"latency_ms\":  0\r\n                                               },\r\n                                      \"gemini\":  {\r\n                                                     \"status\":  \"configured\",\r\n        ",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:24.2354179Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_audit_log",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/audit-log?limit=5",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"id\":  \"a4f85096-5297-4e79-9c6d-7f74a70933cb\",\r\n                     \"admin_id\":  \"4dcaed28-d730-49b3-a030-db70996a3ae1\",\r\n                     \"admin_email\":  \"cron_execution\",\r\n                     \"action\":  \"create\",\r\n                     \"target_resource\":  \"/api/admin/workflow-config\",\r\n                     \"metadata\":  {\r\n                                      \"params\":  {\r\n\r\n                                                 }\r\n                                  },\r\n                     \"ip_address\":  \"106.219.154.92\",\r\n                     \"created_at\":  \"2026-05-01T19:21:49.342195+00:00\"\r\n               ",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:25.3516489Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_feature_flags",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/feature-flags",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"key\":  \"safe_mode\",\r\n                     \"label\":  \"SAFE MODE (Emergency Pause)\",\r\n                     \"description\":  \"Halts ALL automated operations. Read-only mode.\",\r\n                     \"category\":  \"system\",\r\n                     \"value\":  false,\r\n                     \"restricted\":  true,\r\n                     \"source\":  \"system_control_config\",\r\n                     \"last_changed_by\":  null,\r\n                     \"last_changed_at\":  \"2026-04-27T11:56:03.251+00:00\"\r\n                 },\r\n                 {\r\n                     \"key\":  \"pagegen_enabled\",\r\n                     \"label\":  \"Page Generatio",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:26.1199643Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_workflow_config",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/workflow-config",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"id\":  \"000a85b8-915c-48d5-8e27-eb466b6cfe47\",\r\n                     \"key\":  \"ai_model_fallback\",\r\n                     \"label\":  \"Fallback AI model\",\r\n                     \"description\":  \"Fallback model when primary fails\",\r\n                     \"category\":  \"ai\",\r\n                     \"value_type\":  \"text\",\r\n                     \"value_number\":  null,\r\n                     \"value_text\":  \"gpt-4o\",\r\n                     \"min_value\":  null,\r\n                     \"max_value\":  null,\r\n                     \"last_changed_by\":  \"49487904-68d0-4a3a-ab7f-abf5f1248f9b\",\r\n                     \"last_changed_at\":  \"2026",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:26.7906462Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_users",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/users",
+                                        "body_sample":  "{\r\n    \"users\":  [\r\n                  {\r\n                      \"id\":  \"4dcaed28-d730-49b3-a030-db70996a3ae1\",\r\n                      \"email\":  \"admin@bimasakhi.com\",\r\n                      \"name\":  \"Super Admin\",\r\n                      \"role\":  \"super_admin\",\r\n                      \"active\":  true,\r\n                      \"lastLogin\":  \"2026-05-01T19:52:20.854+00:00\",\r\n                      \"createdAt\":  \"2026-03-10T19:55:56.247857+00:00\"\r\n                  }\r\n              ]\r\n}",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:27.7483545Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_geo_cities",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/locations/cities",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"data\":  [\r\n                 {\r\n                     \"id\":  \"ba203abc-4d16-4449-87f1-0339b7c1fa21\",\r\n                     \"city_name\":  \"Bangalore\",\r\n                     \"slug\":  \"bangalore\",\r\n                     \"population\":  8443675,\r\n                     \"active\":  true,\r\n                     \"state\":  \"Karnataka\"\r\n                 },\r\n                 {\r\n                     \"id\":  \"cb222dd4-20df-4ae6-89f5-06b67c097d94\",\r\n                     \"city_name\":  \"Chennai\",\r\n                     \"slug\":  \"chennai\",\r\n                     \"population\":  4681087,\r\n                     \"active\":  true,\r\n                     \"state\":  \"Tamil Nadu\"\r\n                 }",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:28.4649193Z"
+                   },
+                   {
+                       "name":  "admin_endpoint_system_health",
+                       "status":  "PASS",
+                       "evidence":  {
+                                        "ok":  true,
+                                        "status":  200,
+                                        "url":  "https://bimasakhi.com/api/admin/system/health",
+                                        "body_sample":  "{\r\n    \"success\":  true,\r\n    \"timestamp\":  \"2026-05-01T19:52:29.234Z\",\r\n    \"version\":  \"47404cc\",\r\n    \"environment\":  \"production\",\r\n    \"overall_health\":  \"HEALTHY\",\r\n    \"summary\":  {\r\n                    \"status\":  \"ok\",\r\n                    \"hard_failures\":  [\r\n\r\n                                      ],\r\n                    \"warnings\":  [\r\n\r\n                                 ]\r\n                },\r\n    \"system_mode\":  {\r\n                        \"mode\":  \"normal\",\r\n                        \"safe_mode\":  false,\r\n                        \"ai_enabled\":  true,\r\n                        \"followup_enabled\":  true,\r\n                        \"crm_auto_routing\":  true,\r\n                        \"queue",
+                                        "error":  null
+                                    },
+                       "timestamp":  "2026-05-01T19:52:29.3191924Z"
+                   }
+               ],
+    "errors":  [
+
+               ]
+}
