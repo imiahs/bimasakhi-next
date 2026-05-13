@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { generateAiContent } from '@/lib/ai';
 import { getServiceSupabase } from '@/utils/supabase';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { getSystemConfig } from '@/lib/systemConfig';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,12 @@ export const POST = withAdminAuth(async (request, user) => {
     try {
         const body = await request.json();
         const { page_path, page_title, page_description } = body;
+
+        // RC-1B: Gate AI execution on ai_enabled flag
+        const config = await getSystemConfig();
+        if (!config.ai_enabled) {
+            return NextResponse.json({ error: 'AI_DISABLED' }, { status: 503 });
+        }
 
         if (!page_path) {
             return NextResponse.json({ error: 'Page path is required' }, { status: 400 });

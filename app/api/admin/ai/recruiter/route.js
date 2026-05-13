@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { getSystemConfig } from '@/lib/systemConfig';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,12 @@ export const POST = withAdminAuth(async (request, user) => {
 
         if (!supabaseUrl || !supabaseKey || process.env.SUPABASE_ENABLED !== 'true') {
             return NextResponse.json({ error: 'Supabase required for AI Recruiter.' }, { status: 400 });
+        }
+
+        // RC-1B: Gate AI execution on ai_enabled flag
+        const config = await getSystemConfig();
+        if (!config.ai_enabled) {
+            return NextResponse.json({ error: 'AI_DISABLED' }, { status: 503 });
         }
 
         const supabase = getServiceSupabase();

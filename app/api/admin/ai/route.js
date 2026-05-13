@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { generateAiContent } from '@/lib/ai';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { getSystemConfig } from '@/lib/systemConfig';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,6 +9,12 @@ export const POST = withAdminAuth(async (request, user) => {
     try {
         const body = await request.json();
         const { action, prompt, context } = body;
+
+        // RC-1B: Gate AI execution on ai_enabled flag
+        const config = await getSystemConfig();
+        if (!config.ai_enabled) {
+            return NextResponse.json({ error: 'AI_DISABLED' }, { status: 503 });
+        }
 
         if (!action) {
             return NextResponse.json({ error: 'Action type is required for AI module' }, { status: 400 });
