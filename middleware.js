@@ -88,19 +88,7 @@ export async function middleware(request) {
                 }, { status: 403 });
             }
 
-            // Allow request through, append headers if needed
-            const requestHeaders = new Headers(request.headers);
-            requestHeaders.set('x-admin-role', payload.role);
-            requestHeaders.set('x-admin-user', payload.sub);
-            if (payload.email) {
-                requestHeaders.set('x-admin-email', payload.email);
-            }
-
-            return NextResponse.next({
-                request: {
-                    headers: requestHeaders,
-                },
-            });
+            return NextResponse.next();
         } catch (err) {
             return NextResponse.json({ error: 'Session expired or invalid token.' }, { status: 401 });
         }
@@ -146,19 +134,7 @@ export async function middleware(request) {
                 return NextResponse.redirect(deniedUrl);
             }
 
-            // Allow request through, append headers if needed
-            const requestHeaders = new Headers(request.headers);
-            requestHeaders.set('x-admin-role', payload.role);
-            requestHeaders.set('x-admin-user', payload.sub);
-            if (payload.email) {
-                requestHeaders.set('x-admin-email', payload.email);
-            }
-
-            return NextResponse.next({
-                request: {
-                    headers: requestHeaders,
-                },
-            });
+            return NextResponse.next();
         } catch (err) {
             // Token is invalid/expired
             const loginUrl = new URL('/admin/login', request.url);
