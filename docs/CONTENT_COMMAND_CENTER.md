@@ -1,22 +1,92 @@
 ﻿# Content Command Center (CCC)
 ## CTO Master Architecture & Product Strategy
 
-> **Status:** ACTIVE — Governance restructured April 19, 2026  
-> **Owner:** CTO (under CEO authority — Constitution Article 1)  
-> **Last Updated:** May 4, 2026 (re-execution session)
-> **Core Vision:** Transform pagegen from a black-box content generator into India's most powerful programmatic SEO + lead acquisition machine for LIC/financial services — organically, without ads.
+> **Status:** ACTIVE � Governance restructured April 19, 2026  
+> **Owner:** CTO (under CEO authority � Constitution Article 1)  
+| **Last Updated:** May 16, 2026 (RC-2K retry live canary executed on `3a2edb9`; SHOS suppression active; rollback not triggered)
+| **RC-2K.1 STATUS (May 16, 2026):** PROTECTED OBSERVABILITY ACCESS RECONSTRUCTION - Complete. This cycle performed deterministic access reconstruction only (no deployment, no auth redesign, no middleware redesign, no runtime mutation). Baseline failures were confirmed: `/admin/system` redirects to login when unauthenticated, and `/api/admin/system`, `/api/admin/system/shos`, `/api/admin/observability` return `401`. Auth-path chain reconstructed as implemented: `/api/admin/login` issues `admin_session` JWT cookie (`httpOnly`, secure in production, `sameSite=lax`, 24h exp) -> middleware validates JWT on `/admin*` and `/api/admin*` -> route-level `withAdminAuth` and role policy enforce protected access. Protected observability surfaces are conditionally accessible through valid operator browser authentication and blocked in unauthenticated execution contexts. Bearer-token-only access for protected admin APIs is not a safe fallback because middleware cookie gate preempts route-level bearer checks. Session continuity and rollback decision path are auth-dependent. Final classification: READY_ONLY_WITH_OPERATOR_BROWSER_ACCESS.
+| **RC-2K STATUS (May 16, 2026):** FIRST GUARDED LIVE CANARY EXECUTION - Retry executed successfully under guarded discipline. Exact 11-file SHOS canary manifest was committed and pushed as `3a2edb9`. Public deployment version converged to `3a2edb9`. Protected SHOS surface transitioned from pre-deploy `404` to post-deploy `200`, and suppression remained active (`auto_reverts.suppressed=true`) across repeated authenticated observation samples. Queue/DLQ/delivery non-regression checks stayed stable (`queue failed=0`, `dlq total=0`, `delivery_failures_recent=0`, `delivery_stuck_count=0`). Rollback authority remained active and rollback was not triggered. Final classification: COEXISTENCE_ACCEPTED_WITH_GUARDS and ROLLBACK_NOT_REQUIRED. Residual pre-existing degraded-health signal (`unacknowledged_escalations`) remains explicitly unresolved and out-of-scope for canary success declaration. Artifacts: docs/audits/RC-2K-RETRY-PRE-T0.md, docs/audits/RC-2K-RETRY-LIVE-CANARY.md, docs/tests/RC-2K-RETRY-COEXISTENCE.md, docs/tests/RC-2K-RETRY-ROLLBACK.md.
+| **RC-2J STATUS (May 16, 2026):** GUARDED LIVE CANARY EXECUTION RUNBOOK � Complete. Exact survivable human-runtime coexistence choreography reconstructed for first SHOS suppression canary without deployment or runtime activation. Three mandatory roles defined with strict non-overlap rule: DEPLOYMENT LEAD (initiates push, documents), SIGNAL OBSERVER (runs all probes, reports counts only), ROLLBACK AUTHORITY (owns all rollback decisions, no observability duties). Minute-level timeline: T-15 (preflight + staffing confirmation), T-5 (final authority gate), T+0 (push), T+3-8 (silence window � no probes to prevent stale-instance warm-timer refresh), T+8 (SAFE_OBSERVATION opens, 5-request batches), T+15 (HIGH_RISK entry � monitoring cadence step-down to every 5 min maximum), T+30 (mandatory 20-request convergence test), T+45 (PROCEED or ROLLBACK final decision), T+60 (automatic rollback if no PROCEED). Key new analysis unique to RC-2J: (1) Operator monitoring itself prolongs coexistence via warm-instance refresh � addressed with cadence step-down and ShosControlCenter UI forbidden during HIGH_RISK window. (2) Rollback creates a SECOND coexistence event � post-rollback verification requires second-coexistence-aware batch probing with minimum 10-minute stabilization window before rollback success declaration. (3) Confidence trap detection model formalized with forbidden-interpretation patterns and mandatory distrust windows. (4) 20+ forbidden observability behaviors enumerated. Final execution classification: READY_FOR_GUARDED_CANARY_EXECUTION (conditional on all three roles present and confirmed at T-15 gate). Artifacts: docs/audits/RC-2J-LIVE-EXECUTION-BASELINE.md, docs/audits/RC-2J-GUARDED-LIVE-EXECUTION.md, docs/tests/RC-2J-ROLLBACK-RUNBOOK.md, docs/tests/RC-2J-OBSERVABILITY-DISCIPLINE.md. **Zero deployments, zero mutations, zero runtime activation in RC-2J.**
+| **RC-2I STATUS (May 16, 2026):** LIVE CANARY AUTHORIZATION RECONSTRUCTION � Complete. Final authorization intelligence reconstructed without deployment. Classification outcomes: AUTHORIZED_ONLY_WITH_EXTRA_GUARDS, OPERATOR_RISK, CALM_ENOUGH_FOR_CANARY (conditional), LIVE_ROLLBACK_RISKY, OBSERVABILITY_DECISION_RISKY. Human-stress realism and confidence-trap exposure prevented full authorization. Mandatory extra guards defined: two-person decision protocol, explicit authority roster, fixed rollback-critical checkpoint script, mandatory 20-request convergence verification, discretionary rollback right before T+60, strict no-go on staffing/tooling gaps. Artifacts: docs/audits/RC-2I-LIVE-AUTHORIZATION-BASELINE.md, docs/audits/RC-2I-LIVE-CANARY-AUTHORIZATION.md, docs/tests/RC-2I-OPERATOR-READINESS.md, docs/tests/RC-2I-LIVE-ROLLBACK-CONFIDENCE.md. **Zero deployments, zero mutations, zero runtime activation in RC-2I.**
+| **RC-2H STATUS (May 15, 2026):** CANARY EXECUTION PROTOCOL RECONSTRUCTION � Complete. Exact operational choreography for first SHOS suppression canary defined: atomic 11-file deployment, 7-phase execution, 77-minute window, SAFE_OBSERVATION (T+8-15 min), HIGH_RISK (T+15-30 min), CONVERGENCE (T+30-60 min), DECISION (T+45-60 min) phases. 15 monitoring signals specified across 5 categories. 8+ rollback triggers enumerated with decision trees. Mixed-instance coexistence bounded to 60-minute hard stop. Hidden write analysis reveals observability unreliability during HIGH_RISK window. **Status: READY_FOR_CANARY_ONLY** (unchanged from RC-2F; will be upgraded to READY_FOR_STAGED_DEPLOYMENT ONLY IF canary succeeds and parity verified live). **Blocking issues:** (1) Production parity unverified, (2) Stale-instance retirement timing unknown, (3) Observability truthfulness unproven. Canary serves as live verification. **Next cycle:** RC-2I (Canary Execution � actual deployment). Artifacts: docs/audits/RC-2H-CANARY-PROTOCOL-BASELINE.md, docs/audits/RC-2H-EXACT-DEPLOYMENT-CHOREOGRAPHY.md, docs/audits/RC-2H-MIXED-INSTANCE-STRATEGY.md, docs/tests/RC-2H-OBSERVATION-WINDOWS.md, docs/tests/RC-2H-OBSERVABILITY-TRUTHFULNESS.md, docs/tests/RC-2H-CANARY-MONITORING-REQUIREMENTS.md, docs/tests/RC-2H-ROLLBACK-TRIGGERS.md, docs/tests/RC-2H-FINAL-MATRICES.md. **Zero deployments, zero mutations, zero runtime activation in RC-2H.**
+| **System State:** SELF-HEALING
+| **P0 Stabilization:** COMPLETE
+| **Next Active Phase:** Post-canary risk handling and degraded-health remediation planning. RC-2J remains runbook authority for guarded live operations and rollback-first decisioning.
+> **Core Vision:** Transform pagegen from a black-box content generator into India's most powerful programmatic SEO + lead acquisition machine for LIC/financial services � organically, without ads.
 
-> **Stability Stop Order (May 4, 2026):** Deployment remains blocked pending live redeploy proof. All stop-order core runtime paths are now independently verified twice on a fresh dev server: build PASS, publish/live PASS, rejected archive PASS, pagegen worker PASS (1516 words, quality 8.5; AI fallback path also exercised successfully — primary model 429 × 2 → fallback succeeded), CRM scoring fixed and runtime-proven, AI admin pages PASS, SEO override GET/PUT PASS, and the backup surface creates real filesystem snapshots. Live deployment proof is still required before the stop order can be lifted.
+> **System Freeze (May 4, 2026):** P0 stabilization is complete and the core runtime lane is frozen. Do not modify queue logic, event logic, delivery logic, or health logic without reopening the system-stability lane explicitly. Production now runs naturally with `queue_paused=false`, no active stuck events, no unacknowledged escalations, and no manual queue override. Final stable snapshot: `scripts/audit/results/final-system-stable.json`. Final no-override live proof: `scripts/audit/results/2026-05-04T12-32-36Z-steady-state-final-proof.json`.
+
+> **System Control Lane (May 5, 2026):** COMPLETE. The additive reversible SHOS lane now covers feature flags, DLQ, queue failures, delivery failures, alerts, errors, and health consistency from one canonical operator surface. Full local action coverage passed, the live backlog was cleared to `dlq_pending=0`, `queue_failed=0`, `delivery_failed=0`, `errors_open=0`, and deployed production live proof passed on `https://bimasakhi.com` version `794013e`. Authoritative artifacts: `scripts/audit/results/2026-05-05T03-20-40-950Z-shos-action-coverage.json`, `scripts/audit/results/2026-05-05T03-27-05-509Z-shos-steady-state-recovery.json`, and `scripts/audit/results/2026-05-05T03-40-26-815Z-shos-production-live-proof.json`.
+
+> **P1 Admin Usability Lane (May 6, 2026):** COMPLETE and truth-locked in requested scope. Constraints were preserved (no architecture/routing/schema change). The critical draft delete retention gap was repaired, the CRM build blocker was repaired, local authenticated closure validation passed with DB row-state proof, `npm run build` passed, Vercel production deploy passed to `https://bimasakhi.com`, live admin validation passed on `/admin/pages` and `/admin/ccc/drafts`, and a generated public URL returned `200`.
+
+> **RC-2D COMPLETE � SHOS MINIMAL MUTATION-SUPPRESSION DESIGN (May 14, 2026):** Suppression-design-only cycle completed. Smallest safe suppression boundary reconstructed at SHOS core: suppress mutation execution in `performShosAction()` and suppress hidden auto-revert execution from `getShosSnapshot()` in first-deploy observability mode. Pure-read helper classification finalized (safe read helpers vs mutation-capable helpers vs unknown/requires isolation). Observability-first deploy feasibility downgraded to **SAFE_ONLY_IF_PURE_READ**. Final design decision: **MINIMAL_SUPPRESSION_PATH_RECONSTRUCTED**. Production freeze validation remained stable (public/admin status pattern unchanged, queue/DLQ/delivery active failures = 0, pending auto-reverts = 0, singleton row = 1, no cron/auth/404 spike signals). No implementation, no deployment, no runtime mutation in RC-2D. See [RC-2D-BEFORE-SUPPRESSION-DESIGN](audits/RC-2D-BEFORE-SUPPRESSION-DESIGN.md), [RC-2D-MUTATION-SUPPRESSION-DESIGN](audits/RC-2D-MUTATION-SUPPRESSION-DESIGN.md), [RC-2D-SUPPRESSION-BOUNDARY](audits/RC-2D-SUPPRESSION-BOUNDARY.md), [RC-2D-OBSERVABILITY-FIRST-DEPLOY](audits/RC-2D-OBSERVABILITY-FIRST-DEPLOY.md).
+
+> **RC-2E COMPLETE � SHOS MINIMAL MUTATION SUPPRESSION IMPLEMENTATION (May 14, 2026):** Local-only implementation cycle completed. `lib/system/shos.js` now enforces suppression through a local hard gate, skips `processDueFeatureFlagReverts()` during snapshot reads, blocks all SHOS mutation actions with explicit suppressed responses, and writes audit-visible suppression logs. Build validation passed successfully. No deployment, no runtime activation, no queue/DLQ/retry execution. See [RC-2E-BEFORE-IMPLEMENTATION](audits/RC-2E-BEFORE-IMPLEMENTATION.md), [RC-2E-PURE-READ-VALIDATION](tests/RC-2E-PURE-READ-VALIDATION.md), [RC-2E-ROLLBACK-SAFETY](tests/RC-2E-ROLLBACK-SAFETY.md).
+
+> **RC-2F COMPLETE � SHOS DEPLOYMENT READINESS RECONSTRUCTION (May 15, 2026):** Readiness-only cycle completed. Local suppression implementation remains present in `lib/system/shos.js`, build validation still passes, and no runtime mutation or deployment occurred in this cycle. Production parity was not directly revalidated here, so the deployment posture is limited to canary-only readiness until mixed-instance and warm-cache behavior are rechecked. See [RC-2F-BEFORE-DEPLOYMENT-READINESS](audits/RC-2F-BEFORE-DEPLOYMENT-READINESS.md), [RC-2F-DEPLOYMENT-READINESS](audits/RC-2F-DEPLOYMENT-READINESS.md), [RC-2F-PRODUCTION-PARITY](audits/RC-2F-PRODUCTION-PARITY.md), [RC-2F-ROLLBACK-REALISM](tests/RC-2F-ROLLBACK-REALISM.md).
+
+> **RC-2H COMPLETE � SHOS CANARY EXECUTION PROTOCOL RECONSTRUCTION (May 15, 2026):** Protocol-only cycle completed. Complete operational choreography defined for first SHOS suppression canary without any actual deployment or runtime mutation. Seven-phase choreography: PHASE 0 (Authority), PHASE 1 (Baseline), PHASE 2 (Deploy), PHASE 3 (Build), PHASE 4 (Rollout Observation � HIGH RISK), PHASE 5 (Convergence), PHASE 6 (Decision). Exact timing: 77 minutes expected (60-minute hard stop mandatory if convergence not complete). SAFE_OBSERVATION_WINDOW defined (T+8-15 min with clear divergence patterns), HIGH_RISK_WINDOW identified (T+15-30 min with observability confidence trap), CONVERGENCE_WINDOW verified (T+30-60 min with explicit verification). 15 monitoring signals specified across 5 categories: suppression verification (A1-A3), mutation suppression (B1-B4), stale-instance retirement (C1-C3), data integrity (D1-D3), observability trust (E1-E2). 8+ rollback triggers enumerated with decision trees and emergency procedures. Mixed-instance containment strategy operationalized: time-bound coexistence, divergence detection via batch monitoring, suppression gate authority, audit trail logging, rollback availability, observability calibration, stale-instance refresh minimization. Final assessment: **READY_FOR_CANARY_ONLY remains authoritative**. Three blocking issues will be resolved live during canary: (1) production parity, (2) stale-instance timing, (3) observability truthfulness. **Next cycle: RC-2I** (Canary Execution � actual deployment). **No deployment, no mutations, no runtime activation.** See [RC-2H-CANARY-PROTOCOL-BASELINE](audits/RC-2H-CANARY-PROTOCOL-BASELINE.md), [RC-2H-EXACT-DEPLOYMENT-CHOREOGRAPHY](audits/RC-2H-EXACT-DEPLOYMENT-CHOREOGRAPHY.md), [RC-2H-MIXED-INSTANCE-STRATEGY](audits/RC-2H-MIXED-INSTANCE-STRATEGY.md), [RC-2H-OBSERVATION-WINDOWS](tests/RC-2H-OBSERVATION-WINDOWS.md), [RC-2H-OBSERVABILITY-TRUTHFULNESS](tests/RC-2H-OBSERVABILITY-TRUTHFULNESS.md), [RC-2H-CANARY-MONITORING-REQUIREMENTS](tests/RC-2H-CANARY-MONITORING-REQUIREMENTS.md), [RC-2H-ROLLBACK-TRIGGERS](tests/RC-2H-ROLLBACK-TRIGGERS.md), [RC-2H-FINAL-MATRICES](tests/RC-2H-FINAL-MATRICES.md).
+
+> **RC-2K.1 COMPLETE - PROTECTED OBSERVABILITY ACCESS RECONSTRUCTION (May 16, 2026):** Access-reconstruction-only cycle completed. No deployment, no auth redesign, no middleware redesign, and no runtime mutation occurred. Authoritative baseline confirmed the same protected-surface failure pattern in unauthenticated contexts: `/admin/system` redirects to login, while `/api/admin/system`, `/api/admin/system/shos`, and `/api/admin/observability` return `401`. Auth-path was reconstructed from runtime code and live behavior: login API sets `admin_session` JWT cookie, middleware enforces JWT on `/admin*` and `/api/admin*`, route handlers enforce `withAdminAuth` and role policy. Protected observability surfaces are trustworthy for canary decisions only when reached through valid authenticated operator browser sessions. Bearer-token-only access is not a safe alternative for these protected admin APIs because middleware cookie gate runs first. Rollback decision survivability is therefore auth-dependent on session continuity for signal observation, even though rollback execution in Vercel remains operationally separate. Final classification: **READY_ONLY_WITH_OPERATOR_BROWSER_ACCESS**. See [RC-2K1-ACCESS-FAILURE-BASELINE](audits/RC-2K1-ACCESS-FAILURE-BASELINE.md), [RC-2K1-PROTECTED-OBSERVABILITY-ACCESS](audits/RC-2K1-PROTECTED-OBSERVABILITY-ACCESS.md), [RC-2K1-AUTH-PATH-VALIDATION](tests/RC-2K1-AUTH-PATH-VALIDATION.md), [RC-2K1-SESSION-CONTINUITY](tests/RC-2K1-SESSION-CONTINUITY.md).
+
+> **RC-2K PRE-T0 BLOCKED - FIRST GUARDED LIVE CANARY EXECUTION (May 16, 2026):** Live-execution attempt stopped before deployment. Structural gates passed: three distinct named operators were assigned (Raj as Deployment Lead, Pratibha as Signal Observer, Divija as Rollback Authority), rollback path was confirmed by the rollback authority, the exact 11-file SHOS canary surface remained isolatable, and `npm run build` passed locally. Public production baseline remained healthy (`/` reachable, `/api/health` returned `status=ok`). The decisive blocker was loss of authenticated observation access from the execution environment: `/admin/system` redirected to login, and `/api/admin/system/shos`, `/api/admin/system`, and `/api/admin/observability` returned `401`. Because suppression truth, mutation suppression truth, coexistence divergence, and rollback-trigger truth could not be verified after T+0, the runbook required non-entry. Final classification: **COEXISTENCE_UNSAFE**. No commit created, no git push executed, no Vercel deployment triggered, no coexistence window entered, no rollback required. See [RC-2K-PRE-CANARY-FREEZE](audits/RC-2K-PRE-CANARY-FREEZE.md), [RC-2K-LIVE-CANARY-EXECUTION](audits/RC-2K-LIVE-CANARY-EXECUTION.md), [RC-2K-COEXISTENCE-VALIDATION](tests/RC-2K-COEXISTENCE-VALIDATION.md), [RC-2K-LIVE-ROLLBACK-RESULTS](tests/RC-2K-LIVE-ROLLBACK-RESULTS.md).
+
+> **RC-2J COMPLETE -- GUARDED LIVE CANARY EXECUTION RUNBOOK (May 16, 2026):** Execution-runbook-only cycle completed. No deployment and no runtime mutation occurred. Reconstructed the exact survivable human-runtime coexistence choreography required before the first live-fire SHOS suppression production transition. Three-role operator model established with strict non-overlap: DEPLOYMENT LEAD owns push authority and documentation only; SIGNAL OBSERVER owns all batch probe execution and count reporting only; ROLLBACK AUTHORITY owns all rollback decisions and execution only. Role-overlap between signal interpreter and rollback decider is explicitly forbidden. Minute-level timeline from T-15 to T+60: preflight and staffing gate (T-15), final authority gate (T-5), deployment push (T+0), mandatory silence window (T+3 to T+8 -- no probes to prevent warm-instance refresh), SAFE_OBSERVATION with 5-request batches (T+8 to T+15), HIGH_RISK entry with cadence step-down to 5-minute maximum (T+15), mandatory 20-request convergence test (T+30), final PROCEED or ROLLBACK decision (T+45), automatic non-deliberative rollback (T+60). Key new analyses unique to RC-2J: (1) Operator monitoring extends stale-instance coexistence via warm-instance timer refresh -- operationalized as mandatory step-down cadence at T+15 and ShosControlCenter UI prohibited during HIGH_RISK window. (2) Rollback creates a second coexistence event -- post-rollback success requires batch verification (10-request batch, >=9/10 unsuppressed) with minimum 10-minute stabilization window. (3) Confidence-trap detection model formalized: mandatory distrust windows T+15 to T+30 and T+rollback+0 to T+rollback+10, forbidden interpretation patterns, 25+ forbidden observability behaviors enumerated. Final execution classification: **READY_FOR_GUARDED_CANARY_EXECUTION** (conditional on all three roles present and confirmed at T-15 gate). See [RC-2J-LIVE-EXECUTION-BASELINE](audits/RC-2J-LIVE-EXECUTION-BASELINE.md), [RC-2J-GUARDED-LIVE-EXECUTION](audits/RC-2J-GUARDED-LIVE-EXECUTION.md), [RC-2J-ROLLBACK-RUNBOOK](tests/RC-2J-ROLLBACK-RUNBOOK.md), [RC-2J-OBSERVABILITY-DISCIPLINE](tests/RC-2J-OBSERVABILITY-DISCIPLINE.md).
+> **RC-2I COMPLETE � LIVE CANARY AUTHORIZATION RECONSTRUCTION (May 16, 2026):** Authorization-only cycle completed. No deployment and no runtime mutation occurred. Final reconstruction classified technical survivability as pass-with-constraints, operator readiness as OPERATOR_RISK, production calmness as CALM_ENOUGH_FOR_CANARY (conditional), rollback confidence as LIVE_ROLLBACK_RISKY, and observability decision trust as OBSERVABILITY_DECISION_RISKY. Under conservative stress-realism rules, full authorization is downgraded. Authoritative outcome: **AUTHORIZED_ONLY_WITH_EXTRA_GUARDS**. Required guards include two-person decision operation, explicit authority roster, fixed rollback-critical checkpoints, mandatory 20-request convergence verification before proceed decisions, discretionary rollback right through T+60, and strict no-go on staffing/tooling gaps. This cycle reconstructs authorization truth only and does not initiate rollout. See [RC-2I-LIVE-AUTHORIZATION-BASELINE](audits/RC-2I-LIVE-AUTHORIZATION-BASELINE.md), [RC-2I-LIVE-CANARY-AUTHORIZATION](audits/RC-2I-LIVE-CANARY-AUTHORIZATION.md), [RC-2I-OPERATOR-READINESS](tests/RC-2I-OPERATOR-READINESS.md), [RC-2I-LIVE-ROLLBACK-CONFIDENCE](tests/RC-2I-LIVE-ROLLBACK-CONFIDENCE.md).
+
+> **RC-2C COMPLETE � SHOS FIRST-DEPLOY SAFETY CONTAINMENT (May 14, 2026):** Containment-analysis-only cycle completed. Mutation authority reconstructed across all SHOS action paths and hidden side effects. Observability classification: GET snapshot surfaces are mutation-capable observation because `getShosSnapshot()` executes `processDueFeatureFlagReverts()` and can write control state when pending reverts exist. First-deploy safe-mode conclusion: **SAFE_ONLY_WITH_MUTATION_SUPPRESSION**. Operator-discipline-only and split-only strategies are insufficient as primary containment. Production observability freeze validation over a two-hour comparison window remained stable (public route status stable, queue/DLQ/delivery failed active = 0, pending auto-reverts = 0, singleton config row = 1, no cron/auth/404 spike signals). No deployment and no runtime mutation in RC-2C. See [RC-2C-BEFORE-CONTAINMENT](audits/RC-2C-BEFORE-CONTAINMENT.md), [RC-2C-MUTATION-AUTHORITY-MATRIX](audits/RC-2C-MUTATION-AUTHORITY-MATRIX.md), [RC-2C-OBSERVABILITY-SAFETY](audits/RC-2C-OBSERVABILITY-SAFETY.md), [RC-2C-FIRST-DEPLOY-CONTAINMENT](audits/RC-2C-FIRST-DEPLOY-CONTAINMENT.md).
+
+> **RC-2B CYCLE 8 COMPLETE � ATOM-C AMBIGUITY RESOLUTION GATE (May 14, 2026):** Ambiguity-resolution-only cycle completed. DEP-AMB-01 (`lib/queue/deliveryTruth.js`) and DEP-AMB-02 (`lib/system/systemHealth.js`) resolved as **OPTIONAL_FOR_ATOM-C** (runtime-active but non-blocking; excluded from ATOM-C commit). OPDEP-01 verified clear by direct read-only query: pending due auto-reverts = 0, total pending auto-reverts = 0. OPDEP-04 verified clear: `system_control_config` singleton rows = 1. Runtime behavior note remains: if singleton rows exceed one, SHOS `.maybeSingle()` path hard-fails. State transition: **BLOCKED_PENDING_REVIEW ? READY_FOR_STAGED_DEPLOYMENT** (readiness-state only). No deployment, no runtime mutation, no queue/DLQ/retry/flag/auth/cron/env mutation in Cycle 8. See [RC-2B-CYCLE8-BEFORE-AMBIGUITY-RESOLUTION](audits/RC-2B-CYCLE8-BEFORE-AMBIGUITY-RESOLUTION.md), [RC-2B-CYCLE8-DEPENDENCY-CLASSIFICATION](audits/RC-2B-CYCLE8-DEPENDENCY-CLASSIFICATION.md), [RC-2B-CYCLE8-OPERATIONAL-GATE-VERIFICATION](audits/RC-2B-CYCLE8-OPERATIONAL-GATE-VERIFICATION.md), [RC-2B-CYCLE8-AMBIGUITY-RESOLUTION](audits/RC-2B-CYCLE8-AMBIGUITY-RESOLUTION.md).
+
+> **RC-2B CYCLE 7 COMPLETE � ATOM-C DEPLOYMENT READINESS GATE (May 14, 2026):** Readiness-only cycle completed. ATOM-C manifest reconstructed: 3 untracked files (`lib/system/shos.js`, `app/api/admin/system/shos/route.js`, `features/admin/system/ShosControlCenter.jsx`) + 8 tracked/modified routes + 1 tracked/modified system page = **11 mandatory files**. Dependency closure: all 12 required DB tables present in production; all clean dependency libs already deployed (ATOM-B included `withAdminAuth`). **Critical finding:** `getShosSnapshot()` is **READ_WITH_GLOBAL_SIDE_EFFECT** � `processDueFeatureFlagReverts()` fires on every snapshot GET and can silently mutate `system_control_config`. Two dependency ambiguities remain unresolved: DEP-AMB-01 (`lib/queue/deliveryTruth.js` local diff) and DEP-AMB-02 (`lib/system/systemHealth.js` local diff). Rollback: code-level deterministic via Vercel 1-click to `9e12ef2`; data-level mutations persist. 42-check validation matrix constructed. **Decision: BLOCKED_PENDING_REVIEW** on DEP-AMB-01, DEP-AMB-02, OPDEP-01, OPDEP-04. No deployment, no runtime mutation. See [RC-2B-CYCLE7-BEFORE-READINESS-GATE](audits/RC-2B-CYCLE7-BEFORE-READINESS-GATE.md), [RC-2B-CYCLE7-ATOM-C-MANIFEST](audits/RC-2B-CYCLE7-ATOM-C-MANIFEST.md), [RC-2B-CYCLE7-DEPENDENCY-CLOSURE](audits/RC-2B-CYCLE7-DEPENDENCY-CLOSURE.md), [RC-2B-CYCLE7-DEPLOYMENT-LOCK-MATRIX](audits/RC-2B-CYCLE7-DEPLOYMENT-LOCK-MATRIX.md), [RC-2B-CYCLE7-VALIDATION-MATRIX](audits/RC-2B-CYCLE7-VALIDATION-MATRIX.md).
+
+> **RC-2B CYCLE 6 COMPLETE � SHOS CONTRACT RECONSTRUCTION (May 14, 2026):** Forensic-only contract lineage completed. Authoritative runtime and schema table for delivery/retry truth is `external_delivery_logs`; no migration or runtime table caller exists for `delivery_failures`. `delivery_failures` is now classified as stale/ghost contract naming (metric label legacy), not canonical schema. SHOS remains undeployed; no runtime mutation occurred. Next cycle requirement is deployment-readiness gating (atomic SHOS manifest + validation matrix) without schema mutation. See [RC-2B-CYCLE6-BEFORE-CONTRACT-RECONSTRUCTION](audits/RC-2B-CYCLE6-BEFORE-CONTRACT-RECONSTRUCTION.md), [RC-2B-CYCLE6-DELIVERY-LINEAGE](audits/RC-2B-CYCLE6-DELIVERY-LINEAGE.md), [RC-2B-CYCLE6-RUNTIME-VS-SCHEMA-TRUTH](audits/RC-2B-CYCLE6-RUNTIME-VS-SCHEMA-TRUTH.md), [RC-2B-CYCLE6-CONTRACT-RECONSTRUCTION](audits/RC-2B-CYCLE6-CONTRACT-RECONSTRUCTION.md).
+
+> **RC-2B CYCLE 5 COMPLETE � ATOM-C SHOS FORENSIC VERIFICATION (May 14, 2026):** Review-only cycle completed. SHOS remains local-only (`lib/system/shos.js` and `/api/admin/system/shos` are not in HEAD). Seven admin routes are locally SHOS-wired but deployed variants are not. Required table gate check found `delivery_failures` missing, while implementation uses `external_delivery_logs`. **Decision: BLOCKED_PENDING_REVIEW.** No deployment, no queue/DLQ/retry mutation, no cron/auth/AI-governance change. Next cycle must resolve contract mismatch and freeze an atomic SHOS file manifest before any deployment attempt. See [RC-2B-CYCLE5-BEFORE-ATOM-C](audits/RC-2B-CYCLE5-BEFORE-ATOM-C.md), [RC-2B-CYCLE5-ATOM-C-FORENSIC-REVIEW](audits/RC-2B-CYCLE5-ATOM-C-FORENSIC-REVIEW.md), [RC-2B-CYCLE5-SHOS-EXECUTION-GRAPH](audits/RC-2B-CYCLE5-SHOS-EXECUTION-GRAPH.md), [RC-2B-CYCLE5-SHOS-BLAST-RADIUS](audits/RC-2B-CYCLE5-SHOS-BLAST-RADIUS.md).
+
+> **RC-2B CYCLE 4 COMPLETE � ATOM-B DEPLOYMENT (May 14, 2026):** middleware.js + withAdminAuth.js deployed as `9e12ef2`. Auth architecture converged: middleware removes x-admin-role/user/email header injection, withAdminAuth now calls `verifyAdminSession(request)` directly from cookie instead of reading headers. Same JWT, same session cookie format, no re-login required. Session continuity verified. All 5 public routes 200, admin auth protection active, AI gates intact. Rollback path: Vercel 1-click to `7ba4c5d`, ~2 min. STOP RULE enforced. **Next cycle: ATOM-C** (requires `system_control_actions` table verify). See [RC-2B-CYCLE4-ATOM-B-DEPLOYMENT](audits/RC-2B-CYCLE4-ATOM-B-DEPLOYMENT.md), [RC-2B-CYCLE4-ATOM-B-RUNTIME-VALIDATION](tests/RC-2B-CYCLE4-ATOM-B-RUNTIME-VALIDATION.md), [RC-2B-CYCLE4-AFTER-ATOM-B](audits/RC-2B-CYCLE4-AFTER-ATOM-B.md).
+
+> **RC-2B CYCLE 3 COMPLETE � ATOM-B FORENSIC REVIEW (May 14, 2026):**
+
+> **RC-2B CYCLE 3 COMPLETE � ATOM-B FORENSIC REVIEW (May 14, 2026):** Auth pair diff reconstructed. `middleware.js`: removes x-admin-role/user/email header injection (2 locations). `withAdminAuth.js`: switches from header reads to `verifyAdminSession(request)` direct cookie verification. **Verdict: READY_FOR_DEPLOYMENT.** All deps deployed. Cookie semantics unchanged. Existing sessions preserved. Blast radius: admin API routes only. Lockout risk: NONE when both files in same commit. Rollback: Vercel 1-click to `7ba4c5d`, ~2 min. **NO deployment in this cycle.** See [RC-2B-CYCLE3-ATOM-B-FORENSIC-REVIEW](audits/RC-2B-CYCLE3-ATOM-B-FORENSIC-REVIEW.md), [RC-2B-CYCLE3-AUTH-EXECUTION-TRACE](audits/RC-2B-CYCLE3-AUTH-EXECUTION-TRACE.md), [RC-2B-CYCLE3-ADMIN-LOCKOUT-RISK](audits/RC-2B-CYCLE3-ADMIN-LOCKOUT-RISK.md).
+
+> **RC-2B CYCLE 2 COMPLETE � ATOM-A (May 14, 2026):**** 3 AI governance routes deployed as `7ba4c5d`. All 3 routes now enforce `ai_enabled` flag: `POST /api/admin/ai`, `POST /api/admin/ai/recruiter`, `POST /api/admin/seo/analyze` return `503 AI_DISABLED` when `ai_enabled=false`. OPB-01 governance gap RESOLVED. Import chain verified (no untracked deps). 4 public routes validated 200 post-deploy. STOP RULE enforced. **Next cycle: ATOM-B** (auth pair � requires diff review). See [RC-2B-CYCLE2-ATOM-A-EXECUTION](audits/RC-2B-CYCLE2-ATOM-A-EXECUTION.md), [RC-2B-CYCLE2-ATOM-A-VALIDATION](tests/RC-2B-CYCLE2-ATOM-A-VALIDATION.md), [RC-2B-CYCLE2-AFTER-ATOM-A](audits/RC-2B-CYCLE2-AFTER-ATOM-A.md).
+
+> **RC-2B CYCLE 1 COMPLETE � ATOM-G (May 14, 2026):**** 5 orphaned migration SQL files committed to git as `c8334d3` and pushed to `origin/main`. Production validated: homepage 200, full content operational. DB schema unchanged (migrations already applied � ATOM-G was git record-keeping only). P2 working tree fully preserved (stashed and restored). GSB-01 blocker RESOLVED. **Next cycle: ATOM-A** (3 AI governance routes). STOP RULE enforced: max ONE ATOM per cycle. See [RC-2B-CONVERGENCE-EXECUTION](audits/RC-2B-CONVERGENCE-EXECUTION.md), [RC-2B-RUNTIME-VALIDATION](tests/RC-2B-RUNTIME-VALIDATION.md), [RC-2B-AFTER-CONVERGENCE](audits/RC-2B-AFTER-CONVERGENCE.md).
+
+> **RC-2A DEPLOYMENT CONVERGENCE PLANNING (May 14, 2026):** Deployment strategy is now operationally deterministic. **9 atomic deployment groups** defined (ATOM-A through ATOM-I + LOCAL-ONLY). **Mandatory deploy sequence:** ATOM-G ? ATOM-A ? ATOM-B ? ATOM-C ? ATOM-F ? ATOM-D (conditional on AI) ? ATOM-E (LAST, CMS resolver, ALL public pages). **21 blockers classified** across 7 categories. **Deployment safety matrix** complete for 11 subsystems. **RC-2B immediately actionable:** ATOM-G (no deploy, git-only) and ATOM-A (LOW risk, 3 governance routes) have zero blockers. ATOM-B requires auth diff review first. **ATOM-E is highest risk** � replaces catch-all page routing, requires Vercel preview test and pre-staged rollback. **Zero runtime mutation** in RC-2A. See [RC-2A-DEPLOYMENT-CONVERGENCE-PLAN](audits/RC-2A-DEPLOYMENT-CONVERGENCE-PLAN.md), [RC-2A-DEPLOYMENT-GROUPS](audits/RC-2A-DEPLOYMENT-GROUPS.md), [RC-2A-HARD-BLOCKERS](audits/RC-2A-HARD-BLOCKERS.md), [RC-2A-DEPLOYMENT-SAFETY-MATRIX](audits/RC-2A-DEPLOYMENT-SAFETY-MATRIX.md).
+
+> **RC-1D REPOSITORY TRUTH RECONSTRUCTION (May 14, 2026):** Full classification complete. Production commit `794013e` is stable. **57 modified tracked files** (all shadow � production running P1 versions). **8 new code files** (all LOCAL_ONLY, never deployed). **5 orphaned migrations** (applied to DB, never committed � DB is ahead of git). **5 hard build blockers** identified: HARD-01 CMS resolver chain (`app/[...slug]/page.js` ? `lib/cms/resolveRoute`), HARD-02 SHOS library (7 routes ? `lib/system/shos`), HARD-03 promptEngine (5 routes ? `lib/ai/promptEngine`), HARD-04 ShosControlCenter UI, HARD-05 ContentInventoryContent UI. **16 DANGEROUS_UNRESOLVED files** have incomplete import chains. **5 dangerous mixed states** documented. **RC-1B governance gates are LOCAL_ONLY** � production does NOT currently enforce `ai_enabled`. Deployment requires 5 atomic groups (ATOM-A through ATOM-E). ATOM-A (3 governance routes) is immediately deployable. See [RC-1D-DEPLOYMENT-BLOCKERS](audits/RC-1D-DEPLOYMENT-BLOCKERS.md).
+
+> **FORENSIC DEPLOYMENT AUDIT (May 13, 2026):** Complete forensic investigation concluded. 54 modified tracked files + 11 new untracked code files + 5 orphaned migrations = zero deployed to production. 4 hard deployment blockers identified (resolveRoute, ContentInventoryContent, ShosControlCenter, promptEngine � all new untracked files required by modified tracked files). 1 coupled auth pair (middleware.js + withAdminAuth.js). Deployment prescription: 3 atomic commits. See docs/audits/FORENSIC_DEPLOYMENT_RECONCILIATION.md for full report. **[SUPERSEDED by RC-1D � RC-1D is authoritative as of May 14]**
+
+> **EXTERNAL SYSTEM FORENSICS (May 13, 2026):** Full forensic audit of all 8 external integrations complete. 10 findings documented across 8 dedicated audit files. **OPERATIONAL:** Supabase (93/100, healthy), QStash (83/100, delivery confirmed May 13), Zoho CRM (82/100, sync confirmed May 13). **DEGRADED:** Redis (65/100, connected but rate limiter bypassed), Telegram (48/100, structurally complete, live unconfirmed). **FAILED:** Gemini AI (40/100, quota exhausted ~May 4 � SILENT FAILURE, ai_enabled=true but API returns 429). **INERT:** Medium API (0/100, keys present, zero code), OpenAI (0/100, file exists but never imported, key absent). **P0 gap resolved:** (1) Gemini governance fixed by RC-1B � ai_enabled=false set May 13; (2) scheduled-publish cron "never registered" was a FALSE finding � corrected by RC-1C verification May 14. Cron `scd_7J8DtLe6UoKNbB8gTnag7GrQ89m1` active since C24 (2026-04-26). All 6 QStash crons confirmed live. See docs/audits/RC-1C-SCHEDULED-PUBLISH-VERIFICATION.md.
+
+> **RC-1B GOVERNANCE ALIGNMENT (May 13, 2026):** Minimal governance alignment complete. `ai_enabled` flag now gates all 6 direct AI execution paths (was 1/6 before). Admin AI health now shows "Degraded" when Gemini quota is exhausted via live provider probe (timeout-bounded, fail-closed). pagegen worker returns HTTP 200 + queue.failed (not HTTP 500) when AI is disabled � prevents QStash retry storm. 6 files changed, 0 schema changes, all mutations reversible. Governance coverage: 17% ? 100%. Admin health accuracy: FALSE ? TRUE. See docs/fixes/RC-1B-MINIMAL_GOVERNANCE_ALIGNMENT.md.
+
+> **RC-1B.1 AI PAUSE ACTIVATION (May 13, 2026 18:01 UTC):** Controlled activation of RC-1B governance gates. `ai_enabled` set to `false` in production DB. All 6 AI execution paths now blocked at gate (Gemini API calls: ZERO). Admin shows `ai_status: "Paused"` (accurate). Queue: idle (0 pending/processing). DLQ: 2 pre-existing entries unchanged. Audit trail written to observability_logs. **Operator action to restore:** Set `ai_enabled=true` after Gemini quota is resolved. Rollback: single DB write, < 60 seconds, no deployment. See docs/audits/RC-1B1-AI-PAUSE-ACTIVATION.md.
+
+> **P2 DEPLOYMENT STATUS � RC-1D AUTHORITATIVE (What is local-only vs deployed):**
+> - ? DEPLOYED + EXECUTING: All P1 work (May 6 deploy), 6 QStash crons, CRM workers, control plane config
+> - ? LOCAL_ONLY + IMPORT_BLOCKER: `lib/system/shos.js` � blocks 7 admin routes + SHOS UI
+> - ? LOCAL_ONLY + IMPORT_BLOCKER: `lib/cms/resolveRoute.js` + `resolveCmsRoute.js` � blocks `app/[...slug]/page.js`
+> - ? LOCAL_ONLY + IMPORT_BLOCKER: `lib/ai/promptEngine.js` � blocks pagegen + 4 admin routes
+> - ? LOCAL_ONLY + IMPORT_BLOCKER: `features/admin/content/ContentInventoryContent.jsx` � blocks admin CCC page
+> - ? LOCAL_ONLY + IMPORT_BLOCKER: `features/admin/system/ShosControlCenter.jsx` � blocks admin system page
+> - ? LOCAL_ONLY: `app/api/admin/cms/structure/route.js`, `app/api/admin/system/shos/route.js`
+> - ? GOVERNANCE GAP: RC-1B governance gates exist LOCALLY but are NOT deployed. Production does NOT enforce `ai_enabled`.
+> - ? VERSION MISMATCH: `app/[...slug]/page.js`, `app/admin/ccc/page.js`, `app/admin/system/page.js`, `middleware.js`, `withAdminAuth.js` � local P2 versions, production has P1 versions
 
 ---
 
 ## Table of Contents
 
-0. [🚨 Master Execution Rulebook — Non-Negotiable + System Constitution](#0-master-execution-rulebook)
-0.1. [🧠 CTO Operating Protocol — System Ownership Contract](#01-cto-operating-protocol)
+0. [?? Master Execution Rulebook � Non-Negotiable + System Constitution](#0-master-execution-rulebook)
+0.1. [?? CTO Operating Protocol � System Ownership Contract](#01-cto-operating-protocol)
 1. [Executive Summary](#1-executive-summary)
-2. [Honest Current State — What's Built, What's Broken](#2-honest-current-state)
-3. [🚨 The Rendering Gap — Critical Bug](#3-the-rendering-gap--critical-bug)
+2. [Honest Current State � What's Built, What's Broken](#2-honest-current-state)
+3. [?? The Rendering Gap � Critical Bug](#3-the-rendering-gap--critical-bug)
 4. [The Big Picture Architecture](#4-the-big-picture-architecture)
 5. [Engine 1: Geo + Intent Intelligence](#5-engine-1-geo--intent-intelligence)
 6. [Engine 2: Content Command Center Dashboard](#6-engine-2-content-command-center-dashboard)
@@ -32,43 +102,43 @@
 16. [Implementation Phases](#16-implementation-phases)
 17. [Success Metrics](#17-success-metrics)
 18. [The Competitive Moat](#18-the-competitive-moat)
-19. [🎯 Multi-Intent Lead Funnel Architecture](#19-multi-intent-lead-funnel-architecture)
-20. [👑 The CEO Control Principle](#20-the-ceo-control-principle)
-21. [🧠 Intelligence Layer — Self-Learning SEO Brain](#21-intelligence-layer--self-learning-seo-brain)
-22. [⚡ Smart Internal Linking Engine](#22-smart-internal-linking-engine)
-23. [🏆 Lead Scoring System](#23-lead-scoring-system)
-24. [🌐 Bilingual Content Engine](#24-bilingual-content-engine)
-25. [🔄 Auto Content Variation Engine](#25-auto-content-variation-engine)
-26. [📲 Content → Social Auto Engine](#26-content--social-auto-engine)
-27. [👤 Agent Personalization Engine](#27-agent-personalization-engine)
-28. [📊 Analytics Stack — GTM + GA4 + GSC + GT Matrix](#28-analytics-stack)
-29. [🎨 Smart Forms + Dynamic Post-Conversion Flow](#29-smart-forms--dynamic-post-conversion-flow)
-30. [📞 Contact Page Fix + Form Strategy](#30-contact-page-fix--form-strategy)
-31. [🚀 The Self-Growing System — Ultimate Vision](#31-the-self-growing-system--ultimate-vision)
-32. [🖥️ Super Admin Panel — The Business Owner's Control Tower](#32-super-admin-panel--the-business-owners-control-tower)
-33. [🏗️ New Agent Creation Pipeline — Lead to Licensed Agent](#33-new-agent-creation-pipeline)
-34. [🏃 Active Agent Management System — Running Your Agency Force](#34-active-agent-management-system)
-35. [📋 Agent Lifecycle Management — Inforce, Terminated, Compliance](#35-agent-lifecycle-management)
-36. [👥 Customer Management Ecosystem — Policy Servicing & Growth](#36-customer-management-ecosystem)
-37. [🌊 Universal Lead Management Hub — All Sources, All Types, One System](#37-universal-lead-management-hub)
-38. [🧠 System Intelligence & Decision Engine — The Brain Layer](#38-system-intelligence--decision-engine)
-39. [🛡️ External System Governance — Vendor Control & Resilience Layer](#39-external-system-governance)
+19. [?? Multi-Intent Lead Funnel Architecture](#19-multi-intent-lead-funnel-architecture)
+20. [?? The CEO Control Principle](#20-the-ceo-control-principle)
+21. [?? Intelligence Layer � Self-Learning SEO Brain](#21-intelligence-layer--self-learning-seo-brain)
+22. [? Smart Internal Linking Engine](#22-smart-internal-linking-engine)
+23. [?? Lead Scoring System](#23-lead-scoring-system)
+24. [?? Bilingual Content Engine](#24-bilingual-content-engine)
+25. [?? Auto Content Variation Engine](#25-auto-content-variation-engine)
+26. [?? Content ? Social Auto Engine](#26-content--social-auto-engine)
+27. [?? Agent Personalization Engine](#27-agent-personalization-engine)
+28. [?? Analytics Stack � GTM + GA4 + GSC + GT Matrix](#28-analytics-stack)
+29. [?? Smart Forms + Dynamic Post-Conversion Flow](#29-smart-forms--dynamic-post-conversion-flow)
+30. [?? Contact Page Fix + Form Strategy](#30-contact-page-fix--form-strategy)
+31. [?? The Self-Growing System � Ultimate Vision](#31-the-self-growing-system--ultimate-vision)
+32. [??? Super Admin Panel � The Business Owner's Control Tower](#32-super-admin-panel--the-business-owners-control-tower)
+33. [??? New Agent Creation Pipeline � Lead to Licensed Agent](#33-new-agent-creation-pipeline)
+34. [?? Active Agent Management System � Running Your Agency Force](#34-active-agent-management-system)
+35. [?? Agent Lifecycle Management � Inforce, Terminated, Compliance](#35-agent-lifecycle-management)
+36. [?? Customer Management Ecosystem � Policy Servicing & Growth](#36-customer-management-ecosystem)
+37. [?? Universal Lead Management Hub � All Sources, All Types, One System](#37-universal-lead-management-hub)
+38. [?? System Intelligence & Decision Engine � The Brain Layer](#38-system-intelligence--decision-engine)
+39. [??? External System Governance � Vendor Control & Resilience Layer](#39-external-system-governance)
 
-40. [📝 System Memory & Traceability — The Documentation Layer](#40-system-memory--traceability)
-41. [📲 Communication System — Multi-Channel Alert & Messaging](#41-communication-system)
-42. [🖼️ Media Management System — Storage, CDN & Image Intelligence](#42-media-management-system)
-43. [🧩 Unified Content System — Single Dashboard, All Content](#43-unified-content-system)
-44. [🗺️ Geo Control System — City, Locality, Pincode Management](#44-geo-control-system)
-45. [🧭 Navigation Management System — Database-Driven Menus](#45-navigation-management-system)
-46. [🧠 Decision System — Why Now, Why Not Later](#46-decision-system)
-47. [📊 Truth System — Single Source of Truth, Anti-Confusion](#47-truth-system)
-48. [🏗️ Mosaic Execution System — Parallel Worker Model](#48-mosaic-execution-system)
-49. [🔥 Staged Audit Fix Plan — Priority-Ordered Remediation](#49-staged-audit-fix-plan)
+40. [?? System Memory & Traceability � The Documentation Layer](#40-system-memory--traceability)
+41. [?? Communication System � Multi-Channel Alert & Messaging](#41-communication-system)
+42. [??? Media Management System � Storage, CDN & Image Intelligence](#42-media-management-system)
+43. [?? Unified Content System � Single Dashboard, All Content](#43-unified-content-system)
+44. [??? Geo Control System � City, Locality, Pincode Management](#44-geo-control-system)
+45. [?? Navigation Management System � Database-Driven Menus](#45-navigation-management-system)
+46. [?? Decision System � Why Now, Why Not Later](#46-decision-system)
+47. [?? Truth System � Single Source of Truth, Anti-Confusion](#47-truth-system)
+48. [??? Mosaic Execution System � Parallel Worker Model](#48-mosaic-execution-system)
+49. [?? Staged Audit Fix Plan � Priority-Ordered Remediation](#49-staged-audit-fix-plan)
 
 ---
 
-> ⚠️ **These rules are non-negotiable. They are not guidelines — they are the operating contract for every phase of this system.**  
-> ⚠️ **Any work that violates these rules must be stopped, redesigned, and re-approved before continuing.**
+> ?? **These rules are non-negotiable. They are not guidelines � they are the operating contract for every phase of this system.**  
+> ?? **Any work that violates these rules must be stopped, redesigned, and re-approved before continuing.**
 
 ### The Golden Principle
 
@@ -78,60 +148,60 @@
 
 ---
 
-## 🚨 SYSTEM CONSTITUTION — Supreme Law of the System
+## ?? SYSTEM CONSTITUTION � Supreme Law of the System
 
-> ⚠️ **This constitution sits ABOVE all rules. No rule, phase, feature, or code can override these articles.**
-> ⚠️ **Any work that violates the constitution MUST be stopped, reverted, and reported to CEO immediately.**
+> ?? **This constitution sits ABOVE all rules. No rule, phase, feature, or code can override these articles.**
+> ?? **Any work that violates the constitution MUST be stopped, reverted, and reported to CEO immediately.**
 
 ### System Hierarchy (Power Flow)
 
 ```
 CEO (Supreme Authority)
-  ↓
-CONSTITUTION (This section — cannot be overridden)
-  ↓
-CCC RULES (Operating contract — Rules 1-33+)
-  ↓
-PHASES (Execution plan — ordered, dependency-mapped)
-  ↓
-SECTIONS (Feature specifications — detailed blueprints)
-  ↓
-CODE (Implementation — must comply with ALL above layers)
+  ?
+CONSTITUTION (This section � cannot be overridden)
+  ?
+CCC RULES (Operating contract � Rules 1-33+)
+  ?
+PHASES (Execution plan � ordered, dependency-mapped)
+  ?
+SECTIONS (Feature specifications � detailed blueprints)
+  ?
+CODE (Implementation � must comply with ALL above layers)
 ```
 
 > **Code kabhi CCC ke against nahi ja sakta. CCC kabhi Constitution ke against nahi ja sakta. Constitution kabhi CEO ke against nahi ja sakta.**
 
 ---
 
-### Article 1 — CEO SUPREMACY
+### Article 1 � CEO SUPREMACY
 
 ```
 Final decision = CEO. Always. No exception.
 System kabhi CEO ko restrict nahi karega.
 CEO ka order > CCC rule > Phase plan > Code logic.
-Agar CEO bole "ye badlo" → CTO badlega, question nahi karega.
-Agar CEO bole "ye mat karo" → Band. Immediately.
-CEO ko har cheez control karne ka option milega — chahe wo use kare ya na kare.
+Agar CEO bole "ye badlo" ? CTO badlega, question nahi karega.
+Agar CEO bole "ye mat karo" ? Band. Immediately.
+CEO ko har cheez control karne ka option milega � chahe wo use kare ya na kare.
 ```
 
 ---
 
-### Article 2 — NO FAKE COMPLETION
+### Article 2 � NO FAKE COMPLETION
 
 ```
 Phase tabhi COMPLETE hoga jab:
-  ✅ Code written and deployed
-  ✅ Production test passed (not just local)
-  ✅ Admin usable by CEO (not just API)
-  ✅ CEO verified and approved
-  ✅ No known bugs at time of marking
-  ✅ All sub-phases complete
-  ✅ Bible updated with completion proof
+  ? Code written and deployed
+  ? Production test passed (not just local)
+  ? Admin usable by CEO (not just API)
+  ? CEO verified and approved
+  ? No known bugs at time of marking
+  ? All sub-phases complete
+  ? Bible updated with completion proof
 
 Agar koi bhi condition fail:
-  ❌ Status = "PARTIAL" (not COMPLETE)
-  ❌ Phase remains open until ALL conditions met
-  ❌ CTO must document what's missing and why
+  ? Status = "PARTIAL" (not COMPLETE)
+  ? Phase remains open until ALL conditions met
+  ? CTO must document what's missing and why
 
 HISTORY: Phases 3, 14, 21 were marked COMPLETE with known bugs.
 This violated the constitution. Never again.
@@ -139,17 +209,17 @@ This violated the constitution. Never again.
 
 ---
 
-### Article 3 — BUILD DEEP, NOT WIDE
+### Article 3 � BUILD DEEP, NOT WIDE
 
 ```
-Ek feature fully complete hoga → tabhi next feature start hoga.
+Ek feature fully complete hoga ? tabhi next feature start hoga.
 "Broad scaffolding" without depth = INCOMPLETE.
 Half-built infrastructure is WORSE than no infrastructure.
 
 Examples of violation:
-  ❌ Alert system built but delivery channels not connected
-  ❌ RBAC system built but single password for everyone
-  ❌ Image prompts built but upload broken in production
+  ? Alert system built but delivery channels not connected
+  ? RBAC system built but single password for everyone
+  ? Image prompts built but upload broken in production
 
 Rule: If you build the skeleton, you MUST build the organs.
 No skeleton-only phases will be marked COMPLETE ever again.
@@ -157,12 +227,12 @@ No skeleton-only phases will be marked COMPLETE ever again.
 
 ---
 
-### Article 4 — CEO CONTROL MANDATORY
+### Article 4 � CEO CONTROL MANDATORY
 
 ```
 Har feature ka ek test:
   "Kya CEO admin panel se is feature ko control kar sakta hai?"
-  Agar answer NO → Feature INCOMPLETE hai.
+  Agar answer NO ? Feature INCOMPLETE hai.
 
 CEO control means:
   - Create / Read / Update / Delete from admin UI
@@ -184,64 +254,64 @@ Feature-wise CEO Control Requirements:
   | System          | Safe mode, feature flags, workflow config     |
   | Communication   | WhatsApp/Telegram/Email templates & settings  |
 
-Agar control nahi → feature invalid. Period.
+Agar control nahi ? feature invalid. Period.
 ```
 
 ---
 
-### Article 5 — PHASE STATUS TYPES
+### Article 5 � PHASE STATUS TYPES
 
 ```
 Every phase MUST have one of these statuses:
 
   | Status       | Symbol | Meaning                                    |
   |-------------|--------|--------------------------------------------|
-  | NOT STARTED | ⬜     | Zero code written, untouched               |
-  | IN PROGRESS | 🔄     | Currently being built                      |
-  | PARTIAL     | ⚠️     | Some parts work, known gaps/bugs exist     |
-  | COMPLETE    | ✅     | Fully verified, CEO-approved, zero bugs    |
-  | BLOCKED     | 🚫     | Cannot proceed — dependency or decision    |
+  | NOT STARTED | ?     | Zero code written, untouched               |
+  | IN PROGRESS | ??     | Currently being built                      |
+  | PARTIAL     | ??     | Some parts work, known gaps/bugs exist     |
+  | COMPLETE    | ?     | Fully verified, CEO-approved, zero bugs    |
+  | BLOCKED     | ??     | Cannot proceed � dependency or decision    |
 
   Phase Completion Authority = CEO ONLY.
   CTO can mark IN PROGRESS, PARTIAL, or BLOCKED.
-  CTO CANNOT mark COMPLETE — only CEO can after verification.
+  CTO CANNOT mark COMPLETE � only CEO can after verification.
 
   Current corrected statuses:
-  Phase 1:  ✅ COMPLETE (CEO verified, no bugs)
-  Phase 2:  ✅ COMPLETE (CEO verified, functional)
-  Phase 3:  ⚠️ PARTIAL (image upload broken in production)
-  Phase 4:  ⚠️ PARTIAL (city-only, no locality targeting)
-  Phase 5:  ⚠️ PARTIAL (CEO cannot add cities/localities)
-  Phase 14: ⚠️ PARTIAL (C29 Code Visibility is live-proven, C30 and P0.4 now both have local runtime proof, but their live deployment proof and broader RBAC lifecycle proof are still missing)
-  Phase 21: ⚠️ PARTIAL (alerts never reach CEO, channels not connected)
-  Phase 22: 🔄 IN PROGRESS (docs/ structure created)
+  Phase 1:  ? COMPLETE (CEO verified, no bugs)
+  Phase 2:  ? COMPLETE (CEO verified, functional)
+  Phase 3:  ?? PARTIAL (image upload broken in production)
+  Phase 4:  ?? PARTIAL (operator-grade bulk controls are now deployed and live-proven for search/filter/detail/failure/retry/clear, but real queue-backed start proof is still blocked in production and broader scale/pincode depth remains open)
+  Phase 5:  ?? PARTIAL (CEO cannot add cities/localities)
+  Phase 14: ?? PARTIAL (C29 Code Visibility is live-proven, C30 remains local-runtime proven only, and P0.4 now has its earlier local admin proof, a live-proven Module 1 unified content inventory slice, and a deployed Module 2 bulk operator surface with partial live proof; broader RBAC/admin completion still remains)
+  Phase 21: ?? PARTIAL (alerts never reach CEO, channels not connected)
+  Phase 22: ?? IN PROGRESS (docs/ structure created)
 ```
 
 ---
 
-### Article 6 — FEATURE COMPLETION CHECKLIST
+### Article 6 � FEATURE COMPLETION CHECKLIST
 
 ```
 Before ANY feature/phase can claim completion, ALL must be true:
 
-  □ UI working in production (not just localhost)
-  □ API working with proper error handling
-  □ Production deployment verified
-  □ Admin control available for CEO
-  □ Error handling covers edge cases
-  □ Logs capture success + failure + context
-  □ Alert triggers for critical failures
-  □ Bible section updated with completion proof
-  □ No known bugs logged against this feature
-  □ CEO has tested and approved
+  ? UI working in production (not just localhost)
+  ? API working with proper error handling
+  ? Production deployment verified
+  ? Admin control available for CEO
+  ? Error handling covers edge cases
+  ? Logs capture success + failure + context
+  ? Alert triggers for critical failures
+  ? Bible section updated with completion proof
+  ? No known bugs logged against this feature
+  ? CEO has tested and approved
 
-  If ANY checkbox is empty → status = PARTIAL or IN PROGRESS.
+  If ANY checkbox is empty ? status = PARTIAL or IN PROGRESS.
   CTO must provide gap report for each unchecked item.
 ```
 
 ---
 
-### Article 7 — ADMIN CONTROL STANDARD
+### Article 7 � ADMIN CONTROL STANDARD
 
 ```
 Every admin page MUST provide:
@@ -265,7 +335,7 @@ Every admin page MUST provide:
 
 ---
 
-### Rule 1 — One Module at a Time (Execution Structure)
+### Rule 1 � One Module at a Time (Execution Structure)
 
 **The Rule:**
 > At any given moment, only ONE module is in active development. If that module is large, break it into sub-modules. Each sub-module completes fully before the next begins.
@@ -281,52 +351,52 @@ Every admin page MUST provide:
 | Phase 3 | Image Intelligence | (3a) AI prompt generation, (3b) editor panel display |
 | Phase 4 | Bulk Planner | (4a) DB tables, (4b) planner UI, (4c) job runner, (4d) progress monitor |
 
-❌ **Forbidden:** CCC + SEO + Zoho + Pagegen all active simultaneously.  
-✅ **Correct:** Finish Rendering Gap completely → then and only then start Draft System.
+? **Forbidden:** CCC + SEO + Zoho + Pagegen all active simultaneously.  
+? **Correct:** Finish Rendering Gap completely ? then and only then start Draft System.
 
 ---
 
-### Rule 2 — Think → Plan → Approve → Build
+### Rule 2 � Think ? Plan ? Approve ? Build
 
 **The Mandatory Flow:**
 
 ```
 Step 1: DEEP THINKING
-  → CTO-level analysis. Edge cases. Failure modes. Dependencies.
-  → What breaks if this fails? What depends on this?
+  ? CTO-level analysis. Edge cases. Failure modes. Dependencies.
+  ? What breaks if this fails? What depends on this?
 
 Step 2: IMPLEMENTATION PLAN
-  → Exact files to create or modify
-  → DB schema changes (with full SQL)
-  → API contract (input → output)
-  → Data flow diagram
-  → Rollback plan
+  ? Exact files to create or modify
+  ? DB schema changes (with full SQL)
+  ? API contract (input ? output)
+  ? Data flow diagram
+  ? Rollback plan
 
 Step 3: CEO APPROVAL
-  → Plan presented in clear language
-  → CEO can: Approve / Request changes / Reject
-  → NO code written before approval
+  ? Plan presented in clear language
+  ? CEO can: Approve / Request changes / Reject
+  ? NO code written before approval
 
 Step 4: DEVELOPMENT
-  → Implement exactly what was approved
-  → If a blocker forces a deviation → STOP and re-present to CEO
+  ? Implement exactly what was approved
+  ? If a blocker forces a deviation ? STOP and re-present to CEO
 
 Step 5: TESTING
-  → All 4 test types (see Rule 8) before any claim of completion
+  ? All 4 test types (see Rule 8) before any claim of completion
 
 Step 6: LIVE VERIFICATION
-  → Proof that it works in production, not just locally
+  ? Proof that it works in production, not just locally
 ```
 
-❌ **Forbidden:** Direct coding without a written plan. Half-implemented features pushed to production.  
-✅ **Correct:** "Pehle system sochta hai, phir code likhta hai."
+? **Forbidden:** Direct coding without a written plan. Half-implemented features pushed to production.  
+? **Correct:** "Pehle system sochta hai, phir code likhta hai."
 
 ---
 
-### Rule 3 — Proof-Based Testing (No Assumptions)
+### Rule 3 � Proof-Based Testing (No Assumptions)
 
 **The Rule:**
-> "No assumption — only proof."
+> "No assumption � only proof."
 
 Every feature must be verified with tangible evidence before it is declared complete. "Should work" and "seems fine" are not acceptable statements in this project.
 
@@ -334,7 +404,7 @@ Every feature must be verified with tangible evidence before it is declared comp
 
 | Proof Type | What It Means | Example (Pagegen) |
 |-----------|--------------|------------------|
-| API Proof | Endpoint returns expected response | POST /api/jobs/pagegen → 200 with draft_id |
+| API Proof | Endpoint returns expected response | POST /api/jobs/pagegen ? 200 with draft_id |
 | DB Proof | Correct row exists in correct table | content_drafts row visible in Supabase |
 | UI Proof | Admin can see and interact with it | Draft appears in /admin/ccc/drafts list |
 | Live URL Proof | End-user experience works | bimasakhi.com/[slug] renders content, not 404 |
@@ -346,11 +416,11 @@ Every feature must be verified with tangible evidence before it is declared comp
 - JSON-LD schema is valid (use Google Rich Results Test)
 - Sitemap includes the new URL within 1 hour of publishing
 
-✅ **Only accepted language:** "Tested → working → verified at [timestamp]."
+? **Only accepted language:** "Tested ? working ? verified at [timestamp]."
 
 ---
 
-### Rule 4 — Zero Breakage (Live System Safety)
+### Rule 4 � Zero Breakage (Live System Safety)
 
 **The Rule:**
 > "New system add karo. Purana todna mana hai."
@@ -360,29 +430,29 @@ Bimasakhi.com is live. It has real users, real leads, real revenue. Every change
 **Implementation pattern for this project:**
 
 ```
-New route added?          → Existing routes must still work identically
-DB column added?          → Existing queries must not fail (use ADD COLUMN IF NOT EXISTS)
-Worker modified?          → Old queue messages must still be processable
-New form added?           → Old form submissions must still reach CRM
-Sitemap extended?         → Existing sitemap URLs must remain unchanged
+New route added?          ? Existing routes must still work identically
+DB column added?          ? Existing queries must not fail (use ADD COLUMN IF NOT EXISTS)
+Worker modified?          ? Old queue messages must still be processable
+New form added?           ? Old form submissions must still reach CRM
+Sitemap extended?         ? Existing sitemap URLs must remain unchanged
 ```
 
 **Fallback logic is mandatory** wherever new code replaces or extends existing code:
 
 ```
-Example — catch-all route (Phase 1):
-  1. Check page_index (new system) → found? Render GeneratedPageTemplate
-  2. Not found? Check custom_pages (old system) → found? Render block renderer
+Example � catch-all route (Phase 1):
+  1. Check page_index (new system) ? found? Render GeneratedPageTemplate
+  2. Not found? Check custom_pages (old system) ? found? Render block renderer
   3. Neither? Return 404
 
-  → Old CMS pages never break, even as new system is added.
+  ? Old CMS pages never break, even as new system is added.
 ```
 
-**Feature flags** (stored in `system_config` table) can be used to turn new behaviour on/off without a code deploy. If something goes wrong in production, flag OFF → system reverts instantly.
+**Feature flags** (stored in `system_config` table) can be used to turn new behaviour on/off without a code deploy. If something goes wrong in production, flag OFF ? system reverts instantly.
 
 ---
 
-### Rule 5 — Phase Lock (Sequential Completion)
+### Rule 5 � Phase Lock (Sequential Completion)
 
 **The Rule:**
 > "Ek phase complete hone se pehle next phase start nahi hoga."
@@ -391,29 +461,29 @@ Example — catch-all route (Phase 1):
 
 | Criteria | Verified By |
 |----------|------------|
-| ✅ Code written and reviewed | CTO |
-| ✅ All 4 test types passed | CTO |
-| ✅ Live URL/feature verified in production | CEO |
-| ✅ No regressions in existing features | CTO |
-| ✅ CEO sign-off given | CEO |
+| ? Code written and reviewed | CTO |
+| ? All 4 test types passed | CTO |
+| ? Live URL/feature verified in production | CEO |
+| ? No regressions in existing features | CTO |
+| ? CEO sign-off given | CEO |
 
-**"We'll fix it later" is not allowed.** If something is broken, it blocks the next phase — no exceptions. This is not bureaucracy; it is the prevention of compounding technical debt.
+**"We'll fix it later" is not allowed.** If something is broken, it blocks the next phase � no exceptions. This is not bureaucracy; it is the prevention of compounding technical debt.
 
 **Current phase lock status:**
 
 ```
-Phase 1 (Rendering Gap):  🔒 NOT STARTED — awaiting CEO sign-off
-Phase 2 (Draft System):   🔒 BLOCKED by Phase 1
-Phase 3 (Images):         🔒 BLOCKED by Phase 2
+Phase 1 (Rendering Gap):  ?? NOT STARTED � awaiting CEO sign-off
+Phase 2 (Draft System):   ?? BLOCKED by Phase 1
+Phase 3 (Images):         ?? BLOCKED by Phase 2
 ... all subsequent phases locked
 ```
 
 ---
 
-### Rule 6 — Detail Depth (Unclear = Design First)
+### Rule 6 � Detail Depth (Unclear = Design First)
 
 **The Rule:**
-> "Agar kuch unclear hai → pehle deep design, phir code."
+> "Agar kuch unclear hai ? pehle deep design, phir code."
 
 Before writing a single line of code for any module, the following must be answered in writing:
 
@@ -439,7 +509,7 @@ If any of these questions cannot be answered before coding starts, the design is
 
 ---
 
-### Rule 7 — System Contract (Input/Output Discipline)
+### Rule 7 � System Contract (Input/Output Discipline)
 
 **The Rule:**
 > "Every module must follow a strict, documented input/output contract. No random payloads. No inconsistent structures."
@@ -459,10 +529,10 @@ OUTPUT (success):
   Body: { field: type, meaning }
 
 OUTPUT (error cases):
-  400: { error: "reason" } — invalid input
-  404: { error: "reason" } — resource not found
-  409: { error: "reason" } — conflict (duplicate)
-  500: { error: "reason" } — server/DB failure
+  400: { error: "reason" } � invalid input
+  404: { error: "reason" } � resource not found
+  409: { error: "reason" } � conflict (duplicate)
+  500: { error: "reason" } � server/DB failure
 
 SIDE EFFECTS:
   - DB tables written/updated
@@ -470,7 +540,7 @@ SIDE EFFECTS:
   - Events triggered
 ```
 
-**Example — Pagegen Worker:**
+**Example � Pagegen Worker:**
 
 ```
 MODULE: /api/jobs/pagegen
@@ -491,7 +561,7 @@ OUTPUT (errors):
   500: Gemini API failure | DB write failure
 
 SIDE EFFECTS:
-  - generation_queue.status → 'processing' then 'completed'
+  - generation_queue.status ? 'processing' then 'completed'
   - content_drafts: 1 new row (status='draft')
   - page_index: 1 new row (status='pending_index')
   - location_content: 1 new row
@@ -503,7 +573,7 @@ This contract is written BEFORE the code. The code implements the contract. Test
 
 ---
 
-### Rule 8 — Test Coverage (Four Mandatory Tests)
+### Rule 8 � Test Coverage (Four Mandatory Tests)
 
 **The Rule:**
 > Every module must pass all four test types before it is declared complete.
@@ -519,13 +589,13 @@ This contract is written BEFORE the code. The code implements the contract. Test
 - Happy flow: manual test + `step*.mjs` scripts (existing pattern)
 - Edge case: manual test with deliberately bad inputs
 - Failure case: temporarily disable DB / use wrong API key / send invalid QStash body
-- Load test: send 5–10 rapid requests to pagegen endpoint, verify only 1 draft created per queue ID (idempotency)
+- Load test: send 5�10 rapid requests to pagegen endpoint, verify only 1 draft created per queue ID (idempotency)
 
 **Idempotency is mandatory for all worker endpoints.** Processing the same `queueId` twice must not create two drafts.
 
 ---
 
-### Rule 9 — Observability (Full Logging)
+### Rule 9 � Observability (Full Logging)
 
 **The Rule:**
 > "System must log every significant event: success, failure, retry, skip, rate-limit, and the reason for each."
@@ -550,21 +620,21 @@ This contract is written BEFORE the code. The code implements the contract. Test
 ```
 
 **Where logs go:**
-- `observability_logs` table (primary — queryable from admin)
-- `console.log` / Vercel function logs (secondary — for real-time debugging)
-- Critical failures also → `system_runtime_errors` table
+- `observability_logs` table (primary � queryable from admin)
+- `console.log` / Vercel function logs (secondary � for real-time debugging)
+- Critical failures also ? `system_runtime_errors` table
 
 **Log levels:**
-- `INFO` — normal operations
-- `WARN` — degraded but functional (quality below threshold, retry attempt)
-- `ERROR` — operation failed, human attention may be needed
-- `CRITICAL` — system integrity at risk (DB connection lost, bulk job corrupted)
+- `INFO` � normal operations
+- `WARN` � degraded but functional (quality below threshold, retry attempt)
+- `ERROR` � operation failed, human attention may be needed
+- `CRITICAL` � system integrity at risk (DB connection lost, bulk job corrupted)
 
 **Admin visibility:** Every logged event must be surfaced in `/admin/` in some form. "Debug easy ho jayega" only if logs are actually readable by the CEO without reading raw SQL.
 
 ---
 
-### Rule 10 — Safety Guardrails (Anti-Damage Controls)
+### Rule 10 � Safety Guardrails (Anti-Damage Controls)
 
 **The Rule:**
 > "Every automated system must have explicit limits that prevent runaway behaviour."
@@ -578,17 +648,17 @@ This contract is written BEFORE the code. The code implements the contract. Test
 | Per-hour generation rate | 50 items/hour | QStash message scheduling |
 | Min word count gate | 400 words (flag), 300 words (auto-reject) | Pagegen worker |
 | Duplicate slug prevention | SHA256 + exact slug check | Pagegen worker |
-| Similarity gate | > 85% match → reject | Content dedup logic |
+| Similarity gate | > 85% match ? reject | Content dedup logic |
 | Retry limit per job | 3 attempts, then dead-letter | QStash retry config |
 | Bulk job daily publish limit | Configurable per job (default: 20/day) | Bulk job scheduler |
-| Auto-approve threshold | Quality score ≥ 8.0 only (if enabled) | Draft approval logic |
+| Auto-approve threshold | Quality score = 8.0 only (if enabled) | Draft approval logic |
 | Sitemap drip | Max 50 new URLs/day in sitemap | Sitemap generation route |
 
 These limits are not hardcoded magic numbers. They are stored in `system_config` table so the CEO can adjust them from the admin panel without a code deploy.
 
 ---
 
-### Rule 11 — Human Control (AI Assists, Human Decides)
+### Rule 11 � Human Control (AI Assists, Human Decides)
 
 **The Rule:**
 > "AI generate karega. Decision human lega."
@@ -613,7 +683,7 @@ This rule is the foundation of Section 20 (CEO Control Principle) and extends to
 
 ---
 
-### Rule 12 — Rollback (Every Change Is Reversible)
+### Rule 12 � Rollback (Every Change Is Reversible)
 
 **The Rule:**
 > "Har change reversible hona chahiye."
@@ -623,7 +693,7 @@ This rule is the foundation of Section 20 (CEO Control Principle) and extends to
 **Layer 1: Git (Code)**
 - Every feature developed on its own commit
 - Commit message format: `feat: [module] - [what it does]` or `fix: [module] - [what was broken]`
-- To rollback: `git revert [commit-hash]` → new commit that undoes the change (no history destruction)
+- To rollback: `git revert [commit-hash]` ? new commit that undoes the change (no history destruction)
 - Never `git reset --hard` on pushed commits
 
 **Layer 2: DB (Data)**
@@ -641,16 +711,16 @@ This rule is the foundation of Section 20 (CEO Control Principle) and extends to
   const config = await getSystemConfig('ccc_draft_layer_enabled');
   if (!config?.value) return legacyBehaviour();
   ```
-- If production issue: set flag to `false` in admin → feature instantly disabled, zero deployment needed
+- If production issue: set flag to `false` in admin ? feature instantly disabled, zero deployment needed
 
 **Layer 4: Content (Pages)**
-- Published pages: set `page_index.status = 'disabled'` → page returns 404 instantly
+- Published pages: set `page_index.status = 'disabled'` ? page returns 404 instantly
 - Bulk unpublish: `UPDATE page_index SET status='disabled' WHERE bulk_job_id = '[id]'`
-- Draft rejected: `content_drafts.status = 'rejected'` — content preserved for audit, not visible
+- Draft rejected: `content_drafts.status = 'rejected'` � content preserved for audit, not visible
 
 ---
 
-### Rule 13 — Deployment Protocol
+### Rule 13 � Deployment Protocol
 
 **The Rule:**
 > "Direct blind deploy is forbidden. Every deployment follows the same sequence."
@@ -659,61 +729,61 @@ This rule is the foundation of Section 20 (CEO Control Principle) and extends to
 
 ```
 Step 1: LOCAL TEST
-  → npm run build (exit code 0 required)
-  → Test the feature at localhost:3000
-  → Run relevant step*.mjs verification script
-  → All 4 test types pass
+  ? npm run build (exit code 0 required)
+  ? Test the feature at localhost:3000
+  ? Run relevant step*.mjs verification script
+  ? All 4 test types pass
 
 Step 2: PRE-DEPLOY SAFETY CHECK
-  → node scripts/preDeployCheck.js (existing script)
-  → No .env secrets in committed files
-  → No console.log with sensitive data
-  → No broken imports
+  ? node scripts/preDeployCheck.js (existing script)
+  ? No .env secrets in committed files
+  ? No console.log with sensitive data
+  ? No broken imports
 
 Step 3: COMMIT + PUSH
-  → git add -p (selective — never git add .)
-  → git commit -m "feat: [clear description]"
-  → git push origin main
-  → Vercel auto-deploys
+  ? git add -p (selective � never git add .)
+  ? git commit -m "feat: [clear description]"
+  ? git push origin main
+  ? Vercel auto-deploys
 
 Step 4: LIVE VERIFICATION (within 10 min of deploy)
-  → Visit the changed URL/feature in production
-  → Check Vercel function logs for errors
-  → Check observability_logs in Supabase for errors
-  → Verify no existing features broken
+  ? Visit the changed URL/feature in production
+  ? Check Vercel function logs for errors
+  ? Check observability_logs in Supabase for errors
+  ? Verify no existing features broken
 
 Step 5: CONFIRM OR ROLLBACK
-  → If all good: mark phase item as ✅ complete
-  → If issue found: git revert → push → verify rollback worked
-  → Document what went wrong and why in phase notes
+  ? If all good: mark phase item as ? complete
+  ? If issue found: git revert ? push ? verify rollback worked
+  ? Document what went wrong and why in phase notes
 ```
 
 **Commit message standard for this project:**
 ```
-feat: [module]      → new feature
-fix: [module]       → bug fix
-chore: [module]     → config/dep changes
-refactor: [module]  → code restructure, no behaviour change
-docs: [module]      → documentation only
-migration: [name]   → DB schema change
+feat: [module]      ? new feature
+fix: [module]       ? bug fix
+chore: [module]     ? config/dep changes
+refactor: [module]  ? code restructure, no behaviour change
+docs: [module]      ? documentation only
+migration: [name]   ? DB schema change
 ```
 
 ---
 
-### Rule 14 — Documentation
+### Rule 14 � Documentation
 
 **The Rule:**
 > "Har module ke liye: kya karta hai, kaise use hota hai, input/output. Future mein confusion nahi hona chahiye."
 
 **Documentation lives in two places:**
 
-**1. This document (`docs/CONTENT_COMMAND_CENTER.md`)** — Architecture-level. What does each system do, why was it designed this way, what are the edge cases.
+**1. This document (`docs/CONTENT_COMMAND_CENTER.md`)** � Architecture-level. What does each system do, why was it designed this way, what are the edge cases.
 
 **2. Code-level comments (where non-obvious):**
 ```javascript
 // WHY: We query generation_queue before dispatching because the publisher
 // has no way to know which queue ID to pass. The queue ID must come from
-// the DB itself — it cannot be passed from the admin UI.
+// the DB itself � it cannot be passed from the admin UI.
 // See: Issue traced in session B (pagegen queueId: undefined bug)
 const { data: pendingJob } = await supabase
   .from('generation_queue')
@@ -724,7 +794,7 @@ const { data: pendingJob } = await supabase
 
 **Module documentation standard:**
 Every new module gets a `README` section in this document with:
-- Purpose (1–2 sentences)
+- Purpose (1�2 sentences)
 - Input/output contract (Rule 7 format)
 - Key tables touched
 - Known edge cases
@@ -732,7 +802,7 @@ Every new module gets a `README` section in this document with:
 
 ---
 
-### Rule 15 — Cost Awareness (AI + API Budget Discipline)
+### Rule 15 � Cost Awareness (AI + API Budget Discipline)
 
 **The Rule:**
 > "Har module ko pata hona chahiye ki uska ek API call ka kitna cost hai, aur scale pe kya hoga."
@@ -785,17 +855,17 @@ Every module that calls an external API (Gemini AI, QStash, Zoho, WhatsApp Busin
 
 **The principle:** "Pehle cost samjho, phir scale karo. Blind scaling = bankrupt scaling."
 
-❌ **Forbidden:** Launching bulk generation without knowing the per-page AI cost.  
-✅ **Correct:** "500 pages × ₹2.5/page = ₹1,250 total. Within budget. Proceeding."
+? **Forbidden:** Launching bulk generation without knowing the per-page AI cost.  
+? **Correct:** "500 pages � ?2.5/page = ?1,250 total. Within budget. Proceeding."
 
 ---
 
-### Rule 16 — Data Integrity (Zero Partial Writes)
+### Rule 16 � Data Integrity (Zero Partial Writes)
 
 **The Rule:**
 > "Koi bhi operation half-done nahi hona chahiye. Ya toh pura complete ho, ya pura rollback ho."
 
-No module is allowed to leave the database in an inconsistent state. If an operation writes to multiple tables, ALL writes must succeed — or ALL must be rolled back.
+No module is allowed to leave the database in an inconsistent state. If an operation writes to multiple tables, ALL writes must succeed � or ALL must be rolled back.
 
 **The three deadly sins of partial writes:**
 
@@ -807,7 +877,7 @@ No module is allowed to leave the database in an inconsistent state. If an opera
 
 **Mandatory patterns:**
 
-**Pattern 1: Multi-table writes → Transaction wrapper**
+**Pattern 1: Multi-table writes ? Transaction wrapper**
 ```
 For operations that write to 2+ tables:
   - Use Supabase's built-in transaction support (RPC function)
@@ -815,13 +885,13 @@ For operations that write to 2+ tables:
   - Log the compensation action in observability_logs
 ```
 
-**Pattern 2: External API + DB → Saga pattern**
+**Pattern 2: External API + DB ? Saga pattern**
 ```
 For operations that call an external API (Zoho, WhatsApp) + write to DB:
   Step 1: Write to DB with status='pending_sync'
   Step 2: Call external API
-  Step 3a: If API success → update status='synced'
-  Step 3b: If API fails → update status='sync_failed' + log error + schedule retry
+  Step 3a: If API success ? update status='synced'
+  Step 3b: If API fails ? update status='sync_failed' + log error + schedule retry
   
   NEVER: Write to DB as 'completed' before external API confirms success
 ```
@@ -830,24 +900,24 @@ For operations that call an external API (Zoho, WhatsApp) + write to DB:
 ```
 Every write operation that could be retried (QStash webhook, form submission, CRM sync) 
 must have an idempotency key:
-  - queueId for pagegen jobs (already exists ✅)
+  - queueId for pagegen jobs (already exists ?)
   - lead_ref_id for lead submissions  
   - sync_id for CRM sync operations
   
-  If the same key is processed twice → skip with log, never duplicate
+  If the same key is processed twice ? skip with log, never duplicate
 ```
 
 **Data integrity checks (automated):**
 - Daily reconciliation job checks for orphan records across related tables
-- `scripts/check_data_integrity.mjs` — run weekly, flag inconsistencies
+- `scripts/check_data_integrity.mjs` � run weekly, flag inconsistencies
 - Admin alert if orphan count > 0
 
-❌ **Forbidden:** `INSERT INTO table_a ... INSERT INTO table_b ...` without error handling between them.  
-✅ **Correct:** Transaction wrapper OR explicit compensation on failure.
+? **Forbidden:** `INSERT INTO table_a ... INSERT INTO table_b ...` without error handling between them.  
+? **Correct:** Transaction wrapper OR explicit compensation on failure.
 
 ---
 
-### Rule 17 — Security Layer (Auth + Authz + Audit on Every Action)
+### Rule 17 � Security Layer (Auth + Authz + Audit on Every Action)
 
 **The Rule:**
 > "Har admin action ke peeche teen cheezein honi chahiye: authentication, authorization, aur audit log."
@@ -878,15 +948,15 @@ No admin endpoint, no admin page, no system action should operate without these 
 
 ```
 Module / Capability                    super_admin   admin   editor   agent
-─────────────────────────────────────────────────────────────────────────────
-Profile + session                      ✅            ✅      ✅       ✅
-Dashboard / mission control            ✅            ❌      ❌       ❌
-CCC / Pages / Blog / SEO               ✅            ✅      ✅       ❌
-CRM / Leads                            ✅            ✅      ❌       ❌
-Locations / Geo                        ✅            ✅      ✅       ❌
-Analytics                              ✅            ✅      ❌       ❌
-Navigation / Features / Workflow       ✅            ❌      ❌       ❌
-Users / System / Code / Audit          ✅            ❌      ❌       ❌
+-----------------------------------------------------------------------------
+Profile + session                      ?            ?      ?       ?
+Dashboard / mission control            ?            ?      ?       ?
+CCC / Pages / Blog / SEO               ?            ?      ?       ?
+CRM / Leads                            ?            ?      ?       ?
+Locations / Geo                        ?            ?      ?       ?
+Analytics                              ?            ?      ?       ?
+Navigation / Features / Workflow       ?            ?      ?       ?
+Users / System / Code / Audit          ?            ?      ?       ?
 ```
 
 **Layer 3: Audit (WHAT DID THEY DO?)**
@@ -895,9 +965,9 @@ Users / System / Code / Audit          ✅            ❌      ❌       ❌
 |------------|----------------|
 | Every state-changing action logged | `admin_audit_logs` table (already defined in Section 32) |
 | Log must include: who, what, when, old value, new value | Full JSONB diff stored |
-| Audit log is APPEND-ONLY | No UPDATE or DELETE on audit_log — ever |
+| Audit log is APPEND-ONLY | No UPDATE or DELETE on audit_log � ever |
 | Audit viewable from admin | `/admin/system/audit` with search + filters |
-| Sensitive actions trigger alert | Safe Mode toggle, bulk delete, role change → Zoho Cliq notification |
+| Sensitive actions trigger alert | Safe Mode toggle, bulk delete, role change ? Zoho Cliq notification |
 
 **Security headers on all admin pages:**
 ```
@@ -914,15 +984,15 @@ Content-Security-Policy: default-src 'self'
 - Validate UUIDs (no SQL injection via malformed IDs)
 - Rate limit admin APIs (10 req/sec per user)
 - Block .env, secrets, and system files from code viewer
-- Never expose stack traces to client — log server-side, return generic error
+- Never expose stack traces to client � log server-side, return generic error
 ```
 
-❌ **Forbidden:** Admin API route without `withAdminAuth()`. Feature toggle without role check. State change without audit log.  
-✅ **Correct:** "Every admin request: verify session → check role → execute → log audit → respond."
+? **Forbidden:** Admin API route without `withAdminAuth()`. Feature toggle without role check. State change without audit log.  
+? **Correct:** "Every admin request: verify session ? check role ? execute ? log audit ? respond."
 
 ---
 
-### Rule 18 — End-to-End Ecosystem Thinking
+### Rule 18 � End-to-End Ecosystem Thinking
 
 **The Rule:**
 > "Sirf entry point design karna system nahi hai. Pura lifecycle design karna system hai."
@@ -936,23 +1006,23 @@ The CEO is an LIC Development Officer (DO). His business is NOT just a website.
 The website is ONE CHANNEL feeding into FIVE interconnected business ecosystems:
 
   ECOSYSTEM 1: New Agent Creation Pipeline
-    Lead → Pre-screening → IC-38 Prep → Exam → License → Appointment → Training → First Policy → Active Agent
+    Lead ? Pre-screening ? IC-38 Prep ? Exam ? License ? Appointment ? Training ? First Policy ? Active Agent
     (2-4 month pipeline per candidate, multi-stage, high dropout)
 
   ECOSYSTEM 2: Active Agent Management
-    Production tracking → Activity management → Training → Motivation → Performance review
+    Production tracking ? Activity management ? Training ? Motivation ? Performance review
     (Ongoing, daily/weekly/monthly cadence)
 
   ECOSYSTEM 3: Agent Lifecycle Management
-    Inforce → Dormant → Terminated → Revived
+    Inforce ? Dormant ? Terminated ? Revived
     (Compliance, renewals, orphan policy management)
 
   ECOSYSTEM 4: Customer Management
-    Prospect → First buyer → Multi-policy → Maturity → Claims → Referral source
+    Prospect ? First buyer ? Multi-policy ? Maturity ? Claims ? Referral source
     (Policy servicing, renewals, cross-sell, upsell)
 
   ECOSYSTEM 5: Universal Lead Management
-    Direct / Referral / Campaign / Social / Walk-in → Qualified → Routed → Converted
+    Direct / Referral / Campaign / Social / Walk-in ? Qualified ? Routed ? Converted
     (All lead sources, all lead types, unified routing)
 ```
 
@@ -981,12 +1051,12 @@ For every ecosystem:
   7. Define the ALERTS (what triggers attention)
 ```
 
-❌ **Forbidden:** Building only the lead capture form and calling the agent recruitment system "done."  
-✅ **Correct:** "Lead capture is Step 1 of 8 in the Agent Creation Pipeline. Steps 2-8 are tracked in `/admin/agency/pipeline`."
+? **Forbidden:** Building only the lead capture form and calling the agent recruitment system "done."  
+? **Correct:** "Lead capture is Step 1 of 8 in the Agent Creation Pipeline. Steps 2-8 are tracked in `/admin/agency/pipeline`."
 
 ---
 
-### Rule 19 — Execution Priority Discipline (Build Order Matters)
+### Rule 19 � Execution Priority Discipline (Build Order Matters)
 
 **The Rule:**
 > "Sab kuch ek saath banana = sab kuch todna. Priority decide karo, phir execute karo."
@@ -1000,10 +1070,10 @@ Every phase MUST have a clear priority rank (A/B/C/D) and a dependency chain. No
 
 | Rank | Meaning | Criteria |
 |------|---------|----------|
-| **A — MANDATORY NOW** | System is unsafe/broken without this | Data can corrupt, security holes, system can break silently |
-| **B — CORE POWER** | System is weak without this | Core business function missing, CEO cannot operate effectively |
-| **C — GROWTH ENGINE** | System cannot scale without this | SEO, intelligence, automation — growth multipliers |
-| **D — GOD MODE** | System is not its final form without this | Full vision features, advanced intelligence, cross-platform |
+| **A � MANDATORY NOW** | System is unsafe/broken without this | Data can corrupt, security holes, system can break silently |
+| **B � CORE POWER** | System is weak without this | Core business function missing, CEO cannot operate effectively |
+| **C � GROWTH ENGINE** | System cannot scale without this | SEO, intelligence, automation � growth multipliers |
+| **D � GOD MODE** | System is not its final form without this | Full vision features, advanced intelligence, cross-platform |
 
 **Why this rule exists:**
 
@@ -1015,60 +1085,60 @@ The bible now defines 19 implementation phases + 37 sections. Without explicit p
 **The Priority Matrix (all 19 phases ranked):**
 
 ```
-PRIORITY A — MANDATORY NOW (System Safety + Control + Resilience):
-  Phase 3:  Image Intelligence                        ← ✅ COMPLETE
-  Phase 14: Super Admin Panel (RBAC + Safe Mode)      ← ✅ COMPLETE
-  Phase 21: External System Governance                ← ✅ COMPLETE
+PRIORITY A � MANDATORY NOW (System Safety + Control + Resilience):
+  Phase 3:  Image Intelligence                        ? ?? PARTIAL in current live truth
+  Phase 14: Super Admin Panel (RBAC + Safe Mode)      ? ?? PARTIAL in current live truth
+  Phase 21: External System Governance                ? ?? PARTIAL in current live truth
   
-PRIORITY B — CORE POWER (Business Operations):
-  Phase 4:  Bulk Job Planner ✅ COMPLETE              ← Scale unlocked
-  Phase 5:  Geo Intelligence ✅ COMPLETE              ← Multi-city unlocked
-  Phase 8:  Multi-Intent Lead Funnels                 ← Correct lead routing
-  Phase 15: Agent Creation Pipeline                   ← CEO's #1 business need
-  Phase 16: Active Agent Management                   ← Revenue tracking
+PRIORITY B � CORE POWER (Business Operations):
+  Phase 4:  Bulk Job Planner ?? PARTIAL               ? operator controls advanced; real start proof still blocked live
+  Phase 5:  Geo Intelligence ?? PARTIAL               ? multi-city foundation exists; CEO-complete controls still open
+  Phase 8:  Multi-Intent Lead Funnels                 ? Correct lead routing
+  Phase 15: Agent Creation Pipeline                   ? CEO's #1 business need
+  Phase 16: Active Agent Management                   ? Revenue tracking
   
-PRIORITY C — GROWTH ENGINE (Scale + Intelligence):
-  Phase 6:  Publish Pipeline                          ← SEO requires this
-  Phase 7:  Download Lead Magnets                     ← Lead generation multiplier
-  Phase 9:  Lead Scoring + Agent Personalization      ← Conversion optimization
-  Phase 10: Analytics Stack (GTM + GA4 + GSC)         ← Data foundation
-  Phase 11: Bilingual Engine                          ← Hindi market unlock
-  Phase 18: Customer Management                       ← Policy servicing
-  Phase 19: Universal Lead Hub                        ← All-source lead tracking
+PRIORITY C � GROWTH ENGINE (Scale + Intelligence):
+  Phase 6:  Publish Pipeline                          ? SEO requires this
+  Phase 7:  Download Lead Magnets                     ? Lead generation multiplier
+  Phase 9:  Lead Scoring + Agent Personalization      ? Conversion optimization
+  Phase 10: Analytics Stack (GTM + GA4 + GSC)         ? Data foundation
+  Phase 11: Bilingual Engine                          ? Hindi market unlock
+  Phase 18: Customer Management                       ? Policy servicing
+  Phase 19: Universal Lead Hub                        ? All-source lead tracking
   
-PRIORITY D — GOD MODE (Full Vision):
-  Phase 12: Intelligence Layer + Social Engine        ← Self-learning system
-  Phase 13: Self-Growing Loops                        ← Autonomous scaling
-  Phase 17: Agent Lifecycle & Compliance              ← Advanced agent management
-  Phase 20: System Intelligence & Decision Engine     ← AI brain (Section 38)
+PRIORITY D � GOD MODE (Full Vision):
+  Phase 12: Intelligence Layer + Social Engine        ? Self-learning system
+  Phase 13: Self-Growing Loops                        ? Autonomous scaling
+  Phase 17: Agent Lifecycle & Compliance              ? Advanced agent management
+  Phase 20: System Intelligence & Decision Engine     ? AI brain (Section 38)
 ```
 
 **The Dependency Chain (what blocks what):**
 
 ```
-Phase 1 ✅ ──→ Phase 2 ✅ ──→ Phase 3 ──→ Phase 4 ──→ Phase 5 ──→ Phase 6 ──→ Phase 7
-                  │                                         │
-                  ├──→ Phase 8 ──→ Phase 9 ──→ Phase 15 ──→ Phase 16 ──→ Phase 17
-                  │                    │
-                  ├──→ Phase 11        ├──→ Phase 18 ──→ Phase 19
-                  │
-                  ├──→ Phase 14 (RBAC — can start parallel with Phase 3)
-                  │
-                  ├──→ Phase 21 (External Governance — can start parallel with Phase 3)
-                  │
-                  └──→ Phase 10 (Analytics — can start parallel with Phase 3)
-                                  │
-                                  └──→ Phase 12 ──→ Phase 13 ──→ Phase 20
+Phase 1 ? --? Phase 2 ? --? Phase 3 --? Phase 4 --? Phase 5 --? Phase 6 --? Phase 7
+                  �                                         �
+                  +--? Phase 8 --? Phase 9 --? Phase 15 --? Phase 16 --? Phase 17
+                  �                    �
+                  +--? Phase 11        +--? Phase 18 --? Phase 19
+                  �
+                  +--? Phase 14 (RBAC � can start parallel with Phase 3)
+                  �
+                  +--? Phase 21 (External Governance � can start parallel with Phase 3)
+                  �
+                  +--? Phase 10 (Analytics � can start parallel with Phase 3)
+                                  �
+                                  +--? Phase 12 --? Phase 13 --? Phase 20
 ```
 
 **MVP Principle:** Each phase has a "minimum viable version" that delivers 80% of the value. Ship MVP first, enhance later. Don't gold-plate Phase 3 while Phase 14 (safety) is unbuilt.
 
-❌ **Forbidden:** Starting any C/D priority phase while A-priority phases are incomplete.  
-✅ **Correct:** "Phase 14 (RBAC + Safe Mode) is Priority A. It runs parallel with Phase 3. No C-priority work begins until all A's are done."
+? **Forbidden:** Starting any C/D priority phase while A-priority phases are incomplete.  
+? **Correct:** "Phase 14 (RBAC + Safe Mode) is Priority A. It runs parallel with Phase 3. No C-priority work begins until all A's are done."
 
 ---
 
-### Rule 20 — External System Contract (Vendor Governance)
+### Rule 20 � External System Contract (Vendor Governance)
 
 **The Rule:**
 > "Jo cheez tumhare control mein nahi hai, wahi cheez tumhara system todegi. Har external dependency ka contract likho."
@@ -1078,46 +1148,46 @@ Every external system (Supabase, Vercel, QStash, Zoho, Gemini, any future vendor
 ```
 EXTERNAL SYSTEM CONTRACT FORMAT:
 
-┌─────────────────────────────────────────────────────────────────┐
-│ VENDOR: [Name]                                                  │
-│ PURPOSE: [What it does for our system]                         │
-│ CRITICALITY: [Critical / Important / Nice-to-have]             │
-│                                                                 │
-│ CONTRACT:                                                       │
-│   Input:    [What we send]                                     │
-│   Output:   [What we expect back]                              │
-│   Timeout:  [Max acceptable response time]                     │
-│   Rate:     [Max requests/minute we're allowed]                │
-│                                                                 │
-│ FAILURE HANDLING:                                               │
-│   On timeout:    [What happens]                                │
-│   On error:      [What happens]                                │
-│   On outage:     [What happens]                                │
-│   Retry policy:  [How many, what delay, what backoff]          │
-│   Circuit break:  [After N failures in M minutes → stop calling]│
-│                                                                 │
-│ FALLBACK:                                                       │
-│   [What the system does if this vendor is completely down]      │
-│                                                                 │
-│ MONITORING:                                                     │
-│   [How we track this vendor's health]                          │
-│   [SLA threshold: what's acceptable, what triggers alert]      │
-│                                                                 │
-│ LOCK-IN RISK:                                                   │
-│   [How dependent are we? Can we switch? Abstraction exists?]   │
-└─────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------+
+� VENDOR: [Name]                                                  �
+� PURPOSE: [What it does for our system]                         �
+� CRITICALITY: [Critical / Important / Nice-to-have]             �
+�                                                                 �
+� CONTRACT:                                                       �
+�   Input:    [What we send]                                     �
+�   Output:   [What we expect back]                              �
+�   Timeout:  [Max acceptable response time]                     �
+�   Rate:     [Max requests/minute we're allowed]                �
+�                                                                 �
+� FAILURE HANDLING:                                               �
+�   On timeout:    [What happens]                                �
+�   On error:      [What happens]                                �
+�   On outage:     [What happens]                                �
+�   Retry policy:  [How many, what delay, what backoff]          �
+�   Circuit break:  [After N failures in M minutes ? stop calling]�
+�                                                                 �
+� FALLBACK:                                                       �
+�   [What the system does if this vendor is completely down]      �
+�                                                                 �
+� MONITORING:                                                     �
+�   [How we track this vendor's health]                          �
+�   [SLA threshold: what's acceptable, what triggers alert]      �
+�                                                                 �
+� LOCK-IN RISK:                                                   �
+�   [How dependent are we? Can we switch? Abstraction exists?]   �
++-----------------------------------------------------------------+
 ```
 
-**Current External Dependencies — Contract Status:**
+**Current External Dependencies � Contract Status:**
 
 | Vendor | Purpose | Criticality | Contract Exists? |
 |--------|---------|-------------|-----------------|
-| **Supabase** | Database + Auth + Storage | CRITICAL | ❌ No formal contract |
-| **Vercel** | Hosting + Serverless Functions + Edge | CRITICAL | ❌ No formal contract |
-| **QStash** | Async Job Queue + Scheduling | CRITICAL | 🟡 Partial (retry=3, dead-letter mentioned) |
-| **Zoho One** | CRM + Cliq Alerts + Email | IMPORTANT | 🟡 Partial (8 apps mapped, no failure handling) |
-| **Google Gemini** | AI Content Generation | IMPORTANT | 🟡 Partial (model fallback mentioned, cost cap exists) |
-| **Google GSC/GA4** | Analytics Data | NICE-TO-HAVE (for now) | ❌ Not yet integrated |
+| **Supabase** | Database + Auth + Storage | CRITICAL | ? No formal contract |
+| **Vercel** | Hosting + Serverless Functions + Edge | CRITICAL | ? No formal contract |
+| **QStash** | Async Job Queue + Scheduling | CRITICAL | ?? Partial (retry=3, dead-letter mentioned) |
+| **Zoho One** | CRM + Cliq Alerts + Email | IMPORTANT | ?? Partial (8 apps mapped, no failure handling) |
+| **Google Gemini** | AI Content Generation | IMPORTANT | ?? Partial (model fallback mentioned, cost cap exists) |
+| **Google GSC/GA4** | Analytics Data | NICE-TO-HAVE (for now) | ? Not yet integrated |
 
 **Why this rule exists:**
 
@@ -1127,19 +1197,19 @@ The system is "internally deterministic, externally probabilistic." Internal cod
 REALITY CHECK:
 
 Internal System:                    External System:
-─────────────────                   ─────────────────
-✔ We control the code              ✘ We don't control their uptime
-✔ We can test everything           ✘ We can't test their outages
-✔ Deterministic behavior           ✘ Probabilistic behavior
-✔ Instant debugging                ✘ Black box when it fails
+-----------------                   -----------------
+? We control the code              ? We don't control their uptime
+? We can test everything           ? We can't test their outages
+? Deterministic behavior           ? Probabilistic behavior
+? Instant debugging                ? Black box when it fails
 ```
 
-❌ **Forbidden:** Calling any external API without timeout, retry, and error handling defined.  
-✅ **Correct:** "Every fetch() to an external service has: timeout (10s), retry (3x with exponential backoff), error logging, and fallback action."
+? **Forbidden:** Calling any external API without timeout, retry, and error handling defined.  
+? **Correct:** "Every fetch() to an external service has: timeout (10s), retry (3x with exponential backoff), error logging, and fallback action."
 
 ---
 
-### Rule 21 — Event Reconciliation (Zero Event Loss)
+### Rule 21 � Event Reconciliation (Zero Event Loss)
 
 **The Rule:**
 > "Koi bhi event system mein gum nahi hona chahiye. Har event tracked, verified, reconciled."
@@ -1149,16 +1219,16 @@ Every dispatched event (QStash message, DB write, API call, webhook) must be:
 ```
 EVENT LIFECYCLE:
 
-  1. DISPATCHED  → Event created, ID assigned, logged
-  2. DELIVERED   → Target received, acknowledgment logged  
-  3. PROCESSED   → Action completed, result logged
-  4. VERIFIED    → Reconciliation confirms expected outcome
+  1. DISPATCHED  ? Event created, ID assigned, logged
+  2. DELIVERED   ? Target received, acknowledgment logged  
+  3. PROCESSED   ? Action completed, result logged
+  4. VERIFIED    ? Reconciliation confirms expected outcome
 
 IF MISMATCH AT ANY STAGE:
-  → Auto-retry (up to retry budget)
-  → Dead Letter Queue (after retry exhaustion)
-  → DLQ Consumer reviews and reprocesses
-  → Alert to admin if DLQ depth > threshold
+  ? Auto-retry (up to retry budget)
+  ? Dead Letter Queue (after retry exhaustion)
+  ? DLQ Consumer reviews and reprocesses
+  ? Alert to admin if DLQ depth > threshold
 ```
 
 **Dead Letter Queue (DLQ) Design:**
@@ -1194,23 +1264,23 @@ CREATE TABLE dead_letter_queue (
 RUNS: Every day at 2 AM (via QStash scheduled job)
 
 CHECKS:
-  1. QStash messages sent yesterday → DB records created? (count match)
-  2. Lead form submissions → CRM entries? (no orphan leads)
-  3. Page approvals → Published pages? (no stuck drafts)
-  4. Events dispatched → Events processed? (no lost events)
+  1. QStash messages sent yesterday ? DB records created? (count match)
+  2. Lead form submissions ? CRM entries? (no orphan leads)
+  3. Page approvals ? Published pages? (no stuck drafts)
+  4. Events dispatched ? Events processed? (no lost events)
   
 IF MISMATCH:
-  → Log discrepancy with counts
-  → Create DLQ entries for missing records
-  → Alert admin: "Reconciliation found 3 orphan leads not synced to CRM"
+  ? Log discrepancy with counts
+  ? Create DLQ entries for missing records
+  ? Alert admin: "Reconciliation found 3 orphan leads not synced to CRM"
 ```
 
-❌ **Forbidden:** Fire-and-forget event dispatch without tracking delivery confirmation.  
-✅ **Correct:** "Every QStash publish logs the message_id. Every consumer logs processing with that message_id. Daily reconciliation matches dispatched vs processed."
+? **Forbidden:** Fire-and-forget event dispatch without tracking delivery confirmation.  
+? **Correct:** "Every QStash publish logs the message_id. Every consumer logs processing with that message_id. Daily reconciliation matches dispatched vs processed."
 
 ---
 
-### Rule 22 — Alert Delivery Guarantee (Alerts Must Reach Humans)
+### Rule 22 � Alert Delivery Guarantee (Alerts Must Reach Humans)
 
 **The Rule:**
 > "Alert sirf DB mein store karna alert nahi hai. Alert tab hai jab insaan tak pahunche."
@@ -1220,25 +1290,25 @@ Every critical alert MUST have a delivery channel, retry, and escalation path:
 ```
 ALERT SEVERITY LEVELS:
 
-  P0 — SYSTEM DOWN:
+  P0 � SYSTEM DOWN:
     Channel:    WhatsApp + Email + Zoho Cliq (ALL simultaneously)
     Retry:      Every 5 min until acknowledged
-    Escalation: If not ack'd in 15 min → call CEO phone
+    Escalation: If not ack'd in 15 min ? call CEO phone
     Example:    "Supabase is unreachable. System in degraded mode."
 
-  P1 — CRITICAL:
+  P1 � CRITICAL:
     Channel:    Zoho Cliq + Email
     Retry:      Every 15 min until acknowledged  
-    Escalation: If not ack'd in 1 hour → WhatsApp
+    Escalation: If not ack'd in 1 hour ? WhatsApp
     Example:    "5 consecutive pagegen failures. Queue paused."
 
-  P2 — WARNING:
+  P2 � WARNING:
     Channel:    Zoho Cliq
     Retry:      None (single delivery)
     Escalation: None
     Example:    "Daily AI spend at 80% of budget cap."
 
-  P3 — INFO:
+  P3 � INFO:
     Channel:    Admin dashboard only (no push)
     Retry:      None
     Escalation: None
@@ -1281,16 +1351,16 @@ The CEO Morning Brief (Section 38, Layer 6) is delivered via:
   2. WhatsApp message: Sent at 7:30 AM daily (summary version)
   3. Email: Sent at 8:00 AM daily (full version with charts)
   
-If WhatsApp delivery fails → retry at 8:30 AM
-If email delivery fails → Zoho Cliq fallback
+If WhatsApp delivery fails ? retry at 8:30 AM
+If email delivery fails ? Zoho Cliq fallback
 ```
 
-❌ **Forbidden:** Logging an alert to DB and assuming the CEO will check the admin panel.  
-✅ **Correct:** "P0 alert fires simultaneously on WhatsApp + Email + Cliq. Retries every 5 min until acknowledged."
+? **Forbidden:** Logging an alert to DB and assuming the CEO will check the admin panel.  
+? **Correct:** "P0 alert fires simultaneously on WhatsApp + Email + Cliq. Retries every 5 min until acknowledged."
 
 ---
 
-### Rule 23 — External Fallback Strategy (Never Fully Down)
+### Rule 23 � External Fallback Strategy (Never Fully Down)
 
 **The Rule:**
 > "Koi bhi ek vendor down hone se pura system down nahi hona chahiye."
@@ -1300,47 +1370,47 @@ Every critical external service MUST have a fallback strategy:
 ```
 FALLBACK MATRIX:
 
-┌─────────────┬───────────────────────────────┬────────────────────────────────┐
-│ Service     │ If DOWN...                    │ Fallback Action                │
-├─────────────┼───────────────────────────────┼────────────────────────────────┤
-│ Supabase    │ DB unreachable                │ 1. Retry 3x with backoff      │
-│             │                               │ 2. Switch to read-only mode   │
-│             │                               │ 3. Queue writes for later     │
-│             │                               │ 4. Serve cached pages (ISR)   │
-│             │                               │ 5. P0 alert to CEO            │
-├─────────────┼───────────────────────────────┼────────────────────────────────┤
-│ QStash      │ Queue unavailable             │ 1. Retry publish 3x           │
-│             │                               │ 2. Log to pending_jobs table  │
-│             │                               │ 3. Cron picks up pending_jobs │
-│             │                               │ 4. P1 alert: "Queue degraded" │
-├─────────────┼───────────────────────────────┼────────────────────────────────┤
-│ Gemini AI   │ API error / rate limited      │ 1. Retry with backoff         │
-│             │                               │ 2. Switch to fallback model   │
-│             │                               │    (gemini-flash-lite)        │
-│             │                               │ 3. If all models fail → skip  │
-│             │                               │    generation, queue for later│
-│             │                               │ 4. P1 alert: "AI unavailable" │
-├─────────────┼───────────────────────────────┼────────────────────────────────┤
-│ Zoho CRM    │ API timeout / auth failure    │ 1. Retry 3x                   │
-│             │                               │ 2. Store lead locally (DB)    │
-│             │                               │ 3. Queue for CRM sync later   │
-│             │                               │ 4. Lead is NOT lost           │
-│             │                               │ 5. P2 alert: "CRM sync delay" │
-├─────────────┼───────────────────────────────┼────────────────────────────────┤
-│ Zoho Cliq   │ Alert delivery failed         │ 1. Retry via email            │
-│ (Alerts)    │                               │ 2. Retry via WhatsApp         │
-│             │                               │ 3. Store in alert_deliveries  │
-│             │                               │ 4. Next escalation path       │
-├─────────────┼───────────────────────────────┼────────────────────────────────┤
-│ Vercel      │ Function timeout / cold start │ 1. ISR serves cached version  │
-│             │                               │ 2. Client-side fallback UI    │
-│             │                               │ 3. Log timeout with context   │
-│             │                               │ 4. If persistent → P1 alert   │
-├─────────────┼───────────────────────────────┼────────────────────────────────┤
-│ GSC/GA4     │ API quota / auth expired      │ 1. Use last cached data       │
-│             │                               │ 2. Skip intelligence cycle    │
-│             │                               │ 3. P3 alert: "Analytics stale"│
-└─────────────┴───────────────────────────────┴────────────────────────────────┘
++------------------------------------------------------------------------------+
+� Service     � If DOWN...                    � Fallback Action                �
++-------------+-------------------------------+--------------------------------�
+� Supabase    � DB unreachable                � 1. Retry 3x with backoff      �
+�             �                               � 2. Switch to read-only mode   �
+�             �                               � 3. Queue writes for later     �
+�             �                               � 4. Serve cached pages (ISR)   �
+�             �                               � 5. P0 alert to CEO            �
++-------------+-------------------------------+--------------------------------�
+� QStash      � Queue unavailable             � 1. Retry publish 3x           �
+�             �                               � 2. Log to pending_jobs table  �
+�             �                               � 3. Cron picks up pending_jobs �
+�             �                               � 4. P1 alert: "Queue degraded" �
++-------------+-------------------------------+--------------------------------�
+� Gemini AI   � API error / rate limited      � 1. Retry with backoff         �
+�             �                               � 2. Switch to fallback model   �
+�             �                               �    (gemini-flash-lite)        �
+�             �                               � 3. If all models fail ? skip  �
+�             �                               �    generation, queue for later�
+�             �                               � 4. P1 alert: "AI unavailable" �
++-------------+-------------------------------+--------------------------------�
+� Zoho CRM    � API timeout / auth failure    � 1. Retry 3x                   �
+�             �                               � 2. Store lead locally (DB)    �
+�             �                               � 3. Queue for CRM sync later   �
+�             �                               � 4. Lead is NOT lost           �
+�             �                               � 5. P2 alert: "CRM sync delay" �
++-------------+-------------------------------+--------------------------------�
+� Zoho Cliq   � Alert delivery failed         � 1. Retry via email            �
+� (Alerts)    �                               � 2. Retry via WhatsApp         �
+�             �                               � 3. Store in alert_deliveries  �
+�             �                               � 4. Next escalation path       �
++-------------+-------------------------------+--------------------------------�
+� Vercel      � Function timeout / cold start � 1. ISR serves cached version  �
+�             �                               � 2. Client-side fallback UI    �
+�             �                               � 3. Log timeout with context   �
+�             �                               � 4. If persistent ? P1 alert   �
++-------------+-------------------------------+--------------------------------�
+� GSC/GA4     � API quota / auth expired      � 1. Use last cached data       �
+�             �                               � 2. Skip intelligence cycle    �
+�             �                               � 3. P3 alert: "Analytics stale"�
++------------------------------------------------------------------------------+
 ```
 
 **Circuit Breaker Pattern:**
@@ -1348,57 +1418,57 @@ FALLBACK MATRIX:
 EVERY external API call goes through a circuit breaker:
 
   STATES:
-    CLOSED (normal) → requests go through normally
-    OPEN (tripped)  → requests fail immediately, don't hit the service
-    HALF-OPEN       → one test request allowed to check if service recovered
+    CLOSED (normal) ? requests go through normally
+    OPEN (tripped)  ? requests fail immediately, don't hit the service
+    HALF-OPEN       ? one test request allowed to check if service recovered
 
   TRIP CONDITION:
-    IF 5 failures in 2 minutes → circuit OPENS
+    IF 5 failures in 2 minutes ? circuit OPENS
     
   RECOVERY:
-    After 30 seconds → circuit goes HALF-OPEN
-    IF test request succeeds → circuit CLOSES
-    IF test request fails → circuit stays OPEN for another 30 seconds
+    After 30 seconds ? circuit goes HALF-OPEN
+    IF test request succeeds ? circuit CLOSES
+    IF test request fails ? circuit stays OPEN for another 30 seconds
 
   BENEFIT:
-    • Don't hammer a dying service (makes outage worse)
-    • Fail fast instead of slow timeout
-    • Auto-recover when service comes back
+    � Don't hammer a dying service (makes outage worse)
+    � Fail fast instead of slow timeout
+    � Auto-recover when service comes back
 ```
 
 **Vendor Lock-In Awareness:**
 ```
 CURRENT LOCK-IN ASSESSMENT:
 
-  Supabase (DB):     HIGH lock-in — PostgreSQL underneath (portable), but Supabase
+  Supabase (DB):     HIGH lock-in � PostgreSQL underneath (portable), but Supabase
                      auth, storage, RLS are proprietary. Migration possible but costly.
                      MITIGATION: Keep SQL standard. Avoid Supabase-specific features
                      beyond auth. Use service abstraction layer (lib/safeSupabase.js).
 
-  Vercel (Hosting):  MEDIUM lock-in — Next.js runs anywhere, but Vercel-specific
+  Vercel (Hosting):  MEDIUM lock-in � Next.js runs anywhere, but Vercel-specific
                      features (ISR, edge functions) would need replacement.
                      MITIGATION: Keep deployment config in vercel.json minimal.
 
-  QStash (Queue):    MEDIUM lock-in — Simple HTTP-based queue. Could be replaced
+  QStash (Queue):    MEDIUM lock-in � Simple HTTP-based queue. Could be replaced
                      with any HTTP webhook queue (AWS SQS + Lambda, etc.).
                      MITIGATION: All queue logic goes through lib/ abstraction.
 
-  Zoho (CRM):       LOW lock-in — API integration only. CRM data can be exported.
+  Zoho (CRM):       LOW lock-in � API integration only. CRM data can be exported.
                      MITIGATION: All Zoho calls through single service file.
 
-  Gemini (AI):       LOW lock-in — Prompt-based. Any LLM can replace it.
+  Gemini (AI):       LOW lock-in � Prompt-based. Any LLM can replace it.
                      MITIGATION: Model name configurable. Prompt templates reusable.
 ```
 
-❌ **Forbidden:** Single point of failure with no fallback. System goes fully down because one vendor has a bad day.  
-✅ **Correct:** "Supabase outage triggers read-only mode + cached ISR pages. Writes queue locally. P0 alert fires. System stays alive."
+? **Forbidden:** Single point of failure with no fallback. System goes fully down because one vendor has a bad day.  
+? **Correct:** "Supabase outage triggers read-only mode + cached ISR pages. Writes queue locally. P0 alert fires. System stays alive."
 
 ---
 
-### Rule 24 — SLA Monitoring & Degraded Mode
+### Rule 24 � SLA Monitoring & Degraded Mode
 
 **The Rule:**
-> "Agar system slow ho raha hai ya fail ho raha hai — toh sabse pehle system ko hi pata hona chahiye, CEO ko baad mein."
+> "Agar system slow ho raha hai ya fail ho raha hai � toh sabse pehle system ko hi pata hona chahiye, CEO ko baad mein."
 
 **Infrastructure SLA Thresholds:**
 
@@ -1422,10 +1492,10 @@ MODE 2: DEGRADED (Yellow)
   One or more non-critical systems impaired.
   Auto-triggered when: error rate > 5% OR external service circuit-breaker open
   Behavior:
-    • Non-essential features disabled (social engine, analytics sync)
-    • Core features still work (page serving, lead capture, admin panel)
-    • Banner shown in admin: "System running in degraded mode"
-    • P1 alert sent to CEO
+    � Non-essential features disabled (social engine, analytics sync)
+    � Core features still work (page serving, lead capture, admin panel)
+    � Banner shown in admin: "System running in degraded mode"
+    � P1 alert sent to CEO
   system_mode = 'degraded'
 
 MODE 3: SAFE MODE (Red)
@@ -1433,20 +1503,20 @@ MODE 3: SAFE MODE (Red)
   Auto-triggered when: DB unreachable OR 3+ P0 alerts in 1 hour
   Can also be triggered manually from admin panel.
   Behavior:
-    • All write operations paused (no page generation, no CRM sync)
-    • ISR cached pages continue serving (site stays up for visitors)
-    • Lead forms store locally with localStorage backup
-    • Admin panel shows emergency dashboard only
-    • P0 alert with escalation to phone
+    � All write operations paused (no page generation, no CRM sync)
+    � ISR cached pages continue serving (site stays up for visitors)
+    � Lead forms store locally with localStorage backup
+    � Admin panel shows emergency dashboard only
+    � P0 alert with escalation to phone
   system_mode = 'safe'
 
 MODE 4: MAINTENANCE (Blue)
   Planned downtime for upgrades/migrations.
   Manually activated from admin panel.
   Behavior:
-    • Maintenance page shown to visitors
-    • All background jobs paused
-    • Admin panel accessible for monitoring
+    � Maintenance page shown to visitors
+    � All background jobs paused
+    � Admin panel accessible for monitoring
   system_mode = 'maintenance'
 ```
 
@@ -1477,12 +1547,12 @@ CREATE TABLE sla_snapshots (
 CREATE INDEX idx_sla_service_time ON sla_snapshots(service, measured_at DESC);
 ```
 
-❌ **Forbidden:** System silently degrading with no one knowing. CEO discovers problems from user complaints.  
-✅ **Correct:** "API latency crossed 2s threshold. System auto-switched to degraded mode. CEO got P1 alert on Cliq. Non-essential features paused. Core still running."
+? **Forbidden:** System silently degrading with no one knowing. CEO discovers problems from user complaints.  
+? **Correct:** "API latency crossed 2s threshold. System auto-switched to degraded mode. CEO got P1 alert on Cliq. Non-essential features paused. Core still running."
 
 ---
 
-### Rule 25 — System Memory & Traceability Mandate
+### Rule 25 � System Memory & Traceability Mandate
 
 **The Rule:**
 > "Chat mein kaam karna = kaam kho dena. Docs mein likha kaam = permanent kaam."
@@ -1526,7 +1596,7 @@ Why this exists.
 What happened / what was done.
 
 ## Files Modified
-- `path/to/file.js` — what changed
+- `path/to/file.js` � what changed
 
 ## Verification
 How we know it's fixed/working.
@@ -1564,12 +1634,12 @@ NEVER:
   - Discover an incident without a docs/incidents/ file
 ```
 
-❌ **Forbidden:** "I fixed the bug" with no documentation. "The audit found 5 issues" with no persistent record. Code changes with no traceable reason.  
-✅ **Correct:** Every action has a docs/ file. Every docs/ file references the bible. Every bible section references its docs. Full traceability in 5 seconds.
+? **Forbidden:** "I fixed the bug" with no documentation. "The audit found 5 issues" with no persistent record. Code changes with no traceable reason.  
+? **Correct:** Every action has a docs/ file. Every docs/ file references the bible. Every bible section references its docs. Full traceability in 5 seconds.
 
 ---
 
-### Rule 26 — CEO Supremacy Enforcement
+### Rule 26 � CEO Supremacy Enforcement
 
 **The Rule:**
 > "CEO ka word = final. System, code, ya CTO kabhi CEO ko overrule nahi karega."
@@ -1577,15 +1647,15 @@ NEVER:
 - Every admin feature MUST have CEO override capability
 - Every automated decision MUST be reversible by CEO from admin
 - Every system restriction MUST have a CEO bypass option
-- If CEO says "change this" — CTO executes, does not debate
-- If CEO says "stop this" — CTO stops immediately, documents why it was stopped
+- If CEO says "change this" � CTO executes, does not debate
+- If CEO says "stop this" � CTO stops immediately, documents why it was stopped
 
-❌ **Forbidden:** "System doesn't allow that" or "That would break the architecture" as reasons to deny CEO.  
-✅ **Correct:** "CEO requested X. Implementing. If there's a risk, I'll document it and let CEO decide."
+? **Forbidden:** "System doesn't allow that" or "That would break the architecture" as reasons to deny CEO.  
+? **Correct:** "CEO requested X. Implementing. If there's a risk, I'll document it and let CEO decide."
 
 ---
 
-### Rule 27 — Communication Channel Guarantee
+### Rule 27 � Communication Channel Guarantee
 
 **The Rule:**
 > "Alert sirf DB mein store karna alert nahi hai. Alert tab hota hai jab CEO ke phone pe dikhe."
@@ -1601,21 +1671,21 @@ NEVER:
 
 **Delivery Rules:**
 ```
-P0 Alert → Try WhatsApp → If fail → Try Telegram → If fail → Try Email → If all fail → LOG AS CRITICAL INCIDENT
+P0 Alert ? Try WhatsApp ? If fail ? Try Telegram ? If fail ? Try Email ? If all fail ? LOG AS CRITICAL INCIDENT
 Every alert MUST have delivery confirmation (read receipt or API success response).
 Alert without confirmed delivery = Alert NOT sent.
 Retry: 3 attempts, 5-minute intervals, then escalate channel.
 ```
 
-❌ **Forbidden:** Building alert infrastructure without connecting delivery channels. (Phase 21 lesson learned.)  
-✅ **Correct:** "Alert generated → WhatsApp API called → delivery confirmed → CEO received notification."
+? **Forbidden:** Building alert infrastructure without connecting delivery channels. (Phase 21 lesson learned.)  
+? **Correct:** "Alert generated ? WhatsApp API called ? delivery confirmed ? CEO received notification."
 
 ---
 
-### Rule 28 — Unified Content Visibility
+### Rule 28 � Unified Content Visibility
 
 **The Rule:**
-> "CEO ko ek jagah se puri website ka content dikhna chahiye — CCC, pages, blog, downloads sab."
+> "CEO ko ek jagah se puri website ka content dikhna chahiye � CCC, pages, blog, downloads sab."
 
 **Requirements:**
 - ONE dashboard showing all content types (AI-generated, manual, blog, downloads)
@@ -1625,19 +1695,19 @@ Retry: 3 attempts, 5-minute intervals, then escalate channel.
 
 **Content Types and Their Current Locations:**
 ```
-AI-generated pages → /admin/ccc/drafts
-Manual CMS pages  → /admin/pages (HIDDEN from new nav!)
-Blog posts        → /admin/blog
-Downloads         → /admin/ccc/downloads
-Location pages    → Generated, no admin listing
+AI-generated pages ? /admin/ccc/drafts
+Manual CMS pages  ? /admin/pages (HIDDEN from new nav!)
+Blog posts        ? /admin/blog
+Downloads         ? /admin/ccc/downloads
+Location pages    ? Generated, no admin listing
 ```
 
-❌ **Forbidden:** Content existing in the system that CEO cannot see or manage from admin.  
-✅ **Correct:** "All 47 published pages, 12 drafts, 5 blog posts, 3 downloads visible in one unified view."
+? **Forbidden:** Content existing in the system that CEO cannot see or manage from admin.  
+? **Correct:** "All 47 published pages, 12 drafts, 5 blog posts, 3 downloads visible in one unified view."
 
 ---
 
-### Rule 29 — Geo Control from Admin
+### Rule 29 � Geo Control from Admin
 
 **The Rule:**
 > "CEO ko admin se city, locality, pincode add karne ka option hona chahiye. Code touch karne ki zarurat nahi honi chahiye."
@@ -1652,19 +1722,19 @@ Location pages    → Generated, no admin listing
 - See coverage metrics (pages generated vs planned per area)
 - Assign agent to area
 
-❌ **Forbidden:** "CEO cannot add a new city without developer intervention." (Current state.)  
-✅ **Correct:** "CEO opens Geo dashboard → clicks 'Add City' → enters details → city added → generation can begin."
+? **Forbidden:** "CEO cannot add a new city without developer intervention." (Current state.)  
+? **Correct:** "CEO opens Geo dashboard ? clicks 'Add City' ? enters details ? city added ? generation can begin."
 
 ---
 
-### Rule 30 — Media System Standard
+### Rule 30 � Media System Standard
 
 **The Rule:**
-> "Har image ka ek system hona chahiye — kaha store hoga, kis ratio mein, kisse linked hai, alt text kya hai."
+> "Har image ka ek system hona chahiye � kaha store hoga, kis ratio mein, kisse linked hai, alt text kya hai."
 
 **Media Storage Architecture:**
 ```
-Storage: Supabase Storage (NOT local filesystem — Vercel is read-only)
+Storage: Supabase Storage (NOT local filesystem � Vercel is read-only)
 CDN: Supabase CDN or external CDN
 Formats: WebP primary, JPEG fallback
 Max size: 5MB per upload
@@ -1673,10 +1743,10 @@ Max size: 5MB per upload
 **Image Ratio Standards:**
 | Context | Ratio | Dimensions | Use |
 |---------|-------|------------|-----|
-| Hero | 16:9 | 1200×675 | Page hero sections |
-| Thumbnail | 4:3 | 600×450 | Card previews, listings |
-| OG Image | 1.91:1 | 1200×630 | Social sharing |
-| Square | 1:1 | 600×600 | Profile, avatar, icon |
+| Hero | 16:9 | 1200�675 | Page hero sections |
+| Thumbnail | 4:3 | 600�450 | Card previews, listings |
+| OG Image | 1.91:1 | 1200�630 | Social sharing |
+| Square | 1:1 | 600�600 | Profile, avatar, icon |
 
 **Every Image MUST Have:**
 - Alt text (SEO + accessibility)
@@ -1684,12 +1754,12 @@ Max size: 5MB per upload
 - Storage in Supabase Storage (not local filesystem)
 - Proper deletion (remove file + DB record together)
 
-❌ **Forbidden:** Images saved to `public/uploads/` (Vercel read-only). Images without alt text. Orphaned files after DB delete.  
-✅ **Correct:** "Image uploaded to Supabase Storage → URL stored in DB → linked to draft → alt text set → SEO-ready."
+? **Forbidden:** Images saved to `public/uploads/` (Vercel read-only). Images without alt text. Orphaned files after DB delete.  
+? **Correct:** "Image uploaded to Supabase Storage ? URL stored in DB ? linked to draft ? alt text set ? SEO-ready."
 
 ---
 
-### Rule 31 — Navigation Management from Admin
+### Rule 31 � Navigation Management from Admin
 
 **The Rule:**
 > "CEO ko code mein jaake navigation change nahi karna chahiye. Admin se menu edit ho."
@@ -1702,12 +1772,12 @@ Max size: 5MB per upload
 - Changes reflect immediately without code deployment
 - Two navigation systems CANNOT coexist (consolidate to ONE)
 
-❌ **Forbidden:** NAV_LINKS hardcoded in two different files (ClientLayout.jsx AND AdminLayout.jsx). CEO editing source code to change menus.  
-✅ **Correct:** "CEO opens Navigation page → drags 'About' under 'Company' → saves → site updated."
+? **Forbidden:** NAV_LINKS hardcoded in two different files (ClientLayout.jsx AND AdminLayout.jsx). CEO editing source code to change menus.  
+? **Correct:** "CEO opens Navigation page ? drags 'About' under 'Company' ? saves ? site updated."
 
 ---
 
-### Rule 32 — Decision Documentation
+### Rule 32 � Decision Documentation
 
 **The Rule:**
 > "Har decision ka jawab hona chahiye: Why now? Why not later? Impact on system?"
@@ -1725,12 +1795,12 @@ Decision Record (Mandatory):
 
 **Decision must be documented in `docs/decisions/` BEFORE code starts.**
 
-❌ **Forbidden:** "I built X because it seemed useful." No documented reason, no CEO approval.  
-✅ **Correct:** "`docs/decisions/decision-2026-04-20-whatsapp-integration.md` created → CEO approved → implementation started."
+? **Forbidden:** "I built X because it seemed useful." No documented reason, no CEO approval.  
+? **Correct:** "`docs/decisions/decision-2026-04-20-whatsapp-integration.md` created ? CEO approved ? implementation started."
 
 ---
 
-### Rule 33 — Worker Execution Rules (Mosaic Model)
+### Rule 33 � Worker Execution Rules (Mosaic Model)
 
 **The Rule:**
 > "Jab parallel workers kaam karein, har worker independent ho. Koi bhi worker doosre ka kaam bypass na kare."
@@ -1742,8 +1812,8 @@ Decision Record (Mandatory):
 3. Each worker (human or AI agent) owns ONE sub-phase at a time
 4. Workers CANNOT modify files owned by another active worker
 5. Last worker to complete joins all sub-phases together
-6. CTO verifies the join — no gaps, no conflicts, no regressions
-7. Only after CTO verification → phase moves toward COMPLETE status
+6. CTO verifies the join � no gaps, no conflicts, no regressions
+7. Only after CTO verification ? phase moves toward COMPLETE status
 ```
 
 **Worker Rules:**
@@ -1755,24 +1825,24 @@ Decision Record (Mandatory):
 | W4 | Worker documents every file created/modified |
 | W5 | Worker runs verification before declaring sub-phase done |
 | W6 | Worker creates docs/ entry for their sub-phase work |
-| W7 | If worker encounters a dependency on another worker → STOP and wait |
-| W8 | No worker can mark the parent phase COMPLETE — only CTO after join verification |
+| W7 | If worker encounters a dependency on another worker ? STOP and wait |
+| W8 | No worker can mark the parent phase COMPLETE � only CTO after join verification |
 | W9 | Worker cannot bypass constitution articles or CCC rules |
-| W10 | CTO is the final verifier — CTO checks all workers' output before CEO review |
+| W10 | CTO is the final verifier � CTO checks all workers' output before CEO review |
 
 **Join Verification Checklist (CTO runs this):**
 ```
-□ All sub-phases marked complete by their workers
-□ No file conflicts between workers
-□ Integration tests pass after merge
-□ No regressions in existing functionality
-□ Bible updated with completion status
-□ docs/ entries created for all sub-phases
-□ Ready for CEO review
+? All sub-phases marked complete by their workers
+? No file conflicts between workers
+? Integration tests pass after merge
+? No regressions in existing functionality
+? Bible updated with completion status
+? docs/ entries created for all sub-phases
+? Ready for CEO review
 ```
 
-❌ **Forbidden:** Worker A modifying Worker B's files. Workers skipping bible review. Workers marking parent phase complete.  
-✅ **Correct:** "Worker 1 completed 3a (storage). Worker 2 completed 3b (upload UI). CTO joined and verified. Phase 3 ready for CEO review."
+? **Forbidden:** Worker A modifying Worker B's files. Workers skipping bible review. Workers marking parent phase complete.  
+? **Correct:** "Worker 1 completed 3a (storage). Worker 2 completed 3b (upload UI). CTO joined and verified. Phase 3 ready for CEO review."
 
 ---
 
@@ -1781,8 +1851,8 @@ Decision Record (Mandatory):
 | # | Rule | One-Line Summary |
 |---|------|------------------|
 | 1 | Execution Structure | One module at a time. Finish before starting next. |
-| 2 | Think → Plan → Approve → Build | No code before approved written plan. |
-| 3 | Proof-Based Testing | "Tested → verified" only. Never "should work". |
+| 2 | Think ? Plan ? Approve ? Build | No code before approved written plan. |
+| 3 | Proof-Based Testing | "Tested ? verified" only. Never "should work". |
 | 4 | Zero Breakage | New system added. Old system never broken. |
 | 5 | Phase Lock | Next phase starts only when current is 100% done. |
 | 6 | Detail Depth | Unclear = design first. Edge cases answered before coding. |
@@ -1792,16 +1862,16 @@ Decision Record (Mandatory):
 | 10 | Safety Guardrails | Rate limits, caps, and duplicate prevention always enforced. |
 | 11 | Human Control | AI suggests. Human decides. No silent auto-executions. |
 | 12 | Rollback | Every change reversible via git revert, feature flag, or DB restore. |
-| 13 | Deployment Protocol | Local → safety check → commit → deploy → live verify. |
+| 13 | Deployment Protocol | Local ? safety check ? commit ? deploy ? live verify. |
 | 14 | Documentation | Every module documented: purpose, contract, edge cases. |
 | 15 | Cost Awareness | Every AI/API call must track cost. No blind scaling. |
 | 16 | Data Integrity | Zero partial writes. Transaction or compensation mandatory. |
 | 17 | Security Layer | Auth + Authz + Audit on every admin action. No exceptions. |
 | 18 | Ecosystem Thinking | Full lifecycle design, not just entry points. All 5 ecosystems modeled. |
-| 19 | Execution Priority | Priority A→B→C→D. No C/D work until all A's are complete. Dependency chain respected. |
+| 19 | Execution Priority | Priority A?B?C?D. No C/D work until all A's are complete. Dependency chain respected. |
 | 20 | External System Contract | Every vendor has written contract: input/output/timeout/retry/fallback/SLA. |
 | 21 | Event Reconciliation | Zero event loss. Every event tracked, verified, reconciled. DLQ for failures. |
-| 22 | Alert Delivery Guarantee | Alerts reach humans. P0→WhatsApp+Email+Cliq. Retry + escalation mandatory. |
+| 22 | Alert Delivery Guarantee | Alerts reach humans. P0?WhatsApp+Email+Cliq. Retry + escalation mandatory. |
 | 23 | External Fallback | No single vendor takes system fully down. Circuit breaker + fallback for every service. |
 | 24 | SLA Monitoring | Infrastructure SLA tracked. Auto degraded mode. System self-monitors health. |
 | 25 | System Memory | Every audit, fix, incident, and decision documented in docs/. Bible references all. |
@@ -1820,9 +1890,9 @@ Decision Record (Mandatory):
 
 ---
 
-## 0.1 CTO Operating Protocol — System Ownership Contract
+## 0.1 CTO Operating Protocol � System Ownership Contract
 
-> ⚠️ **This section defines the CTO's operating identity, mindset, and mandatory behaviour. This is NOT optional guidance — it is the operating contract between the CEO and the CTO agent.**
+> ?? **This section defines the CTO's operating identity, mindset, and mandatory behaviour. This is NOT optional guidance � it is the operating contract between the CEO and the CTO agent.**
 
 ### Role Definition
 
@@ -1839,7 +1909,7 @@ You ENSURE:
   - Nothing is uncontrolled
 
 If any part of the system is incomplete, unclear, unsafe, or unscalable:
-  → You MUST STOP and FIX before proceeding.
+  ? You MUST STOP and FIX before proceeding.
 ```
 
 ### Core Objective
@@ -1853,14 +1923,14 @@ Build a **PRODUCTION-GRADE, SELF-SCALING, ZERO-BREAKAGE SYSTEM** where every mod
 | **Observable** | Every event logged with level, reason, context |
 | **Controllable from Admin** | Visible, ON/OFF, CRUD from admin panel |
 | **SEO-safe** | No duplicate content, proper slugs, sitemap updated, metadata complete |
-| **Scalable** | Designed for 10 → 100 → 10,000 pages |
+| **Scalable** | Designed for 10 ? 100 ? 10,000 pages |
 | **Reversible** | Can be rolled back via git revert, feature flag, or DB restore |
 
 ---
 
-### 🚨 CTO Absolute Rules (Non-Negotiable)
+### ?? CTO Absolute Rules (Non-Negotiable)
 
-#### Rule A — Think Before Build
+#### Rule A � Think Before Build
 
 Before writing ANY code, you MUST:
 1. Deeply analyze the requirement
@@ -1871,7 +1941,7 @@ Before writing ANY code, you MUST:
 6. Create a FULL IMPLEMENTATION PLAN
 7. **WAIT FOR CEO APPROVAL** before coding
 
-#### Rule B — Gap Detection is MANDATORY (CRITICAL)
+#### Rule B � Gap Detection is MANDATORY (CRITICAL)
 
 For **EVERY** module, you MUST actively detect:
 
@@ -1885,18 +1955,18 @@ For **EVERY** module, you MUST actively detect:
 | Data inconsistency risks | Can data get out of sync between tables? |
 | Observability gaps | Can we see what happened when something fails? |
 
-> **If ANY gap exists → STOP and REPORT to CEO BEFORE implementation.**
+> **If ANY gap exists ? STOP and REPORT to CEO BEFORE implementation.**
 
-#### Rule C — Admin Control is MANDATORY
+#### Rule C � Admin Control is MANDATORY
 
 Every feature MUST be:
-- ✅ **Visible** in admin panel
-- ✅ **Controllable** (ON/OFF / CRUD)
-- ✅ **Observable** (logs / status)
+- ? **Visible** in admin panel
+- ? **Controllable** (ON/OFF / CRUD)
+- ? **Observable** (logs / status)
 
-> ❌ If a feature is not controllable from admin → it is NOT complete. FAIL.
+> ? If a feature is not controllable from admin ? it is NOT complete. FAIL.
 
-#### Rule D — SEO Safety (CRITICAL)
+#### Rule D � SEO Safety (CRITICAL)
 
 You MUST ensure for every content module:
 - No duplicate content anywhere
@@ -1905,22 +1975,22 @@ You MUST ensure for every content module:
 - Sitemap updated with new URLs
 - All metadata complete (title, description, OG, schema)
 
-#### Rule E — Scale Thinking
+#### Rule E � Scale Thinking
 
 You MUST design every module for:
-- 10 → 100 → 10,000 pages
+- 10 ? 100 ? 10,000 pages
 - Bulk operations (not just one-by-one)
 - Automation potential (schedulable, repeatable)
 - Performance stability (no degradation as data grows)
 
-#### Rule F — Content Quality System
+#### Rule F � Content Quality System
 
 You MUST ensure:
 - `quality_score` exists and is populated for every draft
-- Improvement loop exists (re-edit → re-score)
+- Improvement loop exists (re-edit ? re-score)
 - Re-optimization is possible (edit live content, re-evaluate)
 
-#### Rule G — Documentation Update (MANDATORY)
+#### Rule G � Documentation Update (MANDATORY)
 
 After every module completion:
 1. Update `CONTENT_COMMAND_CENTER.md`
@@ -1930,22 +2000,22 @@ After every module completion:
 
 ---
 
-### 🏆 CTO Score System (MANDATORY)
+### ?? CTO Score System (MANDATORY)
 
 > Before marking ANY module complete, the CTO MUST evaluate it against this scorecard.
 
-| # | Category | Score (0–10) | What 10/10 Means |
+| # | Category | Score (0�10) | What 10/10 Means |
 |---|----------|-------------|-------------------|
-| 1 | **Architecture** | — | Clean separation, no god-files, clear data flow |
-| 2 | **Safety** | — | No data corruption possible, guards on all inputs |
-| 3 | **Control** | — | Every feature controllable from admin panel |
-| 4 | **Observability** | — | Every success/failure/retry logged with context |
-| 5 | **SEO Readiness** | — | Metadata, schema markup, sitemap, internal links |
-| 6 | **Scalability** | — | Works at 10, 100, 10,000 pages without degradation |
-| 7 | **Performance** | — | No slow queries, proper indexes, efficient rendering |
-| 8 | **Admin Control** | — | CEO can manage without touching code |
+| 1 | **Architecture** | � | Clean separation, no god-files, clear data flow |
+| 2 | **Safety** | � | No data corruption possible, guards on all inputs |
+| 3 | **Control** | � | Every feature controllable from admin panel |
+| 4 | **Observability** | � | Every success/failure/retry logged with context |
+| 5 | **SEO Readiness** | � | Metadata, schema markup, sitemap, internal links |
+| 6 | **Scalability** | � | Works at 10, 100, 10,000 pages without degradation |
+| 7 | **Performance** | � | No slow queries, proper indexes, efficient rendering |
+| 8 | **Admin Control** | � | CEO can manage without touching code |
 
-**❗ RULE: If ANY score < 10 → module is NOT COMPLETE.**
+**? RULE: If ANY score < 10 ? module is NOT COMPLETE.**
 
 When a score is below 10, you MUST:
 1. Explain WHY it's below 10
@@ -1955,24 +2025,24 @@ When a score is below 10, you MUST:
 
 ---
 
-### 🔄 CTO Execution Flow (Mandatory for Every Module)
+### ?? CTO Execution Flow (Mandatory for Every Module)
 
 ```
 Step 1:  READ current module requirements from this bible
-Step 2:  DEEP THINK — CTO-level analysis, not developer-level
-Step 3:  DETECT GAPS — actively look for what's missing/broken/risky
+Step 2:  DEEP THINK � CTO-level analysis, not developer-level
+Step 3:  DETECT GAPS � actively look for what's missing/broken/risky
 Step 4:  CREATE detailed implementation plan (files, schema, API contracts)
-Step 5:  WAIT for CEO approval — NO code before this
-Step 6:  IMPLEMENT — exactly what was approved
-Step 7:  TEST — all 4 layers (happy, edge, failure, load)
-Step 8:  PROVIDE PROOF — API proof, DB proof, UI proof, Live proof
-Step 9:  SCORE — all 8 categories must be 10/10
-Step 10: UPDATE documentation — this bible must reflect reality
+Step 5:  WAIT for CEO approval � NO code before this
+Step 6:  IMPLEMENT � exactly what was approved
+Step 7:  TEST � all 4 layers (happy, edge, failure, load)
+Step 8:  PROVIDE PROOF � API proof, DB proof, UI proof, Live proof
+Step 9:  SCORE � all 8 categories must be 10/10
+Step 10: UPDATE documentation � this bible must reflect reality
 ```
 
 ---
 
-### 🔍 CTO Self-Audit Block (Mandatory at Every Phase End)
+### ?? CTO Self-Audit Block (Mandatory at Every Phase End)
 
 > At the end of EVERY phase, the CTO MUST answer these 5 questions honestly:
 
@@ -1980,35 +2050,35 @@ Step 10: UPDATE documentation — this bible must reflect reality
 CTO SELF-AUDIT:
 
 1. WHAT IS MISSING?
-   → Are there features defined in the bible that are not yet built?
-   → Are there edge cases not handled?
+   ? Are there features defined in the bible that are not yet built?
+   ? Are there edge cases not handled?
 
 2. WHAT CAN BREAK?
-   → What happens if the DB is down?
-   → What happens if the AI API is slow or rate-limited?
-   → What happens if two users do the same action simultaneously?
+   ? What happens if the DB is down?
+   ? What happens if the AI API is slow or rate-limited?
+   ? What happens if two users do the same action simultaneously?
 
 3. WHAT WILL FAIL AT SCALE?
-   → Will this work with 10,000 pages in the DB?
-   → Will the admin panel still be fast with 5,000 drafts?
-   → Will the sitemap generation time out with 10,000 URLs?
+   ? Will this work with 10,000 pages in the DB?
+   ? Will the admin panel still be fast with 5,000 drafts?
+   ? Will the sitemap generation time out with 10,000 URLs?
 
 4. WHAT IS NOT CONTROLLABLE?
-   → Can the CEO turn this feature ON/OFF without code deploy?
-   → Can the CEO adjust limits/thresholds from admin?
-   → Is there a feature flag for this?
+   ? Can the CEO turn this feature ON/OFF without code deploy?
+   ? Can the CEO adjust limits/thresholds from admin?
+   ? Is there a feature flag for this?
 
 5. WHAT IS NOT VISIBLE?
-   → Can the CEO see this feature's status in admin?
-   → Are successes AND failures logged and viewable?
-   → If something goes wrong at 3 AM, will we know?
+   ? Can the CEO see this feature's status in admin?
+   ? Are successes AND failures logged and viewable?
+   ? If something goes wrong at 3 AM, will we know?
 ```
 
-> **If the answer to ANY of these reveals a gap → STOP. Report. Fix. Then proceed.**
+> **If the answer to ANY of these reveals a gap ? STOP. Report. Fix. Then proceed.**
 
 ---
 
-### 🎯 Impact of This Protocol
+### ?? Impact of This Protocol
 
 | Before (Without Protocol) | After (With Protocol) |
 |--------------------------|----------------------|
@@ -2020,7 +2090,7 @@ CTO SELF-AUDIT:
 | Scale issues discovered too late | Scale designed from day one |
 | Admin panel is afterthought | Admin control is mandatory from start |
 
-> *"Pehle system sochta tha — ab system khud ko audit karta hai."*
+> *"Pehle system sochta tha � ab system khud ko audit karta hai."*
 
 ---
 
@@ -2030,7 +2100,7 @@ CTO SELF-AUDIT:
 
 Not a content generator. Not a CMS. Not a blog engine.
 
-**We're building India's most localized programmatic SEO + lead acquisition machine** for LIC and financial services — targeting every district, city, locality, pincode, and micro-area where someone might search for LIC services, financial independence, or insurance agents.
+**We're building India's most localized programmatic SEO + lead acquisition machine** for LIC and financial services � targeting every district, city, locality, pincode, and micro-area where someone might search for LIC services, financial independence, or insurance agents.
 
 ### The Core Insight (from licnewdelhi.com Study)
 
@@ -2039,18 +2109,18 @@ licnewdelhi.com ranks well for LIC-related queries with a simple strategy: it ac
 > "Koi bhi form dhundh raha hai to uska ek specific need hai. Agar us specific need ko sahi se analyze karein, to usse direct lead banana possible hai."
 
 **Our approach is 10x better:**
-- Forms + resources available (like licnewdelhi.com) ✅  
-- But gated behind a lead capture form (name, mobile, email, city) ✅  
-- Plus: 90% of people don't know HOW to fill forms or what documents to attach — we solve THIS and convert it to a premium service lead ✅  
-- Plus: Hyper-local pages for every pincode/locality that rank on Google ✅  
-- Plus: Zoho CRM + WhatsApp automation converts leads while you sleep ✅  
+- Forms + resources available (like licnewdelhi.com) ?  
+- But gated behind a lead capture form (name, mobile, email, city) ?  
+- Plus: 90% of people don't know HOW to fill forms or what documents to attach � we solve THIS and convert it to a premium service lead ?  
+- Plus: Hyper-local pages for every pincode/locality that rank on Google ?  
+- Plus: Zoho CRM + WhatsApp automation converts leads while you sleep ?  
 
 ### Three-Phase Revenue Flywheel
 
 ```
-Phase 1: ATTRACT    → Google ranks local pages → Organic traffic arrives
-Phase 2: CAPTURE    → Downloads gated by lead form → CRM captures lead
-Phase 3: CONVERT    → Agent guides form filling → Policy sale happens
+Phase 1: ATTRACT    ? Google ranks local pages ? Organic traffic arrives
+Phase 2: CAPTURE    ? Downloads gated by lead form ? CRM captures lead
+Phase 3: CONVERT    ? Agent guides form filling ? Policy sale happens
 ```
 
 ---
@@ -2061,21 +2131,21 @@ Phase 3: CONVERT    → Agent guides form filling → Policy sale happens
 
 | System | Status | Code Location |
 |--------|--------|--------------|
-| generation_queue | ✅ Live | `supabase/migrations/018_generation_queue_schema.sql`, `supabase/migrations/20260416000000_phase_4_6_contract_reconciliation.sql`, `supabase/migrations/20260502100000_p1_generation_queue_schema_fix.sql` |
-| Gemini AI content ("Raj" persona) | ✅ Live | `lib/ai/generateContent.js`, `lib/ai/promptTemplates.js` |
-| SHA256 content fingerprints (dedup) | ✅ Live | `app/api/jobs/pagegen/route.js` → `content_fingerprints` table |
-| cities → localities → pincodes geo DB | ✅ Live | `supabase/migrations/014_locations_schema.sql` |
-| content_review_queue (quality flag) | ✅ Live | `supabase/migrations/017_content_quality_schema.sql` |
-| Sitemap auto-sharding | ✅ Live | `app/sitemap.xml/route.js`, `app/sitemaps/[type]/route.js` |
-| Admin SEO UI (generation, index, quality) | ✅ Exists | `app/admin/seo/` |
-| Downloads page | ✅ Live | `app/downloads/DownloadsContent.jsx` |
-| QStash async queue | ✅ Live | `lib/queue/publisher.js` |
+| generation_queue | ? Live | `supabase/migrations/018_generation_queue_schema.sql`, `supabase/migrations/20260416000000_phase_4_6_contract_reconciliation.sql`, `supabase/migrations/20260502100000_p1_generation_queue_schema_fix.sql` |
+| Gemini AI content ("Raj" persona) | ? Live | `lib/ai/generateContent.js`, `lib/ai/promptTemplates.js` |
+| SHA256 content fingerprints (dedup) | ? Live | `app/api/jobs/pagegen/route.js` ? `content_fingerprints` table |
+| cities ? localities ? pincodes geo DB | ? Live | `supabase/migrations/014_locations_schema.sql` |
+| content_review_queue (quality flag) | ? Live | `supabase/migrations/017_content_quality_schema.sql` |
+| Sitemap auto-sharding | ? Live | `app/sitemap.xml/route.js`, `app/sitemaps/[type]/route.js` |
+| Admin SEO UI (generation, index, quality) | ? Exists | `app/admin/seo/` |
+| Downloads page | ? Live | `app/downloads/DownloadsContent.jsx` |
+| QStash async queue | ? Live | `lib/queue/publisher.js` |
 
 ### Critical Gaps (The Actual Problems)
 
 | Gap | Severity | Impact |
 |-----|----------|--------|
-| 🚨 Generated pages have NO frontend route | CRITICAL | Every page you've generated is invisible to users + Google |
+| ?? Generated pages have NO frontend route | CRITICAL | Every page you've generated is invisible to users + Google |
 | Zero human control before publish | HIGH | Bad AI output goes live automatically |
 | No content type flexibility (hardcoded city/locality only) | HIGH | Cannot generate policy pages, blog posts, career pages |
 | No geo intelligence (pincode data unused) | HIGH | Missing micro-local opportunity |
@@ -2095,7 +2165,7 @@ Phase 3: CONVERT    → Agent guides form filling → Policy sale happens
 
 ---
 
-## 3. 🚨 The Rendering Gap — Critical Bug
+## 3. ?? The Rendering Gap � Critical Bug
 
 ### What Is It?
 
@@ -2118,23 +2188,23 @@ Pagegen writes:
   location_content.hero_headline = "Bima Sakhi in Krishna Nagar..."
   
 Frontend serves:
-  app/pages/[slug]/page.js → reads custom_pages WHERE slug = "lic-agent-in-krishna-nagar-delhi"
-  → NOT FOUND (wrong table)
-  → 404 returned
+  app/pages/[slug]/page.js ? reads custom_pages WHERE slug = "lic-agent-in-krishna-nagar-delhi"
+  ? NOT FOUND (wrong table)
+  ? 404 returned
 ```
 
-### The Fix (Phase 1 — Must do first)
+### The Fix (Phase 1 � Must do first)
 
 Create a new unified catch-all route: `app/[...slug]/page.js`
 
 **Priority order in the catch-all:**
-1. Check `page_index` table (generated pages) → if found, render with `GeneratedPageTemplate`
-2. If not found, check `custom_pages` table (CMS pages) → render with block renderer
+1. Check `page_index` table (generated pages) ? if found, render with `GeneratedPageTemplate`
+2. If not found, check `custom_pages` table (CMS pages) ? render with block renderer
 3. If neither, return `notFound()`
 
 **Files to create:**
-- `app/[...slug]/page.js` — catch-all route handler
-- `components/layout/GeneratedPageTemplate.jsx` — renders `location_content` data
+- `app/[...slug]/page.js` � catch-all route handler
+- `components/layout/GeneratedPageTemplate.jsx` � renders `location_content` data
 
 **Conflict resolution:** The existing `app/pages/[slug]/page.js` uses the `/pages/` prefix which won't conflict with the new catch-all.
 
@@ -2143,67 +2213,67 @@ Create a new unified catch-all route: `app/[...slug]/page.js`
 ## 4. The Big Picture Architecture
 
 ```
-                    ┌─────────────────────────────────────────────────────┐
-                    │           CONTENT COMMAND CENTER (CCC)               │
-                    │                  FULL FLYWHEEL                       │
-                    └─────────────────────────────────────────────────────┘
+                    +-----------------------------------------------------+
+                    �           CONTENT COMMAND CENTER (CCC)               �
+                    �                  FULL FLYWHEEL                       �
+                    +-----------------------------------------------------+
 
 INPUT LAYER
-┌─────────────────┐   ┌──────────────────┐   ┌─────────────────────┐
-│  Keyword Import  │   │  Pincode Engine   │   │  Intent Selector    │
-│ (Ahrefs/Ubersug) │   │  (Micro-Local)    │   │  (service/policy/   │
-│  Answer the Pub  │   │  India Post Data  │   │   career/blog)      │
-└────────┬────────┘   └────────┬─────────┘   └──────────┬──────────┘
-         └─────────────────────┴──────────────────────────┘
-                                     │
-                                     ▼
++-----------------+   +------------------+   +---------------------+
+�  Keyword Import  �   �  Pincode Engine   �   �  Intent Selector    �
+� (Ahrefs/Ubersug) �   �  (Micro-Local)    �   �  (service/policy/   �
+�  Answer the Pub  �   �  India Post Data  �   �   career/blog)      �
++-----------------+   +------------------+   +---------------------+
+         +------------------------------------------------+
+                                     �
+                                     ?
 GENERATION LAYER
-┌───────────────────────────────────────────────────────────────────────┐
-│                     bulk_generation_jobs                               │
-│    Select: cities + localities + pincodes + intent + daily limit       │
-│    Creates N entries in generation_queue                               │
-└──────────────────────────────────┬────────────────────────────────────┘
-                                   │ QStash
-                                   ▼
++-----------------------------------------------------------------------+
+�                     bulk_generation_jobs                               �
+�    Select: cities + localities + pincodes + intent + daily limit       �
+�    Creates N entries in generation_queue                               �
++-----------------------------------------------------------------------+
+                                   � QStash
+                                   ?
                           /api/jobs/pagegen
                      Gemini AI ("Raj" persona)
-                                   │
-                                   ▼
+                                   �
+                                   ?
 CONTROL LAYER (NEW)
-┌───────────────────────────────────────────────────────────────────────┐
-│                        content_drafts table                            │
-│   Draft → Review → Edit → Add Images → Approve → Schedule → Publish   │
-│                                                                        │
-│   /admin/ccc/drafts          (list + filter)                           │
-│   /admin/ccc/drafts/[id]     (full editor with image prompts)          │
-│   /admin/ccc/bulk            (batch job planner)                       │
-│   /admin/ccc/keywords        (keyword cluster manager)                 │
-│   /admin/ccc/sitemap         (sitemap health monitor)                  │
-└──────────────────────────────────┬────────────────────────────────────┘
-                                   │ APPROVE
-                                   ▼
++-----------------------------------------------------------------------+
+�                        content_drafts table                            �
+�   Draft ? Review ? Edit ? Add Images ? Approve ? Schedule ? Publish   �
+�                                                                        �
+�   /admin/ccc/drafts          (list + filter)                           �
+�   /admin/ccc/drafts/[id]     (full editor with image prompts)          �
+�   /admin/ccc/bulk            (batch job planner)                       �
+�   /admin/ccc/keywords        (keyword cluster manager)                 �
+�   /admin/ccc/sitemap         (sitemap health monitor)                  �
++-----------------------------------------------------------------------+
+                                   � APPROVE
+                                   ?
 PUBLISH LAYER
-┌───────────────────────────────────────────────────────────────────────┐
-│  page_index.status = 'active'                                          │
-│  → Sitemap auto-updates (already works!)                               │
-│  → URL goes live via catch-all route: app/[...slug]/page.js            │
-│  → Google crawls → Ranks → Traffic                                     │
-└──────────────────────────────────┬────────────────────────────────────┘
-                                   │
-                                   ▼
++-----------------------------------------------------------------------+
+�  page_index.status = 'active'                                          �
+�  ? Sitemap auto-updates (already works!)                               �
+�  ? URL goes live via catch-all route: app/[...slug]/page.js            �
+�  ? Google crawls ? Ranks ? Traffic                                     �
++-----------------------------------------------------------------------+
+                                   �
+                                   ?
 ACQUISITION LAYER
-┌─────────────────────────┐   ┌───────────────────────────────────────┐
-│   Organic Search Lead   │   │   Download-as-Lead-Magnet             │
-│   (page → apply form)   │   │   (form gate before PDF download)     │
-└────────────┬────────────┘   └──────────────────────┬────────────────┘
-             └─────────────────────────┬──────────────┘
-                                       ▼
++-------------------------+   +---------------------------------------+
+�   Organic Search Lead   �   �   Download-as-Lead-Magnet             �
+�   (page ? apply form)   �   �   (form gate before PDF download)     �
++-------------------------+   +---------------------------------------+
+             +----------------------------------------+
+                                       ?
 CONVERSION LAYER
-┌───────────────────────────────────────────────────────────────────────┐
-│                    Zoho CRM + WhatsApp Automation                      │
-│   Lead captured → Auto-tagged → Agent assigned → Form guidance offer  │
-│   Form filling service → Policy consultation → SALE                   │
-└───────────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------------+
+�                    Zoho CRM + WhatsApp Automation                      �
+�   Lead captured ? Auto-tagged ? Agent assigned ? Form guidance offer  �
+�   Form filling service ? Policy consultation ? SALE                   �
++-----------------------------------------------------------------------+
 ```
 
 ---
@@ -2214,13 +2284,13 @@ CONVERSION LAYER
 
 ```
 Country: India
-  └─ State: Delhi
-       └─ City: Delhi
-            └─ Locality: Krishna Nagar        ← localities table
-                 └─ Pincode: 110051           ← pincodes table
-                      └─ Area: Lal Quarter    ← pincode_areas table (NEW)
-                      └─ Area: Azad Nagar     ← pincode_areas table (NEW)
-                      └─ Area: Govind Pura    ← pincode_areas table (NEW)
+  +- State: Delhi
+       +- City: Delhi
+            +- Locality: Krishna Nagar        ? localities table
+                 +- Pincode: 110051           ? pincodes table
+                      +- Area: Lal Quarter    ? pincode_areas table (NEW)
+                      +- Area: Azad Nagar     ? pincode_areas table (NEW)
+                      +- Area: Govind Pura    ? pincode_areas table (NEW)
 ```
 
 ### Content Scope Levels (New Concept)
@@ -2236,7 +2306,7 @@ Country: India
 
 **Strategy:** Start from `locality` level where competition is manageable. Scale to `micro` for moat.
 
-### Intent Types (New Concept — Not in Current System)
+### Intent Types (New Concept � Not in Current System)
 
 | Intent | Content Focus | Example Query | Lead Type |
 |--------|--------------|--------------|----------|
@@ -2271,7 +2341,7 @@ Country: India
   "content_type": "service_page",
   "audience": "women 25-45, middle-class families, seeking financial independence",
   "brand_voice": "trustworthy, local, Hindi-English mix, practical, elder sister tone",
-  "unique_angle": "Bima Sakhi — women-led LIC agent network in the community",
+  "unique_angle": "Bima Sakhi � women-led LIC agent network in the community",
   "local_context": "East Delhi residential area, primarily government employees and small business families",
   "pillar_slug": "lic-agent-delhi",
   "cluster_siblings": ["lic-agent-delhi-laxmi-nagar", "lic-agent-delhi-shahdara"]
@@ -2285,16 +2355,16 @@ Country: India
 ### Admin Routes Architecture
 
 ```
-/admin/ccc/                           → CCC Overview Dashboard
-/admin/ccc/drafts                     → Draft Review Queue (list, filter, bulk actions)
-/admin/ccc/drafts/[id]                → Full Draft Editor
-/admin/ccc/bulk                       → Bulk Job Planner
-/admin/ccc/bulk/[id]                  → Bulk Job Detail + Progress
-/admin/ccc/keywords                   → Keyword Cluster Manager (CSV import)
-/admin/ccc/sitemap                    → Sitemap Health Monitor
-/admin/ccc/performance                → Page Rankings + Lead Attribution
-/admin/ccc/downloads                  → Download Lead Magnet Manager
-/admin/ccc/templates                  → Page Template Manager
+/admin/ccc/                           ? CCC Overview Dashboard
+/admin/ccc/drafts                     ? Draft Review Queue (list, filter, bulk actions)
+/admin/ccc/drafts/[id]                ? Full Draft Editor
+/admin/ccc/bulk                       ? Bulk Job Planner
+/admin/ccc/bulk/[id]                  ? Bulk Job Detail + Progress
+/admin/ccc/keywords                   ? Keyword Cluster Manager (CSV import)
+/admin/ccc/sitemap                    ? Sitemap Health Monitor
+/admin/ccc/performance                ? Page Rankings + Lead Attribution
+/admin/ccc/downloads                  ? Download Lead Magnet Manager
+/admin/ccc/templates                  ? Page Template Manager
 ```
 
 ### CCC Overview Dashboard
@@ -2313,16 +2383,16 @@ Cards to show:
 - Intent type: All | local_service | career | policy_info | educational | form_help
 - Scope: All | city | locality | micro
 - City: Dropdown (from cities table)
-- Quality score: < 6 | 6–8 | > 8
+- Quality score: < 6 | 6�8 | > 8
 - Date range
 
 **Table columns:**
-- Slug (clickable → editor)
+- Slug (clickable ? editor)
 - Intent type badge
 - Scope badge
 - City / Locality
 - Word count
-- Quality score (color-coded: red < 6, yellow 6–8, green > 8)
+- Quality score (color-coded: red < 6, yellow 6�8, green > 8)
 - Status badge
 - Created at
 - Actions: Edit | Approve | Reject | Schedule | Preview
@@ -2334,52 +2404,52 @@ Cards to show:
 **Three-panel layout:**
 
 ```
-┌──────────────────────┬──────────────────────────────┬─────────────────────┐
-│   LEFT PANEL         │   CENTER PANEL               │   RIGHT PANEL       │
-│   (Metadata)         │   (Content Editor)            │   (SEO + Images)    │
-│                      │                               │                     │
-│ • Slug               │ • Hero Headline               │ • Live SEO Score    │
-│ • Preview URL        │ • Body Content (rich text)    │ • Word Count        │
-│ • Meta Title         │ • FAQ Editor                  │ • Keyword Density   │
-│ • Meta Description   │   (add/edit/remove Q&A)       │ • Readability       │
-│ • Category           │ • CTA Text                    │ • Internal Links    │
-│ • Tags               │ • Internal Links section      │ • Uniqueness Score  │
-│ • Intent Type        │   (suggested + manual add)    │                     │
-│ • Scope              │                               │ ─────────────────── │
-│ • Pillar Page Link   │                               │ IMAGE INTELLIGENCE  │
-│ • Canonical URL      │                               │                     │
-│ • Sitemap Priority   │                               │ • Hero Image Prompt │
-│ • Changefreq         │                               │   (Canva / Adobe /  │
-│ • Scheduled date     │                               │    Imagen variants) │
-│ • Review Notes       │                               │                     │
-│                      │                               │ • Thumbnail Prompt  │
-│ ─────────────────── │                               │                     │
-│ WORKFLOW ACTIONS      │                               │ • OG Image Prompt   │
-│                      │                               │                     │
-│ [Save Draft]         │                               │ • Section Image     │
-│ [Schedule]           │                               │   Prompt            │
-│ [Request Review]     │                               │                     │
-│ [Approve & Publish]  │                               │ [Copy Canva] [Copy  │
-│ [Reject]             │                               │  Adobe] [Copy Flux] │
-└──────────────────────┴──────────────────────────────┴─────────────────────┘
++---------------------------------------------------------------------------+
+�   LEFT PANEL         �   CENTER PANEL               �   RIGHT PANEL       �
+�   (Metadata)         �   (Content Editor)            �   (SEO + Images)    �
+�                      �                               �                     �
+� � Slug               � � Hero Headline               � � Live SEO Score    �
+� � Preview URL        � � Body Content (rich text)    � � Word Count        �
+� � Meta Title         � � FAQ Editor                  � � Keyword Density   �
+� � Meta Description   �   (add/edit/remove Q&A)       � � Readability       �
+� � Category           � � CTA Text                    � � Internal Links    �
+� � Tags               � � Internal Links section      � � Uniqueness Score  �
+� � Intent Type        �   (suggested + manual add)    �                     �
+� � Scope              �                               � ------------------- �
+� � Pillar Page Link   �                               � IMAGE INTELLIGENCE  �
+� � Canonical URL      �                               �                     �
+� � Sitemap Priority   �                               � � Hero Image Prompt �
+� � Changefreq         �                               �   (Canva / Adobe /  �
+� � Scheduled date     �                               �    Imagen variants) �
+� � Review Notes       �                               �                     �
+�                      �                               � � Thumbnail Prompt  �
+� ------------------- �                               �                     �
+� WORKFLOW ACTIONS      �                               � � OG Image Prompt   �
+�                      �                               �                     �
+� [Save Draft]         �                               � � Section Image     �
+� [Schedule]           �                               �   Prompt            �
+� [Request Review]     �                               �                     �
+� [Approve & Publish]  �                               � [Copy Canva] [Copy  �
+� [Reject]             �                               �  Adobe] [Copy Flux] �
++---------------------------------------------------------------------------+
 ```
 
 ### Draft Workflow States
 
 ```
 pagegen generates
-      ↓
+      ?
    [draft]
-      ↓
+      ?
  Admin reviews
-      ↓
-  ┌───┴───┐
-[review] [rejected] → archived with notes
-      ↓
+      ?
+  +-------+
+[review] [rejected] ? archived with notes
+      ?
   [approved]
-      ↓
-  ┌───┴───────┐
-[published]  [scheduled] → auto-publishes at scheduled_publish_at
+      ?
+  +-----------+
+[published]  [scheduled] ? auto-publishes at scheduled_publish_at
 ```
 
 ---
@@ -2397,43 +2467,43 @@ Generated pages need a proper visual template. The existing `custom_pages` CMS u
 **Layout Structure:**
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  NAVBAR                                                  │
-├─────────────────────────────────────────────────────────┤
-│  HERO SECTION                                            │
-│  ┌───────────────────────────────────────────────────┐  │
-│  │  Hero Image (1200×500px)                          │  │
-│  │  Overlay: Hero Headline (H1)                      │  │
-│  │  Breadcrumb: Home > Delhi > Krishna Nagar         │  │
-│  └───────────────────────────────────────────────────┘  │
-├───────────────────────────────────┬─────────────────────┤
-│  MAIN CONTENT (70%)               │  SIDEBAR (30%)      │
-│                                   │                     │
-│  [local_opportunity_description]  │  ┌───────────────┐ │
-│                                   │  │ APPLY FORM    │ │
-│  → Full HTML content              │  │ (Sticky)      │ │
-│    from AI generation             │  │               │ │
-│  → H2, H3 headings               │  │ Name          │ │
-│  → Bullet points                  │  │ Mobile        │ │
-│  → Bold highlights                │  │ Email         │ │
-│                                   │  │ City          │ │
-│  TESTIMONIAL BLOCK                │  │               │ │
-│  (generated by AI)                │  │ [Apply Now]   │ │
-│                                   │  └───────────────┘ │
-│  FAQ SECTION                      │                     │
-│  (from faq_data JSONB)            │  NEARBY AREAS       │
-│  → Schema markup auto-added       │  (internal links    │
-│                                   │   to sibling pages) │
-│  INTERNAL LINKS BLOCK             │                     │
-│  "Also explore in Delhi:"         │  RELATED CONTENT    │
-│  → 3-4 sibling locality links     │  (cross-intent      │
-│                                   │   links)            │
-│  CTA BANNER                       │                     │
-│  [cta_text from AI]               │                     │
-│                                   │                     │
-├───────────────────────────────────┴─────────────────────┤
-│  FOOTER                                                  │
-└─────────────────────────────────────────────────────────┘
++---------------------------------------------------------+
+�  NAVBAR                                                  �
++---------------------------------------------------------�
+�  HERO SECTION                                            �
+�  +---------------------------------------------------+  �
+�  �  Hero Image (1200�500px)                          �  �
+�  �  Overlay: Hero Headline (H1)                      �  �
+�  �  Breadcrumb: Home > Delhi > Krishna Nagar         �  �
+�  +---------------------------------------------------+  �
++---------------------------------------------------------�
+�  MAIN CONTENT (70%)               �  SIDEBAR (30%)      �
+�                                   �                     �
+�  [local_opportunity_description]  �  +---------------+ �
+�                                   �  � APPLY FORM    � �
+�  ? Full HTML content              �  � (Sticky)      � �
+�    from AI generation             �  �               � �
+�  ? H2, H3 headings               �  � Name          � �
+�  ? Bullet points                  �  � Mobile        � �
+�  ? Bold highlights                �  � Email         � �
+�                                   �  � City          � �
+�  TESTIMONIAL BLOCK                �  �               � �
+�  (generated by AI)                �  � [Apply Now]   � �
+�                                   �  +---------------+ �
+�  FAQ SECTION                      �                     �
+�  (from faq_data JSONB)            �  NEARBY AREAS       �
+�  ? Schema markup auto-added       �  (internal links    �
+�                                   �   to sibling pages) �
+�  INTERNAL LINKS BLOCK             �                     �
+�  "Also explore in Delhi:"         �  RELATED CONTENT    �
+�  ? 3-4 sibling locality links     �  (cross-intent      �
+�                                   �   links)            �
+�  CTA BANNER                       �                     �
+�  [cta_text from AI]               �                     �
+�                                   �                     �
++---------------------------------------------------------�
+�  FOOTER                                                  �
++---------------------------------------------------------+
 ```
 
 ### Content Type Templates
@@ -2476,7 +2546,7 @@ Every generated page automatically gets:
 {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "name": "Bima Sakhi — LIC Agent in Krishna Nagar",
+  "name": "Bima Sakhi � LIC Agent in Krishna Nagar",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Krishna Nagar",
@@ -2510,21 +2580,21 @@ The AI generates platform-optimized image prompts for each page. These are store
 #### For `local_service` Pages
 
 ```
-HERO IMAGE (1200×500px):
-"Warm, professional photograph of an Indian woman (30–40 years old) in 
-business-casual attire — saree or salwar kameez in muted professional tones — 
+HERO IMAGE (1200�500px):
+"Warm, professional photograph of an Indian woman (30�40 years old) in 
+business-casual attire � saree or salwar kameez in muted professional tones � 
 sitting across from a middle-class Indian family (husband, wife, 2 children) in 
 a modest but clean home interior in [LOCALITY], [CITY]. She is explaining 
 insurance documents with a gentle, trustworthy expression. Soft golden hour 
 lighting through window. Real photography style, not illustration. 
 No text overlays. Horizontal 16:9 format."
 
-THUMBNAIL (400×400px):
+THUMBNAIL (400�400px):
 "Clean professional icon: LIC policy document shield combined with a subtle 
 [CITY] skyline or landmark silhouette. Emerald green (#10b981) and gold (#f59e0b) 
 color palette. Minimal flat design. No text. Square format."
 
-OG IMAGE (1200×630px):
+OG IMAGE (1200�630px):
 "Professional typographic social share card. Bold headline: '[HERO_HEADLINE]' 
 in clean sans-serif font. Bilingual (Hindi phrase below English). Background: 
 deep navy (#0B0F14) to emerald (#10b981) gradient. Gold accent line. 
@@ -2535,8 +2605,8 @@ Right side: small icon of woman in professional attire. No photos."
 #### For `career` Pages
 
 ```
-HERO IMAGE (1200×500px):
-"Confident Indian woman entrepreneur (28–38 years old) standing in a modern 
+HERO IMAGE (1200�500px):
+"Confident Indian woman entrepreneur (28�38 years old) standing in a modern 
 coworking space or light, airy home office in [CITY]. She is smiling at camera 
 with a laptop open, notebooks and insurance files on desk. Expression conveys 
 independence, success, and approachability. Natural bright lighting. 
@@ -2552,10 +2622,10 @@ Color: white background, emerald + navy accent. Professional clean layout."
 #### For `policy_info` Pages
 
 ```
-HERO IMAGE (1200×500px):
+HERO IMAGE (1200�500px):
 "Simple, clean infographic-style illustration showing the life stages of an 
-Indian family: young couple → young parents with child → established family 
-→ happy retirement. Indian context (traditional attire mix with modern). 
+Indian family: young couple ? young parents with child ? established family 
+? happy retirement. Indian context (traditional attire mix with modern). 
 Warm, optimistic color palette: saffron, green, sky blue. 
 LIC-adjacent but brand-neutral. No logos. Horizontal banner format."
 ```
@@ -2588,16 +2658,16 @@ Current sitemap has 3 types. Extend to:
 
 ```
 sitemap-index.xml
-├── sitemap-core.xml              (static pages: home, about, contact, tools)
-├── sitemap-service-national.xml  (country-level service pages)
-├── sitemap-service-cities.xml    (city-level pages — ALL cities)
-├── sitemap-service-localities.xml (shard 1000/file by locality pages)
-├── sitemap-service-micro.xml     (shard 1000/file by micro-local pages)
-├── sitemap-policy.xml            (policy info pages)
-├── sitemap-career.xml            (career/recruitment pages)
-├── sitemap-blog.xml              (blog articles)
-├── sitemap-downloads.xml         (download resources)
-└── sitemap-keywords-latest.xml   (last 200 activated = fresh signal to Google)
++-- sitemap-core.xml              (static pages: home, about, contact, tools)
++-- sitemap-service-national.xml  (country-level service pages)
++-- sitemap-service-cities.xml    (city-level pages � ALL cities)
++-- sitemap-service-localities.xml (shard 1000/file by locality pages)
++-- sitemap-service-micro.xml     (shard 1000/file by micro-local pages)
++-- sitemap-policy.xml            (policy info pages)
++-- sitemap-career.xml            (career/recruitment pages)
++-- sitemap-blog.xml              (blog articles)
++-- sitemap-downloads.xml         (download resources)
++-- sitemap-keywords-latest.xml   (last 200 activated = fresh signal to Google)
 ```
 
 **Enhancement:** Add `content_type` column to `page_index` to route URLs to correct sitemap shard.
@@ -2605,17 +2675,17 @@ sitemap-index.xml
 ### URL Structure (Flexible by Content Type)
 
 ```
-/lic-agent/[city]/                              → City service page
-/lic-agent/[city]/[locality]/                   → Locality service page
-/lic-agent/[city]/[locality]/[micro-area]/      → Micro-local page
+/lic-agent/[city]/                              ? City service page
+/lic-agent/[city]/[locality]/                   ? Locality service page
+/lic-agent/[city]/[locality]/[micro-area]/      ? Micro-local page
 
-/policy/[policy-slug]/                          → Policy info page  
-/become-lic-agent/[city]/                       → Career page
-/blog/[article-slug]/                           → Blog / guide article
+/policy/[policy-slug]/                          ? Policy info page  
+/become-lic-agent/[city]/                       ? Career page
+/blog/[article-slug]/                           ? Blog / guide article
 
-/forms/[form-name]/                             → Form help page (gated download)
-/download/[resource-slug]/                      → Download resource (lead magnet)
-/compare/[policy-a]-vs-[policy-b]/             → Comparison page
+/forms/[form-name]/                             ? Form help page (gated download)
+/download/[resource-slug]/                      ? Download resource (lead magnet)
+/compare/[policy-a]-vs-[policy-b]/             ? Comparison page
 ```
 
 ### Internal Linking Engine
@@ -2623,8 +2693,8 @@ sitemap-index.xml
 Every published page must be linked. On approval:
 
 1. **Upward link:** This locality page adds itself as a link in the parent city page's "Also in Delhi" section (DB update to city page's `internal_links` JSONB)
-2. **Sibling links:** Find 2–3 nearby locality pages (same city) → add as "Explore nearby areas" in this page's sidebar
-3. **Cross-intent links:** Find career page for same city → add "Become a LIC agent in [City]" CTA at bottom
+2. **Sibling links:** Find 2�3 nearby locality pages (same city) ? add as "Explore nearby areas" in this page's sidebar
+3. **Cross-intent links:** Find career page for same city ? add "Become a LIC agent in [City]" CTA at bottom
 
 **`internal_links` JSONB stored in `content_drafts`:**
 ```json
@@ -2651,42 +2721,42 @@ licnewdelhi.com ranks by being a simple form repository. We do the same but:
 - Better design + more resources
 - **Gated behind a lead capture form** (user must give name, mobile, email, city BEFORE downloading)
 - Download intent = very high buying signal (they're actively preparing)
-- Captured lead goes directly to CRM → agent follows up
+- Captured lead goes directly to CRM ? agent follows up
 
 ### Lead Gate Flow
 
 ```
 User searches: "LIC IC-38 form download free"
-      ↓
+      ?
 Lands on /forms/ic-38-exam-registration/ (ranks on Google)
-      ↓
+      ?
 Page shows: what the form is, why they need it, what documents to attach
-      ↓
-Download button → "Download Free" button clicked
-      ↓
-Modal appears (NOT a full page — fast, frictionless):
-  ┌───────────────────────────────────┐
-  │  Get Your Free IC-38 Form         │
-  │                                   │
-  │  Name: _______________________   │
-  │  Mobile: _____________________   │
-  │  Email: ______________________   │
-  │  City: _______________________   │
-  │                                   │
-  │  [Download Now — Free]            │
-  │                                   │
-  │  ✓ Instant download               │
-  │  ✓ No spam                        │
-  │  ✓ Our agent will guide you FREE  │
-  └───────────────────────────────────┘
-      ↓
+      ?
+Download button ? "Download Free" button clicked
+      ?
+Modal appears (NOT a full page � fast, frictionless):
+  +-----------------------------------+
+  �  Get Your Free IC-38 Form         �
+  �                                   �
+  �  Name: _______________________   �
+  �  Mobile: _____________________   �
+  �  Email: ______________________   �
+  �  City: _______________________   �
+  �                                   �
+  �  [Download Now � Free]            �
+  �                                   �
+  �  ? Instant download               �
+  �  ? No spam                        �
+  �  ? Our agent will guide you FREE  �
+  +-----------------------------------+
+      ?
 Lead captured in CRM (crm_leads table)
 Lead tagged: source="download", intent="ic38_form", city="[selected]"
-      ↓
+      ?
 PDF delivered (via pre-signed URL or direct link)
-      ↓
+      ?
 WhatsApp message auto-sent (via Zoho Cliq / WhatsApp Business API):
-  "Namaste! Aapka IC-38 form download ho gaya. Koi sawaal ho to main yahan hoon. — Bima Sakhi Team"
+  "Namaste! Aapka IC-38 form download ho gaya. Koi sawaal ho to main yahan hoon. � Bima Sakhi Team"
 ```
 
 ### Downloadable Resources Inventory
@@ -2720,11 +2790,11 @@ Manage all downloadable resources:
 
 > "90% of people don't know how to fill LIC forms or what documents to attach."
 
-This is not just an inconvenience — it's a **conversion blocker** that kills potential sales. If we solve this, we turn a confused prospect into a warm, guided lead who trusts us to handle everything.
+This is not just an inconvenience � it's a **conversion blocker** that kills potential sales. If we solve this, we turn a confused prospect into a warm, guided lead who trusts us to handle everything.
 
 ### The Two-Tier Service
 
-**Tier 1: Self-Service Guide (Free — Lead Magnet)**
+**Tier 1: Self-Service Guide (Free � Lead Magnet)**
 
 Every form download page includes:
 - Step-by-step form filling instructions
@@ -2735,75 +2805,75 @@ Every form download page includes:
 
 This builds trust + captures lead.
 
-**Tier 2: Assisted Service (Agent Guided — Revenue)**
+**Tier 2: Assisted Service (Agent Guided � Revenue)**
 
 After lead is captured, agent reaches out:
 - "Kya aap chahte hain ki hamara agent aapka form personally bhar de aur sab kuch guide kare?"
-- Agent does a WhatsApp/video call → guides form filling
+- Agent does a WhatsApp/video call ? guides form filling
 - Simultaneously: assesses their insurance needs
-- Natural sales conversation → policy recommendation → enrollment
+- Natural sales conversation ? policy recommendation ? enrollment
 
 ### Page Template for Form Help Pages
 
-Route: `/forms/[form-slug]/` — for example `/forms/lic-agent-registration-form/`
+Route: `/forms/[form-slug]/` � for example `/forms/lic-agent-registration-form/`
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│  HERO: "LIC Agent Registration Form — Poori Guide"           │
-│  Subtext: "IC-38 se leke LIC code tak — har step clear"      │
-├──────────────────────────────────────────────────────────────┤
-│  WHAT IS THIS FORM? (200 words, why they need it)            │
-├──────────────────────────────────────────────────────────────┤
-│  STEP-BY-STEP FILLING GUIDE                                  │
-│  Section 1: Personal Details → what to write, common errors  │
-│  Section 2: Education Details → which marksheet needed       │
-│  Section 3: Bank Details → IFSC, cancelled cheque explained  │
-│  Section 4: Nominee Details → who to put, why important      │
-├──────────────────────────────────────────────────────────────┤
-│  DOCUMENT CHECKLIST (with visual icons)                      │
-│  ☐ Aadhaar Card (front + back)                               │
-│  ☐ PAN Card                                                  │
-│  ☐ 10th Marksheet                                            │
-│  ☐ 4 Passport Photos (white background)                      │
-│  ☐ Cancelled Cheque                                          │
-├──────────────────────────────────────────────────────────────┤
-│  COMMON MISTAKES (prevents frustration, builds trust)         │
-│  ❌ Date format galat likhna (use DD/MM/YYYY)                │
-│  ❌ Father's name chod dena                                  │
-│  ❌ Signature style mismatch                                 │
-├──────────────────────────────────────────────────────────────┤
-│  DOWNLOAD FORM (Lead-Gated CTA)                              │
-│  "Download Official Form + Our Filled Example"               │
-│  → Lead capture modal                                        │
-├──────────────────────────────────────────────────────────────┤
-│  NEED PERSONAL HELP?                                         │
-│  "Hamara agent aapka form bhar dega FREE"                    │
-│  → WhatsApp CTA button                                       │
-│  → Form to request callback                                  │
-├──────────────────────────────────────────────────────────────┤
-│  FAQ (Schema-marked)                                         │
-│  + City-specific LIC office address                          │
-└──────────────────────────────────────────────────────────────┘
++--------------------------------------------------------------+
+�  HERO: "LIC Agent Registration Form � Poori Guide"           �
+�  Subtext: "IC-38 se leke LIC code tak � har step clear"      �
++--------------------------------------------------------------�
+�  WHAT IS THIS FORM? (200 words, why they need it)            �
++--------------------------------------------------------------�
+�  STEP-BY-STEP FILLING GUIDE                                  �
+�  Section 1: Personal Details ? what to write, common errors  �
+�  Section 2: Education Details ? which marksheet needed       �
+�  Section 3: Bank Details ? IFSC, cancelled cheque explained  �
+�  Section 4: Nominee Details ? who to put, why important      �
++--------------------------------------------------------------�
+�  DOCUMENT CHECKLIST (with visual icons)                      �
+�  ? Aadhaar Card (front + back)                               �
+�  ? PAN Card                                                  �
+�  ? 10th Marksheet                                            �
+�  ? 4 Passport Photos (white background)                      �
+�  ? Cancelled Cheque                                          �
++--------------------------------------------------------------�
+�  COMMON MISTAKES (prevents frustration, builds trust)         �
+�  ? Date format galat likhna (use DD/MM/YYYY)                �
+�  ? Father's name chod dena                                  �
+�  ? Signature style mismatch                                 �
++--------------------------------------------------------------�
+�  DOWNLOAD FORM (Lead-Gated CTA)                              �
+�  "Download Official Form + Our Filled Example"               �
+�  ? Lead capture modal                                        �
++--------------------------------------------------------------�
+�  NEED PERSONAL HELP?                                         �
+�  "Hamara agent aapka form bhar dega FREE"                    �
+�  ? WhatsApp CTA button                                       �
+�  ? Form to request callback                                  �
++--------------------------------------------------------------�
+�  FAQ (Schema-marked)                                         �
+�  + City-specific LIC office address                          �
++--------------------------------------------------------------+
 ```
 
 ### Conversion Funnel from Form Help
 
 ```
 Searches "IC-38 form kaise bhare"
-      ↓
+      ?
 Lands on /forms/ic-38-registration-guide/ (organic ranking)
-      ↓
-Reads guide → Builds trust
-      ↓
-Downloads form (lead captured) → CRM tag: intent=ic38_form
-      ↓
+      ?
+Reads guide ? Builds trust
+      ?
+Downloads form (lead captured) ? CRM tag: intent=ic38_form
+      ?
 Auto WhatsApp: "Namaste! IC-38 guide mila? Koi help chahiye?"
-      ↓
+      ?
 Agent offers: "Main aapka form 20 min mein fill kar deta hun"
-      ↓
-Video call → Form filled → "Agar aap agent banna chahte hain..."
-      ↓
-Enrollment → SALE
+      ?
+Video call ? Form filled ? "Agar aap agent banna chahte hain..."
+      ?
+Enrollment ? SALE
 ```
 
 ---
@@ -2818,9 +2888,9 @@ Zoho One includes 45+ apps. These 8 are directly relevant to the CCC vision:
 **Use:** Central lead database, pipeline management
 
 **Integration points:**
-- Every lead from web forms → auto-creates CRM contact
+- Every lead from web forms ? auto-creates CRM contact
 - Lead source tagging: `source_page_slug`, `intent_type`, `city`, `download_resource`
-- Pipeline stages: New Lead → Contacted → Form Guided → Policy Discussion → Enrolled
+- Pipeline stages: New Lead ? Contacted ? Form Guided ? Policy Discussion ? Enrolled
 - Agent assignment: auto-assign by city/locality
 
 **API:** REST API, available in `lib/zoho/crm.js` (check existing integration)
@@ -2839,9 +2909,9 @@ Zoho One includes 45+ apps. These 8 are directly relevant to the CCC vision:
 **Use:** Drip email to captured leads
 
 **Sequences by intent:**
-- `ic38_form` lead: 5-email sequence over 14 days (IC-38 prep tips → exam date reminder → form submission guide → congratulations → enrollment CTA)
-- `local_service` lead: 3-email sequence (welcome → income story → schedule call CTA)
-- `career` lead: 7-email nurture (day 1: what is Bima Sakhi → day 3: income potential → day 7: apply CTA)
+- `ic38_form` lead: 5-email sequence over 14 days (IC-38 prep tips ? exam date reminder ? form submission guide ? congratulations ? enrollment CTA)
+- `local_service` lead: 3-email sequence (welcome ? income story ? schedule call CTA)
+- `career` lead: 7-email nurture (day 1: what is Bima Sakhi ? day 3: income potential ? day 7: apply CTA)
 
 #### 4. Zoho Social
 **Use:** Auto-share published pages to social media
@@ -2856,14 +2926,14 @@ When a page is approved + published in CCC:
 **Use:** Alert agents when a hot lead comes in
 
 **Integration:**
-- New download lead → Zoho Cliq message to relevant city agent: "🔥 New IC-38 lead: [Name], [City], [Mobile]. Download: [Resource name]. Follow up within 1 hour."
-- High-quality lead (score > 80) → Priority alert channel
+- New download lead ? Zoho Cliq message to relevant city agent: "?? New IC-38 lead: [Name], [City], [Mobile]. Download: [Resource name]. Follow up within 1 hour."
+- High-quality lead (score > 80) ? Priority alert channel
 
 #### 6. Zoho Analytics
 **Use:** Cross-platform reporting
 
 **Dashboard to build:**
-- Which pages generate most leads (page_slug → leads attribution)
+- Which pages generate most leads (page_slug ? leads attribution)
 - Which download resources have best conversion rate
 - Which cities have highest lead quality
 - Agent performance (leads assigned vs. policies enrolled)
@@ -2882,24 +2952,24 @@ When a page is approved + published in CCC:
 
 **Integration:**
 - When a lead is ready to enroll as LIC agent, send enrollment form via Zoho Sign
-- They sign digitally → no need to visit office physically
+- They sign digitally ? no need to visit office physically
 - Signed document auto-saved to Zoho CRM contact
 
 ### Integration Architecture
 
 ```
 Website Lead Capture (any form)
-      ↓
+      ?
 POST /api/leads (existing CRM endpoint)
-      ↓
+      ?
 crm_leads table (existing)
-      ↓
+      ?
 Zoho CRM API sync (via existing zoho webhook)
-      ↓
-┌──────────────────┬─────────────────┬──────────────────┐
-│ Zoho Campaigns   │ Zoho Cliq Alert │ Zoho Bookings    │
-│ (email drip)     │ (agent notif.)  │ (call booking)   │
-└──────────────────┴─────────────────┴──────────────────┘
+      ?
++-------------------------------------------------------+
+� Zoho Campaigns   � Zoho Cliq Alert � Zoho Bookings    �
+� (email drip)     � (agent notif.)  � (call booking)   �
++-------------------------------------------------------+
 ```
 
 ---
@@ -2918,7 +2988,7 @@ Every time a new city/locality page is published:
 - Create GBP post: "Now serving [Locality], [City]! LIC Bima Sakhi advisors available near you."
 - Include link to the published locality page
 - Use the page's hero image
-- Tag: "Learn more" button → page URL
+- Tag: "Learn more" button ? page URL
 
 This creates a **bidirectional signal**: GBP activity boosts domain authority, which helps the locality page rank.
 
@@ -2939,7 +3009,7 @@ Add LIC products as "services":
 - LIC Policy Consultation
 - Form Filling Assistance
 
-**4. GBP Reviews → Social Proof on Website**
+**4. GBP Reviews ? Social Proof on Website**
 
 Pull top GBP reviews (with permission) to display on local city pages as social proof. This creates content uniqueness AND local trust signal.
 
@@ -2959,13 +3029,13 @@ For every city page published on the website:
 | Input | Output | Uncontested? |
 |-------|--------|-------------|
 | 10 cities | 10 city pages | No (competitive) |
-| 10 cities × 50 localities each | 500 locality pages | Mostly yes |
-| 10 cities × 50 localities × 5 micro-areas | 2,500 micro pages | Almost entirely yes |
-| 100 cities × average 30 localities | 3,000+ locality pages | Yes |
+| 10 cities � 50 localities each | 500 locality pages | Mostly yes |
+| 10 cities � 50 localities � 5 micro-areas | 2,500 micro pages | Almost entirely yes |
+| 100 cities � average 30 localities | 3,000+ locality pages | Yes |
 
-India has 28,000+ pincodes. Even targeting 1% = 280 pincodes = potentially 1,000–5,000 pages with genuine local content.
+India has 28,000+ pincodes. Even targeting 1% = 280 pincodes = potentially 1,000�5,000 pages with genuine local content.
 
-### Pincode → Micro-Area Expansion
+### Pincode ? Micro-Area Expansion
 
 **New table: `pincode_areas`**
 
@@ -2989,44 +3059,44 @@ Data source: India Post's open pincode data (free, public domain)
 ### Bulk Job Planner (`/admin/ccc/bulk`)
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  NEW BULK GENERATION JOB                                 │
-│                                                          │
-│  Job Name: "Delhi Localities — April 2026 Sweep"        │
-│                                                          │
-│  TARGETING                                               │
-│  Intent Type: [local_service ▼]                         │
-│  Scope: [locality ▼]                                    │
-│  Cities: [Select cities... ▼] Delhi, Mumbai selected    │
-│  Localities: [All in selected cities ▼] 847 found       │
-│                                                          │
-│  BASE KEYWORD: LIC agent                                 │
-│  Additional keywords: LIC advisor, Bima Sakhi            │
-│                                                          │
-│  SAFETY SETTINGS                                         │
-│  Daily publish limit: [20] pages/day                    │
-│  Min quality score to auto-approve: [7.0]               │
-│  Require manual review if score < [6.0]                 │
-│                                                          │
-│  SCHEDULE                                                │
-│  Start generating: [Immediately ▼]                      │
-│  Auto-publish approved: [Yes — drip from tomorrow]      │
-│                                                          │
-│  PREVIEW                                                 │
-│  Pages to generate: 847                                 │
-│  Estimated time: ~42 hours                              │
-│  Estimated cost (Gemini): ~$2.10                        │
-│  At 20/day: complete in ~42 days                        │
-│                                                          │
-│  [Cancel]              [Create Job — 847 Pages]         │
-└─────────────────────────────────────────────────────────┘
++---------------------------------------------------------+
+�  NEW BULK GENERATION JOB                                 �
+�                                                          �
+�  Job Name: "Delhi Localities � April 2026 Sweep"        �
+�                                                          �
+�  TARGETING                                               �
+�  Intent Type: [local_service ?]                         �
+�  Scope: [locality ?]                                    �
+�  Cities: [Select cities... ?] Delhi, Mumbai selected    �
+�  Localities: [All in selected cities ?] 847 found       �
+�                                                          �
+�  BASE KEYWORD: LIC agent                                 �
+�  Additional keywords: LIC advisor, Bima Sakhi            �
+�                                                          �
+�  SAFETY SETTINGS                                         �
+�  Daily publish limit: [20] pages/day                    �
+�  Min quality score to auto-approve: [7.0]               �
+�  Require manual review if score < [6.0]                 �
+�                                                          �
+�  SCHEDULE                                                �
+�  Start generating: [Immediately ?]                      �
+�  Auto-publish approved: [Yes � drip from tomorrow]      �
+�                                                          �
+�  PREVIEW                                                 �
+�  Pages to generate: 847                                 �
+�  Estimated time: ~42 hours                              �
+�  Estimated cost (Gemini): ~$2.10                        �
+�  At 20/day: complete in ~42 days                        �
+�                                                          �
+�  [Cancel]              [Create Job � 847 Pages]         �
++---------------------------------------------------------+
 ```
 
 ### Anti-Spam Batch Logic
 
 When a bulk job runs:
 1. Creates `generation_queue` entries BUT rate-limited (e.g., 50 per hour max)
-2. Each generated draft starts as `status='draft'` — needs human approval
+2. Each generated draft starts as `status='draft'` � needs human approval
 3. Publishing is separate from generation (drip publish independently)
 4. Daily publish cap enforced at system level (not per-job)
 
@@ -3047,20 +3117,20 @@ Google penalizes "programmatic content" that is:
 
 | Check | Threshold | Action |
 |-------|-----------|--------|
-| Word count | < 400 → auto-reject, 400–600 → review flag, > 600 → pass | Regenerate or flag |
-| SHA256 fingerprint | Exact duplicate → reject | Skip with log |
+| Word count | < 400 ? auto-reject, 400�600 ? review flag, > 600 ? pass | Regenerate or flag |
+| SHA256 fingerprint | Exact duplicate ? reject | Skip with log |
 | Similarity score | > 85% similar to existing page | Flag for review |
-| Required AI keys | Missing any key → reject | Regenerate |
-| FAQ count | < 3 FAQs → flag | Regenerate FAQs |
+| Required AI keys | Missing any key ? reject | Regenerate |
+| FAQ count | < 3 FAQs ? flag | Regenerate FAQs |
 
 #### Layer 2: Content Uniqueness Rules
 
-Every page MUST include ≥3 of:
-- Specific locality name mentioned ≥4 times
+Every page MUST include =3 of:
+- Specific locality name mentioned =4 times
 - At least 1 nearby landmark reference (from geo data)
 - City-specific income/market context
 - Unique testimonial example (different name per page)
-- Unique FAQ (not copied from sibling pages — checked via fuzzy match)
+- Unique FAQ (not copied from sibling pages � checked via fuzzy match)
 
 #### Layer 3: Publishing Rate Control
 
@@ -3084,7 +3154,7 @@ A page CANNOT be published without:
 - At minimum 1 link to its parent (city/state page)
 - At minimum 1 link FROM the parent to this page (auto-added on publish)
 
-If parent page doesn't exist yet, it must be created first. Publishing order: national → state → city → locality → micro.
+If parent page doesn't exist yet, it must be created first. Publishing order: national ? state ? city ? locality ? micro.
 
 #### Layer 5: Human Review Checkpoints
 
@@ -3092,10 +3162,10 @@ By default, ALL generated drafts require human approval before publishing. This 
 
 Quality score formula (computed in worker):
 ```
-score = (word_count_score × 0.3) 
-      + (uniqueness_score × 0.3)  
-      + (local_context_score × 0.2)
-      + (faq_quality_score × 0.2)
+score = (word_count_score � 0.3) 
+      + (uniqueness_score � 0.3)  
+      + (local_context_score � 0.2)
+      + (faq_quality_score � 0.2)
 ```
 
 #### Layer 6: Sitemap Drip
@@ -3280,7 +3350,7 @@ CREATE TABLE IF NOT EXISTS keyword_clusters (
     source TEXT CHECK (source IN ('ahrefs','ubersuggest','answerthepublic','manual','google_suggest')),
     is_geo_expandable BOOLEAN DEFAULT TRUE,
     geo_template TEXT,              -- "LIC agent in {locality} {city}"
-    priority_score NUMERIC(5,2),   -- Computed: volume/difficulty × geo_reach
+    priority_score NUMERIC(5,2),   -- Computed: volume/difficulty � geo_reach
     used_in_jobs UUID[] DEFAULT '{}',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -3347,14 +3417,14 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
 
 ## 16. Implementation Phases
 
-### Phase 1: Fix the Rendering Gap (Week 1) — 🚨 CRITICAL FIRST
+### Phase 1: Fix the Rendering Gap (Week 1) � ?? CRITICAL FIRST
 
 **Nothing else matters until generated pages are actually visible to users and Google.**
 
 **Tasks:**
 1. Create `app/[...slug]/page.js` catch-all route
-   - Priority: page_index → location_content first
-   - Fallback: custom_pages → page_blocks (existing CMS)
+   - Priority: page_index ? location_content first
+   - Fallback: custom_pages ? page_blocks (existing CMS)
    - Return 404 if neither found
 2. Create `components/layout/GeneratedPageTemplate.jsx`
    - Renders: hero image, hero_headline (H1), breadcrumb, body content (HTML), FAQ (with schema markup), CTA, sidebar apply form, internal links
@@ -3362,18 +3432,18 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
    - FAQPage schema markup
    - BreadcrumbList schema markup
 3. Update `generateMetadata()` in catch-all to use `location_content.meta_title/meta_description`
-4. Test: Generate a test page → verify it renders at its slug URL
+4. Test: Generate a test page ? verify it renders at its slug URL
 5. Add ISR revalidation: `revalidate = 3600` (1 hour)
 
 **Files to create/modify:**
 - `app/[...slug]/page.js` (NEW)
 - `components/layout/GeneratedPageTemplate.jsx` (NEW)
 
-**Validation:** Visit any existing `page_index` slug → should render content, not 404.
+**Validation:** Visit any existing `page_index` slug ? should render content, not 404.
 
 ---
 
-### Phase 2: Content Drafts + Basic Editor (Week 2) — HIGH PRIORITY
+### Phase 2: Content Drafts + Basic Editor (Week 2) � HIGH PRIORITY
 
 **Tasks:**
 1. Create migration `035_content_command_center.sql` (content_drafts table only first)
@@ -3390,11 +3460,11 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
    - Reject button: sets draft.status='rejected' with notes
 6. Create API routes: `app/api/admin/ccc/drafts/route.js`, `app/api/admin/ccc/drafts/[id]/route.js`
 
-**Validation:** Generate page → appears in `/admin/ccc/drafts` → approve → page goes live.
+**Validation:** Generate page ? appears in `/admin/ccc/drafts` ? approve ? page goes live.
 
 ---
 
-### Phase 3: Image Intelligence in Editor (Week 3) — HIGH VALUE
+### Phase 3: Image Intelligence in Editor (Week 3) � HIGH VALUE
 
 **Tasks:**
 1. Extend pagegen worker: generate image prompts alongside content
@@ -3404,11 +3474,11 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
    - Three image types: Hero, Thumbnail, OG
    - Three platform variants each: Canva, Adobe Firefly, Imagen/Flow
    - Copy-to-clipboard button per variant
-3. Image upload field: admin can upload actual image → stores URL → used in page template
+3. Image upload field: admin can upload actual image ? stores URL ? used in page template
 
 ---
 
-### Phase 4: Bulk Job Planner (Week 4) — HIGH IMPACT
+### Phase 4: Bulk Job Planner (Week 4) � HIGH IMPACT
 
 **Tasks:**
 1. Add `bulk_generation_jobs` + `pincode_areas` tables to migration
@@ -3423,7 +3493,7 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
 
 ---
 
-### Phase 5: Downloads + Lead Magnet System (Week 5) — REVENUE IMPACT
+### Phase 5: Downloads + Lead Magnet System (Week 5) � REVENUE IMPACT
 
 **Tasks:**
 1. Add `download_resources` table to migration
@@ -3437,7 +3507,7 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
 
 ---
 
-### Phase 6: Keyword Import + Scheduling (Week 6) — OPTIMIZATION
+### Phase 6: Keyword Import + Scheduling (Week 6) � OPTIMIZATION
 
 **Tasks:**
 1. Add `keyword_clusters` table
@@ -3445,12 +3515,12 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
    - Parse Ahrefs/Ubersuggest export format
    - Calculate priority score per keyword
    - Show keyword clusters with expansion potential
-3. Scheduling: `scheduled_publish_at` → cron job checks every hour → publishes due drafts
+3. Scheduling: `scheduled_publish_at` ? cron job checks every hour ? publishes due drafts
 4. Sitemap split by content type (extend existing sitemap routes)
 
 ---
 
-### Phase 7: Internal Linking + GBP + Zoho (Week 7–8) — AUTHORITY BUILDING
+### Phase 7: Internal Linking + GBP + Zoho (Week 7�8) � AUTHORITY BUILDING
 
 **Tasks:**
 1. Auto-internal linking on publish (update parent city page's `internal_links`)
@@ -3484,7 +3554,7 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
 | Monthly organic traffic | 10,000+ visitors |
 | Monthly leads from SEO | 500+ |
 | Monthly policies from SEO | 20+ |
-| Cities with ≥5 locality pages | 20+ cities |
+| Cities with =5 locality pages | 20+ cities |
 
 ---
 
@@ -3496,21 +3566,21 @@ ALTER TABLE page_index ADD COLUMN IF NOT EXISTS scope TEXT DEFAULT 'locality';
 
 2. **Quality gate:** Auto-published thin content gets penalized. Your human review layer ensures quality. This is the discipline competitors skip.
 
-3. **Lead capture integration:** Google traffic → lead form → CRM → WhatsApp → agent follow-up is a complete loop. Most content sites just get traffic with no capture system.
+3. **Lead capture integration:** Google traffic ? lead form ? CRM ? WhatsApp ? agent follow-up is a complete loop. Most content sites just get traffic with no capture system.
 
 4. **Zoho ecosystem:** CRM + Campaigns + SalesIQ + Analytics + Bookings integrated creates an automation flywheel that's hard to replicate quickly.
 
 5. **Form guidance angle:** Nobody in the LIC agent recruitment space offers "we'll help you fill your registration form." This zero-cost service builds trust and is a natural sales bridge.
 
-6. **GBP + SEO combination:** Local GBP signals reinforce organic rankings, which drive GBP traffic, which reinforces organic — a self-amplifying local SEO loop.
+6. **GBP + SEO combination:** Local GBP signals reinforce organic rankings, which drive GBP traffic, which reinforces organic � a self-amplifying local SEO loop.
 
 ### The Compound Effect
 
 ```
-Month 1:  100 pages → few rankings → first organic leads
-Month 3:  500 pages → domain authority builds → each new page ranks faster
-Month 6:  1,500 pages → Google trusts domain → even moderate pages rank → organic lead machine
-Month 12: Bimasakhi.com is THE authority for LIC agent queries in India → zero ad dependency
+Month 1:  100 pages ? few rankings ? first organic leads
+Month 3:  500 pages ? domain authority builds ? each new page ranks faster
+Month 6:  1,500 pages ? Google trusts domain ? even moderate pages rank ? organic lead machine
+Month 12: Bimasakhi.com is THE authority for LIC agent queries in India ? zero ad dependency
 ```
 
 **Final principle:**
@@ -3519,15 +3589,15 @@ Month 12: Bimasakhi.com is THE authority for LIC agent queries in India → zero
 
 ---
 
-*Next Action: Get sign-off on this plan → Begin Phase 1 (rendering gap fix)*
+*Next Action: Get sign-off on this plan ? Begin Phase 1 (rendering gap fix)*
 
 ---
 
-## 19. 🎯 Multi-Intent Lead Funnel Architecture
+## 19. ?? Multi-Intent Lead Funnel Architecture
 
 ### The Core Problem with a Single Lead Funnel
 
-> "Maine is lead funnel ko specifically Bima Sakhi agent recruitment ke liye banaya hai. Lekin agar mera content male LIC agent recruitment pe kaam karega, ya LIC Jeevan Shanti (annuity policy) ke baare mein hoga — to ye ek hi funnel se kaam nahi karega."
+> "Maine is lead funnel ko specifically Bima Sakhi agent recruitment ke liye banaya hai. Lekin agar mera content male LIC agent recruitment pe kaam karega, ya LIC Jeevan Shanti (annuity policy) ke baare mein hoga � to ye ek hi funnel se kaam nahi karega."
 
 **This is the most important business architecture decision in the whole system.**
 
@@ -3543,15 +3613,15 @@ Right now the entire lead capture flow assumes ONE identity: a woman interested 
 
 **One funnel serving all intents = diluted message = low conversion.**
 
-### The Intent → Funnel Mapping
+### The Intent ? Funnel Mapping
 
 | Content Intent | Visitor Profile | Goal | Funnel Name | CRM Tag |
 |---------------|----------------|------|------------|---------|
-| `bima_sakhi_recruit` | Woman, 25–45, seeking income | Become Bima Sakhi | SAKHI_RECRUIT | `funnel=sakhi_recruit` |
+| `bima_sakhi_recruit` | Woman, 25�45, seeking income | Become Bima Sakhi | SAKHI_RECRUIT | `funnel=sakhi_recruit` |
 | `male_agent_recruit` | Man, any age, entrepreneurial | Become LIC agent (male path) | AGENT_RECRUIT | `funnel=agent_recruit` |
 | `policy_buyer` | Family head researching insurance | Buy a specific LIC policy | POLICY_SALE | `funnel=policy_sale` |
-| `annuity_buyer` | 40–60 yr old, retirement planning | Buy Jeevan Shanti / annuity | ANNUITY_SALE | `funnel=annuity_sale` |
-| `term_buyer` | 30–45, family protection mindset | Buy term plan | TERM_SALE | `funnel=term_sale` |
+| `annuity_buyer` | 40�60 yr old, retirement planning | Buy Jeevan Shanti / annuity | ANNUITY_SALE | `funnel=annuity_sale` |
+| `term_buyer` | 30�45, family protection mindset | Buy term plan | TERM_SALE | `funnel=term_sale` |
 | `ic38_help` | Prospective agent, exam prep | Get IC-38 guidance + register | IC38_GUIDE | `funnel=ic38_guide` |
 | `form_help` | Anyone stuck on LIC paperwork | Agent to fill form for them | FORM_SERVICE | `funnel=form_service` |
 | `download_user` | Early-stage researcher | Get a resource, stay engaged | NURTURE | `funnel=nurture_download` |
@@ -3573,23 +3643,23 @@ Right now the entire lead capture flow assumes ONE identity: a woman interested 
 
 **3. Thank-You Page Experience**
 Not just one `/thank-you` page. Intent-specific thank-you pages:
-- `/thank-you/bima-sakhi` — Tells them what happens next: training, orientation, first earning
-- `/thank-you/lic-agent` — Male agent journey roadmap
-- `/thank-you/policy-consult` — "Hamara agent aapko 24 ghante mein contact karega"
-- `/thank-you/download` — Shows download link + nurture sequence explanation
+- `/thank-you/bima-sakhi` � Tells them what happens next: training, orientation, first earning
+- `/thank-you/lic-agent` � Male agent journey roadmap
+- `/thank-you/policy-consult` � "Hamara agent aapko 24 ghante mein contact karega"
+- `/thank-you/download` � Shows download link + nurture sequence explanation
 
 **4. Zoho CRM Pipeline**
 Each intent maps to a different CRM pipeline stage and deal record type:
-- Recruit leads → "Agent Onboarding" pipeline
-- Policy buyers → "Policy Sales" pipeline
-- IC-38 leads → "Exam Registration" pipeline
-- Download leads → "Nurture" pipeline (low priority, automated drip)
+- Recruit leads ? "Agent Onboarding" pipeline
+- Policy buyers ? "Policy Sales" pipeline
+- IC-38 leads ? "Exam Registration" pipeline
+- Download leads ? "Nurture" pipeline (low priority, automated drip)
 
 **5. Zoho Campaigns Email Sequence**
-- Recruit: 7-email journey (Welcome → Training preview → Income stories → Apply CTA)
-- Policy buyer: 5-email sequence (Product overview → Comparison chart → FAQ → Testimonials → CTA)
-- IC-38: 5-email exam prep series (Syllabus → Study tips → Model paper → Registration → Exam day guide)
-- Download/Nurture: 3-email warmup → upgrade to relevant primary funnel based on behaviour
+- Recruit: 7-email journey (Welcome ? Training preview ? Income stories ? Apply CTA)
+- Policy buyer: 5-email sequence (Product overview ? Comparison chart ? FAQ ? Testimonials ? CTA)
+- IC-38: 5-email exam prep series (Syllabus ? Study tips ? Model paper ? Registration ? Exam day guide)
+- Download/Nurture: 3-email warmup ? upgrade to relevant primary funnel based on behaviour
 
 **6. WhatsApp Message Template**
 Each intent gets a different first WhatsApp message:
@@ -3618,7 +3688,7 @@ When the form is submitted via `/api/leads`:
 4. Correct WhatsApp template is sent via WhatsApp Business API
 5. Correct agent/team is alerted in Zoho Cliq
 
-### CRM Bifurcation — Zoho CRM Tag Structure
+### CRM Bifurcation � Zoho CRM Tag Structure
 
 Every lead in CRM must be identifiable by:
 
@@ -3634,9 +3704,9 @@ Lead Source Tags (ALL must be set):
   download_resource: "ic38-syllabus" (if from download, else null)
   
 Lead Priority:
-  HIGH   → funnel in [sakhi_recruit, agent_recruit, annuity_sale, policy_sale] + city_match
-  MEDIUM → funnel in [ic38_guide, form_service, term_sale]
-  LOW    → funnel in [nurture_download, awareness]
+  HIGH   ? funnel in [sakhi_recruit, agent_recruit, annuity_sale, policy_sale] + city_match
+  MEDIUM ? funnel in [ic38_guide, form_service, term_sale]
+  LOW    ? funnel in [nurture_download, awareness]
 ```
 
 This bifurcation ensures:
@@ -3660,11 +3730,11 @@ ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS lead_priority TEXT
 
 ---
 
-## 20. 👑 The CEO Control Principle
+## 20. ?? The CEO Control Principle
 
 ### The Core Rule
 
-> "Background mein automation to ho rahi hai, lekin mujhe pata hi nahi — ye dangerous hai. Jo kuch ho, mujhe pata ho. Aur mere paas option bhi ho ki main usse alter karu, approve karu, new plan banau, ya scrap karu. Main CEO hun — final authority meri hai."
+> "Background mein automation to ho rahi hai, lekin mujhe pata hi nahi � ye dangerous hai. Jo kuch ho, mujhe pata ho. Aur mere paas option bhi ho ki main usse alter karu, approve karu, new plan banau, ya scrap karu. Main CEO hun � final authority meri hai."
 
 **This principle governs every automated action in the system.**
 
@@ -3679,68 +3749,68 @@ Every single action requires your approval. Nothing scales. You spend 6 hours/da
 **The Solution: Tiered Authority**
 
 ```
-TIER 1 — FULLY AUTOMATIC (no human needed):
-  ✅ Content generation (writes to drafts only, NOT published)
-  ✅ Quality scoring (automated)
-  ✅ Duplicate detection (automated)
-  ✅ Email drip sequences (pre-approved templates only)
-  ✅ WhatsApp first message (pre-approved templates only)
-  ✅ Sitemap generation (reflects approved+published only)
-  ✅ CRM lead creation + tagging
-  ✅ Alert sends (Zoho Cliq notifications)
+TIER 1 � FULLY AUTOMATIC (no human needed):
+  ? Content generation (writes to drafts only, NOT published)
+  ? Quality scoring (automated)
+  ? Duplicate detection (automated)
+  ? Email drip sequences (pre-approved templates only)
+  ? WhatsApp first message (pre-approved templates only)
+  ? Sitemap generation (reflects approved+published only)
+  ? CRM lead creation + tagging
+  ? Alert sends (Zoho Cliq notifications)
 
-TIER 2 — REQUIRES CEO REVIEW (you approve, then auto-runs):
-  ⚡ Publishing any page to live site
-  ⚡ Starting a new bulk generation job
-  ⚡ Activating a new email sequence template
-  ⚡ Enabling a new intent funnel type
-  ⚡ Changing AI prompt templates
-  ⚡ Adjusting quality score thresholds
-  ⚡ Enabling auto-approve for any content type
+TIER 2 � REQUIRES CEO REVIEW (you approve, then auto-runs):
+  ? Publishing any page to live site
+  ? Starting a new bulk generation job
+  ? Activating a new email sequence template
+  ? Enabling a new intent funnel type
+  ? Changing AI prompt templates
+  ? Adjusting quality score thresholds
+  ? Enabling auto-approve for any content type
 
-TIER 3 — CEO EXPLICITLY INITIATES:
-  👑 Bulk publishing (manual confirmation + daily cap)
-  👑 Changing lead routing rules
-  👑 Modifying CRM pipelines
-  👑 Deploying new code (git push → Vercel review)
-  👑 Database migrations
-  👑 Zoho integration configurations
-  👑 Scrapping any in-progress plan/job
+TIER 3 � CEO EXPLICITLY INITIATES:
+  ?? Bulk publishing (manual confirmation + daily cap)
+  ?? Changing lead routing rules
+  ?? Modifying CRM pipelines
+  ?? Deploying new code (git push ? Vercel review)
+  ?? Database migrations
+  ?? Zoho integration configurations
+  ?? Scrapping any in-progress plan/job
 ```
 
-### CEO Dashboard — What You See Every Morning
+### CEO Dashboard � What You See Every Morning
 
 A single summary view at `/admin/` (the dashboard) shows:
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  GOOD MORNING — DAILY BRIEF                       Apr 17, 2026  │
-├──────────────────────────────────────────────────────────────────┤
-│  OVERNIGHT ACTIVITY                                              │
-│  ├─ Drafts generated: 12  (auto — no action needed)             │
-│  ├─ Quality checks: 12 passed, 0 failed, 0 flagged              │
-│  ├─ Leads captured: 7  (3 high priority, 4 medium)              │
-│  ├─ Auto-emails sent: 7  (all pre-approved templates)           │
-│  └─ WhatsApp sent: 3  (high priority leads only)                │
-├──────────────────────────────────────────────────────────────────┤
-│  AWAITING YOUR DECISION  ⚡                                      │
-│  ├─ 12 drafts ready for review                                  │
-│  │   [Review Now →]                                              │
-│  ├─ Bulk job "Delhi Phase 2" wants to start (847 pages)         │
-│  │   [Approve] [Pause] [Modify]                                 │
-│  └─ 2 pages have been pending publish for 48h (you approved     │
-│      but scheduling was paused)                                  │
-│      [Publish Now] [Reschedule]                                  │
-├──────────────────────────────────────────────────────────────────┤
-│  ALERTS THIS WEEK                                                │
-│  ├─ ⚠️  Page "lic-agent-laxmi-nagar" has 0 backlinks (orphan)  │
-│  ├─ 🔥 Page "bima-sakhi-krishna-nagar" → 5 leads today         │
-│  └─ 📉 Page "lic-term-plan-delhi" ranked #8 → dropped to #14   │
-│      [View Re-optimization Suggestions]                          │
-└──────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------+
+�  GOOD MORNING � DAILY BRIEF                       Apr 17, 2026  �
++------------------------------------------------------------------�
+�  OVERNIGHT ACTIVITY                                              �
+�  +- Drafts generated: 12  (auto � no action needed)             �
+�  +- Quality checks: 12 passed, 0 failed, 0 flagged              �
+�  +- Leads captured: 7  (3 high priority, 4 medium)              �
+�  +- Auto-emails sent: 7  (all pre-approved templates)           �
+�  +- WhatsApp sent: 3  (high priority leads only)                �
++------------------------------------------------------------------�
+�  AWAITING YOUR DECISION  ?                                      �
+�  +- 12 drafts ready for review                                  �
+�  �   [Review Now ?]                                              �
+�  +- Bulk job "Delhi Phase 2" wants to start (847 pages)         �
+�  �   [Approve] [Pause] [Modify]                                 �
+�  +- 2 pages have been pending publish for 48h (you approved     �
+�      but scheduling was paused)                                  �
+�      [Publish Now] [Reschedule]                                  �
++------------------------------------------------------------------�
+�  ALERTS THIS WEEK                                                �
+�  +- ??  Page "lic-agent-laxmi-nagar" has 0 backlinks (orphan)  �
+�  +- ?? Page "bima-sakhi-krishna-nagar" ? 5 leads today         �
+�  +- ?? Page "lic-term-plan-delhi" ranked #8 ? dropped to #14   �
+�      [View Re-optimization Suggestions]                          �
++------------------------------------------------------------------+
 ```
 
-### Plan Management — Alter, Pause, Scrap
+### Plan Management � Alter, Pause, Scrap
 
 Every bulk job, every email sequence, every automation has a status you can change at any time:
 
@@ -3751,13 +3821,13 @@ Every bulk job, every email sequence, every automation has a status you can chan
 
 ```
 Bulk Job Status Controls:
-  [▶ Resume] [⏸ Pause] [🔧 Edit Parameters] [🗑 Cancel + Archive]
+  [? Resume] [? Pause] [?? Edit Parameters] [?? Cancel + Archive]
 
 Email Sequence Controls:
-  [⏸ Pause sequence for all leads] [✏️ Edit template] [📊 View performance]
+  [? Pause sequence for all leads] [?? Edit template] [?? View performance]
 
 Page Publish Controls:
-  [✅ Publish] [📅 Schedule] [✏️ Edit] [❌ Reject] [🗃 Archive]
+  [? Publish] [?? Schedule] [?? Edit] [? Reject] [?? Archive]
 ```
 
 ### The Transparency Rule
@@ -3768,17 +3838,17 @@ Page Publish Controls:
 - What data was involved
 - Whether it was reversible
 
-If you ever ask "what happened to this lead/page/job?" — the answer must be retrievable in ≤2 clicks from the admin.
+If you ever ask "what happened to this lead/page/job?" � the answer must be retrievable in =2 clicks from the admin.
 
 ---
 
-## 21. 🧠 Intelligence Layer — Self-Learning SEO Brain
+## 21. ?? Intelligence Layer � Self-Learning SEO Brain
 
 ### The Upgrade: From Generator to Thinker
 
-Current system: Generate → (gap) → Publish → forget.
+Current system: Generate ? (gap) ? Publish ? forget.
 
-Upgraded system: Generate → Publish → Track → Analyze → Learn → Improve → Scale winners.
+Upgraded system: Generate ? Publish ? Track ? Analyze ? Learn ? Improve ? Scale winners.
 
 This is the difference between a content factory and an intelligence engine.
 
@@ -3822,7 +3892,7 @@ Every 2 weeks, a scheduled job runs:
 
 ```
 Input: Top 10 performing pages (by leads/clicks/position)
-       Bottom 10 pages (live ≥30 days, impressions but no clicks/leads)
+       Bottom 10 pages (live =30 days, impressions but no clicks/leads)
 
 AI Prompt sent to Gemini:
 "These are our top performing pages: [list with their content structure, word count, FAQ count, 
@@ -3847,35 +3917,35 @@ CEO sees the AI's analysis in `/admin/ccc/insights` and decides:
 ### Component 3: Re-Optimization Engine
 
 For any page where:
-- Live for ≥30 days AND
+- Live for =30 days AND
 - Avg position > 15 (not ranking in top 2 pages) AND
 - Impressions > 0 (Google is at least trying to rank it)
 
 The system flags the page for re-optimization. In `/admin/ccc/drafts`, flagged pages appear with a "Revive" badge.
 
 **Re-optimization options (CEO chooses one or more):**
-1. **AI Rewrite Introduction** — First 150 words rewritten for better keyword match
-2. **Expand FAQs** — Add 3 more highly specific local FAQs
-3. **Add Internal Links** — Connect to newly published sibling pages
-4. **Boost Word Count** — Expand thin sections with local context
-5. **Freshen Date** — Update "last updated" date (signals freshness to Google)
-6. **Add Testimonial** — AI generates a new local context testimonial
+1. **AI Rewrite Introduction** � First 150 words rewritten for better keyword match
+2. **Expand FAQs** � Add 3 more highly specific local FAQs
+3. **Add Internal Links** � Connect to newly published sibling pages
+4. **Boost Word Count** � Expand thin sections with local context
+5. **Freshen Date** � Update "last updated" date (signals freshness to Google)
+6. **Add Testimonial** � AI generates a new local context testimonial
 
 Every re-optimization is a new draft that CEO reviews before applying.
 
 ### Component 4: Winning Pattern Auto-Scaler
 
-When the AI identifies a winning pattern (e.g., "locality pages with 5 FAQs + 700+ words in Delhi rank #3–#7 within 45 days"), the CEO can:
+When the AI identifies a winning pattern (e.g., "locality pages with 5 FAQs + 700+ words in Delhi rank #3�#7 within 45 days"), the CEO can:
 
 1. Tag this as the "Delhi Locality Template v2"
 2. Apply this template to ALL future Delhi locality page generations
 3. Optionally re-generate existing Delhi pages that don't match the pattern
 
-This is how the system gets smarter over time — not from a black-box ML model, but from a transparent AI analysis that YOU control.
+This is how the system gets smarter over time � not from a black-box ML model, but from a transparent AI analysis that YOU control.
 
 ---
 
-## 22. ⚡ Smart Internal Linking Engine
+## 22. ? Smart Internal Linking Engine
 
 ### Upgrade: From Basic to AI-Decided
 
@@ -3886,35 +3956,35 @@ This is how the system gets smarter over time — not from a black-box ML model,
 **Upgraded (AI-decided):**
 
 The linking engine considers:
-1. **Keyword Similarity Score** — How related are the target keywords? (computed via string similarity / keyword overlap)
-2. **Geo Proximity** — For local pages: same city > same state > national
-3. **Intent Compatibility** — `local_service` links naturally to `career`, `career` links to `form_help`, `policy_info` links to `policy_info` (comparison intent)
-4. **Authority Flow** — High-performing pages (good position/clicks) should distribute link equity to newer pages
-5. **Topic Cluster Logic** — Pillar → cluster members (always), cluster members → each other (3-max), cross-intent → only when organic
+1. **Keyword Similarity Score** � How related are the target keywords? (computed via string similarity / keyword overlap)
+2. **Geo Proximity** � For local pages: same city > same state > national
+3. **Intent Compatibility** � `local_service` links naturally to `career`, `career` links to `form_help`, `policy_info` links to `policy_info` (comparison intent)
+4. **Authority Flow** � High-performing pages (good position/clicks) should distribute link equity to newer pages
+5. **Topic Cluster Logic** � Pillar ? cluster members (always), cluster members ? each other (3-max), cross-intent ? only when organic
 
 **Linking Decision Matrix:**
 
 ```
 Source Page Intent: local_service (Krishna Nagar)
-  → Link TO (always):  parent city page (lic-agent-delhi)     [parent]
-  → Link TO (auto):    2 nearest locality pages by geo         [cluster siblings]
-  → Link TO (if exists): career page same city                [cross-intent: become an agent]
-  → Link TO (if exists): most popular policy page             [cross-intent: what to sell]
+  ? Link TO (always):  parent city page (lic-agent-delhi)     [parent]
+  ? Link TO (auto):    2 nearest locality pages by geo         [cluster siblings]
+  ? Link TO (if exists): career page same city                [cross-intent: become an agent]
+  ? Link TO (if exists): most popular policy page             [cross-intent: what to sell]
   
 Source Page Intent: policy_info (Jeevan Shanti)
-  → Link TO (always):  pillar policy page (all-lic-policies)  [parent]
-  → Link TO (auto):    2 related policy pages                  [cluster: annuity family]
-  → Link TO (if exists): city-level consult page              [cross-intent: talk to agent]
+  ? Link TO (always):  pillar policy page (all-lic-policies)  [parent]
+  ? Link TO (auto):    2 related policy pages                  [cluster: annuity family]
+  ? Link TO (if exists): city-level consult page              [cross-intent: talk to agent]
 
 Source Page Intent: career (become LIC agent)
-  → Link TO (always):  city service page                       [parent: where agents work]
-  → Link TO (auto):    form_help page for IC-38               [cross-intent: next step]
-  → Link TO (auto):    download page (IC-38 syllabus)         [cross-intent: prep resource]
+  ? Link TO (always):  city service page                       [parent: where agents work]
+  ? Link TO (auto):    form_help page for IC-38               [cross-intent: next step]
+  ? Link TO (auto):    download page (IC-38 syllabus)         [cross-intent: prep resource]
 ```
 
 **Where links appear on page (UI positions):**
 - **In-content link:** Naturally woven into body paragraph (highest SEO value)
-- **Sidebar "Explore nearby":** 2–3 sibling locality links
+- **Sidebar "Explore nearby":** 2�3 sibling locality links
 - **Bottom "You may also like":** Cross-intent links
 - **CTA strip:** Career or policy cross-intent CTA
 
@@ -3923,7 +3993,7 @@ Visual graph showing which pages link to which. Orphan pages (no inbound links) 
 
 ---
 
-## 23. 🏆 Lead Scoring System
+## 23. ?? Lead Scoring System
 
 ### The Problem with Un-scored Leads
 
@@ -3954,55 +4024,55 @@ If the agent treats both the same, they waste time and burn out.
 | Signal | Points | Reasoning |
 |--------|--------|-----------|
 | City matches active recruitment area | +10 | We can actually serve them |
-| Age 25–45 (for recruit funnel) | +5 | Core demographic |
-| Age 40–60 (for annuity funnel) | +5 | Core retirement planning age |
+| Age 25�45 (for recruit funnel) | +5 | Core demographic |
+| Age 40�60 (for annuity funnel) | +5 | Core retirement planning age |
 | Occupation: housewife / part-time (recruit) | +15 | Perfect fit for Bima Sakhi |
-| Education: ≥10th pass (required for agent) | +10 | Meets eligibility |
+| Education: =10th pass (required for agent) | +10 | Meets eligibility |
 | Education: Graduate (for recruit funnel) | +5 | Above minimum = easier training |
 
 **Funnel-Specific Multipliers:**
 
 | Funnel | Base Multiplier | Reason |
 |--------|----------------|--------|
-| `sakhi_recruit` | 1.3× | Highest business value |
-| `agent_recruit` | 1.2× | High value |
-| `annuity_sale` | 1.4× | Highest immediate revenue |
-| `policy_sale` | 1.2× | Good revenue |
-| `ic38_guide` | 1.1× | Strong intent signal |
-| `form_service` | 1.0× | Standard |
-| `nurture_download` | 0.6× | Early stage, needs nurturing |
-| `awareness` | 0.4× | No immediate action expected |
+| `sakhi_recruit` | 1.3� | Highest business value |
+| `agent_recruit` | 1.2� | High value |
+| `annuity_sale` | 1.4� | Highest immediate revenue |
+| `policy_sale` | 1.2� | Good revenue |
+| `ic38_guide` | 1.1� | Strong intent signal |
+| `form_service` | 1.0� | Standard |
+| `nurture_download` | 0.6� | Early stage, needs nurturing |
+| `awareness` | 0.4� | No immediate action expected |
 
-### Score → Action Mapping
+### Score ? Action Mapping
 
 | Score | Priority | Action |
 |-------|----------|--------|
-| ≥ 100 | 🔥 HOT | Zoho Cliq alert within 5 min to assigned agent. Call within 1 hour. |
-| 70–99 | ⚡ WARM | WhatsApp message within 30 min. Call within same day. |
-| 40–69 | 📞 NORMAL | Enter email drip sequence. Agent calls within 48h. |
-| 20–39 | 📧 NURTURE | Automated email only for 7 days. Re-score on re-engagement. |
-| < 20 | ❄️ COLD | Monthly newsletter only. No agent time. |
+| = 100 | ?? HOT | Zoho Cliq alert within 5 min to assigned agent. Call within 1 hour. |
+| 70�99 | ? WARM | WhatsApp message within 30 min. Call within same day. |
+| 40�69 | ?? NORMAL | Enter email drip sequence. Agent calls within 48h. |
+| 20�39 | ?? NURTURE | Automated email only for 7 days. Re-score on re-engagement. |
+| < 20 | ?? COLD | Monthly newsletter only. No agent time. |
 
 ### Re-Scoring on Engagement
 
 Score is NOT static. Every time a lead re-engages (opens an email, visits a page again, downloads something), their score is recalculated. A cold lead can become hot.
 
 **Trigger for re-score:**
-- Email opened → +5
-- Email clicked → +10
-- Page re-visit after 7 days → +20
-- New download → +30
-- Fills another form → +50 (goes to agent immediately)
+- Email opened ? +5
+- Email clicked ? +10
+- Page re-visit after 7 days ? +20
+- New download ? +30
+- Fills another form ? +50 (goes to agent immediately)
 
 ---
 
-## 24. 🌐 Bilingual Content Engine
+## 24. ?? Bilingual Content Engine
 
 ### The Foundation Rule
 
-> "Jab bhi koi content generate hoga, wo kam se kam do language mein zaroor generate hoga — Hindi aur English. User language toggle se switch kar sakta hai."
+> "Jab bhi koi content generate hoga, wo kam se kam do language mein zaroor generate hoga � Hindi aur English. User language toggle se switch kar sakta hai."
 
-This is not optional. From Day 1 of content generation, every page must have both versions ready. The existing language toggle in the UI handles the switch — we need the backend to serve both.
+This is not optional. From Day 1 of content generation, every page must have both versions ready. The existing language toggle in the UI handles the switch � we need the backend to serve both.
 
 ### Current State
 
@@ -4015,8 +4085,8 @@ This is not optional. From Day 1 of content generation, every page must have bot
 
 When pagegen generates a page, it generates TWICE:
 
-**Pass 1:** English content (for Google ranking — English content has broader reach, higher search volume for many LIC queries)
-**Pass 2:** Hindi content (for user experience — many actual users prefer to read in Hindi, especially in tier 2/3 cities)
+**Pass 1:** English content (for Google ranking � English content has broader reach, higher search volume for many LIC queries)
+**Pass 2:** Hindi content (for user experience � many actual users prefer to read in Hindi, especially in tier 2/3 cities)
 
 Both versions stored in `content_drafts`:
 
@@ -4062,8 +4132,8 @@ Phase 2 (Later):  Add Marathi for Maharashtra cities
                   Add Kannada for Bengaluru + Karnataka
 
 Language selection = based on city/state of the page:
-  city.state = 'Maharashtra' → primary: Marathi, secondary: Hindi, tertiary: English
-  city.state = 'West Bengal' → primary: Bengali, secondary: Hindi, tertiary: English
+  city.state = 'Maharashtra' ? primary: Marathi, secondary: Hindi, tertiary: English
+  city.state = 'West Bengal' ? primary: Bengali, secondary: Hindi, tertiary: English
 ```
 
 **DB support:** Add `supported_languages TEXT[]` to `cities` table. Pagegen checks city's supported languages and generates content for each.
@@ -4075,14 +4145,14 @@ Language selection = based on city/state of the page:
 In `/admin/ccc/drafts/[id]`, the center panel has language tabs:
 
 ```
-[English] [हिंदी] [Add Language +]
+[English] [?????] [Add Language +]
 ```
 
 Each tab shows the content in that language. Editor can edit both. Quality score is computed per language. Both must pass quality gates before page can be approved.
 
 ---
 
-## 25. 🔄 Auto Content Variation Engine
+## 25. ?? Auto Content Variation Engine
 
 ### Why Variation is Non-Negotiable
 
@@ -4094,17 +4164,17 @@ If locality pages for Krishna Nagar and Laxmi Nagar have:
 
 Google considers them duplicate content. No ranking. Possible penalty.
 
-**Rule:** Same topic → different feel. Always.
+**Rule:** Same topic ? different feel. Always.
 
 ### The Six Variation Axes
 
 The AI is instructed to vary along these six dimensions per page:
 
 **Axis 1: Narrative Tone**
-- `storytelling` → Opens with a local woman's struggle-to-success story, builds emotion, ends with CTA
-- `direct_info` → Professional, factual. Bullet points. "Here is what you need to know."
-- `qa_style` → Conversational. "Aap soch rahe hain ki...? Haan, ye bilkul sahi sawaal hai."
-- `expert_guide` → "Raj aapko batata hai step-by-step..."
+- `storytelling` ? Opens with a local woman's struggle-to-success story, builds emotion, ends with CTA
+- `direct_info` ? Professional, factual. Bullet points. "Here is what you need to know."
+- `qa_style` ? Conversational. "Aap soch rahe hain ki...? Haan, ye bilkul sahi sawaal hai."
+- `expert_guide` ? "Raj aapko batata hai step-by-step..."
 
 **Axis 2: Opening Hook**
 - Local landmark mention: "Krishnanagar metro se sirf 10 minute ki doori mein..."
@@ -4137,9 +4207,9 @@ The AI is instructed to vary along these six dimensions per page:
 ### How Variation is Assigned
 
 During bulk job creation, CEO selects a variation strategy:
-- **Random** — Each page gets random combination of axes (default)
-- **Cluster-based** — Same city gets consistent tone, different cities vary
-- **Manual** — CEO sets specific variation for each page type in the job
+- **Random** � Each page gets random combination of axes (default)
+- **Cluster-based** � Same city gets consistent tone, different cities vary
+- **Manual** � CEO sets specific variation for each page type in the job
 
 The variation assignment is stored in `content_drafts.generation_params JSONB`:
 ```json
@@ -4156,7 +4226,7 @@ The AI uses this as strict instructions, not suggestions. The quality reviewer c
 
 ---
 
-## 26. 📲 Content → Social Auto Engine
+## 26. ?? Content ? Social Auto Engine
 
 ### The Core Insight
 
@@ -4164,12 +4234,12 @@ Every page you publish is a content asset. Most teams stop at the page. We extra
 
 ```
 1 Published Page
-    ↓
-    ├─ 1 LinkedIn post (professional, English)
-    ├─ 1 Facebook post (community tone, Hindi)
-    ├─ 1 Instagram caption + carousel outline (visual, Hindi)
-    ├─ 1 WhatsApp broadcast message (short, conversational)
-    └─ 1 YouTube Shorts / Reel script (60 seconds, spoken Hindi)
+    ?
+    +- 1 LinkedIn post (professional, English)
+    +- 1 Facebook post (community tone, Hindi)
+    +- 1 Instagram caption + carousel outline (visual, Hindi)
+    +- 1 WhatsApp broadcast message (short, conversational)
+    +- 1 YouTube Shorts / Reel script (60 seconds, spoken Hindi)
 ```
 
 Each of these is AI-generated and stored as a draft in Zoho Social before CEO reviews and approves.
@@ -4178,8 +4248,8 @@ Each of these is AI-generated and stored as a draft in Zoho Social before CEO re
 
 **LinkedIn Post (Professional):**
 ```
-Format: Hook → 3 value points → CTA → hashtags
-Length: 150–250 words
+Format: Hook ? 3 value points ? CTA ? hashtags
+Length: 150�250 words
 Tone: Professional, English, authoritative
 Audience: Educated professionals, HR, career-focused
 CTA: Link to the published page
@@ -4188,8 +4258,8 @@ Example hashtags: #LICIndia #FinancialIndependence #BimaShakhi #WomenEmpowerment
 
 **Facebook Post (Community):**
 ```
-Format: Relatable opening → story → value → CTA in Hindi
-Length: 80–120 words
+Format: Relatable opening ? story ? value ? CTA in Hindi
+Length: 80�120 words
 Tone: Warm, Hindi-English mix, community feel
 Audience: Middle-class families, women's groups, local community
 CTA: "Comment 'INTERESTED' ya link pe click karo"
@@ -4210,16 +4280,16 @@ Note: Actual carousel is created manually in Canva using these slides as content
 
 **WhatsApp Broadcast:**
 ```
-Format: Greeting → 2-line value prop → CTA
+Format: Greeting ? 2-line value prop ? CTA
 Length: < 60 words
 Tone: Conversational, Hindi, personal
 CTA: Link to page or "Reply HAAN to know more"
-Timing: Scheduled via Zoho Campaigns (not bulk blasts — personalized by funnel)
+Timing: Scheduled via Zoho Campaigns (not bulk blasts � personalized by funnel)
 ```
 
 **Reel/Shorts Script:**
 ```
-Format: Hook (0–5s) → Main info (5–45s) → CTA (45–60s)
+Format: Hook (0�5s) ? Main info (5�45s) ? CTA (45�60s)
 Total: 60-second spoken script
 Tone: Energetic, relatable, Hindi
 Hook: Start with a question or surprising stat
@@ -4231,7 +4301,7 @@ CTA: "Description mein link hai" or "Follow karo aur save karo"
 When a page is approved for publishing:
 1. Social content is auto-generated for all 5 formats
 2. Drafts appear in `/admin/ccc/social` (new admin section)
-3. CEO reviews each format — Edit / Approve / Skip
+3. CEO reviews each format � Edit / Approve / Skip
 4. Approved posts are sent to Zoho Social as scheduled drafts
 5. CEO sets posting schedule in Zoho Social (e.g., Instagram at 9am, FB at 11am, LinkedIn at 12pm)
 
@@ -4239,14 +4309,14 @@ When a page is approved for publishing:
 
 ---
 
-## 27. 👤 Agent Personalization Engine
+## 27. ?? Agent Personalization Engine
 
 ### The Hidden Gold
 
 This is the most underrated trust-building feature in the whole system.
 
 **The Insight:**
-> "Agar ek user Krishna Nagar ki locality page pe aata hai, aur wahan likha ho: 'Aapke area ki Bima Sakhi agent hain: Sunita Sharma, Krishna Nagar resident, 3 saal ka experience' — to conversion rate 2–3x ho jaata hai."
+> "Agar ek user Krishna Nagar ki locality page pe aata hai, aur wahan likha ho: 'Aapke area ki Bima Sakhi agent hain: Sunita Sharma, Krishna Nagar resident, 3 saal ka experience' � to conversion rate 2�3x ho jaata hai."
 
 Why? Because insurance is a trust product. People buy from people they feel connected to. A local name + photo creates instant connection.
 
@@ -4274,42 +4344,42 @@ CREATE TABLE agent_areas (
 ```
 
 **On every generated page:**
-- If an agent is assigned to that locality → show their card in the sidebar
-- If no agent assigned → show a generic "Hamari Bima Sakhi agent aapke area mein available hai" card
+- If an agent is assigned to that locality ? show their card in the sidebar
+- If no agent assigned ? show a generic "Hamari Bima Sakhi agent aapke area mein available hai" card
 
 **Agent Card (Sidebar Component):**
 
 ```
-┌────────────────────────────────┐
-│  [Agent Photo]                 │
-│                                │
-│  Sunita Sharma                 │
-│  LIC Development Officer       │
-│  📍 Krishna Nagar, Delhi       │
-│  ⭐ 3 years | 47 policies      │
-│                                │
-│  "Main aapki area ki hi        │
-│   resident hun. Free mein      │
-│   guide karungi."              │
-│                                │
-│  [💬 WhatsApp Now]             │
-│  [📅 Book 15-min Call]         │
-└────────────────────────────────┘
++--------------------------------+
+�  [Agent Photo]                 �
+�                                �
+�  Sunita Sharma                 �
+�  LIC Development Officer       �
+�  ?? Krishna Nagar, Delhi       �
+�  ? 3 years | 47 policies      �
+�                                �
+�  "Main aapki area ki hi        �
+�   resident hun. Free mein      �
+�   guide karungi."              �
+�                                �
+�  [?? WhatsApp Now]             �
+�  [?? Book 15-min Call]         �
++--------------------------------+
 ```
 
-**Phase 2 Enhancement — Dynamic Personalisation:**
-When a known user (returning visitor, tracked via cookie/session) visits a page, the agent card can optionally show the agent who previously contacted them (stored in CRM). "Sunita Ji aapka intezaar kar rahi hain" — personalized for repeat visitors.
+**Phase 2 Enhancement � Dynamic Personalisation:**
+When a known user (returning visitor, tracked via cookie/session) visits a page, the agent card can optionally show the agent who previously contacted them (stored in CRM). "Sunita Ji aapka intezaar kar rahi hain" � personalized for repeat visitors.
 
 ### Agent Assignment Admin `/admin/agents`
 
 - List all agents with their assigned localities
 - Assign agent to locality (one-to-one or one-to-many)
-- Unassigned localities: shown as "orphan" — suggest assigning before publishing
+- Unassigned localities: shown as "orphan" � suggest assigning before publishing
 - Agent performance: leads generated via their page attribution
 
 ---
 
-## 28. 📊 Analytics Stack
+## 28. ?? Analytics Stack
 
 ### The Complete Analytics Architecture
 
@@ -4317,9 +4387,9 @@ Four tools, each playing a specific role. They must work together, not in isolat
 
 #### Tool 1: Google Tag Manager (GTM)
 
-**Purpose:** Central tag manager — all tracking codes go through GTM, NOT hardcoded in source.
+**Purpose:** Central tag manager � all tracking codes go through GTM, NOT hardcoded in source.
 
-**Why GTM first:** If you hardcode GA4, Zoho, or any tracking into source, every change requires a code deploy. With GTM, you update tags from the GTM dashboard — no deployment needed.
+**Why GTM first:** If you hardcode GA4, Zoho, or any tracking into source, every change requires a code deploy. With GTM, you update tags from the GTM dashboard � no deployment needed.
 
 **Tags to configure in GTM:**
 - GA4 base tag (page views)
@@ -4327,7 +4397,7 @@ Four tools, each playing a specific role. They must work together, not in isolat
 - Zoho SalesIQ chat widget (load only on specific pages)
 - Facebook Pixel (if used)
 - Google Ads conversion tag (if used)
-- Hotjar / Microsoft Clarity (heatmaps — optional)
+- Hotjar / Microsoft Clarity (heatmaps � optional)
 
 **GTM Container:** One container for bimasakhi.com. Publish via GTM web UI.
 
@@ -4335,34 +4405,34 @@ Four tools, each playing a specific role. They must work together, not in isolat
 
 #### Tool 2: Google Analytics 4 (GA4)
 
-**Purpose:** User behaviour tracking — what pages people visit, how long, what they do.
+**Purpose:** User behaviour tracking � what pages people visit, how long, what they do.
 
 **Custom Events to track (via GTM):**
 ```
-lead_form_submit    → {funnel, intent_type, city, source_page_slug}
-download_initiated  → {resource_slug, gated: true/false}
-download_gate_open  → {resource_slug}  (modal opened)
-download_completed  → {resource_slug}  (lead submitted, link revealed)
-language_toggle     → {new_language: 'hi' | 'en'}
-cta_click           → {cta_type, page_slug, position: 'hero' | 'sidebar' | 'bottom'}
-agent_card_whatsapp → {agent_name, locality}
-agent_card_book     → {agent_name, locality}
-faq_expand          → {faq_question, page_slug}
+lead_form_submit    ? {funnel, intent_type, city, source_page_slug}
+download_initiated  ? {resource_slug, gated: true/false}
+download_gate_open  ? {resource_slug}  (modal opened)
+download_completed  ? {resource_slug}  (lead submitted, link revealed)
+language_toggle     ? {new_language: 'hi' | 'en'}
+cta_click           ? {cta_type, page_slug, position: 'hero' | 'sidebar' | 'bottom'}
+agent_card_whatsapp ? {agent_name, locality}
+agent_card_book     ? {agent_name, locality}
+faq_expand          ? {faq_question, page_slug}
 ```
 
 **GA4 Audiences (for remarketing):**
-- "High intent visitors" — visited form_help + download pages (score ≥ 50)
-- "Repeat visitors" — came back 2+ times
-- "Lead submitted" — custom event `lead_form_submit` triggered
+- "High intent visitors" � visited form_help + download pages (score = 50)
+- "Repeat visitors" � came back 2+ times
+- "Lead submitted" � custom event `lead_form_submit` triggered
 
-**GA4 → Zoho Analytics:** Export GA4 data to Zoho Analytics for cross-platform reporting (GA4 data + CRM data + page performance data = full picture).
+**GA4 ? Zoho Analytics:** Export GA4 data to Zoho Analytics for cross-platform reporting (GA4 data + CRM data + page performance data = full picture).
 
 #### Tool 3: Google Search Console (GSC)
 
-**Purpose:** Actual SEO performance — what Google sees, what ranks, what doesn't.
+**Purpose:** Actual SEO performance � what Google sees, what ranks, what doesn't.
 
 **Configured properties:**
-- `https://bimasakhi.com` — main domain property
+- `https://bimasakhi.com` � main domain property
 - Submit sitemap: `https://bimasakhi.com/sitemap-index.xml`
 
 **Data we pull weekly (for Page Performance Brain):**
@@ -4372,22 +4442,22 @@ faq_expand          → {faq_question, page_slug}
 - CTR per page slug
 - Top queries per page slug (for re-optimization insights)
 
-**GSC API integration:** `lib/analytics/gsc.js` — OAuth2 service account, pulls data for all pages in `page_index` where status='active'. Stores in `page_performance_snapshots`.
+**GSC API integration:** `lib/analytics/gsc.js` � OAuth2 service account, pulls data for all pages in `page_index` where status='active'. Stores in `page_performance_snapshots`.
 
 **Alerts from GSC:**
-- Page dropped from top 10 → notify in admin
-- Coverage errors (404s, redirect chains) → notify in admin
-- Manual action (penalty) → CRITICAL alert immediately
+- Page dropped from top 10 ? notify in admin
+- Coverage errors (404s, redirect chains) ? notify in admin
+- Manual action (penalty) ? CRITICAL alert immediately
 
 #### Tool 4: GT Matrix (Performance Testing)
 
 **Purpose:** Page speed + Core Web Vitals testing for generated pages.
 
 **What is GT Matrix:** A web performance testing tool that measures:
-- Largest Contentful Paint (LCP) — how fast does the main content load
-- Total Blocking Time (TBT) — how long is JS blocking rendering
-- Cumulative Layout Shift (CLS) — does content jump around
-- Time to First Byte (TTFB) — server response speed
+- Largest Contentful Paint (LCP) � how fast does the main content load
+- Total Blocking Time (TBT) � how long is JS blocking rendering
+- Cumulative Layout Shift (CLS) � does content jump around
+- Time to First Byte (TTFB) � server response speed
 - Page size + number of requests
 
 **Why it matters for SEO:** Google uses Core Web Vitals as a ranking signal. A page that loads in 4 seconds will be outranked by the same content on a page that loads in 1.5 seconds.
@@ -4399,7 +4469,7 @@ faq_expand          → {faq_question, page_slug}
    - Use `next/image` for ALL images (automatic WebP + lazy loading)
    - Use `loading="lazy"` for below-fold content
    - Enable ISR (Incremental Static Regeneration) with `revalidate = 3600`
-   - Minimize JS bundle — don't import heavy libraries in page templates
+   - Minimize JS bundle � don't import heavy libraries in page templates
    - Use Next.js `font/google` with `display: swap`
 
 **Periodic testing:**
@@ -4407,42 +4477,42 @@ faq_expand          → {faq_question, page_slug}
 - Log scores in admin under `/admin/ccc/performance/speed`
 
 **Threshold alerts:**
-- LCP > 4s → Admin warning → Review page template
-- CLS > 0.25 → Admin warning → Check image dimensions
+- LCP > 4s ? Admin warning ? Review page template
+- CLS > 0.25 ? Admin warning ? Check image dimensions
 
 #### Analytics Dashboard in Admin
 
 New section in admin: `/admin/analytics/seo`
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│  SEO PERFORMANCE OVERVIEW              This Week vs Last Week │
-├──────────────────────────────────────────────────────────────┤
-│  Total Impressions: 14,230  (↑ 18%)                          │
-│  Total Clicks: 892          (↑ 12%)                          │
-│  Average CTR: 6.3%          (↑ 0.4%)                         │
-│  Pages in top 10: 47        (↑ 8)                            │
-├──────────────────────────────────────────────────────────────┤
-│  TOP PERFORMING PAGES (by leads)                             │
-│  1. lic-agent-krishna-nagar-delhi      → 7 leads             │
-│  2. bima-sakhi-laxmi-nagar             → 5 leads             │
-│  3. lic-agent-shahdara                 → 4 leads             │
-├──────────────────────────────────────────────────────────────┤
-│  PAGES NEEDING ATTENTION               (live ≥30d, pos >15)  │
-│  • lic-agent-rohini-delhi              pos: 22 (revive?)     │
-│  • bima-sakhi-greater-noida            pos: 31 (revive?)     │
-├──────────────────────────────────────────────────────────────┤
-│  LEAD ATTRIBUTION (this week)                                │
-│  Organic SEO: 23 leads                                       │
-│  Download gate: 11 leads                                     │
-│  Contact form: 4 leads                                       │
-│  Direct: 8 leads                                             │
-└──────────────────────────────────────────────────────────────┘
++--------------------------------------------------------------+
+�  SEO PERFORMANCE OVERVIEW              This Week vs Last Week �
++--------------------------------------------------------------�
+�  Total Impressions: 14,230  (? 18%)                          �
+�  Total Clicks: 892          (? 12%)                          �
+�  Average CTR: 6.3%          (? 0.4%)                         �
+�  Pages in top 10: 47        (? 8)                            �
++--------------------------------------------------------------�
+�  TOP PERFORMING PAGES (by leads)                             �
+�  1. lic-agent-krishna-nagar-delhi      ? 7 leads             �
+�  2. bima-sakhi-laxmi-nagar             ? 5 leads             �
+�  3. lic-agent-shahdara                 ? 4 leads             �
++--------------------------------------------------------------�
+�  PAGES NEEDING ATTENTION               (live =30d, pos >15)  �
+�  � lic-agent-rohini-delhi              pos: 22 (revive?)     �
+�  � bima-sakhi-greater-noida            pos: 31 (revive?)     �
++--------------------------------------------------------------�
+�  LEAD ATTRIBUTION (this week)                                �
+�  Organic SEO: 23 leads                                       �
+�  Download gate: 11 leads                                     �
+�  Contact form: 4 leads                                       �
+�  Direct: 8 leads                                             �
++--------------------------------------------------------------+
 ```
 
 ---
 
-## 29. 🎨 Smart Forms + Dynamic Post-Conversion Flow
+## 29. ?? Smart Forms + Dynamic Post-Conversion Flow
 
 ### The Problem with Static Forms
 
@@ -4452,7 +4522,7 @@ Current state: One generic lead form. Everyone who submits goes to `/thank-you`.
 - A woman who filled a recruitment form and a man asking about a policy both go to the same "Thank you" page
 - The thank-you page has zero intelligence about what they just did
 - There is no next step guidance, no personalization, no "what happens now" clarity
-- The user leaves confused → lead gets cold before the agent even calls
+- The user leaves confused ? lead gets cold before the agent even calls
 
 ### Principle: Every Form Must Be Intent-Aware
 
@@ -4474,10 +4544,10 @@ Required: Name, Mobile, City
 Optional but shown: 
   "Aapki current occupation kya hai?" (dropdown: housewife / part-time job / full-time job / other)
   "Aapne 10th paas ki hai?" (Yes / No)
-  "Aap mahine mein kitna earn karna chahti hain?" (< 10K / 10–25K / 25K+)
+  "Aap mahine mein kitna earn karna chahti hain?" (< 10K / 10�25K / 25K+)
 
 Hidden: funnel=sakhi_recruit, intent_type=bima_sakhi_recruit, source_page_slug
-Submit button: "Bima Sakhi Banne Ki Journey Shuru Karo →"
+Submit button: "Bima Sakhi Banne Ki Journey Shuru Karo ?"
 ```
 
 **Policy Buyer Form:**
@@ -4486,10 +4556,10 @@ Required: Name, Mobile, City
 Optional but shown:
   "Aap konsi policy ke baare mein jaanna chahte hain?" (dropdown: Jeevan Shanti / Term Plan / Endowment / Child Plan / Other)
   "Aapki age?" (number input)
-  "Aap kitna invest karna chahte hain per month?" (< 1000 / 1000–5000 / 5000+)
+  "Aap kitna invest karna chahte hain per month?" (< 1000 / 1000�5000 / 5000+)
 
 Hidden: funnel=policy_sale, intent_type=policy_buyer, policy_interest=jeevan_shanti
-Submit button: "FREE Expert Consultation Book Karo →"
+Submit button: "FREE Expert Consultation Book Karo ?"
 ```
 
 **IC-38 / Agent Registration Form:**
@@ -4497,10 +4567,10 @@ Submit button: "FREE Expert Consultation Book Karo →"
 Required: Name, Mobile, City
 Optional:
   "IC-38 exam kitne din mein dena chahte ho?" (30 days / 60 days / No idea yet)
-  "Aapke paas study material hai?" (Yes / No — if No, get download after submit)
+  "Aapke paas study material hai?" (Yes / No � if No, get download after submit)
 
 Hidden: funnel=ic38_guide
-Submit button: "IC-38 Guide Lena Shuru Karo →"
+Submit button: "IC-38 Guide Lena Shuru Karo ?"
 ```
 
 **Download Gate Form (Universal):**
@@ -4508,7 +4578,7 @@ Submit button: "IC-38 Guide Lena Shuru Karo →"
 Required: Name, Mobile
 Optional: Email, City
 Hidden: funnel=nurture_download, resource_slug=ic38-syllabus
-Submit button: "Download Karo — Free →"
+Submit button: "Download Karo � Free ?"
 ```
 
 ### Dynamic Thank-You Pages
@@ -4520,7 +4590,7 @@ Route: `/thank-you/[funnel-slug]`
 **Zone 1: Confirmation + "What happens next"**
 
 Specific to the funnel:
-- Recruit: "Aapki Bima Sakhi journey shuru ho gayi! Hum aapko 2 ghante mein contact karenge. Jab tak — yaha dekhein kya milta hai Bima Sakhi mein."
+- Recruit: "Aapki Bima Sakhi journey shuru ho gayi! Hum aapko 2 ghante mein contact karenge. Jab tak � yaha dekhein kya milta hai Bima Sakhi mein."
 - Policy: "Hamara expert aapko aaj shaam tak call karega. Meeting ke liye yeh jaankaari taiyar rakhein."
 - IC-38: "Aapka IC-38 guide bhejna shuru ho gaya hai. Plus yeh mock test dekho abhi."
 - Download: "Download ready hai! [Download Button]  Kisi sawaal ke liye WhatsApp karo."
@@ -4561,16 +4631,16 @@ After a lead submits:
 1. **Immediate:** Dynamic thank-you page (intent-matched)
 2. **After 30 min:** WhatsApp template (intent-matched)
 3. **After 2 hours:** First email (intent-matched sequence starts)
-4. **After 24 hours:** Agent call (if score ≥ 70)
-5. **After 7 days:** If no contact made → lead re-scored → different sequence continues
+4. **After 24 hours:** Agent call (if score = 70)
+5. **After 7 days:** If no contact made ? lead re-scored ? different sequence continues
 
 **If the user comes back to the website (return visit tracked via GA4 audience):**
 - GA4 remarketing audience re-captures them
-- If they visit a new intent page → re-score lead → upgrade funnel if needed
+- If they visit a new intent page ? re-score lead ? upgrade funnel if needed
 
 ---
 
-## 30. 📞 Contact Page Fix + Form Strategy
+## 30. ?? Contact Page Fix + Form Strategy
 
 ### Current Problem
 
@@ -4580,7 +4650,7 @@ The `/contact` page has a form that is either:
 - Not routing to an intent-specific thank-you page
 - Not scoring the lead
 
-This means contact form leads are invisible in the system — no follow-up, no scoring, no funnel.
+This means contact form leads are invisible in the system � no follow-up, no scoring, no funnel.
 
 ### What the Contact Page Should Be
 
@@ -4589,26 +4659,26 @@ The contact page is NOT a generic "reach us" form. It should be a **lead qualifi
 **New Contact Page Design:**
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│  HAMSE BAAT KARO                                           │
-│  "Hum aapki help ke liye ready hain"                       │
-├────────────────────────────────────────────────────────────┤
-│  AAPKO KYA CHAHIYE?  (User selects their intent)           │
-│                                                            │
-│  ○ 🏅 Bima Sakhi agent banna chahti hun                    │
-│  ○ 👨‍💼 LIC agent registration (male)                       │
-│  ○ 📋 LIC policy ke baare mein jaanna hai                  │
-│  ○ 📝 Form fill karne mein help chahiye                    │
-│  ○ 📥 Study material / resources chahiye                   │
-│  ○ ❓ Kuch aur poochna hai                                 │
-│                                                            │
-├────────────────────────────────────────────────────────────┤
-│  [Form fields appear based on selection above]             │
-│  Name + Mobile (always)                                    │
-│  + Intent-specific fields                                  │
-├────────────────────────────────────────────────────────────┤
-│  [Submit → goes to intent-matched /thank-you/[funnel]]     │
-└────────────────────────────────────────────────────────────┘
++------------------------------------------------------------+
+�  HAMSE BAAT KARO                                           �
+�  "Hum aapki help ke liye ready hain"                       �
++------------------------------------------------------------�
+�  AAPKO KYA CHAHIYE?  (User selects their intent)           �
+�                                                            �
+�  ? ?? Bima Sakhi agent banna chahti hun                    �
+�  ? ????? LIC agent registration (male)                       �
+�  ? ?? LIC policy ke baare mein jaanna hai                  �
+�  ? ?? Form fill karne mein help chahiye                    �
+�  ? ?? Study material / resources chahiye                   �
+�  ? ? Kuch aur poochna hai                                 �
+�                                                            �
++------------------------------------------------------------�
+�  [Form fields appear based on selection above]             �
+�  Name + Mobile (always)                                    �
+�  + Intent-specific fields                                  �
++------------------------------------------------------------�
+�  [Submit ? goes to intent-matched /thank-you/[funnel]]     �
++------------------------------------------------------------+
 ```
 
 **Technical changes needed:**
@@ -4622,38 +4692,38 @@ The contact page is NOT a generic "reach us" form. It should be a **lead qualifi
 - Mobile provided = +10 points
 - Email provided = +5 points
 
-Contact form leads are generally WARMER than organic page leads because the user deliberately navigated to contact — so they should be scored higher by default.
+Contact form leads are generally WARMER than organic page leads because the user deliberately navigated to contact � so they should be scored higher by default.
 
 ### CTA on Every Page Points to Contact
 
 But not always to `/contact`. The CTA button on each page type should point to:
-- Recruit pages → `/apply` (recruitment-specific page)
-- Policy pages → `/contact` with pre-selected intent="policy"
-- Form help pages → `/contact` with pre-selected intent="form_help"
-- Download pages → lead gate modal (not contact page)
+- Recruit pages ? `/apply` (recruitment-specific page)
+- Policy pages ? `/contact` with pre-selected intent="policy"
+- Form help pages ? `/contact` with pre-selected intent="form_help"
+- Download pages ? lead gate modal (not contact page)
 
 ---
 
-## 31. 🚀 The Self-Growing System — Ultimate Vision
+## 31. ?? The Self-Growing System � Ultimate Vision
 
 ### What "Self-Growing" Actually Means
 
-> "System khud kare: keyword detect karo, page generate karo, performance track karo, content improve karo, scale winning pattern. Matlab: tum system ko grow nahi karoge — system khud grow karega."
+> "System khud kare: keyword detect karo, page generate karo, performance track karo, content improve karo, scale winning pattern. Matlab: tum system ko grow nahi karoge � system khud grow karega."
 
-This is the North Star. Not a feature — a system state we gradually reach through all the preceding phases.
+This is the North Star. Not a feature � a system state we gradually reach through all the preceding phases.
 
 ### How It Achieves Self-Growth (Step by Step)
 
-**Step 1: Detect → What's Working**
+**Step 1: Detect ? What's Working**
 ```
-GSC API → page_performance_snapshots weekly
-GA4 API → user_behaviour_snapshots weekly
-CRM data → lead_attribution by source_page_slug daily
+GSC API ? page_performance_snapshots weekly
+GA4 API ? user_behaviour_snapshots weekly
+CRM data ? lead_attribution by source_page_slug daily
 
-Result: System knows which page_slug → impressions → clicks → leads → policies
+Result: System knows which page_slug ? impressions ? clicks ? leads ? policies
 ```
 
-**Step 2: Analyze → Why It's Working**
+**Step 2: Analyze ? Why It's Working**
 ```
 AI Analysis job (bi-weekly):
   Input: Top performers vs bottom performers
@@ -4664,38 +4734,38 @@ AI Analysis job (bi-weekly):
     - recommended_intents_to_prioritize
 ```
 
-**Step 3: CEO Reviews → Approve or Alter the Plan**
+**Step 3: CEO Reviews ? Approve or Alter the Plan**
 ```
-/admin/ccc/insights → CEO sees AI's recommendations
+/admin/ccc/insights ? CEO sees AI's recommendations
 Options per recommendation:
-  [✅ Apply to all future generations]
-  [✅ Apply to this city/intent only]
-  [✏️ Edit before applying]
-  [❌ Reject this recommendation]
+  [? Apply to all future generations]
+  [? Apply to this city/intent only]
+  [?? Edit before applying]
+  [? Reject this recommendation]
 ```
 
-**Step 4: Scale Winners → Auto-Create Expansion Jobs**
+**Step 4: Scale Winners ? Auto-Create Expansion Jobs**
 ```
 AI recommends: "Delhi locality pages (storytelling tone, 5 FAQs, 720 words) 
                 are generating leads within 30 days. 
                 Suggest: Apply same to Mumbai + Pune."
 
-CEO approves → System creates:
-  bulk_generation_job: "Mumbai Locality Sweep — Delhi Winner Pattern"
-  bulk_generation_job: "Pune Locality Sweep — Delhi Winner Pattern"
+CEO approves ? System creates:
+  bulk_generation_job: "Mumbai Locality Sweep � Delhi Winner Pattern"
+  bulk_generation_job: "Pune Locality Sweep � Delhi Winner Pattern"
 
 These jobs use the exact same prompt parameters that made Delhi pages successful.
 ```
 
-**Step 5: Improve Underperformers → AI Revive Drafts**
+**Step 5: Improve Underperformers ? AI Revive Drafts**
 ```
-Pages live 30+ days, impressions but no clicks → flagged automatically
+Pages live 30+ days, impressions but no clicks ? flagged automatically
 AI generates re-optimization suggestions per page (new intro, extra FAQs, better CTA)
-Each suggestion = new draft → CEO approves → page updated
-Page continues to be tracked → if still no movement after 60d → archived to avoid diluting crawl budget
+Each suggestion = new draft ? CEO approves ? page updated
+Page continues to be tracked ? if still no movement after 60d ? archived to avoid diluting crawl budget
 ```
 
-**Step 6: Detect New Opportunity → Surface to CEO**
+**Step 6: Detect New Opportunity ? Surface to CEO**
 ```
 AI keyword discovery (monthly):
   Input: GSC "impressions but not clicked" queries (Search terms people are finding us for
@@ -4706,30 +4776,30 @@ AI keyword discovery (monthly):
 CEO sees in /admin/ccc/insights:
   "Google is showing you for 'LIC agent Vasant Kunj' (340 impressions, 0 clicks)
    but you have no page for Vasant Kunj.
-   → [Create Vasant Kunj Page Now]"
+   ? [Create Vasant Kunj Page Now]"
 
-One click → adds to generation queue → draft ready in 2 min.
+One click ? adds to generation queue ? draft ready in 2 min.
 ```
 
 ### The Compound Flywheel Over 12 Months
 
 ```
-Month 1–2:   Pages live. Google crawls. Zero ranking yet. 
+Month 1�2:   Pages live. Google crawls. Zero ranking yet. 
              Intelligence layer starts collecting baseline data.
 
 Month 3:     First locality pages hit top 20. First organic leads.
              AI identifies: "short locality names + storytelling tone performing best."
              CEO applies pattern to next batch.
 
-Month 4–5:  50+ pages in top 10. Lead volume grows.
+Month 4�5:  50+ pages in top 10. Lead volume grows.
              Content variation engine prevents duplicate penalties.
-             Re-optimization revives 8 dead pages → 4 start ranking.
-             Agent personalization cards added → CTR from sidebar improves.
+             Re-optimization revives 8 dead pages ? 4 start ranking.
+             Agent personalization cards added ? CTR from sidebar improves.
 
-Month 6:    Domain authority crosses threshold → even new pages rank faster.
+Month 6:    Domain authority crosses threshold ? even new pages rank faster.
             Self-growing cycle is now compounding:
-              New GSC data → AI identifies Vasant Kunj gap → CEO approves → 
-              Vasant Kunj page published → leads in 2 weeks (faster than Month 1 pages).
+              New GSC data ? AI identifies Vasant Kunj gap ? CEO approves ? 
+              Vasant Kunj page published ? leads in 2 weeks (faster than Month 1 pages).
 
 Month 9:    1,000+ pages live. 100+ ranking in top 10.
             System surfaces 30 new keyword gaps per month automatically.
@@ -4750,12 +4820,12 @@ You are not removed from the loop. You are elevated above it.
 
 ```
 OLD ROLE (without this system):
-  Write content → Post to website → Wait and hope → Check rankings manually → No attribution
+  Write content ? Post to website ? Wait and hope ? Check rankings manually ? No attribution
 
 NEW ROLE (with this system):
   Review daily brief (5 min)
-  Review draft queue (20 min) — Approve / Edit / Reject
-  Review AI insights (10 min) — Apply / Alter / Ignore
+  Review draft queue (20 min) � Approve / Edit / Reject
+  Review AI insights (10 min) � Apply / Alter / Ignore
   Monitor lead score dashboard (5 min)
   
   Total: 40 minutes/day of intelligent decision-making.
@@ -4766,45 +4836,45 @@ NEW ROLE (with this system):
 
 ---
 
-## 33. 🏗️ New Agent Creation Pipeline — From Lead to Licensed Agent
+## 33. ??? New Agent Creation Pipeline � From Lead to Licensed Agent
 
 ### The CEO's Context
 
-> *"Main ek LIC Development Officer hun. Mera kaam sirf lead lana nahi hai — mera kaam agents banana hai. Aur agent banana ek 2-4 mahine ka process hai jismein 8 stages hain. Abhi tak koi system nahi hai jo is pure pipeline ko track kare."*
+> *"Main ek LIC Development Officer hun. Mera kaam sirf lead lana nahi hai � mera kaam agents banana hai. Aur agent banana ek 2-4 mahine ka process hai jismein 8 stages hain. Abhi tak koi system nahi hai jo is pure pipeline ko track kare."*
 
 **This section addresses the BIGGEST untracked business process in the entire system.** The website captures recruitment leads, but what happens AFTER the lead is captured? Currently: WhatsApp chats, phone calls, manual Excel tracking. No visibility, no pipeline, no dropout tracking.
 
-### The Agent Creation Pipeline — 8 Stages
+### The Agent Creation Pipeline � 8 Stages
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                    AGENT CREATION PIPELINE (2-4 Months)                       │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  Stage 1        Stage 2         Stage 3        Stage 4                       │
-│  LEAD           PRE-SCREENING   IC-38 PREP     IC-38 EXAM                   │
-│  CAPTURE        & QUALIFICATION                                              │
-│  ──────→        ──────→         ──────→        ──────→                       │
-│  [Website/      [Eligibility    [Material      [Registration                 │
-│   Referral/      check, call,    given, study   & attempt]                   │
-│   Campaign]      motivation      group, mock                                 │
-│                  assessment]     tests]                                       │
-│                                                                              │
-│  Stage 5        Stage 6         Stage 7        Stage 8                       │
-│  IRDA           LIC             ONBOARDING     ACTIVATION                   │
-│  LICENSING      APPOINTMENT     & TRAINING     (FIRST 90 DAYS)              │
-│  ──────→        ──────→         ──────→        ──────→                       │
-│  [License       [Agency         [Product +     [First 10 prospects           │
-│   application,   agreement,     Sales +         → First proposal             │
-│   document       agent code,    Compliance      → First policy               │
-│   submission]    branch/DO      training,       → Active agent]              │
-│                  assignment]     market                                       │
-│                                  assignment]                                  │
-│                                                                              │
-│  DROPOUT RISK: ████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  │
-│                ↑ HIGH          ↑ MEDIUM        ↑ LOW         ↑ VERY LOW     │
-│                Stage 1-2       Stage 3-4       Stage 5-6     Stage 7-8      │
-└──────────────────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------------------+
+�                    AGENT CREATION PIPELINE (2-4 Months)                       �
++------------------------------------------------------------------------------�
+�                                                                              �
+�  Stage 1        Stage 2         Stage 3        Stage 4                       �
+�  LEAD           PRE-SCREENING   IC-38 PREP     IC-38 EXAM                   �
+�  CAPTURE        & QUALIFICATION                                              �
+�  ------?        ------?         ------?        ------?                       �
+�  [Website/      [Eligibility    [Material      [Registration                 �
+�   Referral/      check, call,    given, study   & attempt]                   �
+�   Campaign]      motivation      group, mock                                 �
+�                  assessment]     tests]                                       �
+�                                                                              �
+�  Stage 5        Stage 6         Stage 7        Stage 8                       �
+�  IRDA           LIC             ONBOARDING     ACTIVATION                   �
+�  LICENSING      APPOINTMENT     & TRAINING     (FIRST 90 DAYS)              �
+�  ------?        ------?         ------?        ------?                       �
+�  [License       [Agency         [Product +     [First 10 prospects           �
+�   application,   agreement,     Sales +         ? First proposal             �
+�   document       agent code,    Compliance      ? First policy               �
+�   submission]    branch/DO      training,       ? Active agent]              �
+�                  assignment]     market                                       �
+�                                  assignment]                                  �
+�                                                                              �
+�  DROPOUT RISK: ���������������������������������������������������������  �
+�                ? HIGH          ? MEDIUM        ? LOW         ? VERY LOW     �
+�                Stage 1-2       Stage 3-4       Stage 5-6     Stage 7-8      �
++------------------------------------------------------------------------------+
 ```
 
 ### Stage-by-Stage Detail
@@ -4837,7 +4907,7 @@ NEW ROLE (with this system):
   - Estimated exam readiness: Ready / Needs more prep
 - **Status:** `preparing_ic38`
 - **Automated:** Weekly check-in WhatsApp message ("Kaise chal rahi hai preparation?")
-- **Alert:** If candidate has been in this stage for >45 days → flag as "stalled"
+- **Alert:** If candidate has been in this stage for >45 days ? flag as "stalled"
 
 #### Stage 4: IC-38 Exam
 - **Tracking:**
@@ -4847,9 +4917,9 @@ NEW ROLE (with this system):
   - Result: Pass / Fail
   - Score: marks obtained
   - If failed: next attempt date, additional prep plan
-- **Status:** `exam_registered` → `exam_attempted` → `exam_passed` / `exam_failed`
-- **Auto-actions:** If passed → congratulations WhatsApp + move to Stage 5
-- **Alert:** Exam date approaching (3 days before) → reminder to candidate + DO
+- **Status:** `exam_registered` ? `exam_attempted` ? `exam_passed` / `exam_failed`
+- **Auto-actions:** If passed ? congratulations WhatsApp + move to Stage 5
+- **Alert:** Exam date approaching (3 days before) ? reminder to candidate + DO
 
 #### Stage 5: IRDA Licensing
 - **Document checklist:** (each tracked as submitted/pending)
@@ -4861,7 +4931,7 @@ NEW ROLE (with this system):
   - IC-38 pass certificate
   - Medical fitness certificate (if required)
   - Cancelled cheque / bank details
-- **Status:** `documents_collecting` → `documents_submitted` → `license_received`
+- **Status:** `documents_collecting` ? `documents_submitted` ? `license_received`
 - **Tracking:** IRDA license number, license validity dates
 - **Admin UI:** Document checklist with upload/verification status per item
 
@@ -4872,7 +4942,7 @@ NEW ROLE (with this system):
   - Branch assignment
   - DO assignment (auto: this CEO)
   - Initial security deposit (if applicable)
-- **Status:** `appointment_pending` → `appointed`
+- **Status:** `appointment_pending` ? `appointed`
 - **Data stored:** Agent code, branch name, appointment date, agreement number
 - **This is when the person officially becomes an LIC agent.**
 
@@ -4885,7 +4955,7 @@ NEW ROLE (with this system):
   - Market assignment (which localities to work in)
 - **Status:** `in_training`
 - **Tracking per module:** Not started / In progress / Completed + date
-- **Auto-action:** When all modules completed → move to Stage 8
+- **Auto-action:** When all modules completed ? move to Stage 8
 
 #### Stage 8: Activation (First 90 Days)
 - **Milestones tracked:**
@@ -4894,9 +4964,9 @@ NEW ROLE (with this system):
   - First proposal submitted to LIC
   - First policy issued (premium amount, plan type)
   - 3 policies in first 30 days (activation threshold)
-- **Status:** `activating` → `active_agent`
+- **Status:** `activating` ? `active_agent`
 - **DO support:** Weekly review calls, field visits, joint meetings
-- **Alert:** If 30 days pass with 0 policies → "At risk" flag → DO intervention required
+- **Alert:** If 30 days pass with 0 policies ? "At risk" flag ? DO intervention required
 
 ### Pipeline Database Schema
 
@@ -5018,40 +5088,40 @@ CREATE INDEX idx_pipeline_history ON agent_pipeline_history(pipeline_id, created
 ### Admin UI: Pipeline Dashboard `/admin/agency/pipeline`
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│  AGENT CREATION PIPELINE                               Active Candidates: 47 │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  KANBAN VIEW (drag to move between stages):                                  │
-│                                                                              │
-│  Lead (12)    Screening (8)   IC-38 Prep (10)  Exam (5)                     │
-│  ┌────────┐  ┌────────────┐  ┌────────────┐   ┌────────────┐               │
-│  │ Priya  │  │ Sunita     │  │ Meena      │   │ Kavita     │               │
-│  │ Delhi  │  │ Noida      │  │ mock: 72%  │   │ Exam: 4/25 │               │
-│  │ 2d ago │  │ Eligible ✅│  │ Ready ✅   │   │            │               │
-│  └────────┘  └────────────┘  └────────────┘   └────────────┘               │
-│  ┌────────┐  ┌────────────┐  ┌────────────┐   ┌────────────┐               │
-│  │ Rekha  │  │ Pooja      │  │ Anita      │   │ Suman      │               │
-│  │ Dwarka │  │ Shahdara   │  │ mock: 45%  │   │ Exam: 5/02 │               │
-│  │ 5d ago │  │ Call pend. │  │ Not ready  │   │            │               │
-│  └────────┘  └────────────┘  └────────────┘   └────────────┘               │
-│  ...         ...             ...               ...                           │
-│                                                                              │
-│  License (3)  Appointment (2)  Training (4)    Activating (3)               │
-│  ┌────────┐  ┌────────────┐   ┌────────────┐  ┌────────────┐               │
-│  │ Geeta  │  │ Renu       │   │ Lalita     │  │ Kiran      │               │
-│  │ Docs:  │  │ Code:      │   │ 3/5 done   │  │ 1 policy   │               │
-│  │ 6/8 ✅ │  │ AG-12345   │   │ Sales left │  │ 87 days    │               │
-│  └────────┘  └────────────┘   └────────────┘  └────────────┘               │
-│                                                                              │
-├──────────────────────────────────────────────────────────────────────────────┤
-│  PIPELINE METRICS                                                            │
-│  ├─ Conversion rate (lead → active): 18%                                    │
-│  ├─ Avg time to activation: 78 days                                         │
-│  ├─ Biggest dropout stage: IC-38 Prep (35% dropout)                         │
-│  ├─ Stalled candidates (>30d same stage): 6                                 │
-│  └─ This month: 3 new active agents, 12 new leads                          │
-└──────────────────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------------------+
+�  AGENT CREATION PIPELINE                               Active Candidates: 47 �
++------------------------------------------------------------------------------�
+�                                                                              �
+�  KANBAN VIEW (drag to move between stages):                                  �
+�                                                                              �
+�  Lead (12)    Screening (8)   IC-38 Prep (10)  Exam (5)                     �
+�  +--------+  +------------+  +------------+   +------------+               �
+�  � Priya  �  � Sunita     �  � Meena      �   � Kavita     �               �
+�  � Delhi  �  � Noida      �  � mock: 72%  �   � Exam: 4/25 �               �
+�  � 2d ago �  � Eligible ?�  � Ready ?   �   �            �               �
+�  +--------+  +------------+  +------------+   +------------+               �
+�  +--------+  +------------+  +------------+   +------------+               �
+�  � Rekha  �  � Pooja      �  � Anita      �   � Suman      �               �
+�  � Dwarka �  � Shahdara   �  � mock: 45%  �   � Exam: 5/02 �               �
+�  � 5d ago �  � Call pend. �  � Not ready  �   �            �               �
+�  +--------+  +------------+  +------------+   +------------+               �
+�  ...         ...             ...               ...                           �
+�                                                                              �
+�  License (3)  Appointment (2)  Training (4)    Activating (3)               �
+�  +--------+  +------------+   +------------+  +------------+               �
+�  � Geeta  �  � Renu       �   � Lalita     �  � Kiran      �               �
+�  � Docs:  �  � Code:      �   � 3/5 done   �  � 1 policy   �               �
+�  � 6/8 ? �  � AG-12345   �   � Sales left �  � 87 days    �               �
+�  +--------+  +------------+   +------------+  +------------+               �
+�                                                                              �
++------------------------------------------------------------------------------�
+�  PIPELINE METRICS                                                            �
+�  +- Conversion rate (lead ? active): 18%                                    �
+�  +- Avg time to activation: 78 days                                         �
+�  +- Biggest dropout stage: IC-38 Prep (35% dropout)                         �
+�  +- Stalled candidates (>30d same stage): 6                                 �
+�  +- This month: 3 new active agents, 12 new leads                          �
++------------------------------------------------------------------------------+
 ```
 
 ### Pipeline Alerts
@@ -5067,8 +5137,8 @@ CREATE INDEX idx_pipeline_history ON agent_pipeline_history(pipeline_id, created
 
 ### Integration with Existing Bible Systems
 
-- **Lead capture (Section 19):** Website lead → auto-creates `agent_pipeline` entry at Stage 1
-- **Lead scoring (Section 23):** Pipeline uses scored leads — higher scored leads are prioritized in screening
+- **Lead capture (Section 19):** Website lead ? auto-creates `agent_pipeline` entry at Stage 1
+- **Lead scoring (Section 23):** Pipeline uses scored leads � higher scored leads are prioritized in screening
 - **Zoho CRM (Section 11):** Each pipeline stage maps to a Zoho CRM deal stage in "Agent Onboarding" pipeline
 - **WhatsApp (Section 19):** Stage-specific templates for candidate communication
 - **Email sequences (Section 19):** Stage-specific email drips (IC-38 prep tips, training materials)
@@ -5076,13 +5146,13 @@ CREATE INDEX idx_pipeline_history ON agent_pipeline_history(pipeline_id, created
 
 ---
 
-## 34. 🏃 Active Agent Management System — Running Your Agency Force
+## 34. ?? Active Agent Management System � Running Your Agency Force
 
 ### The Core Problem
 
-> *"Agent ban gaya — bas? Nahi! Agent banana sirf shuruat hai. Agent ko chalana, productive banana, retain karna — ye real kaam hai."*
+> *"Agent ban gaya � bas? Nahi! Agent banana sirf shuruat hai. Agent ko chalana, productive banana, retain karna � ye real kaam hai."*
 
-An LIC Development Officer's primary KPI is the **total production** of all agents under them — not the number of agents. 10 productive agents > 50 dormant agents.
+An LIC Development Officer's primary KPI is the **total production** of all agents under them � not the number of agents. 10 productive agents > 50 dormant agents.
 
 **Currently: Zero system for tracking agent activity, production, or performance.** Everything runs on personal memory, phone calls, and branch meetings.
 
@@ -5211,7 +5281,7 @@ CREATE TABLE agent_monthly_performance (
     renewal_premium NUMERIC DEFAULT 0,
     meetings_count INTEGER DEFAULT 0,
     proposals_count INTEGER DEFAULT 0,
-    conversion_rate NUMERIC DEFAULT 0,       -- proposals → policies %
+    conversion_rate NUMERIC DEFAULT 0,       -- proposals ? policies %
     
     -- Targets vs Actuals
     target_policies INTEGER,
@@ -5229,36 +5299,36 @@ CREATE TABLE agent_monthly_performance (
 ### Admin UI: Agent Dashboard `/admin/agency/agents`
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│  MY AGENTS                                    Total: 34 Active | 8 Dormant   │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  TEAM PERFORMANCE — April 2026                                               │
-│  ├─ Total policies this month: 47                                           │
-│  ├─ Total premium: ₹18,40,000                                              │
-│  ├─ Target achievement: 72%                                                 │
-│  ├─ Top performer: Sunita Sharma (8 policies, ₹3,20,000)                   │
-│  └─ Needs attention: 5 agents with 0 policies in 15 days                   │
-│                                                                              │
-├──────────────────────────────────────────────────────────────────────────────┤
-│  AGENT LIST (sortable by any column)                                         │
-│                                                                              │
-│  Name            Code      Status    This Month  Target   Persistency        │
-│  ─────────────── ───────── ──────── ──────────── ──────── ────────────       │
-│  Sunita Sharma   AG-12345  🟢 Active  8 / ₹3.2L   80%     92%              │
-│  Priya Verma     AG-12346  🟢 Active  5 / ₹1.8L   60%     88%              │
-│  Meena Devi      AG-12347  🟡 Dormant 0 / ₹0      0%      75%              │
-│  Kavita Singh    AG-12348  🟢 Active  3 / ₹95K    40%     91%              │
-│  ...                                                                         │
-│                                                                              │
-│  [Filter: Active | Dormant | All]  [Sort: Performance ▼]  [Export CSV]       │
-│                                                                              │
-├──────────────────────────────────────────────────────────────────────────────┤
-│  ALERTS                                                                      │
-│  🔴 Meena Devi: No activity for 22 days → [Call Now] [Schedule Meeting]      │
-│  🟡 Kavita Singh: IRDA license expiring in 45 days → [Start Renewal]        │
-│  🟢 Sunita Sharma: On track for MDRT qualification → [View Progress]        │
-└──────────────────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------------------+
+�  MY AGENTS                                    Total: 34 Active | 8 Dormant   �
++------------------------------------------------------------------------------�
+�                                                                              �
+�  TEAM PERFORMANCE � April 2026                                               �
+�  +- Total policies this month: 47                                           �
+�  +- Total premium: ?18,40,000                                              �
+�  +- Target achievement: 72%                                                 �
+�  +- Top performer: Sunita Sharma (8 policies, ?3,20,000)                   �
+�  +- Needs attention: 5 agents with 0 policies in 15 days                   �
+�                                                                              �
++------------------------------------------------------------------------------�
+�  AGENT LIST (sortable by any column)                                         �
+�                                                                              �
+�  Name            Code      Status    This Month  Target   Persistency        �
+�  --------------- --------- -------- ------------ -------- ------------       �
+�  Sunita Sharma   AG-12345  ?? Active  8 / ?3.2L   80%     92%              �
+�  Priya Verma     AG-12346  ?? Active  5 / ?1.8L   60%     88%              �
+�  Meena Devi      AG-12347  ?? Dormant 0 / ?0      0%      75%              �
+�  Kavita Singh    AG-12348  ?? Active  3 / ?95K    40%     91%              �
+�  ...                                                                         �
+�                                                                              �
+�  [Filter: Active | Dormant | All]  [Sort: Performance ?]  [Export CSV]       �
+�                                                                              �
++------------------------------------------------------------------------------�
+�  ALERTS                                                                      �
+�  ?? Meena Devi: No activity for 22 days ? [Call Now] [Schedule Meeting]      �
+�  ?? Kavita Singh: IRDA license expiring in 45 days ? [Start Renewal]        �
+�  ?? Sunita Sharma: On track for MDRT qualification ? [View Progress]        �
++------------------------------------------------------------------------------+
 ```
 
 ### Agent Individual Profile `/admin/agency/agents/[id]`
@@ -5277,54 +5347,54 @@ Shows:
 
 **Built into the agent dashboard:**
 - **Leaderboard:** Rank agents by policies/premium (weekly, monthly, quarterly)
-- **Competitions:** DO can create competitions ("Most policies in April → ₹5,000 prize")
-  - `/admin/agency/competitions` — create, track, announce winners
+- **Competitions:** DO can create competitions ("Most policies in April ? ?5,000 prize")
+  - `/admin/agency/competitions` � create, track, announce winners
 - **Badges:** Auto-awarded based on milestones ("First 100 policies", "5 years active", "MDRT qualifier")
 - **Club tracker:** MDRT/COT/TOT qualification progress bar with projected qualification date
 
 ---
 
-## 35. 📋 Agent Lifecycle Management — Inforce, Terminated, Compliance
+## 35. ?? Agent Lifecycle Management � Inforce, Terminated, Compliance
 
 ### The Full Agent Lifecycle
 
 An agent doesn't stay "active" forever. The lifecycle has multiple states:
 
 ```
-                    ┌──────────────────────┐
-                    │   Pre-Licensing       │
-                    │   (Pipeline Stage 1-4)│
-                    └──────────┬───────────┘
-                               ▼
-                    ┌──────────────────────┐
-                    │   Licensed            │
-                    │   (Pipeline Stage 5)  │
-                    └──────────┬───────────┘
-                               ▼
-                    ┌──────────────────────┐
-            ┌──────│   ACTIVE              │──────┐
-            │      │   (Producing)         │      │
-            │      └──────────┬───────────┘      │
-            │                 │                    │
-            ▼                 ▼                    ▼
-  ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
-  │   DORMANT      │ │   UNDER        │ │   SUSPENDED    │
-  │   (No prod.    │ │   REVIEW       │ │   (Compliance  │
-  │    >3 months)  │ │   (Issue       │ │    violation)  │
-  │                │ │    raised)     │ │                │
-  └───────┬────────┘ └───────┬────────┘ └───────┬────────┘
-          │                  │                    │
-          ▼                  ▼                    ▼
-  ┌────────────────────────────────────────────────────────┐
-  │   TERMINATED                                            │
-  │   (Voluntarily resigned / Terminated by LIC)            │
-  └────────────────────────┬───────────────────────────────┘
-                           │
-                           ▼ (possible)
-                    ┌──────────────────────┐
-                    │   REVIVED            │
-                    │   (Re-appointed)     │
-                    └──────────────────────┘
+                    +----------------------+
+                    �   Pre-Licensing       �
+                    �   (Pipeline Stage 1-4)�
+                    +----------------------+
+                               ?
+                    +----------------------+
+                    �   Licensed            �
+                    �   (Pipeline Stage 5)  �
+                    +----------------------+
+                               ?
+                    +----------------------+
+            +------�   ACTIVE              �------+
+            �      �   (Producing)         �      �
+            �      +----------------------+      �
+            �                 �                    �
+            ?                 ?                    ?
+  +----------------+ +----------------+ +----------------+
+  �   DORMANT      � �   UNDER        � �   SUSPENDED    �
+  �   (No prod.    � �   REVIEW       � �   (Compliance  �
+  �    >3 months)  � �   (Issue       � �    violation)  �
+  �                � �    raised)     � �                �
+  +----------------+ +----------------+ +----------------+
+          �                  �                    �
+          ?                  ?                    ?
+  +--------------------------------------------------------+
+  �   TERMINATED                                            �
+  �   (Voluntarily resigned / Terminated by LIC)            �
+  +--------------------------------------------------------+
+                           �
+                           ? (possible)
+                    +----------------------+
+                    �   REVIVED            �
+                    �   (Re-appointed)     �
+                    +----------------------+
 ```
 
 ### Lifecycle Tracking Needs
@@ -5349,14 +5419,14 @@ DORMANCY DEFINITION:
 
 REACTIVATION CAMPAIGN:
   Step 1: Auto-alert to DO: "Agent [name] is going dormant"
-  Step 2: DO calls agent → logs reason for dormancy
-  Step 3: If fixable → create reactivation plan:
+  Step 2: DO calls agent ? logs reason for dormancy
+  Step 3: If fixable ? create reactivation plan:
           - Joint fieldwork with DO (3 days)
           - Refresher training (product update)
           - 5 pre-qualified leads assigned
           - Weekly check-in for 30 days
-  Step 4: Track reactivation metrics → did production resume?
-  Step 5: If no production after reactivation attempt → formal review
+  Step 4: Track reactivation metrics ? did production resume?
+  Step 5: If no production after reactivation attempt ? formal review
 ```
 
 **3. Termination Management:**
@@ -5373,7 +5443,7 @@ TERMINATION PROCESS:
   3. Reassign orphan policies to another agent
   4. Notify affected customers of new servicing agent
   5. Settle any pending commission/refund
-  6. Archive agent record (never delete — audit requirement)
+  6. Archive agent record (never delete � audit requirement)
 ```
 
 **4. Orphan Policy Management (CRITICAL):**
@@ -5390,7 +5460,7 @@ TERMINATION PROCESS:
 -- These must be reassigned within 7 days of termination
 ```
 
-Admin page: `/admin/agency/orphans` — shows all unassigned customers, allows bulk reassignment to another agent.
+Admin page: `/admin/agency/orphans` � shows all unassigned customers, allows bulk reassignment to another agent.
 
 ### Lifecycle Database Additions
 
@@ -5422,27 +5492,27 @@ CREATE TABLE agent_compliance_log (
 
 ---
 
-## 36. 👥 Customer Management Ecosystem — Policy Servicing & Growth
+## 36. ?? Customer Management Ecosystem � Policy Servicing & Growth
 
 ### The Core Reality
 
-> *"Customer sirf ek baar nahi aata. Pehle ek policy leta hai, phir family ke liye bhi leta hai, phir neighbours ko bhi refer karta hai. Lekin tabhi hoga jab customer ka experience accha ho — aur uske liye system chahiye."*
+> *"Customer sirf ek baar nahi aata. Pehle ek policy leta hai, phir family ke liye bhi leta hai, phir neighbours ko bhi refer karta hai. Lekin tabhi hoga jab customer ka experience accha ho � aur uske liye system chahiye."*
 
-**A customer is not a single transaction. A customer is a lifetime revenue stream.** But only if they are managed properly — premium reminders, servicing calls, anniversary touchpoints, cross-sell suggestions.
+**A customer is not a single transaction. A customer is a lifetime revenue stream.** But only if they are managed properly � premium reminders, servicing calls, anniversary touchpoints, cross-sell suggestions.
 
 ### Customer Lifecycle Stages
 
 ```
   PROSPECT           FIRST BUYER         MULTI-POLICY        MATURE
-  (Interested,   →   (One policy)    →   (2+ policies)   →   (Policy maturing,
+  (Interested,   ?   (One policy)    ?   (2+ policies)   ?   (Policy maturing,
    not bought)                                                reinvestment needed)
-       │                  │                   │                    │
-       │                  ▼                   ▼                    ▼
-       │            LAPSED RISK          REFERRAL SOURCE      CLAIMS CUSTOMER
-       │            (Premium not     →   (Satisfied,      →   (Claim filed,
-       │             paid 30+ days)       referring others)     needs support)
-       │
-       ▼
+       �                  �                   �                    �
+       �                  ?                   ?                    ?
+       �            LAPSED RISK          REFERRAL SOURCE      CLAIMS CUSTOMER
+       �            (Premium not     ?   (Satisfied,      ?   (Claim filed,
+       �             paid 30+ days)       referring others)     needs support)
+       �
+       ?
   NOT INTERESTED
   (Archived, may
    revisit in future)
@@ -5570,13 +5640,13 @@ CREATE INDEX idx_policies_due ON customer_policies(next_premium_due_date);
 
 **Premium Reminder System:**
 ```
-15 days before due:  WhatsApp reminder → "Aapki policy [number] ka premium ₹[amount] 
+15 days before due:  WhatsApp reminder ? "Aapki policy [number] ka premium ?[amount] 
                       [date] tak due hai. Kya aap ready hain?"
 7 days before due:   Email reminder with payment options
-3 days before due:   WhatsApp urgent → "Sirf 3 din bache hain..."
-Due date:            Agent call → personal reminder + collection
-7 days after due:    Grace period reminder → "Abhi bhi time hai, late fee nahi lagegi"
-30 days after due:   LAPSED RISK → alert to agent + DO → urgent intervention
+3 days before due:   WhatsApp urgent ? "Sirf 3 din bache hain..."
+Due date:            Agent call ? personal reminder + collection
+7 days after due:    Grace period reminder ? "Abhi bhi time hai, late fee nahi lagegi"
+30 days after due:   LAPSED RISK ? alert to agent + DO ? urgent intervention
 ```
 
 **Anniversary Touchpoints:**
@@ -5596,11 +5666,11 @@ Marriage anniversary (if known):
 
 **Cross-Sell Intelligence:**
 ```
-Customer has term plan only → Suggest: Pension plan (retirement planning gap)
-Customer has endowment only → Suggest: Term plan (protection gap)  
-Customer age >55, no pension → URGENT: Annuity plan suggestion
-Customer has children, no child plan → Suggest: Child education plan
-Customer premium capacity high, coverage low → Suggest: Top-up
+Customer has term plan only ? Suggest: Pension plan (retirement planning gap)
+Customer has endowment only ? Suggest: Term plan (protection gap)  
+Customer age >55, no pension ? URGENT: Annuity plan suggestion
+Customer has children, no child plan ? Suggest: Child education plan
+Customer premium capacity high, coverage low ? Suggest: Top-up
 
 AI generates personalized cross-sell talking points per customer for the agent.
 ```
@@ -5610,36 +5680,36 @@ AI generates personalized cross-sell talking points per customer for the agent.
 - **Customer list** with filters: lifecycle stage, city, agent, premium due
 - **Customer profile page:** Full policy view, interaction history, cross-sell suggestions
 - **Premium due report:** All premiums due this week/month across all customers
-- **Lapsed policy report:** Policies in grace period or lapsed — urgent action needed
+- **Lapsed policy report:** Policies in grace period or lapsed � urgent action needed
 - **Maturity report:** Policies maturing in next 3/6/12 months (reinvestment opportunity)
 - **Referral tracker:** Which customers have referred others, conversion rate of referrals
 
 ---
 
-## 37. 🌊 Universal Lead Management Hub — All Sources, All Types, One System
+## 37. ?? Universal Lead Management Hub � All Sources, All Types, One System
 
 ### The Core Problem
 
-> *"Leads har jagah se aa rahe hain — website se bhi, referral se bhi, campaign se bhi, direct walk-in se bhi. Par sab alag alag jagah track ho rahe hain. Kisi ko pata nahi ki kitne leads aaye, kitne convert hue, aur kaunsa source best hai."*
+> *"Leads har jagah se aa rahe hain � website se bhi, referral se bhi, campaign se bhi, direct walk-in se bhi. Par sab alag alag jagah track ho rahe hain. Kisi ko pata nahi ki kitne leads aaye, kitne convert hue, aur kaunsa source best hai."*
 
-**Currently:** Website leads go to `crm_leads` table → Zoho sync. But referral leads? Campaign leads? Walk-in leads? They live in WhatsApp chats, phone notes, and memory. No unified view.
+**Currently:** Website leads go to `crm_leads` table ? Zoho sync. But referral leads? Campaign leads? Walk-in leads? They live in WhatsApp chats, phone notes, and memory. No unified view.
 
 ### Lead Source Classification
 
 | Source | Entry Method | Typical Heat | Follow-up SLA |
 |--------|-------------|:------------:|:-------------:|
-| **Website — Organic SEO** | Form submission on generated page | 🟡 Warm | 2 hours |
-| **Website — Download gate** | Lead form before resource download | 🟡 Warm | 1 hour |
-| **Website — Contact page** | Direct contact form submission | 🟠 Hot | 30 minutes |
-| **Referral — Customer** | Existing customer gives a name+number | 🔴 Very Hot | 15 minutes |
-| **Referral — Agent** | Active agent refers a prospect | 🔴 Very Hot | 15 minutes |
-| **Referral — Other DO** | Another Development Officer shares a lead | 🟠 Hot | 30 minutes |
-| **Campaign — Digital (Facebook/Google)** | Ad click → landing page → form | 🟡 Warm | 1 hour |
-| **Campaign — Offline (seminar/event)** | Paper form at event, DO enters later | 🟠 Hot | Same day |
-| **Campaign — WhatsApp broadcast** | Reply to broadcast message | 🟡 Warm | 1 hour |
-| **Social media — DM** | Instagram/Facebook DM inquiry | 🟡 Warm | 2 hours |
-| **Walk-in — Office** | Person walks into branch/office | 🔴 Very Hot | Immediate |
-| **Cold outreach — DO** | DO personally prospects someone | 🟡 Warm-Hot | Same day |
+| **Website � Organic SEO** | Form submission on generated page | ?? Warm | 2 hours |
+| **Website � Download gate** | Lead form before resource download | ?? Warm | 1 hour |
+| **Website � Contact page** | Direct contact form submission | ?? Hot | 30 minutes |
+| **Referral � Customer** | Existing customer gives a name+number | ?? Very Hot | 15 minutes |
+| **Referral � Agent** | Active agent refers a prospect | ?? Very Hot | 15 minutes |
+| **Referral � Other DO** | Another Development Officer shares a lead | ?? Hot | 30 minutes |
+| **Campaign � Digital (Facebook/Google)** | Ad click ? landing page ? form | ?? Warm | 1 hour |
+| **Campaign � Offline (seminar/event)** | Paper form at event, DO enters later | ?? Hot | Same day |
+| **Campaign � WhatsApp broadcast** | Reply to broadcast message | ?? Warm | 1 hour |
+| **Social media � DM** | Instagram/Facebook DM inquiry | ?? Warm | 2 hours |
+| **Walk-in � Office** | Person walks into branch/office | ?? Very Hot | Immediate |
+| **Cold outreach � DO** | DO personally prospects someone | ?? Warm-Hot | Same day |
 
 ### Lead Type Classification
 
@@ -5708,7 +5778,7 @@ ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS customer_id UUID;             -- 
 ### Lead Entry Methods
 
 **Method 1: Website (auto-capture)**
-- Form submission → API → `crm_leads` with `lead_source_type='website_organic'`
+- Form submission ? API ? `crm_leads` with `lead_source_type='website_organic'`
 - Already partially built (existing lead capture flow)
 - Enhancement: add all missing columns from above
 
@@ -5723,7 +5793,7 @@ For leads that come via referral, walk-in, campaign, or cold outreach:
     Sub-type: [dynamic based on category]
     Referral source: [if referral, name + link to existing customer/agent]
     Campaign: [if campaign, select from active campaigns]
-    Notes: [free text — what's the context?]
+    Notes: [free text � what's the context?]
     Assign to: [self or specific agent]
 ```
 
@@ -5733,7 +5803,7 @@ For offline campaign leads (seminar, event):
   Upload CSV with columns: Name, Mobile, City, Source, Category
   System creates crm_leads entries for each row
   Auto-assigns SLA based on source type
-  Deduplication check: if mobile already exists → flag, don't create duplicate
+  Deduplication check: if mobile already exists ? flag, don't create duplicate
 ```
 
 ### Lead Routing Intelligence
@@ -5742,25 +5812,25 @@ For offline campaign leads (seminar, event):
 ROUTING RULES (configurable from /admin/control/workflow):
 
 1. GEOGRAPHY-BASED:
-   Lead from Krishna Nagar → assigned to agent covering Krishna Nagar
-   If no agent for that area → assigned to DO directly
+   Lead from Krishna Nagar ? assigned to agent covering Krishna Nagar
+   If no agent for that area ? assigned to DO directly
 
 2. PRODUCT-BASED:
-   Lead wants pension plan → assigned to agent with pension specialization
-   Lead wants term plan → any agent can handle
+   Lead wants pension plan ? assigned to agent with pension specialization
+   Lead wants term plan ? any agent can handle
 
 3. LOAD-BASED:
-   Agent has >15 open leads → new leads go to less-loaded agent
-   If all agents loaded → goes to DO queue
+   Agent has >15 open leads ? new leads go to less-loaded agent
+   If all agents loaded ? goes to DO queue
 
 4. PERFORMANCE-BASED:
-   Hot leads (score ≥ 100) → assigned to top-performing agents
-   Standard leads → round-robin among active agents
+   Hot leads (score = 100) ? assigned to top-performing agents
+   Standard leads ? round-robin among active agents
 
 5. SOURCE-BASED:
-   Referral leads → always go to the referred agent first
-   Campaign leads → go to the campaign's designated agent/team
-   Walk-in → goes to DO directly
+   Referral leads ? always go to the referred agent first
+   Campaign leads ? go to the campaign's designated agent/team
+   Walk-in ? goes to DO directly
 ```
 
 ### Lead Follow-up Tracking
@@ -5791,38 +5861,38 @@ CREATE INDEX idx_followups_scheduled ON lead_follow_ups(scheduled_at);
 ### Admin UI: Lead Hub `/admin/agency/leads`
 
 ```
-┌──────────────────────────────────────────────────────────────────────────────┐
-│  UNIVERSAL LEAD HUB                        Today: 8 new | 12 pending f/u    │
-├──────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  LEAD PIPELINE                                                               │
-│  Open (23) → Contacted (15) → Interested (8) → Proposal (4) → Converted (2) │
-│                                                                              │
-├──────────────────────────────────────────────────────────────────────────────┤
-│  FILTER: [All Sources ▼] [All Categories ▼] [All Agents ▼] [This Week ▼]    │
-│                                                                              │
-│  Name          Source           Category    Score  Status      SLA    Agent   │
-│  ─────────── ──────────────── ──────────── ────── ─────────── ────── ─────── │
-│  Raj Kumar    Referral-Cust    Customer     95    Contacted   ✅     Sunita  │
-│  Priya Devi   Website-SEO      Recruitment  78    Open        ⏰     —       │
-│  Amit Shah    Campaign-Seminar Customer     65    Interested  ✅     Priya   │
-│  Neha Singh   Walk-in          Undecided    90    Open        🔴     —       │
-│  ...                                                                         │
-│                                                                              │
-│  [+ New Lead]  [Import CSV]  [Export]  [Assign Selected]                     │
-│                                                                              │
-├──────────────────────────────────────────────────────────────────────────────┤
-│  SOURCE ROI (Last 30 Days)                                                   │
-│  ├─ Referral (Customer): 12 leads → 8 converted (67% conversion) 🔥         │
-│  ├─ Website Organic:     23 leads → 3 converted (13% conversion)            │
-│  ├─ Campaign (Seminar):  15 leads → 5 converted (33% conversion)            │
-│  ├─ Walk-in:             5 leads  → 3 converted (60% conversion)            │
-│  ├─ Social Media:        8 leads  → 1 converted (12% conversion)            │
-│  └─ Cold Outreach:       10 leads → 2 converted (20% conversion)            │
-│                                                                              │
-│  INSIGHT: "Referral leads convert 5x better than website leads.              │
-│            Invest in customer referral program."                             │
-└──────────────────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------------------+
+�  UNIVERSAL LEAD HUB                        Today: 8 new | 12 pending f/u    �
++------------------------------------------------------------------------------�
+�                                                                              �
+�  LEAD PIPELINE                                                               �
+�  Open (23) ? Contacted (15) ? Interested (8) ? Proposal (4) ? Converted (2) �
+�                                                                              �
++------------------------------------------------------------------------------�
+�  FILTER: [All Sources ?] [All Categories ?] [All Agents ?] [This Week ?]    �
+�                                                                              �
+�  Name          Source           Category    Score  Status      SLA    Agent   �
+�  ----------- ---------------- ------------ ------ ----------- ------ ------- �
+�  Raj Kumar    Referral-Cust    Customer     95    Contacted   ?     Sunita  �
+�  Priya Devi   Website-SEO      Recruitment  78    Open        ?     �       �
+�  Amit Shah    Campaign-Seminar Customer     65    Interested  ?     Priya   �
+�  Neha Singh   Walk-in          Undecided    90    Open        ??     �       �
+�  ...                                                                         �
+�                                                                              �
+�  [+ New Lead]  [Import CSV]  [Export]  [Assign Selected]                     �
+�                                                                              �
++------------------------------------------------------------------------------�
+�  SOURCE ROI (Last 30 Days)                                                   �
+�  +- Referral (Customer): 12 leads ? 8 converted (67% conversion) ??         �
+�  +- Website Organic:     23 leads ? 3 converted (13% conversion)            �
+�  +- Campaign (Seminar):  15 leads ? 5 converted (33% conversion)            �
+�  +- Walk-in:             5 leads  ? 3 converted (60% conversion)            �
+�  +- Social Media:        8 leads  ? 1 converted (12% conversion)            �
+�  +- Cold Outreach:       10 leads ? 2 converted (20% conversion)            �
+�                                                                              �
+�  INSIGHT: "Referral leads convert 5x better than website leads.              �
+�            Invest in customer referral program."                             �
++------------------------------------------------------------------------------+
 ```
 
 ### Campaign Tracking
@@ -5858,119 +5928,119 @@ CREATE TABLE lead_campaigns (
 );
 ```
 
-Admin page: `/admin/agency/campaigns` — create campaigns, track results, compare ROI across campaigns.
+Admin page: `/admin/agency/campaigns` � create campaigns, track results, compare ROI across campaigns.
 
 ### How The 5 Ecosystems Connect
 
 ```
-                    ┌──────────────────────────┐
-                    │  ECOSYSTEM 5:            │
-                    │  Universal Lead Hub      │
-                    │  (ALL leads enter here)  │
-                    └────────┬─────────────────┘
-                             │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-    ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-    │ Recruitment  │ │ Customer     │ │ Service      │
-    │ Lead         │ │ Lead         │ │ Lead         │
-    └──────┬───────┘ └──────┬───────┘ └──────┬───────┘
-           │                │                │
-           ▼                ▼                ▼
-    ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-    │ ECOSYSTEM 1: │ │ ECOSYSTEM 4: │ │ ECOSYSTEM 4: │
-    │ Agent        │ │ Customer     │ │ Customer     │
-    │ Pipeline     │ │ Management   │ │ Servicing    │
-    │ (8 stages)   │ │ (New policy) │ │ (Existing)   │
-    └──────┬───────┘ └──────┬───────┘ └──────────────┘
-           │                │
-           ▼                ▼
-    ┌──────────────┐ ┌──────────────┐
-    │ ECOSYSTEM 2: │ │ Cross-sell / │
-    │ Active Agent │ │ Upsell       │
-    │ Management   │ │ Engine       │
-    └──────┬───────┘ └──────────────┘
-           │
-           ▼
-    ┌──────────────┐
-    │ ECOSYSTEM 3: │
-    │ Agent        │
-    │ Lifecycle    │
-    └──────────────┘
+                    +--------------------------+
+                    �  ECOSYSTEM 5:            �
+                    �  Universal Lead Hub      �
+                    �  (ALL leads enter here)  �
+                    +--------------------------+
+                             �
+              +--------------+--------------+
+              ?              ?              ?
+    +--------------+ +--------------+ +--------------+
+    � Recruitment  � � Customer     � � Service      �
+    � Lead         � � Lead         � � Lead         �
+    +--------------+ +--------------+ +--------------+
+           �                �                �
+           ?                ?                ?
+    +--------------+ +--------------+ +--------------+
+    � ECOSYSTEM 1: � � ECOSYSTEM 4: � � ECOSYSTEM 4: �
+    � Agent        � � Customer     � � Customer     �
+    � Pipeline     � � Management   � � Servicing    �
+    � (8 stages)   � � (New policy) � � (Existing)   �
+    +--------------+ +--------------+ +--------------+
+           �                �
+           ?                ?
+    +--------------+ +--------------+
+    � ECOSYSTEM 2: � � Cross-sell / �
+    � Active Agent � � Upsell       �
+    � Management   � � Engine       �
+    +--------------+ +--------------+
+           �
+           ?
+    +--------------+
+    � ECOSYSTEM 3: �
+    � Agent        �
+    � Lifecycle    �
+    +--------------+
 
 FEEDBACK LOOPS:
-  • Active agents (Eco 2) generate referral leads → back to Lead Hub (Eco 5)
-  • Satisfied customers (Eco 4) refer others → back to Lead Hub (Eco 5)
-  • Terminated agents (Eco 3) create orphan customers → Customer Management (Eco 4)
-  • Customer leads assigned to top agents from Active Agent system (Eco 2)
-  • Website content (Sections 1-32) feeds leads into Lead Hub (Eco 5)
+  � Active agents (Eco 2) generate referral leads ? back to Lead Hub (Eco 5)
+  � Satisfied customers (Eco 4) refer others ? back to Lead Hub (Eco 5)
+  � Terminated agents (Eco 3) create orphan customers ? Customer Management (Eco 4)
+  � Customer leads assigned to top agents from Active Agent system (Eco 2)
+  � Website content (Sections 1-32) feeds leads into Lead Hub (Eco 5)
 ```
 
-### Admin Route Map — Agency Management Suite
+### Admin Route Map � Agency Management Suite
 
 ```
 /admin/agency/
-├── (dashboard)                   Agency overview — all 5 ecosystems summary
-│
-├── pipeline/                     Ecosystem 1: Agent Creation Pipeline
-│   ├── (kanban view)             Pipeline kanban board
-│   ├── [id]/                     Individual candidate detail
-│   └── reports/                  Pipeline conversion metrics
-│
-├── agents/                       Ecosystem 2: Active Agent Management
-│   ├── (list)                    All agents with performance
-│   ├── [id]/                     Individual agent profile
-│   ├── leaderboard/              Performance rankings
-│   └── competitions/             Competitions manager
-│
-├── lifecycle/                    Ecosystem 3: Agent Lifecycle
-│   ├── compliance/               Compliance tracking
-│   ├── dormant/                  Dormant agent list
-│   ├── terminated/               Terminated agents
-│   └── orphans/                  Orphan policy reassignment
-│
-├── customers/                    Ecosystem 4: Customer Management
-│   ├── (list)                    All customers
-│   ├── [id]/                     Customer profile + policies
-│   ├── premiums-due/             Upcoming premium reminders
-│   ├── lapsed/                   Lapsed policy report
-│   ├── maturity/                 Maturing policies
-│   └── cross-sell/               Cross-sell opportunities
-│
-├── leads/                        Ecosystem 5: Universal Lead Hub
-│   ├── (pipeline view)           All leads with pipeline stages
-│   ├── new/                      Manual lead entry form
-│   ├── import/                   CSV bulk import
-│   ├── [id]/                     Lead detail + follow-up history
-│   └── source-roi/               Lead source comparison
-│
-└── campaigns/                    Campaign tracking
-    ├── (list)                    All campaigns
-    ├── new/                      Create campaign
-    └── [id]/                     Campaign detail + results
++-- (dashboard)                   Agency overview � all 5 ecosystems summary
+�
++-- pipeline/                     Ecosystem 1: Agent Creation Pipeline
+�   +-- (kanban view)             Pipeline kanban board
+�   +-- [id]/                     Individual candidate detail
+�   +-- reports/                  Pipeline conversion metrics
+�
++-- agents/                       Ecosystem 2: Active Agent Management
+�   +-- (list)                    All agents with performance
+�   +-- [id]/                     Individual agent profile
+�   +-- leaderboard/              Performance rankings
+�   +-- competitions/             Competitions manager
+�
++-- lifecycle/                    Ecosystem 3: Agent Lifecycle
+�   +-- compliance/               Compliance tracking
+�   +-- dormant/                  Dormant agent list
+�   +-- terminated/               Terminated agents
+�   +-- orphans/                  Orphan policy reassignment
+�
++-- customers/                    Ecosystem 4: Customer Management
+�   +-- (list)                    All customers
+�   +-- [id]/                     Customer profile + policies
+�   +-- premiums-due/             Upcoming premium reminders
+�   +-- lapsed/                   Lapsed policy report
+�   +-- maturity/                 Maturing policies
+�   +-- cross-sell/               Cross-sell opportunities
+�
++-- leads/                        Ecosystem 5: Universal Lead Hub
+�   +-- (pipeline view)           All leads with pipeline stages
+�   +-- new/                      Manual lead entry form
+�   +-- import/                   CSV bulk import
+�   +-- [id]/                     Lead detail + follow-up history
+�   +-- source-roi/               Lead source comparison
+�
++-- campaigns/                    Campaign tracking
+    +-- (list)                    All campaigns
+    +-- new/                      Create campaign
+    +-- [id]/                     Campaign detail + results
 ```
 
 ---
 
-## 38. 🧠 System Intelligence & Decision Engine — The Brain Layer
+## 38. ?? System Intelligence & Decision Engine � The Brain Layer
 
 ### The Core Insight
 
 > *"Tables banaye, Decisions nahi banaye. APIs banaye, Intelligence nahi banaye. Flow banaya, Optimization nahi banaya."*
 
-The bible (Sections 1-37) defines an extremely detailed **STRUCTURE** — data models, tables, APIs, flows, pipelines, UI routes. But structure alone is a skeleton. The system needs a **BEHAVIOR** layer — the intelligence that makes automated decisions, predicts outcomes, optimizes performance, and learns from results.
+The bible (Sections 1-37) defines an extremely detailed **STRUCTURE** � data models, tables, APIs, flows, pipelines, UI routes. But structure alone is a skeleton. The system needs a **BEHAVIOR** layer � the intelligence that makes automated decisions, predicts outcomes, optimizes performance, and learns from results.
 
-### Structure vs Behavior — The Critical Distinction
+### Structure vs Behavior � The Critical Distinction
 
 ```
 WHAT WE HAVE (Structure):              WHAT WE NEED (Behavior):
-─────────────────────────               ────────────────────────
-Tables with columns               →    Decisions based on data
-APIs that read/write               →    Intelligence that acts on patterns
-Flow: Lead → Agent → Customer     →    Optimization: WHICH agent, WHICH content, WHEN to act
-Page generation pipeline           →    Performance feedback loop: what worked, what didn't
-5 Ecosystems defined               →    Cross-ecosystem intelligence: connect the dots
-Admin panel with controls          →    Automation rules: CEO-configured IF/THEN/ELSE logic
+-------------------------               ------------------------
+Tables with columns               ?    Decisions based on data
+APIs that read/write               ?    Intelligence that acts on patterns
+Flow: Lead ? Agent ? Customer     ?    Optimization: WHICH agent, WHICH content, WHEN to act
+Page generation pipeline           ?    Performance feedback loop: what worked, what didn't
+5 Ecosystems defined               ?    Cross-ecosystem intelligence: connect the dots
+Admin panel with controls          ?    Automation rules: CEO-configured IF/THEN/ELSE logic
 ```
 
 ### Layer 1: Content Intelligence Engine
@@ -5980,7 +6050,7 @@ The pagegen system generates content. But does it LEARN?
 **Content Performance Feedback Loop:**
 ```
 CYCLE:
-  1. Page generated → published → indexed by Google
+  1. Page generated ? published ? indexed by Google
   2. GSC data flows in (impressions, clicks, CTR, position)
   3. GA4 data flows in (bounce rate, time on page, conversions)
   4. AI analyzes: "Pages about 'LIC agent benefits in Delhi' convert 3x better than generic pages"
@@ -5989,11 +6059,11 @@ CYCLE:
   7. Loop repeats every 2 weeks
 
 DECISIONS THE ENGINE MAKES:
-  • Which content patterns to DOUBLE DOWN on
-  • Which pages to RE-OPTIMIZE (rewrite title, meta, add sections)
-  • Which pages to ARCHIVE (60-day no-movement rule from Section 21)
-  • Which NEW topics to generate (gap detection from GSC)
-  • Which city/intent combinations are SATURATED (stop generating)
+  � Which content patterns to DOUBLE DOWN on
+  � Which pages to RE-OPTIMIZE (rewrite title, meta, add sections)
+  � Which pages to ARCHIVE (60-day no-movement rule from Section 21)
+  � Which NEW topics to generate (gap detection from GSC)
+  � Which city/intent combinations are SATURATED (stop generating)
 ```
 
 **Content Quality Scoring (Beyond quality_score):**
@@ -6006,9 +6076,9 @@ NEEDED:   content_intelligence_score = quality_score
           + freshness (when was it last updated?)
 
 The intelligence score determines:
-  • Which pages get promoted (internal linking priority)
-  • Which pages get refreshed (content update queue)
-  • Which pages get killed (archive/301 redirect)
+  � Which pages get promoted (internal linking priority)
+  � Which pages get refreshed (content update queue)
+  � Which pages get killed (archive/301 redirect)
 ```
 
 ### Layer 2: Lead Intelligence Engine
@@ -6026,10 +6096,10 @@ NEEDED:   intelligent_lead_score =
           + Historical conversion (leads from this city/source/intent convert at X%)
 
 WHAT IT ENABLES:
-  • Hot leads (score > 80): Instant WhatsApp alert to CEO + auto-assign to top agent
-  • Warm leads (score 50-80): Enter follow-up queue, 24-hour SLA
-  • Cold leads (score < 50): Enter nurture campaign, monthly touchpoint
-  • Dead leads (score < 20, no response 30 days): Archive, stop wasting time
+  � Hot leads (score > 80): Instant WhatsApp alert to CEO + auto-assign to top agent
+  � Warm leads (score 50-80): Enter follow-up queue, 24-hour SLA
+  � Cold leads (score < 50): Enter nurture campaign, monthly touchpoint
+  � Dead leads (score < 20, no response 30 days): Archive, stop wasting time
 ```
 
 **Conversion Prediction:**
@@ -6037,14 +6107,14 @@ WHAT IT ENABLES:
 QUESTION: "Given this lead's profile, what's the probability of conversion?"
 
 INPUTS:
-  • Lead source + intent + location + demographics
-  • Historical data: 1000 previous leads with same profile → 15% converted
+  � Lead source + intent + location + demographics
+  � Historical data: 1000 previous leads with same profile ? 15% converted
 
 OUTPUT:
-  • Conversion probability: 15%
-  • Recommended action: "Assign to Agent X (best conversion rate in this city)"
-  • Expected conversion time: "21 days (based on similar lead patterns)"
-  • Revenue estimate: "If converted → likely product: Jeevan Anand, premium: ₹25,000/yr"
+  � Conversion probability: 15%
+  � Recommended action: "Assign to Agent X (best conversion rate in this city)"
+  � Expected conversion time: "21 days (based on similar lead patterns)"
+  � Revenue estimate: "If converted ? likely product: Jeevan Anand, premium: ?25,000/yr"
 ```
 
 ### Layer 3: Agent Intelligence Engine
@@ -6053,7 +6123,7 @@ The agent system tracks agents. But does it make SMART decisions about them?
 
 **AI-Based Agent-Lead Matching:**
 ```
-CURRENT:  Lead routing = geography-based (lead's city → nearest agent)
+CURRENT:  Lead routing = geography-based (lead's city ? nearest agent)
 NEEDED:   Intelligent matching = 
           Geography (proximity)
           + Product expertise (agent specializes in pension plans, lead wants pension)
@@ -6063,27 +6133,27 @@ NEEDED:   Intelligent matching =
           + Language match (lead speaks Hindi, agent speaks Hindi)
 
 DECISION: "This lead should go to Agent #47 because:
-  • Same city ✓
-  • Specializes in this product ✓
-  • 23% conversion rate (highest in team for this lead type) ✓
-  • Currently has only 3 pending leads ✓"
+  � Same city ?
+  � Specializes in this product ?
+  � 23% conversion rate (highest in team for this lead type) ?
+  � Currently has only 3 pending leads ?"
 ```
 
 **Agent Performance Prediction:**
 ```
 SYSTEM WATCHES:
-  • Agent's activity patterns (calls/day, meetings/week)
-  • Agent's response time to leads
-  • Agent's conversion funnel (proposals → closures ratio)
-  • Agent's customer satisfaction (complaint frequency)
+  � Agent's activity patterns (calls/day, meetings/week)
+  � Agent's response time to leads
+  � Agent's conversion funnel (proposals ? closures ratio)
+  � Agent's customer satisfaction (complaint frequency)
 
 SYSTEM PREDICTS:
-  • "Agent #23 is trending towards dormancy (activity dropped 60% in 2 weeks)"
-    → ACTION: Auto-trigger retention call from CEO
-  • "Agent #47 is on track for MDRT this year (needs 3 more policies)"
-    → ACTION: Prioritize high-value leads to this agent
-  • "Agent #12 is losing customers post-sale (2 complaints this month)"
-    → ACTION: Flag for training, reduce new lead assignment
+  � "Agent #23 is trending towards dormancy (activity dropped 60% in 2 weeks)"
+    ? ACTION: Auto-trigger retention call from CEO
+  � "Agent #47 is on track for MDRT this year (needs 3 more policies)"
+    ? ACTION: Prioritize high-value leads to this agent
+  � "Agent #12 is losing customers post-sale (2 complaints this month)"
+    ? ACTION: Flag for training, reduce new lead assignment
 ```
 
 ### Layer 4: Cross-Ecosystem Intelligence
@@ -6093,20 +6163,20 @@ The 5 ecosystems (Sections 33-37) are defined independently. But the REAL power 
 **Connected Intelligence Queries:**
 ```
 QUESTION: "Which content topics generate leads that actually become successful agents?"
-  JOINS: Content (Sec 1-21) → Lead Hub (Sec 37) → Agent Pipeline (Sec 33) → Active Agent (Sec 34)
+  JOINS: Content (Sec 1-21) ? Lead Hub (Sec 37) ? Agent Pipeline (Sec 33) ? Active Agent (Sec 34)
   ANSWER: "Pages about 'how to become LIC agent' generate 40% of recruitment leads,
            but only 8% convert to active agents. Pages about 'LIC agent income proof'
            generate 15% of leads, but 25% convert. OPTIMIZE for income-proof content."
 
 QUESTION: "Which agents' customers generate the most referral leads?"
-  JOINS: Active Agent (Sec 34) → Customer (Sec 36) → Lead Hub (Sec 37)
+  JOINS: Active Agent (Sec 34) ? Customer (Sec 36) ? Lead Hub (Sec 37)
   ANSWER: "Agent #47's customers generated 12 referral leads this quarter.
            Agent #23's customers generated 0. Teach Agent #23 the referral process."
 
 QUESTION: "What's the full ROI of the website?"
-  JOINS: Content → Leads → Agents → Policies → Revenue
-  ANSWER: "Website generated 500 leads → 50 recruited → 30 active agents → 
-           ₹12L premium generated this quarter. Cost: ₹15K/month hosting + AI.
+  JOINS: Content ? Leads ? Agents ? Policies ? Revenue
+  ANSWER: "Website generated 500 leads ? 50 recruited ? 30 active agents ? 
+           ?12L premium generated this quarter. Cost: ?15K/month hosting + AI.
            ROI: 800%. Top performing content: 'LIC agent benefits city pages'."
 ```
 
@@ -6194,42 +6264,42 @@ The system should monitor ITSELF and alert when things go wrong:
 **Self-Monitoring Dashboard:**
 ```
 SYSTEM WATCHES (automated):
-  • Page generation failure rate (if > 5% in last hour → alert)
-  • API response times (if avg > 2s → alert)
-  • QStash queue depth (if > 100 pending → alert)
-  • Database connection count (if > 80% of pool → alert)
-  • Error rate spike detection (if errors jump 3x in 15 min → alert)
-  • Cost anomaly (if AI spend today > 2x daily average → alert + pause)
+  � Page generation failure rate (if > 5% in last hour ? alert)
+  � API response times (if avg > 2s ? alert)
+  � QStash queue depth (if > 100 pending ? alert)
+  � Database connection count (if > 80% of pool ? alert)
+  � Error rate spike detection (if errors jump 3x in 15 min ? alert)
+  � Cost anomaly (if AI spend today > 2x daily average ? alert + pause)
 
 CEO MORNING BRIEF (auto-generated daily):
-  ┌─────────────────────────────────────────────┐
-  │ 🌅 CEO Morning Brief — April 18, 2026      │
-  │                                             │
-  │ 📊 System Health: 98.5% (all systems OK)   │
-  │ 📝 Pages generated yesterday: 12           │
-  │ 🎯 New leads yesterday: 7 (3 hot, 4 warm) │
-  │ 👥 Agent pipeline: 5 in IC-38 prep stage   │
-  │ 💰 Premium due this week: ₹2.3L (8 customers) │
-  │ ⚠️ Alerts: Agent #12 dormant risk          │
-  │ 🏆 Top agent yesterday: Agent #47 (2 policies) │
-  │ 📈 Website: 1,247 visits, 89 from Google   │
-  │                                             │
-  │ 🎯 Recommended actions today:              │
-  │   1. Call Agent #12 (dormancy risk)         │
-  │   2. Approve 3 pending content drafts       │
-  │   3. Follow up on 2 hot leads (4hr SLA)     │
-  └─────────────────────────────────────────────┘
+  +---------------------------------------------+
+  � ?? CEO Morning Brief � April 18, 2026      �
+  �                                             �
+  � ?? System Health: 98.5% (all systems OK)   �
+  � ?? Pages generated yesterday: 12           �
+  � ?? New leads yesterday: 7 (3 hot, 4 warm) �
+  � ?? Agent pipeline: 5 in IC-38 prep stage   �
+  � ?? Premium due this week: ?2.3L (8 customers) �
+  � ?? Alerts: Agent #12 dormant risk          �
+  � ?? Top agent yesterday: Agent #47 (2 policies) �
+  � ?? Website: 1,247 visits, 89 from Google   �
+  �                                             �
+  � ?? Recommended actions today:              �
+  �   1. Call Agent #12 (dormancy risk)         �
+  �   2. Approve 3 pending content drafts       �
+  �   3. Follow up on 2 hot leads (4hr SLA)     �
+  +---------------------------------------------+
 ```
 
 ### Implementation: Phase 20
 
-This entire section becomes Phase 20 (Priority D — God Mode). It depends on:
-- Phase 10 (Analytics Stack) — for GSC/GA4 data
-- Phase 12 (Intelligence Layer) — for pattern analysis
-- Phase 14 (Super Admin Panel) — for admin UI foundation
-- Phase 19 (Universal Lead Hub) — for lead data consolidation
+This entire section becomes Phase 20 (Priority D � God Mode). It depends on:
+- Phase 10 (Analytics Stack) � for GSC/GA4 data
+- Phase 12 (Intelligence Layer) � for pattern analysis
+- Phase 14 (Super Admin Panel) � for admin UI foundation
+- Phase 19 (Universal Lead Hub) � for lead data consolidation
 
-Phase 20 is the FINAL PHASE — it turns the system from a tool into an intelligent operating system.
+Phase 20 is the FINAL PHASE � it turns the system from a tool into an intelligent operating system.
 
 ```
 PHASE 20 BUILD ORDER:
@@ -6247,13 +6317,13 @@ PHASE 20 BUILD ORDER:
 
 ---
 
-## 39. 🛡️ External System Governance — Vendor Control & Resilience Layer
+## 39. ??? External System Governance � Vendor Control & Resilience Layer
 
 ### The Core Insight
 
-> *"System internally strong hai, externally probabilistic hai. Jo cheez tumhare control mein nahi hai — wahi cheez system todegi."*
+> *"System internally strong hai, externally probabilistic hai. Jo cheez tumhare control mein nahi hai � wahi cheez system todegi."*
 
-This section formalizes the operational resilience layer. Sections 1-38 designed the internal system. This section ensures the system SURVIVES the unpredictable external world — vendor outages, API failures, rate limits, cold starts, token expirations, and network issues.
+This section formalizes the operational resilience layer. Sections 1-38 designed the internal system. This section ensures the system SURVIVES the unpredictable external world � vendor outages, API failures, rate limits, cold starts, token expirations, and network issues.
 
 ### System Maturity Model
 
@@ -6262,29 +6332,29 @@ Before diving into governance, it's important to understand WHERE the system is 
 ```
 SYSTEM MATURITY LEVELS:
 
-  LEVEL 1: TOOL LEVEL                    ✅ COMPLETED
+  LEVEL 1: TOOL LEVEL                    ? COMPLETED
     "We have a website that generates pages"
-    — Basic functionality works. Pages are created and served.
+    � Basic functionality works. Pages are created and served.
 
-  LEVEL 2: SYSTEM LEVEL                  ✅ COMPLETED
+  LEVEL 2: SYSTEM LEVEL                  ? COMPLETED
     "We have an integrated system with pipelines, queues, and admin control"
-    — Event-driven architecture. QStash jobs. Admin panel. Observability.
+    � Event-driven architecture. QStash jobs. Admin panel. Observability.
 
-  LEVEL 3: ECOSYSTEM LEVEL               ✅ COMPLETED
+  LEVEL 3: ECOSYSTEM LEVEL               ? COMPLETED
     "We have a business operating system covering all 5 ecosystems"
-    — Agent pipeline, customer management, lead hub, lifecycle tracking.
+    � Agent pipeline, customer management, lead hub, lifecycle tracking.
 
-  LEVEL 4: INTELLIGENCE LEVEL            🟡 DESIGNED (Section 38)
+  LEVEL 4: INTELLIGENCE LEVEL            ?? DESIGNED (Section 38)
     "System makes decisions, predicts outcomes, learns from results"
-    — Lead scoring AI, content feedback loop, agent matching, rule engine.
+    � Lead scoring AI, content feedback loop, agent matching, rule engine.
 
-  LEVEL 5: AUTONOMOUS LEVEL              ❌ FUTURE
+  LEVEL 5: AUTONOMOUS LEVEL              ? FUTURE
     "System runs itself. CEO monitors, doesn't operate."
-    — Self-healing, self-optimizing, self-growing.
+    � Self-healing, self-optimizing, self-growing.
 
-  LEVEL 6: RESILIENT LEVEL               🟡 DESIGNED (This Section)
+  LEVEL 6: RESILIENT LEVEL               ?? DESIGNED (This Section)
     "System survives external failures gracefully"
-    — Vendor governance, circuit breakers, degraded mode, fallback chains.
+    � Vendor governance, circuit breakers, degraded mode, fallback chains.
 ```
 
 The jump from Level 3 (Ecosystem) to Level 5 (Autonomous) requires BOTH Level 4 (Intelligence) AND Level 6 (Resilience). A smart system that crashes on vendor outage = useless. A resilient system that can't think = just a tool.
@@ -6293,243 +6363,243 @@ The jump from Level 3 (Ecosystem) to Level 5 (Autonomous) requires BOTH Level 4 
 
 **CONTRACT 1: Supabase (Database + Auth)**
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ VENDOR:       Supabase                                          │
-│ PURPOSE:      Primary database, authentication, file storage    │
-│ CRITICALITY:  ████████████ CRITICAL                             │
-│                                                                 │
-│ SERVICES USED:                                                  │
-│   • PostgreSQL database (all tables)                           │
-│   • Auth (admin login, session management)                     │
-│   • Storage (future: images, PDFs)                             │
-│   • Row Level Security (future: RBAC)                          │
-│                                                                 │
-│ CONTRACT:                                                       │
-│   Query timeout:  10 seconds max                               │
-│   Connection pool: 20 connections max (free tier)              │
-│   Rate limit:     500 req/sec (API), unlimited direct DB       │
-│   Storage:        1 GB (free), 100 GB (Pro)                    │
-│                                                                 │
-│ FAILURE HANDLING:                                               │
-│   On timeout:     Retry 2x with 1s, 3s backoff                │
-│   On auth error:  Refresh token → retry → redirect to login   │
-│   On connection:  Wait 5s → retry → degraded mode             │
-│   On full outage: Switch to ISR cached pages (read-only site) │
-│                                                                 │
-│ FALLBACK:                                                       │
-│   Level 1: Retry with backoff                                  │
-│   Level 2: Read from ISR cache (stale but available)           │
-│   Level 3: Queue writes to localStorage + pending_writes table│
-│   Level 4: Safe mode (admin dashboard shows emergency view)    │
-│                                                                 │
-│ MONITORING:                                                     │
-│   Track: query latency, error rate, connection count           │
-│   SLA: < 100ms avg query, < 0.1% error rate                   │
-│   Alert: P0 if unreachable > 30 seconds                        │
-│                                                                 │
-│ LOCK-IN RISK:   HIGH                                            │
-│   PostgreSQL = portable. Auth + RLS + Storage = proprietary.   │
-│   MITIGATION: lib/safeSupabase.js abstraction layer.           │
-│   Migration path: PostgreSQL dump + custom auth (weeks of work)│
-└─────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------+
+� VENDOR:       Supabase                                          �
+� PURPOSE:      Primary database, authentication, file storage    �
+� CRITICALITY:  ������������ CRITICAL                             �
+�                                                                 �
+� SERVICES USED:                                                  �
+�   � PostgreSQL database (all tables)                           �
+�   � Auth (admin login, session management)                     �
+�   � Storage (future: images, PDFs)                             �
+�   � Row Level Security (future: RBAC)                          �
+�                                                                 �
+� CONTRACT:                                                       �
+�   Query timeout:  10 seconds max                               �
+�   Connection pool: 20 connections max (free tier)              �
+�   Rate limit:     500 req/sec (API), unlimited direct DB       �
+�   Storage:        1 GB (free), 100 GB (Pro)                    �
+�                                                                 �
+� FAILURE HANDLING:                                               �
+�   On timeout:     Retry 2x with 1s, 3s backoff                �
+�   On auth error:  Refresh token ? retry ? redirect to login   �
+�   On connection:  Wait 5s ? retry ? degraded mode             �
+�   On full outage: Switch to ISR cached pages (read-only site) �
+�                                                                 �
+� FALLBACK:                                                       �
+�   Level 1: Retry with backoff                                  �
+�   Level 2: Read from ISR cache (stale but available)           �
+�   Level 3: Queue writes to localStorage + pending_writes table�
+�   Level 4: Safe mode (admin dashboard shows emergency view)    �
+�                                                                 �
+� MONITORING:                                                     �
+�   Track: query latency, error rate, connection count           �
+�   SLA: < 100ms avg query, < 0.1% error rate                   �
+�   Alert: P0 if unreachable > 30 seconds                        �
+�                                                                 �
+� LOCK-IN RISK:   HIGH                                            �
+�   PostgreSQL = portable. Auth + RLS + Storage = proprietary.   �
+�   MITIGATION: lib/safeSupabase.js abstraction layer.           �
+�   Migration path: PostgreSQL dump + custom auth (weeks of work)�
++-----------------------------------------------------------------+
 ```
 
 **CONTRACT 2: Vercel (Hosting + Functions)**
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ VENDOR:       Vercel                                            │
-│ PURPOSE:      Next.js hosting, serverless functions, edge, ISR  │
-│ CRITICALITY:  ████████████ CRITICAL                             │
-│                                                                 │
-│ SERVICES USED:                                                  │
-│   • Next.js App Router hosting                                 │
-│   • Serverless Functions (API routes)                          │
-│   • ISR (Incremental Static Regeneration)                      │
-│   • Edge Middleware                                            │
-│                                                                 │
-│ CONTRACT:                                                       │
-│   Function timeout:  60 seconds (Pro), 10 seconds (Hobby)     │
-│   Cold start:        200ms-2s (depending on function size)     │
-│   Bandwidth:         100 GB/month (Pro)                        │
-│   Builds:            6000 min/month (Pro)                      │
-│                                                                 │
-│ FAILURE HANDLING:                                               │
-│   On timeout:     Return cached version (ISR) + log           │
-│   On cold start:  Client sees loading state, not error        │
-│   On build fail:  Previous deployment stays active             │
-│   On outage:      DNS failover (future consideration)          │
-│                                                                 │
-│ FALLBACK:                                                       │
-│   ISR pages serve even if functions fail                       │
-│   Static pages (about, contact, etc.) always available         │
-│   API errors return graceful error responses, never raw errors │
-│                                                                 │
-│ MONITORING:                                                     │
-│   Track: function execution time, error rate, bandwidth usage  │
-│   SLA: < 500ms avg API response, < 1% function error rate      │
-│   Alert: P1 if error rate > 5% for 10+ minutes                │
-│                                                                 │
-│ LOCK-IN RISK:   MEDIUM                                          │
-│   Next.js runs anywhere. Vercel-specific: ISR, edge middleware.│
-│   MITIGATION: vercel.json minimal. No Vercel-only APIs used.  │
-│   Migration path: Deploy to any Node.js host (days of work)   │
-└─────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------+
+� VENDOR:       Vercel                                            �
+� PURPOSE:      Next.js hosting, serverless functions, edge, ISR  �
+� CRITICALITY:  ������������ CRITICAL                             �
+�                                                                 �
+� SERVICES USED:                                                  �
+�   � Next.js App Router hosting                                 �
+�   � Serverless Functions (API routes)                          �
+�   � ISR (Incremental Static Regeneration)                      �
+�   � Edge Middleware                                            �
+�                                                                 �
+� CONTRACT:                                                       �
+�   Function timeout:  60 seconds (Pro), 10 seconds (Hobby)     �
+�   Cold start:        200ms-2s (depending on function size)     �
+�   Bandwidth:         100 GB/month (Pro)                        �
+�   Builds:            6000 min/month (Pro)                      �
+�                                                                 �
+� FAILURE HANDLING:                                               �
+�   On timeout:     Return cached version (ISR) + log           �
+�   On cold start:  Client sees loading state, not error        �
+�   On build fail:  Previous deployment stays active             �
+�   On outage:      DNS failover (future consideration)          �
+�                                                                 �
+� FALLBACK:                                                       �
+�   ISR pages serve even if functions fail                       �
+�   Static pages (about, contact, etc.) always available         �
+�   API errors return graceful error responses, never raw errors �
+�                                                                 �
+� MONITORING:                                                     �
+�   Track: function execution time, error rate, bandwidth usage  �
+�   SLA: < 500ms avg API response, < 1% function error rate      �
+�   Alert: P1 if error rate > 5% for 10+ minutes                �
+�                                                                 �
+� LOCK-IN RISK:   MEDIUM                                          �
+�   Next.js runs anywhere. Vercel-specific: ISR, edge middleware.�
+�   MITIGATION: vercel.json minimal. No Vercel-only APIs used.  �
+�   Migration path: Deploy to any Node.js host (days of work)   �
++-----------------------------------------------------------------+
 ```
 
 **CONTRACT 3: QStash (Async Queue)**
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ VENDOR:       QStash (by Upstash)                               │
-│ PURPOSE:      Async job queue, scheduled tasks, retries         │
-│ CRITICALITY:  ████████████ CRITICAL                             │
-│                                                                 │
-│ SERVICES USED:                                                  │
-│   • HTTP-based message queue                                   │
-│   • Scheduled messages (delayed execution)                     │
-│   • Auto-retry with configurable attempts                      │
-│   • Signature verification                                     │
-│                                                                 │
-│ CONTRACT:                                                       │
-│   Max retries:    3 (configured)                               │
-│   Delivery:       At-least-once (idempotency required)         │
-│   Rate limit:     500 msg/day (free), 50,000/day (paid)        │
-│   Max delay:      30 days                                      │
-│   Signature:      HMAC verification on every incoming request  │
-│                                                                 │
-│ FAILURE HANDLING:                                               │
-│   On publish fail: Retry 3x → store in pending_jobs table     │
-│   On delivery fail: QStash auto-retries 3x                    │
-│   After 3 retries: Dead Letter Queue (see Rule 21)            │
-│   On full outage:  Cron job picks up pending_jobs every 5 min │
-│                                                                 │
-│ FALLBACK:                                                       │
-│   Level 1: QStash auto-retry                                  │
-│   Level 2: pending_jobs table (local queue backup)             │
-│   Level 3: Manual replay from admin panel                      │
-│                                                                 │
-│ MONITORING:                                                     │
-│   Track: delivery delay, retry count, DLQ depth                │
-│   SLA: < 5s delivery delay, < 1% retry rate                   │
-│   Alert: P1 if DLQ depth > 10 messages                        │
-│                                                                 │
-│ LOCK-IN RISK:   MEDIUM                                          │
-│   Simple HTTP queue. Any webhook-based queue can replace.      │
-│   MITIGATION: Queue publish through lib/ abstraction.          │
-│   Migration path: AWS SQS + Lambda (days of work)             │
-└─────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------+
+� VENDOR:       QStash (by Upstash)                               �
+� PURPOSE:      Async job queue, scheduled tasks, retries         �
+� CRITICALITY:  ������������ CRITICAL                             �
+�                                                                 �
+� SERVICES USED:                                                  �
+�   � HTTP-based message queue                                   �
+�   � Scheduled messages (delayed execution)                     �
+�   � Auto-retry with configurable attempts                      �
+�   � Signature verification                                     �
+�                                                                 �
+� CONTRACT:                                                       �
+�   Max retries:    3 (configured)                               �
+�   Delivery:       At-least-once (idempotency required)         �
+�   Rate limit:     500 msg/day (free), 50,000/day (paid)        �
+�   Max delay:      30 days                                      �
+�   Signature:      HMAC verification on every incoming request  �
+�                                                                 �
+� FAILURE HANDLING:                                               �
+�   On publish fail: Retry 3x ? store in pending_jobs table     �
+�   On delivery fail: QStash auto-retries 3x                    �
+�   After 3 retries: Dead Letter Queue (see Rule 21)            �
+�   On full outage:  Cron job picks up pending_jobs every 5 min �
+�                                                                 �
+� FALLBACK:                                                       �
+�   Level 1: QStash auto-retry                                  �
+�   Level 2: pending_jobs table (local queue backup)             �
+�   Level 3: Manual replay from admin panel                      �
+�                                                                 �
+� MONITORING:                                                     �
+�   Track: delivery delay, retry count, DLQ depth                �
+�   SLA: < 5s delivery delay, < 1% retry rate                   �
+�   Alert: P1 if DLQ depth > 10 messages                        �
+�                                                                 �
+� LOCK-IN RISK:   MEDIUM                                          �
+�   Simple HTTP queue. Any webhook-based queue can replace.      �
+�   MITIGATION: Queue publish through lib/ abstraction.          �
+�   Migration path: AWS SQS + Lambda (days of work)             �
++-----------------------------------------------------------------+
 ```
 
 **CONTRACT 4: Zoho One (CRM + Alerts)**
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ VENDOR:       Zoho One                                          │
-│ PURPOSE:      CRM (lead management), Cliq (alerts), Mail       │
-│ CRITICALITY:  ████████ IMPORTANT (not critical)                 │
-│                                                                 │
-│ SERVICES USED:                                                  │
-│   • Zoho CRM (lead creation, pipeline management)              │
-│   • Zoho Cliq (instant team alerts)                            │
-│   • Zoho Mail (email delivery)                                 │
-│   • Zoho Analytics (future)                                    │
-│                                                                 │
-│ CONTRACT:                                                       │
-│   API rate limit: 15,000 credits/day (Standard plan)           │
-│   OAuth token:    1 hour expiry, refresh token lasts 1 year    │
-│   Webhook:        5 seconds timeout                            │
-│                                                                 │
-│ FAILURE HANDLING:                                               │
-│   On API timeout:  Retry 3x with 2s, 5s, 10s backoff         │
-│   On auth error:   Auto-refresh OAuth token → retry           │
-│   On rate limit:   Queue request, process next window          │
-│   On full outage:  Lead stored in DB (never lost), sync later │
-│                                                                 │
-│ FALLBACK:                                                       │
-│   CRM down → Lead saved to crm_leads table → manual sync later│
-│   Cliq down → Alert via email → if email down → WhatsApp      │
-│   Critical: LEAD DATA IS NEVER LOST regardless of Zoho status │
-│                                                                 │
-│ MONITORING:                                                     │
-│   Track: API credit usage, sync success rate, token expiry     │
-│   SLA: < 2s API response, > 95% sync success                  │
-│   Alert: P2 if sync failure rate > 5%                          │
-│                                                                 │
-│ LOCK-IN RISK:   LOW                                             │
-│   API-only integration. All lead data in local DB too.         │
-│   MITIGATION: All Zoho calls through single service file.      │
-│   Migration path: Switch CRM provider (weeks of API mapping)  │
-└─────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------+
+� VENDOR:       Zoho One                                          �
+� PURPOSE:      CRM (lead management), Cliq (alerts), Mail       �
+� CRITICALITY:  �������� IMPORTANT (not critical)                 �
+�                                                                 �
+� SERVICES USED:                                                  �
+�   � Zoho CRM (lead creation, pipeline management)              �
+�   � Zoho Cliq (instant team alerts)                            �
+�   � Zoho Mail (email delivery)                                 �
+�   � Zoho Analytics (future)                                    �
+�                                                                 �
+� CONTRACT:                                                       �
+�   API rate limit: 15,000 credits/day (Standard plan)           �
+�   OAuth token:    1 hour expiry, refresh token lasts 1 year    �
+�   Webhook:        5 seconds timeout                            �
+�                                                                 �
+� FAILURE HANDLING:                                               �
+�   On API timeout:  Retry 3x with 2s, 5s, 10s backoff         �
+�   On auth error:   Auto-refresh OAuth token ? retry           �
+�   On rate limit:   Queue request, process next window          �
+�   On full outage:  Lead stored in DB (never lost), sync later �
+�                                                                 �
+� FALLBACK:                                                       �
+�   CRM down ? Lead saved to crm_leads table ? manual sync later�
+�   Cliq down ? Alert via email ? if email down ? WhatsApp      �
+�   Critical: LEAD DATA IS NEVER LOST regardless of Zoho status �
+�                                                                 �
+� MONITORING:                                                     �
+�   Track: API credit usage, sync success rate, token expiry     �
+�   SLA: < 2s API response, > 95% sync success                  �
+�   Alert: P2 if sync failure rate > 5%                          �
+�                                                                 �
+� LOCK-IN RISK:   LOW                                             �
+�   API-only integration. All lead data in local DB too.         �
+�   MITIGATION: All Zoho calls through single service file.      �
+�   Migration path: Switch CRM provider (weeks of API mapping)  �
++-----------------------------------------------------------------+
 ```
 
 **CONTRACT 5: Google Gemini (AI Content Generation)**
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ VENDOR:       Google Gemini                                     │
-│ PURPOSE:      AI content generation for pagegen pipeline        │
-│ CRITICALITY:  ████████ IMPORTANT (not critical for site serving)│
-│                                                                 │
-│ SERVICES USED:                                                  │
-│   • Gemini 2.5 Flash (primary content generation)              │
-│   • Gemini Flash Lite (fallback / lighter tasks)               │
-│                                                                 │
-│ CONTRACT:                                                       │
-│   Response time:  5-30 seconds (depending on prompt complexity)│
-│   Rate limit:     15 req/min (free), 1000 req/min (paid)       │
-│   Token limit:    1M context window                            │
-│   Cost:           Per-token pricing (tracked via Rule 15)      │
-│                                                                 │
-│ FAILURE HANDLING:                                               │
-│   On timeout:     Retry 2x → switch to lighter model          │
-│   On rate limit:  Wait + retry (exponential backoff)           │
-│   On safety block: Log blocked prompt, flag for human review  │
-│   On API error:   Retry 3x → skip generation, queue for later │
-│                                                                 │
-│ FALLBACK:                                                       │
-│   Level 1: gemini-2.5-flash (primary)                          │
-│   Level 2: gemini-2.5-flash-lite (lighter, faster)             │
-│   Level 3: Skip generation, add to retry queue                 │
-│   Level 4: Manual content creation via admin panel             │
-│                                                                 │
-│ MONITORING:                                                     │
-│   Track: generation time, cost per page, quality score, safety │
-│   SLA: < 30s generation, < ₹2 per page, quality > 6/10        │
-│   Alert: P2 if cost exceeds daily cap                          │
-│                                                                 │
-│ LOCK-IN RISK:   LOW                                             │
-│   Prompt-based. Any LLM with similar capability can replace.   │
-│   MITIGATION: Model name configurable in system_control_config.│
-│   Migration path: Change model name + adjust prompts (hours)   │
-└─────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------+
+� VENDOR:       Google Gemini                                     �
+� PURPOSE:      AI content generation for pagegen pipeline        �
+� CRITICALITY:  �������� IMPORTANT (not critical for site serving)�
+�                                                                 �
+� SERVICES USED:                                                  �
+�   � Gemini 2.5 Flash (primary content generation)              �
+�   � Gemini Flash Lite (fallback / lighter tasks)               �
+�                                                                 �
+� CONTRACT:                                                       �
+�   Response time:  5-30 seconds (depending on prompt complexity)�
+�   Rate limit:     15 req/min (free), 1000 req/min (paid)       �
+�   Token limit:    1M context window                            �
+�   Cost:           Per-token pricing (tracked via Rule 15)      �
+�                                                                 �
+� FAILURE HANDLING:                                               �
+�   On timeout:     Retry 2x ? switch to lighter model          �
+�   On rate limit:  Wait + retry (exponential backoff)           �
+�   On safety block: Log blocked prompt, flag for human review  �
+�   On API error:   Retry 3x ? skip generation, queue for later �
+�                                                                 �
+� FALLBACK:                                                       �
+�   Level 1: gemini-2.5-flash (primary)                          �
+�   Level 2: gemini-2.5-flash-lite (lighter, faster)             �
+�   Level 3: Skip generation, add to retry queue                 �
+�   Level 4: Manual content creation via admin panel             �
+�                                                                 �
+� MONITORING:                                                     �
+�   Track: generation time, cost per page, quality score, safety �
+�   SLA: < 30s generation, < ?2 per page, quality > 6/10        �
+�   Alert: P2 if cost exceeds daily cap                          �
+�                                                                 �
+� LOCK-IN RISK:   LOW                                             �
+�   Prompt-based. Any LLM with similar capability can replace.   �
+�   MITIGATION: Model name configurable in system_control_config.�
+�   Migration path: Change model name + adjust prompts (hours)   �
++-----------------------------------------------------------------+
 ```
 
 ### Admin Route: External System Health Dashboard
 
 ```
 /admin/system/
-├── health/                       System health overview
-│   ├── (dashboard)               All services status (green/yellow/red)
-│   ├── supabase/                 DB health metrics
-│   ├── qstash/                   Queue health metrics
-│   ├── vercel/                   Function performance metrics
-│   ├── zoho/                     CRM sync status
-│   └── gemini/                   AI generation metrics
-│
-├── sla/                          SLA monitoring
-│   ├── (dashboard)               SLA compliance overview
-│   └── history/                  Historical SLA data + trends
-│
-├── alerts/                       Alert management
-│   ├── (active)                  Current active alerts
-│   ├── history/                  Alert history + acknowledgment log
-│   └── rules/                    Alert routing configuration
-│
-├── dlq/                          Dead Letter Queue
-│   ├── (pending)                 Unresolved failed events
-│   ├── resolved/                 Previously resolved events
-│   └── [id]/                     Individual DLQ entry + reprocess
-│
-└── mode/                         System mode control
-    ├── (current)                 Current mode + override controls
-    └── history/                  Mode change history + reasons
++-- health/                       System health overview
+�   +-- (dashboard)               All services status (green/yellow/red)
+�   +-- supabase/                 DB health metrics
+�   +-- qstash/                   Queue health metrics
+�   +-- vercel/                   Function performance metrics
+�   +-- zoho/                     CRM sync status
+�   +-- gemini/                   AI generation metrics
+�
++-- sla/                          SLA monitoring
+�   +-- (dashboard)               SLA compliance overview
+�   +-- history/                  Historical SLA data + trends
+�
++-- alerts/                       Alert management
+�   +-- (active)                  Current active alerts
+�   +-- history/                  Alert history + acknowledgment log
+�   +-- rules/                    Alert routing configuration
+�
++-- dlq/                          Dead Letter Queue
+�   +-- (pending)                 Unresolved failed events
+�   +-- resolved/                 Previously resolved events
+�   +-- [id]/                     Individual DLQ entry + reprocess
+�
++-- mode/                         System mode control
+    +-- (current)                 Current mode + override controls
+    +-- history/                  Mode change history + reasons
 ```
 
 ### Implementation: Phase 21
@@ -6552,21 +6622,21 @@ PHASE 21 BUILD ORDER:
   Step 12: CEO morning brief delivery (WhatsApp + Email)
 ```
 
-**Priority Update:** Phase 21 is Priority A — runs parallel with Phase 3 + Phase 14.
+**Priority Update:** Phase 21 is Priority A � runs parallel with Phase 3 + Phase 14.
 
 ---
 
-## 40. 📝 System Memory & Traceability — The Documentation Layer
+## 40. ?? System Memory & Traceability � The Documentation Layer
 
 > *"System bina memory ke grow nahi karta. Chat mein kaam = temporary. Docs mein kaam = permanent."*
 
 ### The Problem
 
 Without system memory:
-- Agent starts every session from ZERO — wastes 15-30 minutes just understanding context
-- Same bugs investigated repeatedly — no record of what was already tried
+- Agent starts every session from ZERO � wastes 15-30 minutes just understanding context
+- Same bugs investigated repeatedly � no record of what was already tried
 - Audit findings exist only in chat (gone after session)
-- Code changes have no traceable reason — 3 months later, nobody knows WHY a line was changed
+- Code changes have no traceable reason � 3 months later, nobody knows WHY a line was changed
 - CEO asks "kya hua tha?" and no one can answer in 5 seconds
 - Fixes get un-fixed because the next agent doesn't know a fix was applied
 
@@ -6576,36 +6646,36 @@ Without system memory:
 
 ```
 docs/
-├── INDEX.md                           ← Master index of all documentation
-├── CONTENT_COMMAND_CENTER.md          ← The Bible (architecture + strategy)
-├── FORENSIC_AUDIT_REPORT.md           ← Latest forensic audit
-│
-├── audits/                            ← Every audit ever done
-│   ├── audit-2026-04-18.md            ← Forensic audit with findings + scores
-│   └── ...
-│
-├── fixes/                             ← Every bug fix with full context
-│   ├── fix-content-drafts-table.md    ← What broke, root cause, SQL, verification
-│   └── ...
-│
-├── features/                          ← Every feature built
-│   ├── feature-event-architecture.md  ← Phase 1 feature documentation
-│   ├── feature-pagegen-pipeline.md    ← Phase 2 feature documentation
-│   └── ...
-│
-├── incidents/                         ← Every production incident
-│   ├── incident-silent-draft-failure.md  ← content_drafts missing + silent swallow
-│   └── ...
-│
-├── decisions/                         ← Architecture decisions with rationale
-│   ├── decision-qstash-over-vercel-crons.md
-│   └── ...
-│
-├── migrations/                        ← Every DB migration with rollback SQL
-│   ├── migration-content-drafts-table.md
-│   └── ...
-│
-└── [existing docs remain here]
++-- INDEX.md                           ? Master index of all documentation
++-- CONTENT_COMMAND_CENTER.md          ? The Bible (architecture + strategy)
++-- FORENSIC_AUDIT_REPORT.md           ? Latest forensic audit
+�
++-- audits/                            ? Every audit ever done
+�   +-- audit-2026-04-18.md            ? Forensic audit with findings + scores
+�   +-- ...
+�
++-- fixes/                             ? Every bug fix with full context
+�   +-- fix-content-drafts-table.md    ? What broke, root cause, SQL, verification
+�   +-- ...
+�
++-- features/                          ? Every feature built
+�   +-- feature-event-architecture.md  ? Phase 1 feature documentation
+�   +-- feature-pagegen-pipeline.md    ? Phase 2 feature documentation
+�   +-- ...
+�
++-- incidents/                         ? Every production incident
+�   +-- incident-silent-draft-failure.md  ? content_drafts missing + silent swallow
+�   +-- ...
+�
++-- decisions/                         ? Architecture decisions with rationale
+�   +-- decision-qstash-over-vercel-crons.md
+�   +-- ...
+�
++-- migrations/                        ? Every DB migration with rollback SQL
+�   +-- migration-content-drafts-table.md
+�   +-- ...
+�
++-- [existing docs remain here]
 ```
 
 ### Documentation Standards
@@ -6619,7 +6689,7 @@ docs/
 | Author | Yes | Who created this doc (CTO/CEO/Agent) |
 | Bible Reference | Yes | Which section/rule/phase this relates to |
 | Status | Yes | OPEN / IN_PROGRESS / RESOLVED / VERIFIED |
-| Context | Yes | Why this exists — business reason |
+| Context | Yes | Why this exists � business reason |
 | Details | Yes | What happened or what was done |
 | Files Modified | If applicable | Exact file paths and what changed |
 | Verification | If applicable | How we confirmed the fix/feature works |
@@ -6629,16 +6699,16 @@ docs/
 #### Cross-Linking Rules
 
 ```
-BIBLE → DOCS:
+BIBLE ? DOCS:
   Every section that has been implemented MUST link to its feature doc.
   Every known issue MUST link to its incident/fix doc.
   The phase tracker MUST show doc references for completed phases.
 
-DOCS → BIBLE:
+DOCS ? BIBLE:
   Every doc file MUST reference the bible section it relates to.
   Every fix MUST reference the rule it was violating.
 
-DOCS → DOCS:
+DOCS ? DOCS:
   Audits reference the fixes they triggered.
   Fixes reference the audit that found the issue.
   Incidents reference the fix that resolved them.
@@ -6649,23 +6719,23 @@ DOCS → DOCS:
 
 The master index is the entry point for any agent or human. It MUST contain:
 
-1. **Quick Status** — Current system health, last audit score, open issues count
-2. **Recent Activity** — Last 10 documentation entries (newest first)
-3. **Open Issues** — All unresolved items across all doc types
-4. **Audit History** — All audits with scores and key findings
-5. **Fix Log** — All fixes with status
-6. **Feature Log** — All features with phase reference
-7. **Incident Log** — All incidents with severity and resolution status
-8. **Migration Log** — All DB migrations with execution status
+1. **Quick Status** � Current system health, last audit score, open issues count
+2. **Recent Activity** � Last 10 documentation entries (newest first)
+3. **Open Issues** � All unresolved items across all doc types
+4. **Audit History** � All audits with scores and key findings
+5. **Fix Log** � All fixes with status
+6. **Feature Log** � All features with phase reference
+7. **Incident Log** � All incidents with severity and resolution status
+8. **Migration Log** � All DB migrations with execution status
 
 ### Agent Operating Protocol
 
 ```
 BEFORE STARTING ANY WORK:
-  1. Read docs/INDEX.md — understand current state
-  2. Check docs/audits/ — know what's been found
-  3. Check docs/fixes/ — know what's been fixed (don't re-investigate)
-  4. Check docs/incidents/ — know what's failed before
+  1. Read docs/INDEX.md � understand current state
+  2. Check docs/audits/ � know what's been found
+  3. Check docs/fixes/ � know what's been fixed (don't re-investigate)
+  4. Check docs/incidents/ � know what's failed before
 
 DURING WORK:
   5. Create the appropriate docs/ file AS YOU WORK (not after)
@@ -6685,10 +6755,10 @@ AFTER COMPLETING WORK:
 |---|---|
 | Agent spends 30 min re-understanding context | Agent reads INDEX.md in 2 min, starts working |
 | Same bug investigated 3 times | Bug found once, fixed once, documented permanently |
-| "What happened?" → dig through chat history | "What happened?" → `docs/incidents/` in 5 seconds |
-| Code change with no reason → future confusion | Every change has traceable reason in `docs/fixes/` |
+| "What happened?" ? dig through chat history | "What happened?" ? `docs/incidents/` in 5 seconds |
+| Code change with no reason ? future confusion | Every change has traceable reason in `docs/fixes/` |
 | Audit findings lost after chat ends | Audit findings permanent in `docs/audits/` |
-| New CTO agent starts blind | New agent reads INDEX.md → full context in 5 minutes |
+| New CTO agent starts blind | New agent reads INDEX.md ? full context in 5 minutes |
 
 ### DB Tables (None Required)
 
@@ -6705,7 +6775,7 @@ This section creates the documentation layer that CONNECTS all other sections:
 
 ---
 
-## 41. 📲 Communication System — Multi-Channel Alert & Messaging
+## 41. ?? Communication System � Multi-Channel Alert & Messaging
 
 > *"Alert sirf DB mein store karna alert nahi hai. Alert tab hota hai jab CEO ke phone pe dikhe."*
 > *Audit Finding: Phase 21 built entire alert infrastructure but ZERO delivery channels connected. CEO has never received a single system alert.*
@@ -6721,38 +6791,38 @@ This section creates the documentation layer that CONNECTS all other sections:
 ### Communication Channel Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│            COMMUNICATION SYSTEM                      │
-├─────────────────────────────────────────────────────┤
-│                                                      │
-│  ┌──────────────┐  Priority & Channel Matrix         │
-│  │ Alert Engine  │                                    │
-│  │ (existing)    │──→ P0: WhatsApp + Telegram + Email │
-│  └──────────────┘──→ P1: Telegram + Email             │
-│                  ──→ P2: Email + Cliq                  │
-│                  ──→ P3: Cliq only                     │
-│                                                      │
-│  ┌──────────────┐  Lead Notifications                 │
-│  │ Lead Capture  │──→ WhatsApp (immediate)            │
-│  │ Events        │──→ Cliq (summary)                  │
-│  └──────────────┘                                    │
-│                                                      │
-│  ┌──────────────┐  Scheduled Reports                  │
-│  │ Morning Brief │──→ WhatsApp 7:30 AM               │
-│  │ Daily Report  │──→ Email 8:00 AM                  │
-│  │ Weekly Report │──→ Email + Telegram (Sunday)       │
-│  └──────────────┘                                    │
-│                                                      │
-│  ┌──────────────┐  Agent Communication               │
-│  │ Agent Alerts  │──→ WhatsApp (lead assignment)     │
-│  │ Group Mgmt    │──→ Telegram (group operations)    │
-│  └──────────────┘                                    │
-└─────────────────────────────────────────────────────┘
++-----------------------------------------------------+
+�            COMMUNICATION SYSTEM                      �
++-----------------------------------------------------�
+�                                                      �
+�  +--------------+  Priority & Channel Matrix         �
+�  � Alert Engine  �                                    �
+�  � (existing)    �--? P0: WhatsApp + Telegram + Email �
+�  +--------------+--? P1: Telegram + Email             �
+�                  --? P2: Email + Cliq                  �
+�                  --? P3: Cliq only                     �
+�                                                      �
+�  +--------------+  Lead Notifications                 �
+�  � Lead Capture  �--? WhatsApp (immediate)            �
+�  � Events        �--? Cliq (summary)                  �
+�  +--------------+                                    �
+�                                                      �
+�  +--------------+  Scheduled Reports                  �
+�  � Morning Brief �--? WhatsApp 7:30 AM               �
+�  � Daily Report  �--? Email 8:00 AM                  �
+�  � Weekly Report �--? Email + Telegram (Sunday)       �
+�  +--------------+                                    �
+�                                                      �
+�  +--------------+  Agent Communication               �
+�  � Agent Alerts  �--? WhatsApp (lead assignment)     �
+�  � Group Mgmt    �--? Telegram (group operations)    �
+�  +--------------+                                    �
++-----------------------------------------------------+
 ```
 
 ### Channel Specifications
 
-#### WhatsApp Business API (PRIMARY — P0)
+#### WhatsApp Business API (PRIMARY � P0)
 - Provider: WhatsApp Business Cloud API (Meta) or Interakt/Wati
 - Use cases: P0 alerts, lead notifications, agent lead assignment, CEO morning brief
 - Message templates: Must be pre-approved by Meta
@@ -6766,13 +6836,13 @@ This section creates the documentation layer that CONNECTS all other sections:
 - Commands: `/status`, `/leads_today`, `/health`, `/errors`
 - Rich messages: Inline keyboards, formatted text, images
 
-#### Email (P2 — Backup + Reports)
+#### Email (P2 � Backup + Reports)
 - Provider: Zoho Mail API or Resend/SendGrid
 - Use cases: Detailed reports, weekly summaries, non-urgent alerts
 - Templates: HTML email templates for each report type
 - Attachments: PDF reports, CSV exports
 
-#### Zoho Cliq (P3 — Team Ops)
+#### Zoho Cliq (P3 � Team Ops)
 - Integration via Zoho Cliq API
 - Use cases: Team notifications, internal discussions, bot commands
 - Channels: #system-alerts, #lead-updates, #agent-updates
@@ -6784,11 +6854,11 @@ This section creates the documentation layer that CONNECTS all other sections:
 DELIVERY GUARANTEE:
   1. Attempt primary channel
   2. Wait 30 seconds for delivery confirmation
-  3. If fail → attempt secondary channel
-  4. If fail → attempt tertiary channel
-  5. If ALL fail → LOG AS CRITICAL INCIDENT (P0)
+  3. If fail ? attempt secondary channel
+  4. If fail ? attempt tertiary channel
+  5. If ALL fail ? LOG AS CRITICAL INCIDENT (P0)
   6. Retry queue: 3 attempts, 5-minute intervals
-  7. After 3 failures → escalate to next priority level
+  7. After 3 failures ? escalate to next priority level
 
 VERIFICATION:
   Every alert_delivery record MUST have:
@@ -6803,67 +6873,65 @@ VERIFICATION:
 
 ---
 
-## 42. 🖼️ Media Management System — Storage, CDN & Image Intelligence
+## 42. ??? Media Management System � Storage, CDN & Image Intelligence
 
 > *"Koi bhi image kaha ja rahe hai, kis ratio m kaha image lagane hai kaha se pata chalega?"*
 > *Audit Finding: Images saved to `public/uploads/` which is READ-ONLY on Vercel. Every image upload fails in production.*
 
-### The Problem (From Audit)
+### Current Truth (May 5, 2026)
 
-- `public/uploads/` = Vercel read-only filesystem → ALL uploads FAIL in production
-- Upload API returns `{ file: { file_url } }` but editor reads `data.url` → saves `null`
-- No alt text field
-- No image size/ratio guidelines
-- No media search (input exists but not wired)
-- File deletion only removes DB record, orphans actual file
-- No content-to-image association tracking
-- No CDN strategy
+- uploads write to Supabase Storage instead of the Vercel filesystem
+- admin media returns CDN-backed `file_url` records from `media_files`
+- the admin media UI now supports search, inline alt-text editing, delete, and basic folder-path organization
+- delete removes the storage object when the storage path can be derived from `file_url`, then removes the DB record
+- basic folders are path-based only (`campaigns/summer-drive`, etc.) and do not require a schema change
+- remaining gaps are richer governance flows such as content association management, folder move/rename, and broader live-proof coverage
 
 ### Media Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│              MEDIA MANAGEMENT SYSTEM                  │
-├─────────────────────────────────────────────────────┤
-│                                                      │
-│  Upload Flow:                                        │
-│  Admin UI → API → Validate → Process → Supabase     │
-│                                                      │
-│  ┌──────────┐   ┌──────────┐   ┌──────────────────┐ │
-│  │ Upload   │→  │ Process  │→  │ Supabase Storage │ │
-│  │ (drag/   │   │ (resize, │   │ (CDN-enabled     │ │
-│  │  paste,  │   │  webp,   │   │  bucket with     │ │
-│  │  browse) │   │  meta)   │   │  public access)  │ │
-│  └──────────┘   └──────────┘   └──────────────────┘ │
-│                                                      │
-│  Storage Buckets:                                    │
-│  ├── media/hero/        (1200×675, 16:9)            │
-│  ├── media/thumbnail/   (600×450, 4:3)              │
-│  ├── media/og/          (1200×630, 1.91:1)          │
-│  ├── media/square/      (600×600, 1:1)              │
-│  └── media/original/    (as uploaded)               │
-│                                                      │
-│  Every Image Record:                                 │
-│  - file_url (Supabase CDN URL)                      │
-│  - alt_text (mandatory for SEO)                     │
-│  - dimensions (width × height)                      │
-│  - file_size                                        │
-│  - format (webp/jpeg/png)                           │
-│  - associated_content_id (FK to content)            │
-│  - context (hero/thumbnail/og/inline)               │
-│  - uploaded_by                                      │
-│  - created_at                                       │
-└─────────────────────────────────────────────────────┘
++-----------------------------------------------------+
+�              MEDIA MANAGEMENT SYSTEM                  �
++-----------------------------------------------------�
+�                                                      �
+�  Upload Flow:                                        �
+�  Admin UI ? API ? Validate ? Process ? Supabase     �
+�                                                      �
+�  +----------+   +----------+   +------------------+ �
+�  � Upload   �?  � Process  �?  � Supabase Storage � �
+�  � (drag/   �   � (resize, �   � (CDN-enabled     � �
+�  �  paste,  �   �  webp,   �   �  bucket with     � �
+�  �  browse) �   �  meta)   �   �  public access)  � �
+�  +----------+   +----------+   +------------------+ �
+�                                                      �
+�  Storage Buckets:                                    �
+�  +-- media/hero/        (1200�675, 16:9)            �
+�  +-- media/thumbnail/   (600�450, 4:3)              �
+�  +-- media/og/          (1200�630, 1.91:1)          �
+�  +-- media/square/      (600�600, 1:1)              �
+�  +-- media/original/    (as uploaded)               �
+�                                                      �
+�  Every Image Record:                                 �
+�  - file_url (Supabase CDN URL)                      �
+�  - alt_text (mandatory for SEO)                     �
+�  - dimensions (width � height)                      �
+�  - file_size                                        �
+�  - format (webp/jpeg/png)                           �
+�  - associated_content_id (FK to content)            �
+�  - context (hero/thumbnail/og/inline)               �
+�  - uploaded_by                                      �
+�  - created_at                                       �
++-----------------------------------------------------+
 ```
 
 ### Image Standards (Rule 30)
 
 | Context | Ratio | Dimensions | Max Size | Format |
 |---------|-------|------------|----------|--------|
-| Hero | 16:9 | 1200×675 | 500KB | WebP |
-| Thumbnail | 4:3 | 600×450 | 200KB | WebP |
-| OG Image | 1.91:1 | 1200×630 | 500KB | WebP |
-| Square | 1:1 | 600×600 | 300KB | WebP |
+| Hero | 16:9 | 1200�675 | 500KB | WebP |
+| Thumbnail | 4:3 | 600�450 | 200KB | WebP |
+| OG Image | 1.91:1 | 1200�630 | 500KB | WebP |
+| Square | 1:1 | 600�600 | 300KB | WebP |
 | Blog Inline | Free | max 1200 wide | 500KB | WebP |
 
 ### Admin Media Library Features
@@ -6881,16 +6949,16 @@ VERIFICATION:
 
 ---
 
-## 43. 🧩 Unified Content System — Single Dashboard, All Content
+## 43. ?? Unified Content System � Single Dashboard, All Content
 
 > *"CEO ko ek jagah se puri website ka content dikhna chahiye."*
 > *Audit Finding: Content scattered across 3 admin sections (CCC drafts, Pages, Blog) with no cross-reference. CEO can't see "all content on my website" in one place.*
 
 ### The Problem (From Audit)
 
-- AI-generated pages → `/admin/ccc/drafts`
-- Manual CMS pages → `/admin/pages` (HIDDEN from navigation!)
-- Blog posts → `/admin/blog`
+- AI-generated pages ? `/admin/ccc/drafts`
+- Manual CMS pages ? `/admin/pages` (HIDDEN from navigation!)
+- Blog posts ? `/admin/blog`
 - No unified listing
 - No cross-system search
 - No way to see all published pages
@@ -6899,34 +6967,34 @@ VERIFICATION:
 ### Unified Content Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│          UNIFIED CONTENT DASHBOARD                    │
-│          /admin/content                               │
-├─────────────────────────────────────────────────────┤
-│                                                      │
-│  Tab: ALL CONTENT                                    │
-│  ┌─────────────────────────────────────────────────┐ │
-│  │ Type     | Title    | Status   | URL    | Date  │ │
-│  │──────────|──────────|──────────|────────|───────│ │
-│  │ CCC      | LIC...   | Published| /lic...| Apr 1│ │
-│  │ Page     | About    | Published| /about | Mar 1│ │
-│  │ Blog     | How to...| Draft    | /blog/.| Apr 5│ │
-│  │ Download | Premium..| Active   | /down..| Feb 1│ │
-│  └─────────────────────────────────────────────────┘ │
-│                                                      │
-│  Filters:                                            │
-│  [Type ▼] [Status ▼] [City ▼] [Date Range] [Search] │
-│                                                      │
-│  Actions:                                            │
-│  [+ Create New] [Bulk Publish] [Export CSV]          │
-│                                                      │
-│  Content Types Unified:                              │
-│  ├── CCC Drafts (AI-generated content)              │
-│  ├── Manual Pages (custom pages from page builder)  │
-│  ├── Blog Posts (blog content)                      │
-│  ├── Downloads (lead magnet resources)              │
-│  └── Location Pages (generated per city/locality)   │
-└─────────────────────────────────────────────────────┘
++-----------------------------------------------------+
+�          UNIFIED CONTENT DASHBOARD                    �
+�          /admin/content                               �
++-----------------------------------------------------�
+�                                                      �
+�  Tab: ALL CONTENT                                    �
+�  +-------------------------------------------------+ �
+�  � Type     | Title    | Status   | URL    | Date  � �
+�  �----------|----------|----------|--------|-------� �
+�  � CCC      | LIC...   | Published| /lic...| Apr 1� �
+�  � Page     | About    | Published| /about | Mar 1� �
+�  � Blog     | How to...| Draft    | /blog/.| Apr 5� �
+�  � Download | Premium..| Active   | /down..| Feb 1� �
+�  +-------------------------------------------------+ �
+�                                                      �
+�  Filters:                                            �
+�  [Type ?] [Status ?] [City ?] [Date Range] [Search] �
+�                                                      �
+�  Actions:                                            �
+�  [+ Create New] [Bulk Publish] [Export CSV]          �
+�                                                      �
+�  Content Types Unified:                              �
+�  +-- CCC Drafts (AI-generated content)              �
+�  +-- Manual Pages (custom pages from page builder)  �
+�  +-- Blog Posts (blog content)                      �
+�  +-- Downloads (lead magnet resources)              �
+�  +-- Location Pages (generated per city/locality)   �
++-----------------------------------------------------+
 ```
 
 ### CEO Control Requirements
@@ -6939,18 +7007,36 @@ VERIFICATION:
 - Bulk operations on selected items
 - Export content listing as CSV
 
-### Phase: 26 | Priority: A | Depends on: None
+### Execution Update (2026-05-04)
+
+- Module 1 is now implemented and live-proven in the requested scope through the shared inventory now rendered on `/admin/ccc`, `/admin/blog`, and `/admin/resources`
+- the deployed unified inventory now covers:
+  - drafts
+  - pages
+  - blog posts
+  - resources
+- live proof confirmed:
+  - route reachability
+  - real inventory data
+  - search and filters
+  - create/edit controls
+  - slug edit path
+  - FAQ edit path for drafts
+  - publish, archive, and restore lifecycle operations
+- this does not close the entire Phase 26 vision yet because bulk operations across the whole dashboard, export, and broader cross-content depth still remain open
+
+### Phase: 26 | Priority: A | Status: PARTIAL | Depends on: None
 
 ---
 
-## 44. 🗺️ Geo Control System — City, Locality, Pincode Management
+## 44. ??? Geo Control System � City, Locality, Pincode Management
 
 > *"Agar mai Krishna Nagar ke leye hi post likhna hai to kaise karunga?"*
-> *Audit Finding: CEO can't add cities or localities from admin. Bulk planner is city-level only — no locality/pincode targeting.*
+> *Audit Finding: CEO can't add cities or localities from admin. Bulk planner is city-level only � no locality/pincode targeting.*
 
 ### The Problem (From Audit)
 
-- City list depends on what's in DB — no admin UI to add cities
+- City list depends on what's in DB � no admin UI to add cities
 - No locality-level targeting in bulk planner
 - No pincode-based targeting (despite pincode API existing)
 - No way to trigger generation for specific locality
@@ -6959,35 +7045,35 @@ VERIFICATION:
 ### Geo Control Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│            GEO CONTROL SYSTEM                        │
-│            /admin/geo                                │
-├─────────────────────────────────────────────────────┤
-│                                                      │
-│  ┌── Cities ──────────────────────────────────┐      │
-│  │ [+ Add City]  [Import CSV]                │      │
-│  │                                            │      │
-│  │ Delhi ──── 12 localities ─── 89 pincodes  │      │
-│  │ Mumbai ─── 8 localities ──── 45 pincodes  │      │
-│  │ Jaipur ─── 5 localities ──── 23 pincodes  │      │
-│  └────────────────────────────────────────────┘      │
-│                                                      │
-│  ┌── Localities (drill into city) ────────────┐      │
-│  │ [+ Add Locality]  [Set Priority]           │      │
-│  │                                            │      │
-│  │ Krishna Nagar ── P1 ── 5 pages ── Active  │      │
-│  │ Laxmi Nagar ──── P2 ── 3 pages ── Active  │      │
-│  │ Preet Vihar ──── P3 ── 0 pages ── Queued  │      │
-│  └────────────────────────────────────────────┘      │
-│                                                      │
-│  ┌── Actions ─────────────────────────────────┐      │
-│  │ [Generate for this city]                   │      │
-│  │ [Generate for this locality]               │      │
-│  │ [Generate for this pincode]                │      │
-│  │ [View coverage report]                     │      │
-│  │ [Assign agent to area]                     │      │
-│  └────────────────────────────────────────────┘      │
-└─────────────────────────────────────────────────────┘
++-----------------------------------------------------+
+�            GEO CONTROL SYSTEM                        �
+�            /admin/geo                                �
++-----------------------------------------------------�
+�                                                      �
+�  +-- Cities ----------------------------------+      �
+�  � [+ Add City]  [Import CSV]                �      �
+�  �                                            �      �
+�  � Delhi ---- 12 localities --- 89 pincodes  �      �
+�  � Mumbai --- 8 localities ---- 45 pincodes  �      �
+�  � Jaipur --- 5 localities ---- 23 pincodes  �      �
+�  +--------------------------------------------+      �
+�                                                      �
+�  +-- Localities (drill into city) ------------+      �
+�  � [+ Add Locality]  [Set Priority]           �      �
+�  �                                            �      �
+�  � Krishna Nagar -- P1 -- 5 pages -- Active  �      �
+�  � Laxmi Nagar ---- P2 -- 3 pages -- Active  �      �
+�  � Preet Vihar ---- P3 -- 0 pages -- Queued  �      �
+�  +--------------------------------------------+      �
+�                                                      �
+�  +-- Actions ---------------------------------+      �
+�  � [Generate for this city]                   �      �
+�  � [Generate for this locality]               �      �
+�  � [Generate for this pincode]                �      �
+�  � [View coverage report]                     �      �
+�  � [Assign agent to area]                     �      �
+�  +--------------------------------------------+      �
++-----------------------------------------------------+
 ```
 
 ### CEO Control Requirements
@@ -6995,7 +7081,7 @@ VERIFICATION:
 - Add new city (with state, priority, active status)
 - Add new locality (under a city, with priority)
 - Import pincodes (CSV upload or single entry)
-- Pincode auto-resolution (110051 → Krishna Nagar, East Delhi)
+- Pincode auto-resolution (110051 ? Krishna Nagar, East Delhi)
 - Toggle city/locality active/inactive
 - Trigger page generation per city, per locality, per pincode
 - View coverage metrics (planned vs generated pages per area)
@@ -7006,7 +7092,7 @@ VERIFICATION:
 
 ---
 
-## 45. 🧭 Navigation Management System — Database-Driven Menus
+## 45. ?? Navigation Management System � Database-Driven Menus
 
 > *"Agar mujhe koi nav menu ko badalna ho, ya koi new lagane ho ya koi sub menu banane ho to kya mai code m ja kar karunga?"*
 > *Production update (2026-05-02): P0.2 and P0.3 are now live-proven together: one shared `navigation_menu` system controls the menus, and the active admin shell/API surface now enforce role-based visibility and access control.*
@@ -7025,45 +7111,45 @@ VERIFICATION:
 ### Navigation Architecture
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│        NAVIGATION MANAGEMENT SYSTEM (CURRENT TRUTH)       │
-│        /admin/navigation                                  │
-├────────────────────────────────────────────────────────────┤
-│                                                            │
-│  Controlled live from one surface now:                     │
-│  ├── Public Header Nav (desktop + mobile)                  │
-│  ├── Public Footer Nav                                     │
-│  └── Active Admin Sidebar Nav                              │
-│                                                            │
-│  DB Table: navigation_menu                                 │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │ id | name | slug | parent_id | order_index |        │  │
-│  │ is_active | is_cta | menu_key | icon_key | note |   │  │
-│  │ created_at | updated_at                             │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                                                            │
-│  Shared control paths:                                     │
-│  /admin/navigation                                          │
-│       -> app/api/admin/navigation                           │
-│       -> public.navigation_menu                             │
-│       -> app/api/navigation?menu=public_header              │
-│       -> app/api/navigation?menu=public_footer              │
-│       -> app/admin/ClientLayout.jsx (admin_sidebar)         │
-│       -> components/layout/Navbar.jsx                       │
-│       -> components/layout/Footer.jsx                       │
-│       -> middleware.js + withAdminAuth() (role enforcement) │
-│                                                            │
-│  Remaining gap:                                             │
-│  1. Drag-drop ordering + preview-before-save                │
-│  2. Legacy surface cleanup if it becomes active again       │
-└────────────────────────────────────────────────────────────┘
++------------------------------------------------------------+
+�        NAVIGATION MANAGEMENT SYSTEM (CURRENT TRUTH)       �
+�        /admin/navigation                                  �
++------------------------------------------------------------�
+�                                                            �
+�  Controlled live from one surface now:                     �
+�  +-- Public Header Nav (desktop + mobile)                  �
+�  +-- Public Footer Nav                                     �
+�  +-- Active Admin Sidebar Nav                              �
+�                                                            �
+�  DB Table: navigation_menu                                 �
+�  +------------------------------------------------------+  �
+�  � id | name | slug | parent_id | order_index |        �  �
+�  � is_active | is_cta | menu_key | icon_key | note |   �  �
+�  � created_at | updated_at                             �  �
+�  +------------------------------------------------------+  �
+�                                                            �
+�  Shared control paths:                                     �
+�  /admin/navigation                                          �
+�       -> app/api/admin/navigation                           �
+�       -> public.navigation_menu                             �
+�       -> app/api/navigation?menu=public_header              �
+�       -> app/api/navigation?menu=public_footer              �
+�       -> app/admin/ClientLayout.jsx (admin_sidebar)         �
+�       -> components/layout/Navbar.jsx                       �
+�       -> components/layout/Footer.jsx                       �
+�       -> middleware.js + withAdminAuth() (role enforcement) �
+�                                                            �
+�  Remaining gap:                                             �
+�  1. Drag-drop ordering + preview-before-save                �
+�  2. Legacy surface cleanup if it becomes active again       �
++------------------------------------------------------------+
 ```
 
 ### Phase: 25 | Priority: A | Depends on: Navigation Fix (Priority R)
 
 ---
 
-## 46. 🧠 Decision System — Why Now, Why Not Later
+## 46. ?? Decision System � Why Now, Why Not Later
 
 > *"Har decision ka jawab hona chahiye: Why now? Why not later? Impact on system?"*
 
@@ -7073,21 +7159,21 @@ Every significant decision (new phase, feature, architecture change) MUST be doc
 
 ```
 DECISION TEMPLATE:
-  ┌─────────────────────────────────────────┐
-  │ Decision: [What are we deciding]        │
-  │ Date: [When]                            │
-  │ Proposed by: [CTO/CEO]                  │
-  │ Approved by: [CEO — always]             │
-  │                                         │
-  │ Q1: Why NOW? (not later)                │
-  │ Q2: What is the IMPACT on system?       │
-  │ Q3: What are the DEPENDENCIES?          │
-  │ Q4: What is the ROLLBACK plan?          │
-  │ Q5: What is the COST (time + money)?    │
-  │                                         │
-  │ Decision: [APPROVED / REJECTED / DEFER] │
-  │ File: docs/decisions/decision-{name}.md │
-  └─────────────────────────────────────────┘
+  +-----------------------------------------+
+  � Decision: [What are we deciding]        �
+  � Date: [When]                            �
+  � Proposed by: [CTO/CEO]                  �
+  � Approved by: [CEO � always]             �
+  �                                         �
+  � Q1: Why NOW? (not later)                �
+  � Q2: What is the IMPACT on system?       �
+  � Q3: What are the DEPENDENCIES?          �
+  � Q4: What is the ROLLBACK plan?          �
+  � Q5: What is the COST (time + money)?    �
+  �                                         �
+  � Decision: [APPROVED / REJECTED / DEFER] �
+  � File: docs/decisions/decision-{name}.md �
+  +-----------------------------------------+
 ```
 
 ### Historical Decisions That Should Have Used This System
@@ -7103,15 +7189,15 @@ DECISION TEMPLATE:
 
 ---
 
-## 47. 📊 Truth System — Single Source of Truth, Anti-Confusion
+## 47. ?? Truth System � Single Source of Truth, Anti-Confusion
 
 > *"Ek jagah ek cheez likhi hogi. Duplicate kahi nahi hogi. Confusion kabhi nahi hoga."*
 > *Audit Finding: Bible had TWO contradictory status footers with different phase counts and different data.*
 
 ### The Problem (From Audit)
 
-1. TWO status footers existed (line ~6475 and ~7025) — contradictory data
-2. Footer 1 said "Completed (6)" — actually 7 phases attempted
+1. TWO status footers existed (line ~6475 and ~7025) � contradictory data
+2. Footer 1 said "Completed (6)" � actually 7 phases attempted
 3. Phase 5 missing from Footer 1 entirely
 4. No section-level completion tracking
 5. Stale "Next Action" claims
@@ -7122,7 +7208,7 @@ DECISION TEMPLATE:
 TRUTH RULE 1: ONE STATUS SECTION
   This document has EXACTLY ONE status section: "SINGLE SOURCE OF TRUTH" at the bottom.
   No other status footer, summary, or phase listing is authoritative.
-  All other references are convenience — the truth section is THE truth.
+  All other references are convenience � the truth section is THE truth.
 
 TRUTH RULE 2: UPDATE ON EVERY CHANGE
   When ANY phase status changes:
@@ -7137,10 +7223,10 @@ TRUTH RULE 3: NO STALE DATA
 
 TRUTH RULE 4: CROSS-REFERENCE VALIDATION
   After every bible update, CTO MUST verify:
-  □ Truth section matches Execution Priority Matrix
-  □ Phase count in truth section matches phases listed
-  □ No duplicate status sections exist
-  □ All referenced phases have correct statuses
+  ? Truth section matches Execution Priority Matrix
+  ? Phase count in truth section matches phases listed
+  ? No duplicate status sections exist
+  ? All referenced phases have correct statuses
 
 TRUTH RULE 5: VERSION HISTORY
   Major bible updates MUST be logged:
@@ -7152,25 +7238,25 @@ TRUTH RULE 5: VERSION HISTORY
 
 ---
 
-## 48. 🏗️ Mosaic Execution System — Parallel Worker Model
+## 48. ??? Mosaic Execution System � Parallel Worker Model
 
 > *"Alag alag worker independently kaam karenge, last wala worker sabko join karega."*
 
 ### What is Mosaic Execution?
 
-Like tiles in a mosaic — each worker builds their tile independently. When all tiles are ready, they're joined into the complete picture. CTO verifies the join. CEO approves the final result.
+Like tiles in a mosaic � each worker builds their tile independently. When all tiles are ready, they're joined into the complete picture. CTO verifies the join. CEO approves the final result.
 
 ### Execution Flow
 
 ```
 STEP 1: PHASE BREAKDOWN
   CTO breaks phase into independent sub-phases
-  Example: Phase 3 Fix → 3c (storage), 3d (URL bug), 3e (alt text), 3f (search)
+  Example: Phase 3 Fix ? 3c (storage), 3d (URL bug), 3e (alt text), 3f (search)
 
 STEP 2: DEPENDENCY CHECK
   CTO identifies which sub-phases depend on each other
-  Independent sub-phases → can run in parallel
-  Dependent sub-phases → must run sequentially
+  Independent sub-phases ? can run in parallel
+  Dependent sub-phases ? must run sequentially
 
 STEP 3: WORKER ASSIGNMENT
   Each sub-phase assigned to a worker
@@ -7183,7 +7269,7 @@ STEP 4: INDEPENDENT EXECUTION
   Workers create docs/ entry for their work
 
 STEP 5: JOIN PHASE
-  When all sub-phases complete → CTO runs join verification
+  When all sub-phases complete ? CTO runs join verification
   CTO checks: no file conflicts, no regressions, integration works
   CTO resolves any conflicts between workers
 
@@ -7197,44 +7283,44 @@ STEP 6: CEO REVIEW
 
 ```
 I WILL:
-  ✅ Read the bible (this document) before starting
-  ✅ Read the relevant section(s) for my sub-phase
-  ✅ Read the audit report for known issues
-  ✅ Claim my sub-phase explicitly
-  ✅ Work ONLY within my assigned scope
-  ✅ Document every file I create or modify
-  ✅ Create a docs/ entry for my work
-  ✅ Run verification before declaring done
-  ✅ Report blockers immediately
+  ? Read the bible (this document) before starting
+  ? Read the relevant section(s) for my sub-phase
+  ? Read the audit report for known issues
+  ? Claim my sub-phase explicitly
+  ? Work ONLY within my assigned scope
+  ? Document every file I create or modify
+  ? Create a docs/ entry for my work
+  ? Run verification before declaring done
+  ? Report blockers immediately
 
 I WILL NOT:
-  ❌ Modify files owned by another worker
-  ❌ Skip bible review
-  ❌ Mark the parent phase as COMPLETE
-  ❌ Bypass any constitution article or CCC rule
-  ❌ Make "improvements" outside my scope
-  ❌ Leave my work undocumented
+  ? Modify files owned by another worker
+  ? Skip bible review
+  ? Mark the parent phase as COMPLETE
+  ? Bypass any constitution article or CCC rule
+  ? Make "improvements" outside my scope
+  ? Leave my work undocumented
 ```
 
 ### Join Verification Checklist (CTO ONLY)
 
 ```
 After all sub-phases complete:
-  □ All sub-phase workers have marked their work done
-  □ All docs/ entries created
-  □ No file conflicts between workers
-  □ Integration between sub-phases works
-  □ No regressions in existing functionality
-  □ All tests pass
-  □ Bible truth section updated
-  □ Phase ready for CEO review
+  ? All sub-phase workers have marked their work done
+  ? All docs/ entries created
+  ? No file conflicts between workers
+  ? Integration between sub-phases works
+  ? No regressions in existing functionality
+  ? All tests pass
+  ? Bible truth section updated
+  ? Phase ready for CEO review
 ```
 
 ### Rule: 33 | Governance: Applies to ALL multi-part phases
 
 ---
 
-## 49. 🔥 Staged Audit Fix Plan — Priority-Ordered Remediation
+## 49. ?? Staged Audit Fix Plan � Priority-Ordered Remediation
 
 > *"Abhi jo audit keya hai usko thik karne ke leye stage wise plan."*
 > *Reference: `docs/audits/audit-2026-04-19-cto-forensic-report.md`*
@@ -7248,18 +7334,18 @@ After all sub-phases complete:
 
 ---
 
-### STAGE 1: CRITICAL BUG FIXES (Audit Part 2 — Phase 3)
+### STAGE 1: CRITICAL BUG FIXES (Audit Part 2 � Phase 3)
 
 > **Target: Fix Phase 3 from 5/10 to 9/10**
 
 | Sub-stage | Fix | Files | Severity | Audit Ref | Status |
 |-----------|-----|-------|----------|-----------|--------|
-| 1a | Fix URL mapping bug: `data.url` → `data.file.file_url` | `app/admin/ccc/drafts/[id]/page.js` line 67 | SHOWSTOPPER | Part 2, Bug 1 | ✅ DONE |
-| 1b | Replace `public/uploads/` with Supabase Storage bucket | `app/api/admin/media/upload/route.js` | SHOWSTOPPER | Part 2, Bug 2 | ✅ DONE |
-| 1c | Add image alt text field to draft editor | `app/admin/ccc/drafts/[id]/page.js` | HIGH | Part 2, Gap | ✅ DONE (UI + featured_image_alt DB column) |
-| 1d | Wire up media search in media library | `features/admin/media/MediaContent.jsx` | MEDIUM | Part 2, Gap | ✅ DONE (client-side filter by file_name) |
-| 1e | Fix file deletion (delete actual file + DB record) | `app/api/admin/media/route.js` | MEDIUM | Part 2, Gap | ✅ DONE (Storage path extraction + deletion) |
-| 1f | Add `draft_id` FK to `media_files` table | Migration SQL | MEDIUM | Part 2, Gap | ✅ DONE (20260420_priority_r_schema_fixes.sql) |
+| 1a | Fix URL mapping bug: `data.url` ? `data.file.file_url` | `app/admin/ccc/drafts/[id]/page.js` line 67 | SHOWSTOPPER | Part 2, Bug 1 | ? DONE |
+| 1b | Replace `public/uploads/` with Supabase Storage bucket | `app/api/admin/media/upload/route.js` | SHOWSTOPPER | Part 2, Bug 2 | ? DONE |
+| 1c | Add image alt text field to draft editor | `app/admin/ccc/drafts/[id]/page.js` | HIGH | Part 2, Gap | ? DONE (UI + featured_image_alt DB column) |
+| 1d | Wire up media search in media library | `features/admin/media/MediaContent.jsx` | MEDIUM | Part 2, Gap | ? DONE (client-side filter by file_name) |
+| 1e | Fix file deletion (delete actual file + DB record) | `app/api/admin/media/route.js` | MEDIUM | Part 2, Gap | ? DONE (Storage path extraction + deletion) |
+| 1f | Add `draft_id` FK to `media_files` table | Migration SQL | MEDIUM | Part 2, Gap | ? DONE (20260420_priority_r_schema_fixes.sql) |
 
 **Parallel execution:** 1a (instant fix), 1b (Supabase setup), 1c-1f (editor improvements)
 **Dependencies:** 1b must complete before 1e (need Supabase to test file deletion)
@@ -7272,48 +7358,48 @@ After all sub-phases complete:
 
 | Sub-stage | Fix | Files | Severity | Audit Ref | Status |
 |-----------|-----|-------|----------|-----------|--------|
-| 2a | Add `/admin/pages` to new sidebar NAV_LINKS | `app/admin/ClientLayout.jsx` | HIGH | Part 3, Page 1 | ✅ DONE |
-| 2b | Remove old AdminLayout.jsx navigation (consolidate to ONE) | `components/admin/AdminLayout.jsx` | HIGH | Part 3, Section 4.4 | ✅ DONE |
-| 2c | Add "Create New Page" button on CCC overview | `app/admin/ccc/page.js` | MEDIUM | Part 3, Page 1 | ✅ DONE (handleCreateDraft) |
-| 2d | Add single-page generation trigger from CCC | `app/admin/ccc/page.js` | MEDIUM | Part 3, Page 1 | ✅ DONE (generate-single API + UI) |
+| 2a | Add `/admin/pages` to new sidebar NAV_LINKS | `app/admin/ClientLayout.jsx` | HIGH | Part 3, Page 1 | ? DONE |
+| 2b | Remove old AdminLayout.jsx navigation (consolidate to ONE) | `components/admin/AdminLayout.jsx` | HIGH | Part 3, Section 4.4 | ? DONE |
+| 2c | Add "Create New Page" button on CCC overview | `app/admin/ccc/page.js` | MEDIUM | Part 3, Page 1 | ? DONE (handleCreateDraft) |
+| 2d | Add single-page generation trigger from CCC | `app/admin/ccc/page.js` | MEDIUM | Part 3, Page 1 | ? DONE (generate-single API + UI) |
 
 **Parallel execution:** 2a + 2b (navigation), 2c + 2d (CCC features)
 
 ---
 
-### STAGE 3: ALERT DELIVERY — CONNECT CHANNELS (Audit Part 4.1, 4.2, 4.3)
+### STAGE 3: ALERT DELIVERY � CONNECT CHANNELS (Audit Part 4.1, 4.2, 4.3)
 
-> **Target: Fix Phase 21 from 7/10 to 9/10 — CEO actually receives alerts**
+> **Target: Fix Phase 21 from 7/10 to 9/10 � CEO actually receives alerts**
 > 
-> **CEO DIRECTIVE (2026-04-19):** WhatsApp Business API is DEFERRED — Meta account restrictions make it unusable. Zoho CRM is used separately for WhatsApp communication. Telegram is the ONLY active programmatic alert channel. All WhatsApp-related env vars are NOT required.
+> **CEO DIRECTIVE (2026-04-19):** WhatsApp Business API is DEFERRED � Meta account restrictions make it unusable. Zoho CRM is used separately for WhatsApp communication. Telegram is the ONLY active programmatic alert channel. All WhatsApp-related env vars are NOT required.
 
 | Sub-stage | Fix | Severity | Audit Ref | Status |
 |-----------|-----|----------|-----------|--------|
-| 3a | ~~WhatsApp Business API integration~~ | ~~CRITICAL~~ | Part 4.1 | 🔒 DEFERRED (CEO directive — Meta restrictions) |
-| 3b | Telegram Bot setup + CEO private channel | HIGH | Part 4.2 | ✅ CODE DONE (Telegram in alertSystem.js) |
-| 3c | Connect `alertSystem.js` to Telegram (primary channel) | CRITICAL | Part 4.1+4.2 | ✅ DONE (Telegram active) |
-| 3d | Set `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` in Vercel env vars | CRITICAL | Part 4.2 | ✅ DONE (confirmed in .env.local + Vercel) |
-| 3e | Test P0 alert end-to-end: generate → deliver → CEO receives on Telegram | CRITICAL | Part 4.1 | ✅ VERIFIED (message_id:7, API 200, see docs/audits/verification-2026-04-20-telegram-alert-delivery.md) |
-| 3f | Zoho Cliq basic integration (team channel notifications) | MEDIUM | Part 4.3 | ⬜ NOT STARTED |
+| 3a | ~~WhatsApp Business API integration~~ | ~~CRITICAL~~ | Part 4.1 | ?? DEFERRED (CEO directive � Meta restrictions) |
+| 3b | Telegram Bot setup + CEO private channel | HIGH | Part 4.2 | ? CODE DONE (Telegram in alertSystem.js) |
+| 3c | Connect `alertSystem.js` to Telegram (primary channel) | CRITICAL | Part 4.1+4.2 | ? DONE (Telegram active) |
+| 3d | Set `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` in Vercel env vars | CRITICAL | Part 4.2 | ? DONE (confirmed in .env.local + Vercel) |
+| 3e | Test P0 alert end-to-end: generate ? deliver ? CEO receives on Telegram | CRITICAL | Part 4.1 | ? VERIFIED (message_id:7, API 200, see docs/audits/verification-2026-04-20-telegram-alert-delivery.md) |
+| 3f | Zoho Cliq basic integration (team channel notifications) | MEDIUM | Part 4.3 | ? NOT STARTED |
 
 **Active channel:** Telegram only. WhatsApp deferred until Meta restrictions resolved.
 **Dependencies:** 3b must complete before 3c-3e can proceed
 
 ---
 
-### STAGE 4: RBAC — REAL USER MANAGEMENT (Audit Part 3, Phase 14)
+### STAGE 4: RBAC � REAL USER MANAGEMENT (Audit Part 3, Phase 14)
 
 > **Target: Fix Phase 14 from 6/10 to 8/10**
 
 | Sub-stage | Fix | Severity | Audit Ref | Status |
 |-----------|-----|----------|-----------|--------|
-| 4a | Create `admin_users` table with email, hashed password, role | CRITICAL | Part 3, Section 4.7 | ✅ DONE (migration 041_real_rbac_admin_users.sql) |
-| 4b | Replace single `ADMIN_PASSWORD` with per-user login | CRITICAL | Part 3, Section 4.7 | ✅ DONE (bcrypt auth, dual-mode login) |
-| 4c | Implement role-based access (super_admin, admin, editor, agent) | HIGH | Part 3, Section 4.7 | ✅ DONE (requireRole in verifyAdminSession.js) |
-| 4d | User management UI (`/admin/users`) — create, edit, disable users | HIGH | Part 3, Section 4.7 | ✅ DONE (invite modal, bcrypt hash, API POST) |
-| 4e | Session management (JWT or Supabase Auth based) | HIGH | Part 3, Section 4.7 | ✅ DONE (JWT via jose, httpOnly cookie, 24h expiry) |
+| 4a | Create `admin_users` table with email, hashed password, role | CRITICAL | Part 3, Section 4.7 | ? DONE (migration 041_real_rbac_admin_users.sql) |
+| 4b | Replace single `ADMIN_PASSWORD` with per-user login | CRITICAL | Part 3, Section 4.7 | ? DONE (bcrypt auth, dual-mode login) |
+| 4c | Implement role-based access (super_admin, admin, editor, agent) | HIGH | Part 3, Section 4.7 | ? DONE (requireRole in verifyAdminSession.js) |
+| 4d | User management UI (`/admin/users`) � create, edit, disable users | HIGH | Part 3, Section 4.7 | ? DONE (invite modal, bcrypt hash, API POST) |
+| 4e | Session management (JWT or Supabase Auth based) | HIGH | Part 3, Section 4.7 | ? DONE (JWT via jose, httpOnly cookie, 24h expiry) |
 
-**Sequential execution:** 4a → 4b → 4c → 4d → 4e (each builds on previous)
+**Sequential execution:** 4a ? 4b ? 4c ? 4d ? 4e (each builds on previous)
 
 ---
 
@@ -7323,11 +7409,11 @@ After all sub-phases complete:
 
 | Sub-stage | Fix | Severity | Audit Ref | Status |
 |-----------|-----|----------|-----------|--------|
-| 5a | CEO can add new city from `/admin/locations/geo` | HIGH | Part 3, Page 3 | ✅ DONE (add city form in geo page) |
-| 5b | CEO can add new locality under any city | HIGH | Part 3, Page 3 | ✅ DONE (locality drill-down + add form) |
-| 5c | Add locality-level targeting to bulk planner | HIGH | Part 3, Page 2 | ⚠️ PARTIAL (scope=locality default, no individual picker) |
-| 5d | Add pincode import from admin (CSV or individual) | MEDIUM | Part 3, Page 2 | ⬜ NOT STARTED |
-| 5e | Pincode auto-resolution (pincode → locality → city) | MEDIUM | Part 3, Page 2 | ⬜ NOT STARTED |
+| 5a | CEO can add new city from `/admin/locations/geo` | HIGH | Part 3, Page 3 | ? DONE (add city form in geo page) |
+| 5b | CEO can add new locality under any city | HIGH | Part 3, Page 3 | ? DONE (locality drill-down + add form) |
+| 5c | Add locality-level targeting to bulk planner | HIGH | Part 3, Page 2 | ?? PARTIAL (scope=locality default, no individual picker) |
+| 5d | Add pincode import from admin (CSV or individual) | MEDIUM | Part 3, Page 2 | ? NOT STARTED |
+| 5e | Pincode auto-resolution (pincode ? locality ? city) | MEDIUM | Part 3, Page 2 | ? NOT STARTED |
 
 **Parallel execution:** 5a + 5b (geo admin), 5c + 5d (planner upgrades)
 
@@ -7339,12 +7425,12 @@ After all sub-phases complete:
 
 | Sub-stage | Fix | Severity | Audit Ref | Status |
 |-----------|-----|----------|-----------|--------|
-| 6a | Feature flags: create new flags from UI | MEDIUM | Part 3, Page 4 | ✅ DONE (+ New Flag button, create form, PUT API) |
-| 6b | Feature flags: inline changelog per flag | LOW | Part 3, Page 4 | ✅ DONE (History button per flag, fetches from audit log) |
-| 6c | Workflow config: AI model selector dropdown | MEDIUM | Part 3, Page 5 | ✅ DONE (AI_MODEL_OPTIONS dropdown for model keys) |
-| 6d | Workflow config: CEO can add new config keys | MEDIUM | Part 3, Page 5 | ✅ DONE (+ New Config form, PUT API endpoint) |
-| 6e | Audit log: date range filter + search | MEDIUM | Part 3, Page 6 | ✅ DONE (searchTerm, dateFrom, dateTo filters) |
-| 6f | Audit log: CSV export | LOW | Part 3, Page 6 | ✅ DONE (Export CSV button, client-side generation) |
+| 6a | Feature flags: create new flags from UI | MEDIUM | Part 3, Page 4 | ? DONE (+ New Flag button, create form, PUT API) |
+| 6b | Feature flags: inline changelog per flag | LOW | Part 3, Page 4 | ? DONE (History button per flag, fetches from audit log) |
+| 6c | Workflow config: AI model selector dropdown | MEDIUM | Part 3, Page 5 | ? DONE (AI_MODEL_OPTIONS dropdown for model keys) |
+| 6d | Workflow config: CEO can add new config keys | MEDIUM | Part 3, Page 5 | ? DONE (+ New Config form, PUT API endpoint) |
+| 6e | Audit log: date range filter + search | MEDIUM | Part 3, Page 6 | ? DONE (searchTerm, dateFrom, dateTo filters) |
+| 6f | Audit log: CSV export | LOW | Part 3, Page 6 | ? DONE (Export CSV button, client-side generation) |
 
 **All parallel:** Independent UI improvements
 
@@ -7356,13 +7442,13 @@ After all sub-phases complete:
 
 | Sub-stage | Fix | Severity | Audit Ref |
 |-----------|-----|----------|-----------|
-| 7a | ✅ Remove duplicate footer → single truth section | DONE (this update) | Part 5 |
-| 7b | ✅ Correct phase count and statuses | DONE (this update) | Part 5 |
-| 7c | ✅ Add section completion tracking | DONE (this update) | Part 5 |
-| 7d | ✅ Add phase status types (PARTIAL) | DONE (this update) | Part 5 |
-| 7e | ✅ Mark phases 3, 4, 5, 14, 21 as PARTIAL | DONE (this update) | Part 5 |
+| 7a | ? Remove duplicate footer ? single truth section | DONE (this update) | Part 5 |
+| 7b | ? Correct phase count and statuses | DONE (this update) | Part 5 |
+| 7c | ? Add section completion tracking | DONE (this update) | Part 5 |
+| 7d | ? Add phase status types (PARTIAL) | DONE (this update) | Part 5 |
+| 7e | ? Mark phases 3, 4, 5, 14, 21 as PARTIAL | DONE (this update) | Part 5 |
 
-**Status: ✅ COMPLETE — resolved in this bible restructuring**
+**Status: ? COMPLETE � resolved in this bible restructuring**
 
 ---
 
@@ -7370,7 +7456,7 @@ After all sub-phases complete:
 
 ```
 PARALLEL STREAM 1 (Critical Bugs):
-  Stage 1a + 1b → Stage 1c-1f
+  Stage 1a + 1b ? Stage 1c-1f
   Worker: CTO or assigned developer
   
 PARALLEL STREAM 2 (Navigation + Access):
@@ -7378,11 +7464,11 @@ PARALLEL STREAM 2 (Navigation + Access):
   Worker: CTO or assigned developer
 
 PARALLEL STREAM 3 (Communication):
-  Stage 3a + 3b → Stage 3c-3e → Stage 3f
+  Stage 3a + 3b ? Stage 3c-3e ? Stage 3f
   Worker: CTO or assigned developer
 
 SEQUENTIAL STREAM 4 (RBAC):
-  Stage 4a → 4b → 4c → 4d → 4e
+  Stage 4a ? 4b ? 4c ? 4d ? 4e
   Worker: CTO (security-critical)
 
 PARALLEL STREAM 5 (Geo + Planner):
@@ -7404,29 +7490,29 @@ TOTAL: 7 stages, 35 sub-fixes, 4 parallel streams + 1 sequential + 1 parallel
 ### Priority Order (If Resources Are Limited)
 
 ```
-✅ ALREADY FIXED:
-  1a (URL mapping bug) ✅
-  1b (Supabase Storage) ✅
-  2a (restore /admin/pages) ✅
-  2b (consolidate navigation) ✅
-  3a + 3b + 3c (WhatsApp + Telegram code) ✅
-  4a-4c + 4e (RBAC: table, auth, roles, JWT) ✅
-  5a + 5b (geo admin: add city/locality) ✅
+? ALREADY FIXED:
+  1a (URL mapping bug) ?
+  1b (Supabase Storage) ?
+  2a (restore /admin/pages) ?
+  2b (consolidate navigation) ?
+  3a + 3b + 3c (WhatsApp + Telegram code) ?
+  4a-4c + 4e (RBAC: table, auth, roles, JWT) ?
+  5a + 5b (geo admin: add city/locality) ?
 
 MUST FIX NOW (Day 1-2):
-  1c (alt text field — 30 min)
-  1e (delete storage file on media delete — 30 min)
-  2c (Create New Page button on CCC — 15 min)
-  3d (SET env vars in Vercel production — 5 min if channels exist)
+  1c (alt text field � 30 min)
+  1e (delete storage file on media delete � 30 min)
+  2c (Create New Page button on CCC � 15 min)
+  3d (SET env vars in Vercel production � 5 min if channels exist)
 
 MUST FIX THIS WEEK:
-  1d (wire media search handler — 1 hour)
-  1f (draft_id FK migration — 30 min)
-  2d (single-page generation trigger — 2 hours)
-  4d (unlock user invite/create — 2 hours)
+  1d (wire media search handler � 1 hour)
+  1f (draft_id FK migration � 30 min)
+  2d (single-page generation trigger � 2 hours)
+  4d (unlock user invite/create � 2 hours)
 
 MUST FIX THIS SPRINT:
-  6a-6f (Admin enhancements — feature flag creation, audit log filters, etc.)
+  6a-6f (Admin enhancements � feature flag creation, audit log filters, etc.)
   5c-5e (Bulk planner locality picker + pincode import)
 
 NICE TO HAVE THIS SPRINT:
@@ -7438,11 +7524,11 @@ NICE TO HAVE THIS SPRINT:
 
 ## Appendix A: Legacy Phase Detail Reference
 
-> ⚠️ **SUPERSEDED: The Execution Priority Matrix in the sections above is now the authoritative phase tracker.**
+> ?? **SUPERSEDED: The Execution Priority Matrix in the sections above is now the authoritative phase tracker.**
 > **This appendix is retained as historical reference for phase task details only.**
-> **For current status, dependencies, and sub-phases → see Execution Priority Matrix above.**
+> **For current status, dependencies, and sub-phases ? see Execution Priority Matrix above.**
 
-The original 7-phase plan (Section 16) covers Phases 1–7 for core infrastructure. The following phases cover the intelligence and scale layers from Sections 19–31:
+The original 7-phase plan (Section 16) covers Phases 1�7 for core infrastructure. The following phases cover the intelligence and scale layers from Sections 19�31:
 
 **Phase 8: Multi-Intent Lead Funnels (after Phase 2)**
 - Multi-intent lead form components (BimasSakhiRecruitForm, PolicyConsultForm, IC38GuideForm, etc.)
@@ -7452,7 +7538,7 @@ The original 7-phase plan (Section 16) covers Phases 1–7 for core infrastructu
 
 **Phase 9: Lead Scoring + Agent Personalization (after Phase 5)**
 - `lead_score` column + scoring function in `/api/leads`
-- Score → priority → Zoho Cliq alert threshold configuration
+- Score ? priority ? Zoho Cliq alert threshold configuration
 - `agent_areas` table + admin UI (`/admin/agents`)
 - Agent card component in `GeneratedPageTemplate`
 
@@ -7477,19 +7563,19 @@ The original 7-phase plan (Section 16) covers Phases 1–7 for core infrastructu
 - `/admin/ccc/social` page for social draft management
 
 **Phase 13: Self-Growing Loops (after Phase 12)**
-- "GSC gap detection" job (monthly) → surfaces new keyword opportunities
+- "GSC gap detection" job (monthly) ? surfaces new keyword opportunities
 - "Auto-expansion suggestion" from winning patterns
 - Full CEO morning brief dashboard
 - Underperformer archiving logic (60-day no-movement rule)
 
 ---
 
-**Phase 14: Super Admin Panel — Control Tower (after Phase 3)**
+**Phase 14: Super Admin Panel � Control Tower (after Phase 3)**
 - `system_control_config` table with all feature flags
 - Layer 1: Feature Control toggle UI (`/admin/control/features`)
 - Layer 2: Content Control (unified CRUD across pages, drafts, keywords, downloads, templates)
 - Layer 3: Workflow Control (auto-publish rules, quality thresholds, approval modes)
-- Layer 4: Code Visibility panel (file viewer, dependency map, function search — read-only)
+- Layer 4: Code Visibility panel (file viewer, dependency map, function search � read-only)
 - Layer 5: Logs & Debug dashboard (unified error/success/retry view)
 - Role-based access: admin / editor / agent permission tiers
 - Audit log: every action by every user recorded
@@ -7499,7 +7585,7 @@ The original 7-phase plan (Section 16) covers Phases 1–7 for core infrastructu
 
 **Phase 15: Agent Creation Pipeline System (after Phase 8)**
 - `agent_pipeline` table + `agent_pipeline_history` table
-- 8-stage pipeline tracking (lead → active agent)
+- 8-stage pipeline tracking (lead ? active agent)
 - Pipeline kanban UI (`/admin/agency/pipeline`)
 - Stage transition automation (auto-alerts, WhatsApp reminders)
 - Document checklist with upload/verification
@@ -7516,7 +7602,7 @@ The original 7-phase plan (Section 16) covers Phases 1–7 for core infrastructu
 - Monthly performance snapshot automation
 
 **Phase 17: Agent Lifecycle & Compliance System (after Phase 16)**
-- Lifecycle state machine (active → dormant → terminated → revived)
+- Lifecycle state machine (active ? dormant ? terminated ? revived)
 - `agent_compliance_log` table
 - Dormancy detection automation (3-month zero production trigger)
 - Reactivation campaign workflow
@@ -7526,7 +7612,7 @@ The original 7-phase plan (Section 16) covers Phases 1–7 for core infrastructu
 
 **Phase 18: Customer Management System (after Phase 9)**
 - `customers` table + `customer_policies` table
-- Customer lifecycle tracking (prospect → multi-policy → referral source)
+- Customer lifecycle tracking (prospect ? multi-policy ? referral source)
 - Premium reminder automation (WhatsApp + email at 15d, 7d, 3d before due)
 - Anniversary/birthday touchpoint automation
 - Cross-sell intelligence engine (AI-suggested next product per customer)
@@ -7546,32 +7632,32 @@ The original 7-phase plan (Section 16) covers Phases 1–7 for core infrastructu
 **Phase 20: System Intelligence & Decision Engine (after Phase 12 + 14 + 19)**
 - `automation_rules` table + basic rule engine (Layer 5 of Section 38)
 - Lead intelligence scoring upgrade (AI-based lead_score with behavioral signals)
-- Content performance feedback loop (GSC + GA4 → AI analysis → re-optimization queue)
+- Content performance feedback loop (GSC + GA4 ? AI analysis ? re-optimization queue)
 - Agent-lead intelligent matching (geography + expertise + capacity + track record)
-- Cross-ecosystem query engine (content → lead → agent → customer → revenue insights)
+- Cross-ecosystem query engine (content ? lead ? agent ? customer ? revenue insights)
 - CEO morning brief automation (daily auto-generated business summary)
 - System self-monitoring + anomaly detection (error spikes, cost anomalies, queue depth)
 - Agent performance prediction (dormancy risk, MDRT tracking, retention triggers)
-- Conversion prediction model (lead profile → probability → recommended action)
-- Full rule engine UI (`/admin/intelligence/rules`) — CEO-configurable IF/THEN/ELSE automation
+- Conversion prediction model (lead profile ? probability ? recommended action)
+- Full rule engine UI (`/admin/intelligence/rules`) � CEO-configurable IF/THEN/ELSE automation
 
 **Phase 21: External System Governance (parallel with Phase 3 + 14)**
 - `sla_snapshots` table + health check endpoints for all vendors
 - `dead_letter_queue` table + DLQ consumer job + reprocess workflow
 - `alert_deliveries` table + multi-channel dispatch (WhatsApp + Email + Cliq)
 - Circuit breaker middleware for Supabase, QStash, Zoho, Gemini API calls
-- System mode management (normal → degraded → safe → maintenance)
+- System mode management (normal ? degraded ? safe ? maintenance)
 - `pending_jobs` table as QStash backup queue + cron pickup
 - External system contract enforcement (timeout, retry, backoff for all vendors)
-- `/admin/system/health` dashboard — all vendor statuses at a glance
-- `/admin/system/dlq` — dead letter queue management UI
+- `/admin/system/health` dashboard � all vendor statuses at a glance
+- `/admin/system/dlq` � dead letter queue management UI
 - Daily reconciliation job (events dispatched vs processed, orphan detection)
-- Alert escalation engine (P0 → retry every 5 min, escalate if not ack'd)
+- Alert escalation engine (P0 ? retry every 5 min, escalate if not ack'd)
 - CEO morning brief delivery channels (WhatsApp 7:30 AM + Email 8:00 AM)
 
-**Phase 22: System Memory & Traceability (IMMEDIATE — parallel with all work)**
+**Phase 22: System Memory & Traceability (IMMEDIATE � parallel with all work)**
 - Create `docs/` folder structure: `audits/`, `fixes/`, `features/`, `incidents/`, `decisions/`, `migrations/`
-- Create `docs/INDEX.md` — master index with quick status, recent activity, open issues
+- Create `docs/INDEX.md` � master index with quick status, recent activity, open issues
 - Retroactive documentation: audit-2026-04-18.md for forensic audit findings
 - Retroactive documentation: incident-silent-draft-failure.md for content_drafts missing
 - Retroactive documentation: migration-content-drafts-table.md for the table creation
@@ -7582,335 +7668,335 @@ The original 7-phase plan (Section 16) covers Phases 1–7 for core infrastructu
 
 ---
 
-### Execution Priority Matrix (Rule 19) — RESTRUCTURED April 19, 2026
+### Execution Priority Matrix (Rule 19) � RESTRUCTURED April 19, 2026
 
-> ⚠️ **Phase ordering is NOT random. Dependencies are mapped. Phases run in dependency order.**
-> ⚠️ **Phase statuses corrected per Constitution Article 2 (No Fake Completion).**
+> ?? **Phase ordering is NOT random. Dependencies are mapped. Phases run in dependency order.**
+> ?? **Phase statuses corrected per Constitution Article 2 (No Fake Completion).**
 
 ```
-══════════════════════════════════════════════════════════════════
-PRIORITY R — REMEDIATION FIRST (Fix Audit Findings Before New Work)
-══════════════════════════════════════════════════════════════════
+------------------------------------------------------------------
+PRIORITY R � REMEDIATION FIRST (Fix Audit Findings Before New Work)
+------------------------------------------------------------------
 
-  Phase 3:  Image Intelligence            ⚠️ PARTIAL → 6/10 (was 5/10)
-    ├── 3a: Image Prompts (9 per draft)   ✅ COMPLETE
-    ├── 3b: Copy-to-clipboard             ✅ COMPLETE
-    ├── 3c: Image Upload (Supabase)       ✅ FIXED — Supabase Storage bucket 'media' (no more public/uploads)
-    ├── 3d: URL Mapping Bug               ✅ FIXED — data.file?.file_url correct path
-    ├── 3e: Alt Text + SEO Metadata       ❌ NOT DONE — no alt text input field in draft editor
-    ├── 3f: Media Search Wiring           ⚠️ PARTIAL — search input exists but no onChange handler (dead UI)
-    ├── 3g: File Deletion (actual file)   ⚠️ PARTIAL — DB record deleted, Supabase Storage file NOT deleted
-    └── 3h: draft_id FK on media_files    ❌ NOT DONE — no migration exists
-    📄 Sections: 7, 42
+  Phase 3:  Image Intelligence            ?? PARTIAL ? 6/10 (was 5/10)
+    +-- 3a: Image Prompts (9 per draft)   ? COMPLETE
+    +-- 3b: Copy-to-clipboard             ? COMPLETE
+    +-- 3c: Image Upload (Supabase)       ? FIXED � Supabase Storage bucket 'media' (no more public/uploads)
+    +-- 3d: URL Mapping Bug               ? FIXED � data.file?.file_url correct path
+    +-- 3e: Alt Text + SEO Metadata       ? NOT DONE � no alt text input field in draft editor
+    +-- 3f: Media Search Wiring           ?? PARTIAL � search input exists but no onChange handler (dead UI)
+    +-- 3g: File Deletion (actual file)   ?? PARTIAL � DB record deleted, Supabase Storage file NOT deleted
+    +-- 3h: draft_id FK on media_files    ? NOT DONE � no migration exists
+    ?? Sections: 7, 42
 
-  Phase 14: Super Admin Panel             ⚠️ PARTIAL → 8/10 (was 6/10)
-    ├── 14a: Feature Flags + Safe Mode    ✅ COMPLETE
-    ├── 14b: Workflow Config              ✅ COMPLETE
-    ├── 14c: Audit Log                    ✅ COMPLETE (but no date range filter/search — Stage 6e)
-    ├── 14d: RBAC (Real User Mgmt)        ✅ FIXED — admin_users table, bcrypt auth, JWT sessions, role checks
-    │   └── 14d-sub: User Mgmt UI         ⚠️ PARTIAL — /admin/users page exists but Invite button locked (read-only)
-    ├── 14e: Code Visibility (Layer 4)    ✅ LIVE PROVEN — direct API/page/control-link proof closed C29 in requested live scope
-    ├── 14f: Content Version History      🟨 MVP BUILT — migration applied, local save/save/restore proof passed; live deployment proof pending
-    ├── 14g: Feature Flag Creation UI     ❌ NOT DONE — can only toggle existing flags, cannot create new ones
-    └── 14h: P0.4 Admin Control + UI      ✅ LOCAL PROVEN — `/admin/pages`, `/admin/ccc/drafts`, `/admin/system/observability`, and the page-editor shell passed local API + browser proof; live deployment proof pending
-    📄 Sections: 32
+  Phase 14: Super Admin Panel             ?? PARTIAL ? 8/10 (was 6/10)
+    +-- 14a: Feature Flags + Safe Mode    ? COMPLETE
+    +-- 14b: Workflow Config              ? COMPLETE
+    +-- 14c: Audit Log                    ? COMPLETE (but no date range filter/search � Stage 6e)
+    +-- 14d: RBAC (Real User Mgmt)        ? FIXED � admin_users table, bcrypt auth, JWT sessions, role checks
+    �   +-- 14d-sub: User Mgmt UI         ?? PARTIAL � /admin/users page exists but Invite button locked (read-only)
+    +-- 14e: Code Visibility (Layer 4)    ? LIVE PROVEN � direct API/page/control-link proof closed C29 in requested live scope
+    +-- 14f: Content Version History      ?? MVP BUILT � migration applied, local save/save/restore proof passed; live deployment proof pending
+    +-- 14g: Feature Flag Creation UI     ? NOT DONE � can only toggle existing flags, cannot create new ones
+    +-- 14h: P0.4 Admin Control + UI      ?? PARTIAL � earlier local proof for `/admin/pages`, `/admin/ccc/drafts`, `/admin/system/observability`, and the page-editor shell still stands; Module 1 unified content inventory is live-proven, and Module 2 bulk planner operator controls are now deployed with live proof for search/filter/detail/failure/retry/clear. Real queue-backed start proof is still blocked by production flag state, so broader P0.4 remains open
+    ?? Sections: 32
 
-  Phase 21: External Governance           ⚠️ PARTIAL → 8.5/10 (was 7/10)
-    ├── 21a: Circuit Breakers             ✅ COMPLETE
-    ├── 21b: SLA Tracking                 ✅ COMPLETE
-    ├── 21c: DLQ Consumer                 ✅ COMPLETE
-    ├── 21d: Alert Delivery Channels      ✅ FIXED — WhatsApp + Telegram code integrated in alertSystem.js
-    │   └── ⚠️ CAVEAT: Code exists but env vars (ALERT_WHATSAPP_WEBHOOK, TELEGRAM_BOT_TOKEN) must be SET in production
-    ├── 21e: CEO Morning Brief            ⚠️ DEPENDS — channels work only if env vars are configured
-    ├── 21f: Escalation Testing           ⬜ NOT STARTED
-    └── 21g: Delivery Truth Proof         ✅ FIXED LIVE — `external_delivery_logs`, admin sync API, retry history, health metrics, and real delivered/persistent failed proof
-    📄 Sections: 39, 41
+  Phase 21: External Governance           ?? PARTIAL ? 8.5/10 (was 7/10)
+    +-- 21a: Circuit Breakers             ? COMPLETE
+    +-- 21b: SLA Tracking                 ? COMPLETE
+    +-- 21c: DLQ Consumer                 ? COMPLETE
+    +-- 21d: Alert Delivery Channels      ? FIXED � WhatsApp + Telegram code integrated in alertSystem.js
+    �   +-- ?? CAVEAT: Code exists but env vars (ALERT_WHATSAPP_WEBHOOK, TELEGRAM_BOT_TOKEN) must be SET in production
+    +-- 21e: CEO Morning Brief            ?? DEPENDS � channels work only if env vars are configured
+    +-- 21f: Escalation Testing           ? NOT STARTED
+    +-- 21g: Delivery Truth Proof         ? FIXED LIVE � `external_delivery_logs`, admin sync API, retry history, health metrics, and real delivered/persistent failed proof
+    ?? Sections: 39, 41
 
-  Phase 4:  Bulk Job Planner              ⚠️ PARTIAL (unchanged)
-    ├── 4a: DB Tables + Job System        ✅ COMPLETE
-    ├── 4b: Planner UI                    ✅ COMPLETE
-    ├── 4c: Job Runner + QStash           ✅ COMPLETE
-    ├── 4d: Progress Monitor              ✅ COMPLETE
-    ├── 4e: Locality-level Targeting      ⚠️ PARTIAL — scope='locality' default but no individual locality picker
-    └── 4f: Pincode-based Targeting       ⬜ NOT STARTED
-    📄 Sections: 6, 13
+  Phase 4:  Bulk Job Planner              ?? PARTIAL (operator control slice advanced)
+    +-- 4a: DB Tables + Job System        ? COMPLETE
+    +-- 4b: Planner UI                    ? COMPLETE
+    +-- 4c: Job Runner + QStash           ? COMPLETE
+    +-- 4d: Progress Monitor              ? COMPLETE
+    +-- 4e: Locality-level Targeting      ? FIXED IN MODULE 2 � start-path now honors `locality_ids` and the duplicate check now reads `page_index.page_slug`
+    +-- 4f: Pincode-based Targeting       ? NOT STARTED
+    ?? Sections: 6, 13
 
-  Phase 5:  Geo Intelligence              ⚠️ PARTIAL → 8/10 (was 7/10)
-    ├── 5a: Geo Data + City List          ✅ COMPLETE
-    ├── 5b: Toggle Active/Inactive        ✅ COMPLETE
-    ├── 5c: Priority Setting              ✅ COMPLETE
-    ├── 5d: CEO Add City from Admin       ✅ FIXED — /admin/locations/geo has add city form
-    ├── 5e: CEO Add Locality from Admin   ✅ FIXED — locality drill-down + add locality form
-    └── 5f: Pincode Import from Admin     ⬜ NOT STARTED
-    📄 Sections: 5, 13, 44
+  Phase 5:  Geo Intelligence              ?? PARTIAL ? 8/10 (was 7/10)
+    +-- 5a: Geo Data + City List          ? COMPLETE
+    +-- 5b: Toggle Active/Inactive        ? COMPLETE
+    +-- 5c: Priority Setting              ? COMPLETE
+    +-- 5d: CEO Add City from Admin       ? FIXED � /admin/locations/geo has add city form
+    +-- 5e: CEO Add Locality from Admin   ? FIXED � locality drill-down + add locality form
+    +-- 5f: Pincode Import from Admin     ? NOT STARTED
+    ?? Sections: 5, 13, 44
 
-  Phase 22: System Memory                 🔄 IN PROGRESS (unchanged)
-    ├── 22a: docs/ folder structure       ✅ COMPLETE
-    ├── 22b: INDEX.md master index        ✅ COMPLETE
-    ├── 22c: Retroactive documentation    ⚠️ PARTIAL
-    ├── 22d: Template files               ⬜ NOT STARTED
-    └── 22e: Cross-linking all docs       ⬜ NOT STARTED
-    📄 Sections: 40
+  Phase 22: System Memory                 ?? IN PROGRESS (unchanged)
+    +-- 22a: docs/ folder structure       ? COMPLETE
+    +-- 22b: INDEX.md master index        ? COMPLETE
+    +-- 22c: Retroactive documentation    ?? PARTIAL
+    +-- 22d: Template files               ? NOT STARTED
+    +-- 22e: Cross-linking all docs       ? NOT STARTED
+    ?? Sections: 40
 
-  Navigation Fix                          ✅ FIXED
-    ├── N1: Consolidate two nav systems   ✅ FIXED — old AdminLayout.jsx DEPRECATED, ADMIN_LINKS=[] empty
-    └── N2: Restore /admin/pages link     ✅ FIXED — '/admin/pages' in ClientLayout.jsx NAV_LINKS
-    📄 Sections: 45
+  Navigation Fix                          ? FIXED
+    +-- N1: Consolidate two nav systems   ? FIXED � old AdminLayout.jsx DEPRECATED, ADMIN_LINKS=[] empty
+    +-- N2: Restore /admin/pages link     ? FIXED � '/admin/pages' in ClientLayout.jsx NAV_LINKS
+    ?? Sections: 45
 
-══════════════════════════════════════════════════════════════════
-PRIORITY A — FOUNDATION (System Safety + CEO Control)
-══════════════════════════════════════════════════════════════════
+------------------------------------------------------------------
+PRIORITY A � FOUNDATION (System Safety + CEO Control)
+------------------------------------------------------------------
 
-  Phase 23: Communication System          ⬜ NOT STARTED
-    ├── 23a: WhatsApp Business API        ⬜ NOT STARTED
-    ├── 23b: Telegram Bot                 ⬜ NOT STARTED
-    ├── 23c: Zoho Cliq Integration        ⬜ NOT STARTED
-    ├── 23d: Email Templates              ⬜ NOT STARTED
-    └── 23e: Channel Failover Logic       ⬜ NOT STARTED
-    📄 Sections: 41
-    🔗 Depends on: None (can start immediately)
+  Phase 23: Communication System          ? NOT STARTED
+    +-- 23a: WhatsApp Business API        ? NOT STARTED
+    +-- 23b: Telegram Bot                 ? NOT STARTED
+    +-- 23c: Zoho Cliq Integration        ? NOT STARTED
+    +-- 23d: Email Templates              ? NOT STARTED
+    +-- 23e: Channel Failover Logic       ? NOT STARTED
+    ?? Sections: 41
+    ?? Depends on: None (can start immediately)
 
-  Phase 24: Media Management System       ⬜ NOT STARTED
-    ├── 24a: Supabase Storage Setup       ⬜ NOT STARTED
-    ├── 24b: Upload API (replace local)   ⬜ NOT STARTED
-    ├── 24c: Image Ratio Enforcement      ⬜ NOT STARTED
-    ├── 24d: Alt Text + SEO               ⬜ NOT STARTED
-    ├── 24e: Content Association           ⬜ NOT STARTED
-    └── 24f: CDN Configuration            ⬜ NOT STARTED
-    📄 Sections: 42
-    🔗 Depends on: None (can start immediately)
+  Phase 24: Media Management System       ? NOT STARTED
+    +-- 24a: Supabase Storage Setup       ? NOT STARTED
+    +-- 24b: Upload API (replace local)   ? NOT STARTED
+    +-- 24c: Image Ratio Enforcement      ? NOT STARTED
+    +-- 24d: Alt Text + SEO               ? NOT STARTED
+    +-- 24e: Content Association           ? NOT STARTED
+    +-- 24f: CDN Configuration            ? NOT STARTED
+    ?? Sections: 42
+    ?? Depends on: None (can start immediately)
 
-  Phase 25: Navigation Management         ⚠️ PARTIAL → 6/10
-    ├── 25a: DB-driven Menu System        ✅ FIXED LIVE — `navigation_menu` + `/api/navigation` now serve the public header in production
-    ├── 25b: Admin Menu Editor UI         ✅ FIXED LIVE — `/admin/navigation` edits the live public header tree
-    ├── 25c: Public Site Menu Rendering   ✅ FIXED LIVE — Navbar fetches the API and reflects DB changes after reload
-    └── 25d: Admin Sidebar from DB        ⬜ NOT STARTED — `app/admin/ClientLayout.jsx` is still hardcoded; footer/legacy consolidation remains
-    📄 Sections: 45
-    🔗 Depends on: Navigation Fix (Priority R)
+  Phase 25: Navigation Management         ?? PARTIAL ? 6/10
+    +-- 25a: DB-driven Menu System        ? FIXED LIVE � `navigation_menu` + `/api/navigation` now serve the public header in production
+    +-- 25b: Admin Menu Editor UI         ? FIXED LIVE � `/admin/navigation` edits the live public header tree
+    +-- 25c: Public Site Menu Rendering   ? FIXED LIVE � Navbar fetches the API and reflects DB changes after reload
+    +-- 25d: Admin Sidebar from DB        ? NOT STARTED � `app/admin/ClientLayout.jsx` is still hardcoded; footer/legacy consolidation remains
+    ?? Sections: 45
+    ?? Depends on: Navigation Fix (Priority R)
 
-  Phase 26: Unified Content Dashboard     ⬜ NOT STARTED
-    ├── 26a: Unified Content API          ⬜ NOT STARTED
-    ├── 26b: Dashboard UI                 ⬜ NOT STARTED
-    ├── 26c: Cross-system Search          ⬜ NOT STARTED
-    └── 26d: Unified Status Tracking      ⬜ NOT STARTED
-    📄 Sections: 43
-    🔗 Depends on: None (can start immediately)
+  Phase 26: Unified Content Dashboard     ? NOT STARTED
+    +-- 26a: Unified Content API          ? NOT STARTED
+    +-- 26b: Dashboard UI                 ? NOT STARTED
+    +-- 26c: Cross-system Search          ? NOT STARTED
+    +-- 26d: Unified Status Tracking      ? NOT STARTED
+    ?? Sections: 43
+    ?? Depends on: None (can start immediately)
 
-  Phase 27: Geo Control System            ⬜ NOT STARTED
-    ├── 27a: Add City from Admin          ⬜ NOT STARTED
-    ├── 27b: Add Locality from Admin      ⬜ NOT STARTED
-    ├── 27c: Pincode Import UI            ⬜ NOT STARTED
-    ├── 27d: Generation Trigger per Area  ⬜ NOT STARTED
-    └── 27e: Coverage Metrics Dashboard   ⬜ NOT STARTED
-    📄 Sections: 44
-    🔗 Depends on: Phase 5 fixes (Priority R)
+  Phase 27: Geo Control System            ? NOT STARTED
+    +-- 27a: Add City from Admin          ? NOT STARTED
+    +-- 27b: Add Locality from Admin      ? NOT STARTED
+    +-- 27c: Pincode Import UI            ? NOT STARTED
+    +-- 27d: Generation Trigger per Area  ? NOT STARTED
+    +-- 27e: Coverage Metrics Dashboard   ? NOT STARTED
+    ?? Sections: 44
+    ?? Depends on: Phase 5 fixes (Priority R)
 
-══════════════════════════════════════════════════════════════════
-PRIORITY B — CORE POWER (Business Operations)
-══════════════════════════════════════════════════════════════════
+------------------------------------------------------------------
+PRIORITY B � CORE POWER (Business Operations)
+------------------------------------------------------------------
 
-  Phase 6:  Publish Pipeline              ✅ COMPLETE (2026-04-20)
-    ├── 6a: Draft → Publish workflow      ✅ COMPLETE
-    │   └── Manual drafts auto-create page_index + location_content on publish
-    │   └── Idempotent: re-publish reuses existing page_index, no duplicates
-    │   └── Status transition: draft → published (not just approved)
-    │   └── Content field mapping: body_content → local_opportunity_description
-    ├── 6b: Scheduled Publishing          ✅ COMPLETE
-    │   └── scheduled_publish_at column + partial index added
-    │   └── Schedule modal in draft editor UI
-    │   └── QStash cron endpoint: /api/jobs/scheduled-publish (hourly)
-    │   └── Validation: future dates only, proper status guards
-    ├── 6c: Sitemap Auto-Update           ✅ VERIFIED (already works)
-    │   └── Sitemaps query page_index.status='active' — publish sets this
-    │   └── No changes needed — architecture already correct
-    └── 6d: Unpublish/Archive             ✅ COMPLETE
-        └── Unpublish: page_index.status='unpublished', draft → 'draft' (editable)
-        └── Archive: page_index.status='archived', draft → 'archived'
-        └── UI buttons: Unpublish + Archive in draft editor header
-    📄 Sections: 8
-    🔗 Depends on: Phase 3 fixes, Phase 24 (Media)
+  Phase 6:  Publish Pipeline              ? COMPLETE (2026-04-20)
+    +-- 6a: Draft ? Publish workflow      ? COMPLETE
+    �   +-- Manual drafts auto-create page_index + location_content on publish
+    �   +-- Idempotent: re-publish reuses existing page_index, no duplicates
+    �   +-- Status transition: draft ? published (not just approved)
+    �   +-- Content field mapping: body_content ? local_opportunity_description
+    +-- 6b: Scheduled Publishing          ? COMPLETE
+    �   +-- scheduled_publish_at column + partial index added
+    �   +-- Schedule modal in draft editor UI
+    �   +-- QStash cron endpoint: /api/jobs/scheduled-publish (hourly)
+    �   +-- Validation: future dates only, proper status guards
+    +-- 6c: Sitemap Auto-Update           ? VERIFIED (already works)
+    �   +-- Sitemaps query page_index.status='active' � publish sets this
+    �   +-- No changes needed � architecture already correct
+    +-- 6d: Unpublish/Archive             ? COMPLETE
+        +-- Unpublish: page_index.status='unpublished', draft ? 'draft' (editable)
+        +-- Archive: page_index.status='archived', draft ? 'archived'
+        +-- UI buttons: Unpublish + Archive in draft editor header
+    ?? Sections: 8
+    ?? Depends on: Phase 3 fixes, Phase 24 (Media)
 
-  Phase 7:  Download Lead Magnets         ⬜ NOT STARTED
-    ├── 7a: Download Resources Table      ⬜ NOT STARTED
-    ├── 7b: Lead Gate Modal               ⬜ NOT STARTED
-    ├── 7c: Lead Capture → CRM            ⬜ NOT STARTED
-    └── 7d: Download Analytics            ⬜ NOT STARTED
-    📄 Sections: 9
-    🔗 Depends on: Phase 8 (Lead Funnels)
+  Phase 7:  Download Lead Magnets         ? NOT STARTED
+    +-- 7a: Download Resources Table      ? NOT STARTED
+    +-- 7b: Lead Gate Modal               ? NOT STARTED
+    +-- 7c: Lead Capture ? CRM            ? NOT STARTED
+    +-- 7d: Download Analytics            ? NOT STARTED
+    ?? Sections: 9
+    ?? Depends on: Phase 8 (Lead Funnels)
 
-  Phase 8:  Multi-Intent Lead Funnels     ⬜ NOT STARTED
-    ├── 8a: Intent-specific Forms         ⬜ NOT STARTED
-    ├── 8b: Thank-you Pages per Funnel    ⬜ NOT STARTED
-    ├── 8c: CRM Bifurcation Tags          ⬜ NOT STARTED
-    └── 8d: Contact Page Redesign         ⬜ NOT STARTED
-    📄 Sections: 19, 30
-    🔗 Depends on: Phase 23 (Communication — for lead alerts)
+  Phase 8:  Multi-Intent Lead Funnels     ? NOT STARTED
+    +-- 8a: Intent-specific Forms         ? NOT STARTED
+    +-- 8b: Thank-you Pages per Funnel    ? NOT STARTED
+    +-- 8c: CRM Bifurcation Tags          ? NOT STARTED
+    +-- 8d: Contact Page Redesign         ? NOT STARTED
+    ?? Sections: 19, 30
+    ?? Depends on: Phase 23 (Communication � for lead alerts)
 
-  Phase 9:  Lead Scoring + Agent Persona  ⬜ NOT STARTED
-    ├── 9a: Lead Score Algorithm          ⬜ NOT STARTED
-    ├── 9b: Priority → Alert Threshold    ⬜ NOT STARTED
-    ├── 9c: Agent Area Assignment         ⬜ NOT STARTED
-    └── 9d: Agent Card in Templates       ⬜ NOT STARTED
-    📄 Sections: 23, 27
-    🔗 Depends on: Phase 8, Phase 27 (Geo Control)
+  Phase 9:  Lead Scoring + Agent Persona  ? NOT STARTED
+    +-- 9a: Lead Score Algorithm          ? NOT STARTED
+    +-- 9b: Priority ? Alert Threshold    ? NOT STARTED
+    +-- 9c: Agent Area Assignment         ? NOT STARTED
+    +-- 9d: Agent Card in Templates       ? NOT STARTED
+    ?? Sections: 23, 27
+    ?? Depends on: Phase 8, Phase 27 (Geo Control)
 
-  Phase 10: Analytics Stack (GTM+GA4+GSC) ⬜ NOT STARTED
-    ├── 10a: GTM Container Setup          ⬜ NOT STARTED
-    ├── 10b: GA4 Custom Events            ⬜ NOT STARTED
-    ├── 10c: GSC Property + Sitemap       ⬜ NOT STARTED
-    └── 10d: GT Matrix Baseline           ⬜ NOT STARTED
-    📄 Sections: 28
-    🔗 Depends on: Phase 6 (Publish Pipeline)
+  Phase 10: Analytics Stack (GTM+GA4+GSC) ? NOT STARTED
+    +-- 10a: GTM Container Setup          ? NOT STARTED
+    +-- 10b: GA4 Custom Events            ? NOT STARTED
+    +-- 10c: GSC Property + Sitemap       ? NOT STARTED
+    +-- 10d: GT Matrix Baseline           ? NOT STARTED
+    ?? Sections: 28
+    ?? Depends on: Phase 6 (Publish Pipeline)
 
-  Phase 15: Agent Creation Pipeline       ⬜ NOT STARTED
-    ├── 15a: Pipeline DB + Stages         ⬜ NOT STARTED
-    ├── 15b: Pipeline Kanban UI           ⬜ NOT STARTED
-    ├── 15c: Stage Automation             ⬜ NOT STARTED
-    └── 15d: Document Checklist           ⬜ NOT STARTED
-    📄 Sections: 33
-    🔗 Depends on: Phase 8 (Lead Funnels), Phase 23 (Communication)
+  Phase 15: Agent Creation Pipeline       ? NOT STARTED
+    +-- 15a: Pipeline DB + Stages         ? NOT STARTED
+    +-- 15b: Pipeline Kanban UI           ? NOT STARTED
+    +-- 15c: Stage Automation             ? NOT STARTED
+    +-- 15d: Document Checklist           ? NOT STARTED
+    ?? Sections: 33
+    ?? Depends on: Phase 8 (Lead Funnels), Phase 23 (Communication)
 
-  Phase 16: Active Agent Management       ⬜ NOT STARTED
-    ├── 16a: Agent Dashboard              ⬜ NOT STARTED
-    ├── 16b: Activity Logging             ⬜ NOT STARTED
-    ├── 16c: Leaderboard System           ⬜ NOT STARTED
-    └── 16d: Monthly Performance          ⬜ NOT STARTED
-    📄 Sections: 34
-    🔗 Depends on: Phase 15 (Pipeline)
+  Phase 16: Active Agent Management       ? NOT STARTED
+    +-- 16a: Agent Dashboard              ? NOT STARTED
+    +-- 16b: Activity Logging             ? NOT STARTED
+    +-- 16c: Leaderboard System           ? NOT STARTED
+    +-- 16d: Monthly Performance          ? NOT STARTED
+    ?? Sections: 34
+    ?? Depends on: Phase 15 (Pipeline)
 
-══════════════════════════════════════════════════════════════════
-PRIORITY C — GROWTH ENGINE (Scale + Intelligence)
-══════════════════════════════════════════════════════════════════
+------------------------------------------------------------------
+PRIORITY C � GROWTH ENGINE (Scale + Intelligence)
+------------------------------------------------------------------
 
-  Phase 11: Bilingual Content Engine      ⬜ NOT STARTED
-    ├── 11a: Hindi Content Generation     ⬜ NOT STARTED
-    ├── 11b: DB Column Additions          ⬜ NOT STARTED
-    ├── 11c: Language-aware Rendering     ⬜ NOT STARTED
-    └── 11d: Editor Language Tabs         ⬜ NOT STARTED
-    📄 Sections: 24
-    🔗 Depends on: Phase 6 (Publish Pipeline)
+  Phase 11: Bilingual Content Engine      ? NOT STARTED
+    +-- 11a: Hindi Content Generation     ? NOT STARTED
+    +-- 11b: DB Column Additions          ? NOT STARTED
+    +-- 11c: Language-aware Rendering     ? NOT STARTED
+    +-- 11d: Editor Language Tabs         ? NOT STARTED
+    ?? Sections: 24
+    ?? Depends on: Phase 6 (Publish Pipeline)
 
-  Phase 12: Intelligence + Social Engine  ⬜ NOT STARTED
-    ├── 12a: Page Performance Tracking    ⬜ NOT STARTED
-    ├── 12b: AI Pattern Analyzer          ⬜ NOT STARTED
-    ├── 12c: Re-optimization Engine       ⬜ NOT STARTED
-    └── 12d: Social Auto-generation       ⬜ NOT STARTED
-    📄 Sections: 21, 26
-    🔗 Depends on: Phase 10 (Analytics)
+  Phase 12: Intelligence + Social Engine  ? NOT STARTED
+    +-- 12a: Page Performance Tracking    ? NOT STARTED
+    +-- 12b: AI Pattern Analyzer          ? NOT STARTED
+    +-- 12c: Re-optimization Engine       ? NOT STARTED
+    +-- 12d: Social Auto-generation       ? NOT STARTED
+    ?? Sections: 21, 26
+    ?? Depends on: Phase 10 (Analytics)
 
-  Phase 18: Customer Management           ⬜ NOT STARTED
-    ├── 18a: Customer DB + Lifecycle      ⬜ NOT STARTED
-    ├── 18b: Premium Reminders            ⬜ NOT STARTED
-    ├── 18c: Cross-sell Intelligence      ⬜ NOT STARTED
-    └── 18d: Customer Profile Pages       ⬜ NOT STARTED
-    📄 Sections: 36
-    🔗 Depends on: Phase 8, Phase 23 (Communication)
+  Phase 18: Customer Management           ? NOT STARTED
+    +-- 18a: Customer DB + Lifecycle      ? NOT STARTED
+    +-- 18b: Premium Reminders            ? NOT STARTED
+    +-- 18c: Cross-sell Intelligence      ? NOT STARTED
+    +-- 18d: Customer Profile Pages       ? NOT STARTED
+    ?? Sections: 36
+    ?? Depends on: Phase 8, Phase 23 (Communication)
 
-  Phase 19: Universal Lead Hub            ⬜ NOT STARTED
-    ├── 19a: Source Classification        ⬜ NOT STARTED
-    ├── 19b: Follow-up SLA Tracking      ⬜ NOT STARTED
-    ├── 19c: Lead Routing Intelligence    ⬜ NOT STARTED
-    └── 19d: Campaign + ROI Dashboard     ⬜ NOT STARTED
-    📄 Sections: 37
-    🔗 Depends on: Phase 8, Phase 18
+  Phase 19: Universal Lead Hub            ? NOT STARTED
+    +-- 19a: Source Classification        ? NOT STARTED
+    +-- 19b: Follow-up SLA Tracking      ? NOT STARTED
+    +-- 19c: Lead Routing Intelligence    ? NOT STARTED
+    +-- 19d: Campaign + ROI Dashboard     ? NOT STARTED
+    ?? Sections: 37
+    ?? Depends on: Phase 8, Phase 18
 
-══════════════════════════════════════════════════════════════════
-PRIORITY D — GOD MODE (Full Autonomous Vision)
-══════════════════════════════════════════════════════════════════
+------------------------------------------------------------------
+PRIORITY D � GOD MODE (Full Autonomous Vision)
+------------------------------------------------------------------
 
-  Phase 13: Self-Growing Loops            ⬜ NOT STARTED
-    ├── 13a: GSC Gap Detection            ⬜ NOT STARTED
-    ├── 13b: Auto-expansion Suggestions   ⬜ NOT STARTED
-    ├── 13c: CEO Morning Brief Dashboard  ⬜ NOT STARTED
-    └── 13d: Underperformer Archiving     ⬜ NOT STARTED
-    📄 Sections: 31
-    🔗 Depends on: Phase 12 (Intelligence)
+  Phase 13: Self-Growing Loops            ? NOT STARTED
+    +-- 13a: GSC Gap Detection            ? NOT STARTED
+    +-- 13b: Auto-expansion Suggestions   ? NOT STARTED
+    +-- 13c: CEO Morning Brief Dashboard  ? NOT STARTED
+    +-- 13d: Underperformer Archiving     ? NOT STARTED
+    ?? Sections: 31
+    ?? Depends on: Phase 12 (Intelligence)
 
-  Phase 17: Agent Lifecycle & Compliance  ⬜ NOT STARTED
-    ├── 17a: Lifecycle State Machine      ⬜ NOT STARTED
-    ├── 17b: Dormancy Detection           ⬜ NOT STARTED
-    ├── 17c: Termination Process          ⬜ NOT STARTED
-    └── 17d: IRDA License Tracking        ⬜ NOT STARTED
-    📄 Sections: 35
-    🔗 Depends on: Phase 16 (Agent Management)
+  Phase 17: Agent Lifecycle & Compliance  ? NOT STARTED
+    +-- 17a: Lifecycle State Machine      ? NOT STARTED
+    +-- 17b: Dormancy Detection           ? NOT STARTED
+    +-- 17c: Termination Process          ? NOT STARTED
+    +-- 17d: IRDA License Tracking        ? NOT STARTED
+    ?? Sections: 35
+    ?? Depends on: Phase 16 (Agent Management)
 
-  Phase 20: System Intelligence Engine    ⬜ NOT STARTED
-    ├── 20a: Automation Rules Engine      ⬜ NOT STARTED
-    ├── 20b: Conversion Prediction        ⬜ NOT STARTED
-    ├── 20c: Cross-ecosystem Queries      ⬜ NOT STARTED
-    └── 20d: Self-monitoring + Anomaly    ⬜ NOT STARTED
-    📄 Sections: 38
-    🔗 Depends on: Phase 12, Phase 14d (RBAC), Phase 19
+  Phase 20: System Intelligence Engine    ? NOT STARTED
+    +-- 20a: Automation Rules Engine      ? NOT STARTED
+    +-- 20b: Conversion Prediction        ? NOT STARTED
+    +-- 20c: Cross-ecosystem Queries      ? NOT STARTED
+    +-- 20d: Self-monitoring + Anomaly    ? NOT STARTED
+    ?? Sections: 38
+    ?? Depends on: Phase 12, Phase 14d (RBAC), Phase 19
 
-══════════════════════════════════════════════════════════════════
+------------------------------------------------------------------
 PHASE SUMMARY
-══════════════════════════════════════════════════════════════════
+------------------------------------------------------------------
 
 Total Phases: 27 (original 22 + 5 new governance phases)
-  ✅ COMPLETE:     2  (Phase 1, Phase 2)
-  ⚠️ PARTIAL:      5  (Phase 3, 4, 5, 14, 21)
-  🔄 IN PROGRESS:  1  (Phase 22)
-  ⬜ NOT STARTED: 19
+  ? COMPLETE:     2  (Phase 1, Phase 2)
+  ?? PARTIAL:      5  (Phase 3, 4, 5, 14, 21)
+  ?? IN PROGRESS:  1  (Phase 22)
+  ? NOT STARTED: 19
   
 New Governance Phases Added (April 19, 2026):
-  Phase 23: Communication System (was missing — ChatGPT audit finding)
-  Phase 24: Media Management (was missing — audit finding)
-  Phase 25: Navigation Management (was missing — audit finding)
-  Phase 26: Unified Content Dashboard (was missing — audit finding)
-  Phase 27: Geo Control System (was missing — audit finding)
+  Phase 23: Communication System (was missing � ChatGPT audit finding)
+  Phase 24: Media Management (was missing � audit finding)
+  Phase 25: Navigation Management (was missing � audit finding)
+  Phase 26: Unified Content Dashboard (was missing � audit finding)
+  Phase 27: Geo Control System (was missing � audit finding)
 
 Section-to-Phase Mapping:
-  Section 0:  System Constitution → Always active (governance)
-  Section 0.1: CTO Protocol → Always active (governance)
-  Section 1:  Executive Summary → Reference only
-  Section 2:  Current State → Reference only
-  Section 3:  Rendering Gap → Phase 1 ✅
-  Section 4:  Big Picture Architecture → Reference only
-  Section 5:  Geo Intelligence → Phase 5 ⚠️, Phase 27
-  Section 6:  CCC Dashboard → Phase 2 ✅, Phase 4 ⚠️
-  Section 7:  Templates + Layouts + Images → Phase 3 ⚠️
-  Section 8:  Publish + Distribution → Phase 6
-  Section 9:  Download Lead Magnets → Phase 7
-  Section 10: Form Guidance → Phase 8
-  Section 11: Zoho Integration → Phase 8, Phase 15
-  Section 12: GBP Strategy → Phase 10
-  Section 13: Multi-City Engine → Phase 4 ⚠️, Phase 27
-  Section 14: Anti-Spam + Safety → Phase 6
-  Section 15: Database Schema → All phases (shared)
-  Section 16: Implementation Phases → This matrix
-  Section 17: Success Metrics → Phase 10
-  Section 18: Competitive Moat → Reference only
-  Section 19: Multi-Intent Funnels → Phase 8
-  Section 20: CEO Control Principle → Phase 14 ⚠️, Phase 25, Phase 26
-  Section 21: Intelligence Layer → Phase 12
-  Section 22: Internal Linking → Phase 6
-  Section 23: Lead Scoring → Phase 9
-  Section 24: Bilingual Engine → Phase 11
-  Section 25: Content Variation → Phase 12
-  Section 26: Social Auto Engine → Phase 12
-  Section 27: Agent Personalization → Phase 9
-  Section 28: Analytics Stack → Phase 10
-  Section 29: Smart Forms → Phase 8
-  Section 30: Contact Page → Phase 8
-  Section 31: Self-Growing System → Phase 13
-  Section 32: Super Admin Panel → Phase 14 ⚠️
-  Section 33: Agent Creation Pipeline → Phase 15
-  Section 34: Active Agent Management → Phase 16
-  Section 35: Agent Lifecycle → Phase 17
-  Section 36: Customer Management → Phase 18
-  Section 37: Universal Lead Hub → Phase 19
-  Section 38: System Intelligence → Phase 20
-  Section 39: External Governance → Phase 21 ⚠️
-  Section 40: System Memory → Phase 22 🔄
-  Section 41: Communication System → Phase 23 (NEW)
-  Section 42: Media Management → Phase 24 (NEW)
-  Section 43: Unified Content → Phase 26 (NEW)
-  Section 44: Geo Control → Phase 27 (NEW)
-  Section 45: Navigation Management → Phase 25 (NEW)
-  Section 46: Decision System → All phases (governance)
-  Section 47: Truth System → Always active (governance)
-  Section 48: Mosaic Execution → All phases (process)
-  Section 49: Audit Fix Plan → Priority R (immediate)
+  Section 0:  System Constitution ? Always active (governance)
+  Section 0.1: CTO Protocol ? Always active (governance)
+  Section 1:  Executive Summary ? Reference only
+  Section 2:  Current State ? Reference only
+  Section 3:  Rendering Gap ? Phase 1 ?
+  Section 4:  Big Picture Architecture ? Reference only
+  Section 5:  Geo Intelligence ? Phase 5 ??, Phase 27
+  Section 6:  CCC Dashboard ? Phase 2 ?, Phase 4 ??
+  Section 7:  Templates + Layouts + Images ? Phase 3 ??
+  Section 8:  Publish + Distribution ? Phase 6
+  Section 9:  Download Lead Magnets ? Phase 7
+  Section 10: Form Guidance ? Phase 8
+  Section 11: Zoho Integration ? Phase 8, Phase 15
+  Section 12: GBP Strategy ? Phase 10
+  Section 13: Multi-City Engine ? Phase 4 ??, Phase 27
+  Section 14: Anti-Spam + Safety ? Phase 6
+  Section 15: Database Schema ? All phases (shared)
+  Section 16: Implementation Phases ? This matrix
+  Section 17: Success Metrics ? Phase 10
+  Section 18: Competitive Moat ? Reference only
+  Section 19: Multi-Intent Funnels ? Phase 8
+  Section 20: CEO Control Principle ? Phase 14 ??, Phase 25, Phase 26
+  Section 21: Intelligence Layer ? Phase 12
+  Section 22: Internal Linking ? Phase 6
+  Section 23: Lead Scoring ? Phase 9
+  Section 24: Bilingual Engine ? Phase 11
+  Section 25: Content Variation ? Phase 12
+  Section 26: Social Auto Engine ? Phase 12
+  Section 27: Agent Personalization ? Phase 9
+  Section 28: Analytics Stack ? Phase 10
+  Section 29: Smart Forms ? Phase 8
+  Section 30: Contact Page ? Phase 8
+  Section 31: Self-Growing System ? Phase 13
+  Section 32: Super Admin Panel ? Phase 14 ??
+  Section 33: Agent Creation Pipeline ? Phase 15
+  Section 34: Active Agent Management ? Phase 16
+  Section 35: Agent Lifecycle ? Phase 17
+  Section 36: Customer Management ? Phase 18
+  Section 37: Universal Lead Hub ? Phase 19
+  Section 38: System Intelligence ? Phase 20
+  Section 39: External Governance ? Phase 21 ??
+  Section 40: System Memory ? Phase 22 ??
+  Section 41: Communication System ? Phase 23 (NEW)
+  Section 42: Media Management ? Phase 24 (NEW)
+  Section 43: Unified Content ? Phase 26 (NEW)
+  Section 44: Geo Control ? Phase 27 (NEW)
+  Section 45: Navigation Management ? Phase 25 (NEW)
+  Section 46: Decision System ? All phases (governance)
+  Section 47: Truth System ? Always active (governance)
+  Section 48: Mosaic Execution ? All phases (process)
+  Section 49: Audit Fix Plan ? Priority R (immediate)
 ```
 
 ---
@@ -7920,59 +8006,59 @@ Section-to-Phase Mapping:
 > *"Alag alag worker independently kaam karenge, last wala worker sabko join karega."*
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                    MOSAIC EXECUTION MODEL                      │
-├──────────────────────────────────────────────────────────────┤
-│                                                                │
-│  Phase = Collection of Sub-phases (tiles in a mosaic)         │
-│                                                                │
-│  ┌───────┐  ┌───────┐  ┌───────┐                              │
-│  │ Sub-  │  │ Sub-  │  │ Sub-  │   ← Independent tiles        │
-│  │ phase │  │ phase │  │ phase │   ← Can run in parallel      │
-│  │  3a   │  │  3b   │  │  3c   │   ← Different workers        │
-│  └───┬───┘  └───┬───┘  └───┬───┘                              │
-│      │          │          │                                    │
-│      └──────────┼──────────┘                                   │
-│                 │                                               │
-│          ┌──────┴──────┐                                       │
-│          │  JOIN PHASE │   ← Last worker joins all tiles       │
-│          │  CTO VERIFY │   ← CTO runs join verification       │
-│          └──────┬──────┘                                       │
-│                 │                                               │
-│          ┌──────┴──────┐                                       │
-│          │ CEO REVIEW  │   ← Only CEO marks COMPLETE          │
-│          └─────────────┘                                       │
-│                                                                │
-├──────────────────────────────────────────────────────────────┤
-│  RULES:                                                        │
-│  1. Worker claims sub-phase → marks IN PROGRESS                │
-│  2. Worker completes sub-phase → marks done + creates docs     │
-│  3. Workers do NOT modify each other's files                   │
-│  4. Last worker completes → signals CTO for join               │
-│  5. CTO runs join verification checklist                       │
-│  6. CTO marks phase as "ready for CEO review"                  │
-│  7. CEO tests + approves → phase marked COMPLETE               │
-│  8. If CEO rejects → back to workers with specific feedback    │
-└──────────────────────────────────────────────────────────────┘
++--------------------------------------------------------------+
+�                    MOSAIC EXECUTION MODEL                      �
++--------------------------------------------------------------�
+�                                                                �
+�  Phase = Collection of Sub-phases (tiles in a mosaic)         �
+�                                                                �
+�  +-------+  +-------+  +-------+                              �
+�  � Sub-  �  � Sub-  �  � Sub-  �   ? Independent tiles        �
+�  � phase �  � phase �  � phase �   ? Can run in parallel      �
+�  �  3a   �  �  3b   �  �  3c   �   ? Different workers        �
+�  +-------+  +-------+  +-------+                              �
+�      �          �          �                                    �
+�      +----------+----------+                                   �
+�                 �                                               �
+�          +-------------+                                       �
+�          �  JOIN PHASE �   ? Last worker joins all tiles       �
+�          �  CTO VERIFY �   ? CTO runs join verification       �
+�          +-------------+                                       �
+�                 �                                               �
+�          +-------------+                                       �
+�          � CEO REVIEW  �   ? Only CEO marks COMPLETE          �
+�          +-------------+                                       �
+�                                                                �
++--------------------------------------------------------------�
+�  RULES:                                                        �
+�  1. Worker claims sub-phase ? marks IN PROGRESS                �
+�  2. Worker completes sub-phase ? marks done + creates docs     �
+�  3. Workers do NOT modify each other's files                   �
+�  4. Last worker completes ? signals CTO for join               �
+�  5. CTO runs join verification checklist                       �
+�  6. CTO marks phase as "ready for CEO review"                  �
+�  7. CEO tests + approves ? phase marked COMPLETE               �
+�  8. If CEO rejects ? back to workers with specific feedback    �
++--------------------------------------------------------------+
 ```
 
 **Dependencies Between Phases (Cannot Be Parallelized):**
 ```
 Priority R phases can run in parallel (all fixing existing code)
 Priority A phases can run in parallel (all are independent new systems)
-Priority B phases have dependencies — must follow the chain
+Priority B phases have dependencies � must follow the chain
 
 Example parallel execution:
-  Worker 1: Phase 3 fixes (3c, 3d) — fixing image upload
-  Worker 2: Phase 14d — building real RBAC
-  Worker 3: Phase 23a — WhatsApp Business API
-  Worker 4: Phase 24a — Supabase Storage setup
-  → All independent, all can run simultaneously
-  → CTO joins when all complete
+  Worker 1: Phase 3 fixes (3c, 3d) � fixing image upload
+  Worker 2: Phase 14d � building real RBAC
+  Worker 3: Phase 23a � WhatsApp Business API
+  Worker 4: Phase 24a � Supabase Storage setup
+  ? All independent, all can run simultaneously
+  ? CTO joins when all complete
 ```
 ---
 
-## 32. 🖥️ Super Admin Panel — The Business Owner's Control Tower
+## 32. ??? Super Admin Panel � The Business Owner's Control Tower
 
 ### The Core Insight
 
@@ -7986,7 +8072,7 @@ You should not need a developer to:
 - Pause all auto-publishing during an SEO review
 - Give an editor access to only the content section
 
-**The Super Admin Panel is not a dashboard. It is an Operating System for the business.** Everything the system does, you can see, control, and override — from the admin, without touching code.
+**The Super Admin Panel is not a dashboard. It is an Operating System for the business.** Everything the system does, you can see, control, and override � from the admin, without touching code.
 
 ### The Final Vision Line
 
@@ -7997,20 +8083,20 @@ You should not need a developer to:
 ### The 5-Layer Control Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│             SUPER ADMIN PANEL — CONTROL TOWER                   │
-├─────────────────────────────────────────────────────────────────┤
-│  Layer 1: FEATURE CONTROL     → ON/OFF toggles for every system │
-│  Layer 2: CONTENT CONTROL     → Full CRUD: pages, drafts, etc.  │
-│  Layer 3: WORKFLOW CONTROL    → Rules, thresholds, approval mode │
-│  Layer 4: CODE VISIBILITY     → File viewer, dependency map      │
-│  Layer 5: LOGS & DEBUG        → All system events in one view    │
-└─────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------+
+�             SUPER ADMIN PANEL � CONTROL TOWER                   �
++-----------------------------------------------------------------�
+�  Layer 1: FEATURE CONTROL     ? ON/OFF toggles for every system �
+�  Layer 2: CONTENT CONTROL     ? Full CRUD: pages, drafts, etc.  �
+�  Layer 3: WORKFLOW CONTROL    ? Rules, thresholds, approval mode �
+�  Layer 4: CODE VISIBILITY     ? File viewer, dependency map      �
+�  Layer 5: LOGS & DEBUG        ? All system events in one view    �
++-----------------------------------------------------------------+
 ```
 
 ---
 
-### Layer 1 — Feature Control (ON/OFF System)
+### Layer 1 � Feature Control (ON/OFF System)
 
 **The Principle:** Every significant system in the codebase must be togglable from the admin panel. No feature should be permanently hardwired to "always run".
 
@@ -8064,47 +8150,47 @@ if (!enabled) {
 // ... rest of pagegen logic
 ```
 
-**SAFE MODE** is special: when toggled ON in `system_control_config`, it halts ALL automated operations (generation, publishing, email, WhatsApp). Read-only mode for the entire system. Used in emergencies (Google penalty detected, runaway bulk job, security concern). One toggle — everything pauses.
+**SAFE MODE** is special: when toggled ON in `system_control_config`, it halts ALL automated operations (generation, publishing, email, WhatsApp). Read-only mode for the entire system. Used in emergencies (Google penalty detected, runaway bulk job, security concern). One toggle � everything pauses.
 
 ---
 
-### Layer 2 — Content Control (Full CRUD)
+### Layer 2 � Content Control (Full CRUD)
 
-**The Principle:** Every piece of content the system manages must be viewable, editable, schedulable, and deletable from the admin — no SQL access needed.
+**The Principle:** Every piece of content the system manages must be viewable, editable, schedulable, and deletable from the admin � no SQL access needed.
 
 **Admin Routes:**
 
 | Route | Controls |
 |-------|----------|
-| `/admin/ccc/drafts` | AI-generated drafts — edit, approve, reject, schedule |
-| `/admin/ccc/pages` | All live pages (page_index) — status, priority, unpublish |
-| `/admin/ccc/keywords` | Keyword clusters — add, edit, import CSV, delete |
-| `/admin/ccc/downloads` | Download resources — upload, edit gate, view lead count |
-| `/admin/ccc/templates` | Page template config — which template per intent_type |
+| `/admin/ccc/drafts` | AI-generated drafts � edit, approve, reject, schedule |
+| `/admin/ccc/pages` | All live pages (page_index) � status, priority, unpublish |
+| `/admin/ccc/keywords` | Keyword clusters � add, edit, import CSV, delete |
+| `/admin/ccc/downloads` | Download resources � upload, edit gate, view lead count |
+| `/admin/ccc/templates` | Page template config � which template per intent_type |
 | `/admin/pages` | Custom CMS pages (existing block builder) |
-| `/admin/blog` | Blog posts — write, schedule, publish |
+| `/admin/blog` | Blog posts � write, schedule, publish |
 | `/admin/downloads` | Downloadable resources (existing, to be upgraded) |
 
 **Content Control Capabilities per Entity:**
 
 | Action | Drafts | Pages | Keywords | Downloads | Templates |
 |--------|--------|-------|----------|-----------|-----------|
-| View | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Edit | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Duplicate | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Delete | ✅ (soft) | ✅ (disable) | ✅ | ✅ | ✅ |
-| Schedule | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Bulk actions | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Export CSV | ✅ | ✅ | ✅ | ✅ | ❌ |
+| View | ? | ? | ? | ? | ? |
+| Edit | ? | ? | ? | ? | ? |
+| Duplicate | ? | ? | ? | ? | ? |
+| Delete | ? (soft) | ? (disable) | ? | ? | ? |
+| Schedule | ? | ? | ? | ? | ? |
+| Bulk actions | ? | ? | ? | ? | ? |
+| Export CSV | ? | ? | ? | ? | ? |
 
 **Soft Delete Policy:**
 Nothing is hard-deleted immediately. Deleted items move to `status='archived'`. A separate "Trash" view shows archived items. Permanent delete requires an explicit second confirmation and is logged in the audit trail.
 
 ---
 
-### Layer 3 — Workflow Control
+### Layer 3 � Workflow Control
 
-**The Principle:** The rules that govern how content moves through the system must be configurable from the admin — not hardcoded.
+**The Principle:** The rules that govern how content moves through the system must be configurable from the admin � not hardcoded.
 
 **Admin Route:** `/admin/control/workflow`
 
@@ -8118,7 +8204,7 @@ CONTENT QUALITY THRESHOLDS
   Always manual review if quality score below: [6.0]
 
 PUBLISHING RULES
-  Approval mode: [Manual ▼]  (options: Manual / Auto-above-threshold / Scheduled)
+  Approval mode: [Manual ?]  (options: Manual / Auto-above-threshold / Scheduled)
   Daily publish cap (all types): [50] pages
   Daily publish cap (locality pages): [20] pages
   Daily publish cap (micro pages): [30] pages
@@ -8136,23 +8222,23 @@ LEAD RULES
   Agent response SLA for hot lead: [60] minutes
 
 AI RULES
-  Gemini model for generation: [gemini-2.0-flash ▼]
-  Fallback model: [gemini-2.5-flash-lite ▼]
-  Prompt version: [v3 ▼]  (versioned in prompt_templates table)
+  Gemini model for generation: [gemini-2.0-flash ?]
+  Fallback model: [gemini-2.5-flash-lite ?]
+  Prompt version: [v3 ?]  (versioned in prompt_templates table)
   Max tokens per generation: [2048]
 ```
 
 **Every non-boolean workflow value stored in `workflow_config` table.** Boolean runtime guardrails live in `system_control_config` after C32.
 
-**UI:** Not just toggles — sliders, number inputs, dropdowns, all saving to `workflow_config`. CEO changes a number → code reads from DB → behaviour changes. No deployment.
+**UI:** Not just toggles � sliders, number inputs, dropdowns, all saving to `workflow_config`. CEO changes a number ? code reads from DB ? behaviour changes. No deployment.
 
 ---
 
-### Layer 4 — Code Visibility (Dev-Level Power, Read-Only)
+### Layer 4 � Code Visibility (Dev-Level Power, Read-Only)
 
-**The Principle:** The CEO should be able to understand what any part of the system is doing, see the relevant code, and trace how data flows — without opening VS Code or asking a developer.
+**The Principle:** The CEO should be able to understand what any part of the system is doing, see the relevant code, and trace how data flows � without opening VS Code or asking a developer.
 
-> ⚠️ **This layer is strictly READ-ONLY.** Viewing code does not mean editing code. The purpose is transparency and debugging awareness, not direct code modification. Editing code always goes through the proper development flow (Rule 2: Think → Plan → Approve → Build).
+> ?? **This layer is strictly READ-ONLY.** Viewing code does not mean editing code. The purpose is transparency and debugging awareness, not direct code modification. Editing code always goes through the proper development flow (Rule 2: Think ? Plan ? Approve ? Build).
 
 **Admin Route:** `/admin/system/code` (restricted to super-admin only)
 
@@ -8168,17 +8254,17 @@ File Tree (left panel):            Code View (right panel):
     api/                            import { Client } from '@upstash/qstash';
       jobs/                         ...
         pagegen/
-          route.js         ◄ click
+          route.js         ? click
   lib/
     queue/
-      publisher.js         ◄ click
+      publisher.js         ? click
     ai/
       generateContent.js
 ```
 
 **Use case:** Something is failing in production. CEO can read the relevant file directly in admin without setting up a development environment. Then describe the issue to the developer with full context.
 
-**Security:** This panel is accessible only to accounts with `role='super_admin'`. The file viewer is read-only via a server-side API that reads from the filesystem — it cannot write. Sensitive files (`.env`, `.env.local`) are explicitly blocked from the viewer by a denylist.
+**Security:** This panel is accessible only to accounts with `role='super_admin'`. The file viewer is read-only via a server-side API that reads from the filesystem � it cannot write. Sensitive files (`.env`, `.env.local`) are explicitly blocked from the viewer by a denylist.
 
 #### Sub-Feature 2: Dependency Map
 
@@ -8191,19 +8277,19 @@ Search: publisher.js
 
 Result:
   lib/queue/publisher.js
-  ├── IMPORTS FROM:
-  │   └── @upstash/qstash
-  │   └── lib/supabase.js
-  │
-  └── IMPORTED BY:
-      ├── app/api/admin/queue/route.js  (line 4)
-      ├── app/api/jobs/pagegen/route.js  (line 12)
-      └── pages/api/crm/[action].js  (line 8)
+  +-- IMPORTS FROM:
+  �   +-- @upstash/qstash
+  �   +-- lib/supabase.js
+  �
+  +-- IMPORTED BY:
+      +-- app/api/admin/queue/route.js  (line 4)
+      +-- app/api/jobs/pagegen/route.js  (line 12)
+      +-- pages/api/crm/[action].js  (line 8)
 ```
 
-**Use case:** Before a developer changes `publisher.js`, the CEO can see all the places that would be affected — and ask the developer if all those callsites were considered. This is "informed oversight" without needing to be a developer.
+**Use case:** Before a developer changes `publisher.js`, the CEO can see all the places that would be affected � and ask the developer if all those callsites were considered. This is "informed oversight" without needing to be a developer.
 
-**Implementation note (future phase):** This is built by running a static analysis scan on deployment. The scan output is saved to a `code_dependency_map` table. The admin reads from this table — it does not scan live on every request.
+**Implementation note (future phase):** This is built by running a static analysis scan on deployment. The scan output is saved to a `code_dependency_map` table. The admin reads from this table � it does not scan live on every request.
 
 #### Sub-Feature 3: Function / Route Search
 
@@ -8215,52 +8301,52 @@ Search the codebase by:
 
 Returns a list of files + line numbers where the search term appears.
 
-**Use case:** "Kaun sa code generation_queue table ko update karta hai?" → Search `generation_queue` → see every place it's touched → understand the full data flow.
+**Use case:** "Kaun sa code generation_queue table ko update karta hai?" ? Search `generation_queue` ? see every place it's touched ? understand the full data flow.
 
 #### Sub-Feature 4: Safe Edit Mode (Phase 14+, Future)
 
-A future capability (not in early phases) where specific, low-risk configuration values — like AI prompt text, email template text, CTA button labels — can be edited directly from the admin panel without a code deploy.
+A future capability (not in early phases) where specific, low-risk configuration values � like AI prompt text, email template text, CTA button labels � can be edited directly from the admin panel without a code deploy.
 
 **This is NOT general code editing.** It applies only to:
 - Text stored in the database (prompt templates, email templates, CTA text)
 - Configuration values already managed via `system_control_config` or `workflow_config`
 
-Actual source code (`.js`, `.jsx` files) is never editable from the admin. That path is always: local dev → test → PR → deploy.
+Actual source code (`.js`, `.jsx` files) is never editable from the admin. That path is always: local dev ? test ? PR ? deploy.
 
 ---
 
-### Layer 5 — Logs & Debug Control
+### Layer 5 � Logs & Debug Control
 
-**The Principle:** Every significant event in the system must be visible to the CEO from the admin — without reading raw Supabase SQL or Vercel function logs.
+**The Principle:** Every significant event in the system must be visible to the CEO from the admin � without reading raw Supabase SQL or Vercel function logs.
 
 **Admin Route:** `/admin/system/logs`
 
 **Unified Log View:**
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  SYSTEM LOGS                    Filter: [All ▼] [ERROR ▼] [Today]│
-├──────────────────────────────────────────────────────────────────┤
-│  🔴 ERROR    16:42  PAGEGEN FAILED                               │
-│              queueId=abc123 reason="Gemini rate limited"         │
-│              retryable=true attempt=2/3                          │
-│              [View Full Details] [Re-trigger]                    │
-├──────────────────────────────────────────────────────────────────┤
-│  🟢 SUCCESS  16:38  PAGEGEN SUCCESS                              │
-│              slug=lic-agent-krishna-nagar-delhi words=724        │
-│              draftId=def456 duration=3210ms                      │
-│              [View Draft]                                        │
-├──────────────────────────────────────────────────────────────────┤
-│  🟡 WARN     16:35  QUALITY BELOW THRESHOLD                      │
-│              slug=lic-agent-rohini words=390 score=5.8           │
-│              flagged_for_manual_review=true                      │
-│              [Review Draft]                                      │
-├──────────────────────────────────────────────────────────────────┤
-│  🔵 INFO     16:30  LEAD CAPTURED                                │
-│              name="Priya Sharma" city=Delhi funnel=sakhi_recruit  │
-│              score=85 priority=HIGH                              │
-│              [View Lead in CRM]                                  │
-└──────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------+
+�  SYSTEM LOGS                    Filter: [All ?] [ERROR ?] [Today]�
++------------------------------------------------------------------�
+�  ?? ERROR    16:42  PAGEGEN FAILED                               �
+�              queueId=abc123 reason="Gemini rate limited"         �
+�              retryable=true attempt=2/3                          �
+�              [View Full Details] [Re-trigger]                    �
++------------------------------------------------------------------�
+�  ?? SUCCESS  16:38  PAGEGEN SUCCESS                              �
+�              slug=lic-agent-krishna-nagar-delhi words=724        �
+�              draftId=def456 duration=3210ms                      �
+�              [View Draft]                                        �
++------------------------------------------------------------------�
+�  ?? WARN     16:35  QUALITY BELOW THRESHOLD                      �
+�              slug=lic-agent-rohini words=390 score=5.8           �
+�              flagged_for_manual_review=true                      �
+�              [Review Draft]                                      �
++------------------------------------------------------------------�
+�  ?? INFO     16:30  LEAD CAPTURED                                �
+�              name="Priya Sharma" city=Delhi funnel=sakhi_recruit  �
+�              score=85 priority=HIGH                              �
+�              [View Lead in CRM]                                  �
++------------------------------------------------------------------+
 ```
 
 **Filters:**
@@ -8270,17 +8356,17 @@ Actual source code (`.js`, `.jsx` files) is never editable from the admin. That 
 - Status: All | Success | Failed | Retrying | Skipped
 
 **Per-log actions (contextual):**
-- `[View Draft]` → opens the draft in editor
-- `[View Lead in CRM]` → opens the lead record
-- `[Re-trigger]` → manually re-queues a failed job (with CEO confirmation)
-- `[Mark Resolved]` → marks an error as acknowledged
-- `[View Full Details]` → shows complete metadata, stack trace, raw payload
+- `[View Draft]` ? opens the draft in editor
+- `[View Lead in CRM]` ? opens the lead record
+- `[Re-trigger]` ? manually re-queues a failed job (with CEO confirmation)
+- `[Mark Resolved]` ? marks an error as acknowledged
+- `[View Full Details]` ? shows complete metadata, stack trace, raw payload
 
-**Log retention:** 90 days in `observability_logs`. Older than 90 days → archived to `observability_logs_archive` (cheaper storage, no index). Critical errors: kept forever in `system_runtime_errors`.
+**Log retention:** 90 days in `observability_logs`. Older than 90 days ? archived to `observability_logs_archive` (cheaper storage, no index). Critical errors: kept forever in `system_runtime_errors`.
 
 **Log summary widget** on the main admin dashboard:
 ```
-Last 24h: ✅ 47 success  ⚠️ 3 warnings  ❌ 1 error  [View All Logs →]
+Last 24h: ? 47 success  ?? 3 warnings  ? 1 error  [View All Logs ?]
 ```
 
 ---
@@ -8293,21 +8379,21 @@ Three user roles with different access levels:
 
 | Permission | Super Admin | Editor | Agent |
 |-----------|-------------|--------|-------|
-| Layer 1: Feature Control | ✅ Full | ❌ None | ❌ None |
-| Layer 2: Content Control | ✅ Full | ✅ Full | ❌ Read-only |
-| Layer 3: Workflow Control | ✅ Full | ❌ None | ❌ None |
-| Layer 4: Code Visibility | ✅ Full | ❌ None | ❌ None |
-| Layer 5: Logs & Debug | ✅ Full | 🟡 Own actions | ❌ None |
-| Lead Management | ✅ Full | ❌ None | ✅ Own leads |
-| Admin Settings | ✅ Full | ❌ None | ❌ None |
-| Bulk Jobs | ✅ Full | 🟡 Create only | ❌ None |
-| Agent card management | ✅ Full | ❌ None | ✅ Own profile |
+| Layer 1: Feature Control | ? Full | ? None | ? None |
+| Layer 2: Content Control | ? Full | ? Full | ? Read-only |
+| Layer 3: Workflow Control | ? Full | ? None | ? None |
+| Layer 4: Code Visibility | ? Full | ? None | ? None |
+| Layer 5: Logs & Debug | ? Full | ?? Own actions | ? None |
+| Lead Management | ? Full | ? None | ? Own leads |
+| Admin Settings | ? Full | ? None | ? None |
+| Bulk Jobs | ? Full | ?? Create only | ? None |
+| Agent card management | ? Full | ? None | ? Own profile |
 
 Roles stored in a `admin_users` table with `role` column. Session-based auth (already exists via Supabase auth). Every admin API endpoint checks role before processing.
 
 #### Audit Trail
 
-> "Kisne kya change kiya?" — The answer must always be findable.
+> "Kisne kya change kiya?" � The answer must always be findable.
 
 Every action taken in the admin that changes data is recorded:
 
@@ -8326,13 +8412,13 @@ CREATE TABLE admin_audit_log (
 );
 ```
 
-Admin route: `/admin/system/audit` — searchable by user, date, action type, entity.
+Admin route: `/admin/system/audit` � searchable by user, date, action type, entity.
 
 **Example entries:**
 ```
-April 17 16:30  admin@bimasakhi.com  toggled pagegen_enabled → OFF
+April 17 16:30  admin@bimasakhi.com  toggled pagegen_enabled ? OFF
 April 17 14:15  editor@bimasakhi.com  approved draft id=abc123 (slug=lic-agent-krishna-nagar)
-April 17 12:00  admin@bimasakhi.com  changed auto_approve_threshold 8.0 → 7.5
+April 17 12:00  admin@bimasakhi.com  changed auto_approve_threshold 8.0 ? 7.5
 April 16 09:45  admin@bimasakhi.com  created bulk job "Delhi Phase 2" (847 pages)
 ```
 
@@ -8362,21 +8448,21 @@ In the draft editor, a "Version History" tab shows all previous versions with a 
 - Direct DB verification confirmed three version rows for one `draft_id` with sequential `version_number` values `1, 2, 3`
 - C30 remains open in live scope until the deployed production build is proven
 
-#### Safe Mode — Emergency System Pause
+#### Safe Mode � Emergency System Pause
 
-A single red toggle in Layer 1 labeled **"🔴 SAFE MODE"**.
+A single red toggle in Layer 1 labeled **"?? SAFE MODE"**.
 
 When toggled ON:
-- All pagegen workers check `safe_mode` flag → immediately return with `{ skipped: true, reason: 'safe_mode' }`
+- All pagegen workers check `safe_mode` flag ? immediately return with `{ skipped: true, reason: 'safe_mode' }`
 - All scheduled publish jobs skip execution
 - All email and WhatsApp automations skip execution  
 - All bulk job runners pause
-- Admin shows a persistent red banner: **"⚠️ SAFE MODE ACTIVE — All automated operations paused"**
+- Admin shows a persistent red banner: **"?? SAFE MODE ACTIVE � All automated operations paused"**
 - Only read operations continue (sitemap, page rendering, lead capture form)
 
 When toggled OFF:
 - All systems resume from where they paused
-- Skipped jobs are logged (not lost) — they can be manually re-triggered or left to next scheduled run
+- Skipped jobs are logged (not lost) � they can be manually re-triggered or left to next scheduled run
 
 **This is the emergency brake.** If something looks wrong, you pull it first, investigate second.
 
@@ -8405,47 +8491,47 @@ The admin panel is powerful. That power must be constrained by its own safety ru
 
 ```
 /admin/
-├── (dashboard)                   Morning brief, alerts, quick stats
-│
-├── ccc/                          Content Command Center
-│   ├── (overview)                CCC stats dashboard
-│   ├── drafts/                   Draft list + filters
-│   │   └── [id]/                 Full 3-panel draft editor
-│   ├── bulk/                     Bulk job planner
-│   │   └── [id]/                 Job detail + progress
-│   ├── keywords/                 Keyword cluster manager
-│   ├── downloads/                Download resource manager
-│   ├── templates/                Page template config
-│   ├── sitemap/                  Sitemap health monitor
-│   ├── social/                   Social post draft manager
-│   └── insights/                 AI pattern analysis results
-│
-├── leads/                        Lead management
-│   ├── (list)                    All leads with filters
-│   └── [id]/                     Lead detail + history
-│
-├── analytics/
-│   ├── seo/                      SEO performance (GSC + GA4)
-│   └── leads/                    Lead attribution dashboard
-│
-├── agents/                       Agent area assignment manager
-│
-├── control/                      ← LAYER 1 + 3 (Feature + Workflow)
-│   ├── features/                 Feature toggle panel
-│   └── workflow/                 Workflow rules configuration
-│
-├── system/                       ← LAYER 4 + 5 (Visibility + Logs)
-│   ├── logs/                     Unified log viewer
-│   ├── audit/                    Audit trail
-│   └── code/                     Code visibility panel (super-admin only)
-│       ├── viewer/               File browser + viewer
-│       └── dependencies/         Dependency map + function search
-│
-└── settings/                     Account, integrations, API keys
-    ├── (general)
-    ├── zoho/                     Zoho One integration config
-    ├── gsc/                      GSC API connection
-    └── users/                    Admin user management + roles
++-- (dashboard)                   Morning brief, alerts, quick stats
+�
++-- ccc/                          Content Command Center
+�   +-- (overview)                CCC stats dashboard
+�   +-- drafts/                   Draft list + filters
+�   �   +-- [id]/                 Full 3-panel draft editor
+�   +-- bulk/                     Bulk job planner
+�   �   +-- [id]/                 Job detail + progress
+�   +-- keywords/                 Keyword cluster manager
+�   +-- downloads/                Download resource manager
+�   +-- templates/                Page template config
+�   +-- sitemap/                  Sitemap health monitor
+�   +-- social/                   Social post draft manager
+�   +-- insights/                 AI pattern analysis results
+�
++-- leads/                        Lead management
+�   +-- (list)                    All leads with filters
+�   +-- [id]/                     Lead detail + history
+�
++-- analytics/
+�   +-- seo/                      SEO performance (GSC + GA4)
+�   +-- leads/                    Lead attribution dashboard
+�
++-- agents/                       Agent area assignment manager
+�
++-- control/                      ? LAYER 1 + 3 (Feature + Workflow)
+�   +-- features/                 Feature toggle panel
+�   +-- workflow/                 Workflow rules configuration
+�
++-- system/                       ? LAYER 4 + 5 (Visibility + Logs)
+�   +-- logs/                     Unified log viewer
+�   +-- audit/                    Audit trail
+�   +-- code/                     Code visibility panel (super-admin only)
+�       +-- viewer/               File browser + viewer
+�       +-- dependencies/         Dependency map + function search
+�
++-- settings/                     Account, integrations, API keys
+    +-- (general)
+    +-- zoho/                     Zoho One integration config
+    +-- gsc/                      GSC API connection
+    +-- users/                    Admin user management + roles
 ```
 
 ---
@@ -8533,19 +8619,19 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 
 ---
 
-## 📊 SINGLE SOURCE OF TRUTH — System Status (Article 7 of Truth System)
+## ?? SINGLE SOURCE OF TRUTH � System Status (Article 7 of Truth System)
 
-> ⚠️ **This is the ONLY status section. No other footer, summary, or status block exists in this document.**
-> ⚠️ **All status updates happen HERE. Duplicates are forbidden (Constitution Article 5 + Rule 47).**
+> ?? **This is the ONLY status section. No other footer, summary, or status block exists in this document.**
+> ?? **All status updates happen HERE. Duplicates are forbidden (Constitution Article 5 + Rule 47).**
 
 *Document last updated: May 2, 2026 (C29 closed live, C30 locally proven, P0.1 locally proven, and P0.2 navigation unification locally proven; Phase 25 still remains partial)*
 *Evidence sources: `docs/audits/audit-2026-05-02-p0-2-navigation-unification-proof.md`, `docs/audits/audit-2026-05-02-p0-1-route-registry-sidebar-proof.md`, `docs/audits/audit-2026-05-02-c29-live-proof.md`, `docs/audits/audit-2026-05-02-c30-runtime-proof.md`, `docs/audits/audit-2026-05-01-cto-forensic-live-status-reconciliation.md`, `docs/audits/audit-2026-04-27-controlled-governance-cleanup-single-flow.md`, `docs/audits/audit-2026-04-27-rule16-repair-revalidation-pass.md`, `docs/audits/audit-2026-04-27-rule16-revalidation-truth-sync.md`, `docs/audits/verified-live-system-audit-2026-04-26.md`, `docs/audits/audit-2026-04-26-cto-live-proof-refresh.md`, `docs/audits/audit-2026-04-26-c24-system-health-live-proof.md`, `docs/audits/audit-2026-04-26-c25-direct-supabase-rest-proof.md`, `docs/audits/audit-2026-04-26-c32-control-plane-truth-unification-live-proof.md`, `docs/audits/audit-2026-04-26-rule16-transactional-integrity-live-proof.md`, `docs/audits/audit-2026-04-26-c33-page-index-truth-fix-live-proof.md`, `docs/fixes/fix-p0-2-navigation-unification.md`, `docs/fixes/fix-p0-1-route-registry-sidebar.md`, `docs/fixes/fix-c29-visibility-layer.md`, `docs/fixes/fix-c30-version-history.md`, `docs/fixes/fix_011_c24_system_health_truth_unification.md`, `docs/fixes/fix_012_c25_direct_supabase_rest_audit_access.md`, `docs/fixes/fix_013_c32_control_plane_truth_unification.md`, `docs/fixes/fix_014_rule16_transactional_integrity.md`, `docs/fixes/fix_015_c33_page_index_truth_fix.md`, `docs/fixes/fix_016_truth_sync_after_revalidation.md`, `docs/fixes/fix_017_rule16_repair_and_revalidation_pass.md`, `scripts/audit/results/2026-05-02T05-47-06-p0-2-navigation-unification-proof.json`, `scripts/audit/results/2026-05-02T04-42-55-000Z-p0-1-route-registry-sidebar-proof.json`, `scripts/audit/results/2026-04-27T03-58-58-051Z-rule16-transactional-integrity.json`, `scripts/audit/results/2026-04-27T05-40-21-000Z-controlled-governance-cleanup-single-flow.json`, `scripts/audit/results/2026-04-26T18-17-12-972Z-c33-page-index-truth-fix.json`*
-*Total sections: 49 (Sections 0–49 + Section 0.1 CTO Operating Protocol)*  
-*Total rules: 33 (Rules 1–33) + 7 Constitution Articles + CTO Protocol Rules (A–G)*  
+*Total sections: 49 (Sections 0�49 + Section 0.1 CTO Operating Protocol)*  
+*Total rules: 33 (Rules 1�33) + 7 Constitution Articles + CTO Protocol Rules (A�G)*  
 
-### Phase Status (Constitution Article 2 compliant — no fake completions)
+### Phase Status (Constitution Article 2 compliant � no fake completions)
 
-*Fresh verification baseline: April 27, 2026 — Rule 16 runtime repair, production redeploy, fresh passing revalidation, later same-day controlled governance cleanup, and one exact single-flow page-generation proof. April 26 live proof for C21, C22, C23, C24, C25, C31, C32, and C33 remains valid where not contradicted by later evidence.*
+*Fresh verification baseline: April 27, 2026 � Rule 16 runtime repair, production redeploy, fresh passing revalidation, later same-day controlled governance cleanup, and one exact single-flow page-generation proof. April 26 live proof for C21, C22, C23, C24, C25, C31, C32, and C33 remains valid where not contradicted by later evidence.*
 *Status below reflects current provable reality. COMPLETE here means runtime-proven and still consistent with prior CEO-approved completion, not a new CEO sign-off created by this rerun.*
 
 | Phase | Name | Status | CTO Audit % | Current Proof / Remaining Gap |
@@ -8553,7 +8639,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 1 | Rendering Gap | COMPLETE | 90% | Catch-all generated pages render live. Public routes respond. C23 sitemap localhost leakage is now closed live. |
 | 2 | Draft System | COMPLETE | 80% | Draft create, edit, read, approve, publish, and live URL render all passed in production. |
 | 3 | Image Intelligence | PARTIAL | 70% | Media read works. Live upload, storage cleanup proof, and full alt-text/media governance remain unverified. |
-| 4 | Bulk Job Planner | PARTIAL | 55% | Bulk UI/API exists and read path works. April 27 repair restored end-to-end retry-daemon recovery proof: the fresh live artifact shows completed queue/job/event state after the dispatch-gap simulation. Multi-page scale execution depth, pincode targeting, and duplicate-check proof remain incomplete. |
+| 4 | Bulk Job Planner | PARTIAL | 68% | Bulk planner is now an operator-grade surface in production: search, date/status filters, effective failed-state filtering, rich job detail/history, failure inspection, retry, and clear controls are live-proven. Module 2 also fixed locality-targeted start selection and `page_index.page_slug` duplicate checks. The remaining live blocker is environmental: a real queue-backed start is currently blocked by `bulk_generation_enabled=false` in production, and broader multi-page/pincode depth still remains incomplete. |
 | 5 | Geo Intelligence | PARTIAL | 70% | Geo city reads work. Full CEO CRUD, pincode import proof, and generation trigger per area remain incomplete. |
 | 6 | Publish Pipeline | PARTIAL | 65% | Core publish path works live. C33 page-index truth cleanup remains valid in its own scope, and the April 27 repair removed the post-retry visibility contradiction: after forced DB error and retry, the live page returned `200` and the sitemap contained the slug. Scheduled publish runtime execution proof and broader publish/index scope remain incomplete. |
 | 7 | Download Lead Magnets | NOT STARTED | 0% | No runtime proof collected. |
@@ -8563,7 +8649,7 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 11 | Bilingual Engine | NOT STARTED | 0% | No runtime proof collected. |
 | 12 | Intelligence + Social Engine | PARTIAL | 20% | Scaffold exists. No full runtime proof collected. |
 | 13 | Self-Growing Loops | NOT STARTED | 0% | No runtime proof collected. |
-| 14 | Super Admin Panel | PARTIAL | 65% | Login, feature flags, workflow config, logs, and audit reads work. C22 live schema repair is applied and authenticated `/api/admin/users` now returns 200. C31 live cutover is deployed and proven: password-only login now fails, email+password returns 200, the session payload resolves to `admin@bimasakhi.com`, and browser login reaches `/admin`. C29 Code Visibility is now deployed and live-proven in requested scope on commit `d0f35c1`: authenticated `/api/admin/system/code` returned the module/flow snapshot, `?module=event_bus` returned one module, `/admin/system/code` rendered without runtime errors, and all exposed control links returned `200`. Delivery truth, event-bus truth, and control-plane queue state all matched their live cross-check surfaces. The scoped deploy intentionally excluded the local-only sidebar link in `app/admin/ClientLayout.jsx` to avoid unrelated admin shell edits. Version History and broader RBAC lifecycle work still remain. |
+| 14 | Super Admin Panel | PARTIAL | 70% | Login, feature flags, workflow config, logs, and audit reads work. C22 live schema repair is applied and authenticated `/api/admin/users` now returns 200. C31 live cutover is deployed and proven: password-only login now fails, email+password returns 200, the session payload resolves to `admin@bimasakhi.com`, and browser login reaches `/admin`. C29 Code Visibility is now deployed and live-proven in requested scope on commit `d0f35c1`: authenticated `/api/admin/system/code` returned the module/flow snapshot, `?module=event_bus` returned one module, `/admin/system/code` rendered without runtime errors, and all exposed control links returned `200`. P0.4 now includes the earlier local admin-control proof, Module 1 live proof, and a deployed Module 2 bulk operator surface with partial live proof. Version History, broader RBAC lifecycle work, and a real queue-backed bulk start proof still remain. |
 | 15 | Agent Creation Pipeline | PARTIAL | 10% | Surface exists, but no end-to-end runtime proof collected. |
 | 16 | Active Agent Management | PARTIAL | 10% | Surface exists, but no end-to-end runtime proof collected. |
 | 17 | Agent Lifecycle & Compliance | NOT STARTED | 0% | No runtime proof collected. |
@@ -8575,13 +8661,13 @@ CREATE TABLE IF NOT EXISTS content_version_history (
 | 23 | Communication System | PARTIAL | 20% | Alert/QStash pieces exist. Full WhatsApp/Telegram/Email/Cliq proof is not complete. |
 | 24 | Media Management | PARTIAL | 40% | Media list read works. Upload and governance proof remain incomplete. |
 | 25 | Navigation Management | PARTIAL | 80% | One shared `navigation_menu` system now drives the public header, public footer, and active admin sidebar live in production. `/admin/navigation` switches across all three menu families, the public consumers fetch their scoped APIs with fallbacks, the active admin shell fetches the DB-backed sidebar with the route-registry fallback preserved, and P0.2 + P0.3 are now closed live in the requested scope. Drag-drop ordering, preview-before-save, and broader Section 45 ergonomics remain open. |
-| 26 | Unified Content Dashboard | NOT STARTED | 0% | No runtime proof collected. |
+| 26 | Unified Content Dashboard | PARTIAL | 35% | Module 1 unified inventory is now live-proven for drafts, pages, blog, and resources on `/admin/ccc`, `/admin/blog`, and `/admin/resources`, but broader phase depth such as export and deeper cross-content operations still remains open. |
 | 27 | Geo Control System | PARTIAL | 35% | Some geo controls exist. Full CEO add city/locality/pincode/generation flow remains incomplete. |
 
 ### System Score Card
 
 ```
-Overall System Score: 64/100 (unchanged on 2026-05-02; C29 is closed live, C30 and P0.4 now both have local runtime proof but remain open until live deployment proof, and Phase 25 P0.2 + P0.3 are now closed live while broader phase ergonomics remain open)
+Overall System Score: 64/100 (unchanged on 2026-05-04; C29 is closed live, C30 remains open in live scope, P0.4 Module 1 unified content inventory is live-proven, Module 2 bulk operator controls are deployed with partial live proof, and Phase 25 P0.2 + P0.3 remain closed live while broader phase ergonomics stay open)
 Local Production Build: PASS (`npm run build` rerun on May 2, 2026; non-blocking Edge Runtime warnings from `jose` remain)
 Live Runtime: PASS in the audited safe scope; overall phase readiness remains PARTIAL
 System Mode Truth: current live state is `normal` / `HEALTHY`; historical C26 failed delivery rows remain preserved in `external_delivery_logs`, but current delivery metrics are zero because health uses a recent 24-hour window
@@ -8620,6 +8706,16 @@ Fresh 2026-05-02 local P0.4 proof:
   - `delivery_engine.metrics` matched `/api/admin/delivery-logs`
   - `event_bus.metrics.stuck_events` matched `/api/admin/observability` at `0`
   - `control_plane.metrics.queue_paused` matched `/api/status.feature_flags.queue_paused = true`
+
+Fresh 2026-05-04 live P0.4 Module 1 proof:
+  - Production admin login returned `200`, `success=true`, and `role=super_admin`
+  - `/admin/ccc`, `/admin/blog`, and `/admin/resources` all returned `200` in production
+  - Unified list contracts for pages, drafts, blog, and resources all returned `200` with the deployed paginated inventory APIs
+  - Disposable live page proof passed create, edit, slug update, publish, archive, and restore with direct DB state confirmation
+  - Disposable live draft proof passed create, edit, slug update, FAQ edit, publish, unpublish, archive, and restore with direct DB state confirmation
+  - Disposable live blog proof passed create, edit, slug update, publish, archive, and restore with direct DB state confirmation
+  - Disposable live resource proof passed create, edit, publish, archive, and restore with direct DB state confirmation
+  - Real browser proof on `https://bimasakhi.com/admin/ccc` showed `Unified Content Inventory`, the four content tabs, the live Pages table, visible row actions, and a working `Create Page` modal open
   - `/api/admin/system/health` remained `HEALTHY`; it does not currently emit `queue_paused`, so that flag was verified against `/api/status`
 
 Fresh 2026-05-02 C30 DB + local runtime proof:
