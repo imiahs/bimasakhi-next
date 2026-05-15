@@ -1,10 +1,10 @@
-import SystemHealthContent from '@/features/admin/system/SystemHealthContent';
+import ShosControlCenter from '@/features/admin/system/ShosControlCenter';
 
 export const metadata = {
-    title: 'System Health | Bima Sakhi Admin',
-    description: 'Monitor global infrastructure status and backend telemetry.',
+    title: 'SHOS | Bima Sakhi Admin',
+    description: 'Operate feature flags, recovery flows, alerts, and system health from one canonical control plane.',
 };
 
 export default function AdminSystemPage() {
-    return <SystemHealthContent />;
+    return <ShosControlCenter />;
 }

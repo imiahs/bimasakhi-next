@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { getDeliveryHealthMetrics, syncExternalDelivery, syncPendingExternalDeliveries } from '@/lib/queue/deliveryTruth';
+import { performShosAction } from '@/lib/system/shos';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,6 +20,7 @@ export const GET = withAdminAuth(async (request) => {
         const supabase = getServiceSupabase();
         const url = new URL(request.url);
         const status = url.searchParams.get('status');
+        const operatorStatus = url.searchParams.get('operator_status');
         const eventStoreId = url.searchParams.get('event_id') || url.searchParams.get('event_store_id');
         const queueId = url.searchParams.get('queue_id') || url.searchParams.get('generation_queue_id');
         const messageId = url.searchParams.get('message_id');
@@ -41,6 +43,11 @@ export const GET = withAdminAuth(async (request) => {
         if (status) {
             query = query.eq('status', status);
         }
+        if (operatorStatus === 'active') {
+            query = query.or('operator_status.is.null,operator_status.eq.active');
+        } else if (operatorStatus) {
+            query = query.eq('operator_status', operatorStatus);
+        }
         if (eventStoreId) {
             query = query.eq('event_store_id', eventStoreId);
         }
@@ -60,6 +67,7 @@ export const GET = withAdminAuth(async (request) => {
             success: true,
             filters: {
                 status: status || null,
+                operator_status: operatorStatus || null,
                 event_store_id: eventStoreId || null,
                 generation_queue_id: queueId || null,
                 message_id: messageId || null,
@@ -76,7 +84,7 @@ export const GET = withAdminAuth(async (request) => {
     }
 });
 
-export const POST = withAdminAuth(async (request) => {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         const body = await request.json().catch(() => ({}));
         const action = body.action || 'sync_pending';
@@ -96,6 +104,29 @@ export const POST = withAdminAuth(async (request) => {
                 staleMinutes: parseLimit(String(body.stale_minutes || ''), 2, 60),
             });
             return NextResponse.json({ success: !!result?.success, action, result }, { status: result?.success ? 200 : 500 });
+        }
+
+        if (action === 'retry_delivery') {
+            if (!body.id) {
+                return NextResponse.json({ success: false, error: 'id_required' }, { status: 400 });
+            }
+
+            const result = await performShosAction({ action: 'delivery_retry', id: body.id, reason: body.reason || null }, user);
+            return NextResponse.json(result, { status: result.success === false ? 400 : 200 });
+        }
+
+        if (action === 'retry_all') {
+            const result = await performShosAction({ action: 'delivery_retry_all', reason: body.reason || null }, user);
+            return NextResponse.json(result, { status: result.success === false ? 400 : 200 });
+        }
+
+        if (action === 'mark_terminal') {
+            if (!body.id) {
+                return NextResponse.json({ success: false, error: 'id_required' }, { status: 400 });
+            }
+
+            const result = await performShosAction({ action: 'delivery_mark_terminal', id: body.id, reason: body.reason || null }, user);
+            return NextResponse.json(result, { status: result.success === false ? 400 : 200 });
         }
 
         return NextResponse.json({ success: false, error: `unknown_action:${action}` }, { status: 400 });

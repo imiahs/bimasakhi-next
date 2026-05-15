@@ -4,6 +4,7 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 import { enqueuePageGeneration } from '@/lib/queue/publisher';
 import { safeLog } from '@/lib/safeLogger.js';
 import { isValidUUID } from '@/lib/observability';
+import { performShosAction } from '@/lib/system/shos';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +24,8 @@ export const GET = withAdminAuth(async (request, user) => {
             processing: 0,
             completed: 0,
             failed: 0,
-            paused: 0
+            paused: 0,
+            cancelled: 0,
         };
 
         (data || []).forEach((row) => {
@@ -48,7 +50,7 @@ export const GET = withAdminAuth(async (request, user) => {
     }
 });
 
-export const POST = withAdminAuth(async (request) => {
+export const POST = withAdminAuth(async (request, user) => {
     try {
         if (!process.env.QSTASH_TOKEN) {
             return NextResponse.json({
@@ -84,7 +86,7 @@ export const POST = withAdminAuth(async (request) => {
             }, { status: 404 });
         }
 
-        const triggeredBy = request.headers.get('x-admin-user') || 'unknown';
+        const triggeredBy = user?.email || user?.id || 'unknown';
         console.log('[ADMIN QUEUE] Dispatching pending job:', { queueId: pendingJob.id, triggeredBy });
 
         const dispatch = await enqueuePageGeneration({ queueId: pendingJob.id });
@@ -121,70 +123,44 @@ export const POST = withAdminAuth(async (request) => {
  * 
  * { action: 'retry_failed' }              — Reset all failed rows to pending
  * { action: 'retry_failed', id: '<uuid>' } — Reset one specific failed row to pending
- * { action: 'clear_failed' }              — Delete all failed/dead-letter rows
+ * { action: 'clear_failed' }              — Clear failed rows without deleting history
+ * { action: 'cancel_failed', id }         — Mark one failed row cancelled
  */
-export const PATCH = withAdminAuth(async (request) => {
+export const PATCH = withAdminAuth(async (request, user) => {
     try {
-        const supabase = getServiceSupabase();
         const body = await request.json();
         const { action, id } = body;
-        const adminId = request.headers.get('x-admin-user') || request.headers.get('x-admin-id') || 'unknown';
+        const adminId = user?.email || user?.id || request.headers.get('x-admin-user') || 'unknown';
+        const actionMap = {
+            retry_failed: 'queue_retry_failed',
+            clear_failed: 'queue_clear_failed',
+            cancel_failed: 'queue_cancel_failed',
+        };
 
-        if (action === 'retry_failed') {
-            // Validate specific id if provided
-            if (id && !isValidUUID(id)) {
-                return NextResponse.json({ success: false, error: 'Invalid queue row id' }, { status: 400 });
-            }
-
-            let query = supabase
-                .from('generation_queue')
-                .update({
-                    status: 'pending',
-                    retry_count: 0,
-                    error_message: null,
-                    updated_at: new Date().toISOString(),
-                })
-                .eq('status', 'failed');
-
-            if (id) query = query.eq('id', id);
-
-            const { error, count } = await query;
-
-            if (error) {
-                return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-            }
-
-            await safeLog('ADMIN_QUEUE_RETRY_FAILED', 'Admin reset failed queue rows to pending', {
-                id: id || 'all',
-                reset_count: count,
-                admin_id: adminId,
-            });
-
-            return NextResponse.json({ success: true, action: 'retry_failed', reset: count || 0, id: id || 'all' });
+        if (!actionMap[action]) {
+            return NextResponse.json(
+                { success: false, error: `Unknown action: ${action}. Valid: retry_failed, clear_failed, cancel_failed` },
+                { status: 400 }
+            );
         }
 
-        if (action === 'clear_failed') {
-            const { error, count } = await supabase
-                .from('generation_queue')
-                .delete()
-                .eq('status', 'failed');
-
-            if (error) {
-                return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-            }
-
-            await safeLog('ADMIN_QUEUE_CLEAR_FAILED', 'Admin deleted all failed queue rows', {
-                deleted_count: count,
-                admin_id: adminId,
-            });
-
-            return NextResponse.json({ success: true, action: 'clear_failed', deleted: count || 0 });
+        if (id && !isValidUUID(id)) {
+            return NextResponse.json({ success: false, error: 'Invalid queue row id' }, { status: 400 });
         }
 
-        return NextResponse.json(
-            { success: false, error: `Unknown action: ${action}. Valid: retry_failed, clear_failed` },
-            { status: 400 }
-        );
+        const result = await performShosAction({
+            action: actionMap[action],
+            id: id || null,
+            reason: body.reason || null,
+        }, user);
+
+        await safeLog(`ADMIN_QUEUE_${action.toUpperCase()}`, 'Admin operated queue rows through SHOS', {
+            id: id || 'all',
+            action,
+            admin_id: adminId,
+        });
+
+        return NextResponse.json(result, { status: result.success === false ? 400 : 200 });
     } catch (error) {
         console.error('Queue API PATCH error:', error);
         return NextResponse.json({ success: false, error: 'Failed to process queue action' }, { status: 500 });

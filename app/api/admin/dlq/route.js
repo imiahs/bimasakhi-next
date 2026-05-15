@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { performShosAction } from '@/lib/system/shos';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,97 +18,69 @@ export const GET = withAdminAuth(async (request) => {
         const { searchParams } = new URL(request.url);
         const page = parseInt(searchParams.get('page') || '1', 10);
         const limit = Math.min(parseInt(searchParams.get('limit') || '20', 10), 50);
+        const status = searchParams.get('status') || 'pending';
         const offset = (page - 1) * limit;
 
-        const { data, error, count } = await supabase
+        let query = supabase
             .from('job_dead_letters')
             .select('*', { count: 'exact' })
-            .order('created_at', { ascending: false })
-            .range(offset, offset + limit - 1);
+            .order('failed_at', { ascending: false, nullsFirst: false })
+            .order('created_at', { ascending: false });
+
+        if (status === 'pending') {
+            query = query.or('operator_status.is.null,operator_status.eq.pending');
+        } else if (status !== 'all') {
+            query = query.eq('operator_status', status);
+        }
+
+        const { data, error, count } = await query.range(offset, offset + limit - 1);
 
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+            return NextResponse.json({ success: false, error: error.message }, { status: 500 });
         }
 
         return NextResponse.json({
+            success: true,
             data: data || [],
             total: count || 0,
             page,
             pages: Math.ceil((count || 0) / limit),
+            status,
         });
     } catch (err) {
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: err.message }, { status: 500 });
     }
 }, ['super_admin']);
 
 export const POST = withAdminAuth(async (request, user) => {
     try {
-        const supabase = getServiceSupabase();
         const body = await request.json();
         const { id, action } = body;
+        const actionMap = {
+            reprocess: 'dlq_retry',
+            discard: 'dlq_discard',
+            resolve: 'dlq_resolve',
+            requeue: 'dlq_requeue',
+            retry_all: 'dlq_retry_all',
+            clear_all: 'dlq_clear_all',
+        };
 
-        if (!id || !action) {
-            return NextResponse.json({ error: 'id and action required' }, { status: 400 });
+        if (!action || !actionMap[action]) {
+            return NextResponse.json({ success: false, error: 'action must be reprocess, discard, resolve, requeue, retry_all, or clear_all' }, { status: 400 });
         }
 
-        if (!['reprocess', 'discard'].includes(action)) {
-            return NextResponse.json({ error: 'action must be reprocess or discard' }, { status: 400 });
+        if (!id && ['reprocess', 'discard', 'resolve', 'requeue'].includes(action)) {
+            return NextResponse.json({ success: false, error: 'id required for single-entry DLQ actions' }, { status: 400 });
         }
 
-        // Get the DLQ entry
-        const { data: entry, error: fetchErr } = await supabase
-            .from('job_dead_letters')
-            .select('*')
-            .eq('id', id)
-            .single();
+        const result = await performShosAction({
+            action: actionMap[action],
+            id: id || null,
+            reason: body.reason || null,
+        }, user);
 
-        if (fetchErr || !entry) {
-            return NextResponse.json({ error: 'DLQ entry not found' }, { status: 404 });
-        }
-
-        if (action === 'discard') {
-            await supabase.from('job_dead_letters').delete().eq('id', id);
-
-            await supabase.from('observability_logs').insert({
-                level: 'DLQ_DISCARDED',
-                message: `DLQ entry ${id} discarded by admin`,
-                source: 'dlq_consumer',
-                metadata: { dlq_id: id, job_class: entry.job_class, admin: user?.id },
-            });
-
-            return NextResponse.json({ success: true, action: 'discarded' });
-        }
-
-        if (action === 'reprocess') {
-            const { data: newRun, error: insertErr } = await supabase
-                .from('job_runs')
-                .insert({
-                    task_type: entry.job_class,
-                    status: 'pending',
-                    payload: entry.payload,
-                    source: 'dlq_reprocess',
-                })
-                .select('id')
-                .single();
-
-            if (insertErr) {
-                return NextResponse.json({ error: 'Failed to create reprocess job: ' + insertErr.message }, { status: 500 });
-            }
-
-            await supabase.from('job_dead_letters').delete().eq('id', id);
-
-            await supabase.from('observability_logs').insert({
-                level: 'DLQ_REPROCESSED',
-                message: `DLQ entry ${id} reprocessed → new job_run ${newRun.id}`,
-                source: 'dlq_consumer',
-                metadata: { dlq_id: id, new_job_id: newRun.id, job_class: entry.job_class, admin: user?.id },
-            });
-
-            return NextResponse.json({ success: true, action: 'reprocessed', newJobId: newRun.id });
-        }
-
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+        return NextResponse.json(result, { status: result.success === false ? 400 : 200 });
     } catch (err) {
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: err.message }, { status: 500 });
     }
 }, ['super_admin']);

@@ -3,6 +3,7 @@ import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 import { getEventStoreStats, getStuckEvents } from '@/lib/events/eventStore';
 import { getSystemMode, getModeDescription } from '@/lib/system/systemModes';
+import { getShosSnapshot } from '@/lib/system/shos';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +12,7 @@ export const GET = withAdminAuth(async (request, user) => {
         const supabase = getServiceSupabase();
 
         // QStash-native observability — no BullMQ/worker_health
-        const [queueRes, deadLettersRes, runsRes, eventBusRes, executiveRes] = await Promise.all([
+        const [queueRes, deadLettersRes, runsRes, eventBusRes, executiveRes, shosSnapshot] = await Promise.all([
             supabase.from('generation_queue').select('status'),
             supabase.from('job_dead_letters').select('id', { count: 'exact', head: true }),
             supabase.from('job_runs').select('status'),
@@ -21,6 +22,7 @@ export const GET = withAdminAuth(async (request, user) => {
             supabase.from('observability_logs').select('level, message, metadata, created_at')
                 .in('level', ['EXECUTIVE_COMPLETE', 'EXECUTIVE_FAILED', 'TOOL_SUCCESS', 'TOOL_FAILURE'])
                 .order('created_at', { ascending: false }).limit(20),
+            getShosSnapshot({ eventLimit: 6, alertLimit: 6, errorLimit: 6, dlqLimit: 6, queueLimit: 6, deliveryLimit: 6 }),
         ]);
 
         // Event store stats (graceful — may not exist yet)
@@ -68,6 +70,12 @@ export const GET = withAdminAuth(async (request, user) => {
                 duration_ms: log.metadata?.duration_ms,
                 created_at: log.created_at,
             })),
+            recovery: {
+                overall_health: shosSnapshot?.health?.overall_health || shosSnapshot?.metrics?.overall_health || 'UNKNOWN',
+                queue_failures: shosSnapshot?.queue_failures || { count: 0, items: [] },
+                event_failures: shosSnapshot?.event_failures || { count: 0, items: [] },
+                alerts: shosSnapshot?.alerts || { count: 0, items: [] },
+            },
         });
     } catch (error) {
         console.error('Failed to fetch observability snapshot:', error);
