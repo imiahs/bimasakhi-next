@@ -2,7 +2,7 @@
 
 > **Purpose:** Master entry point for all system documentation. Read this FIRST before any work.  
 > **Bible Reference:** Section 40 (System Memory & Traceability), Rule 25  
-| **Last Updated:** May 16, 2026 (RC-FR1 complete: feature recovery and deployment reconstruction map produced; recovery authorization downgraded to limited lanes) |
+| **Last Updated:** May 16, 2026 (RC-FR2 executed: controlled FR-A and FR-B recovery groups restored; FR-C/FR-D remain deferred) |
 
 ---
 
@@ -24,8 +24,8 @@
 | **Bible Version** | 49 sections, 33 rules, 27 phases |
 | **Last Audit** | 2026-05-13 FULL FORENSIC AUDIT: 9-phase investigation complete. 5 output files created in docs/audits/. |
 | **Last Deployment** | 2026-05-16 production now converged to `version=07607b5` (post-canary docs cycle). Canary runtime surface remains active with no expansion in RC-2L. |
-| **Last Git Commit** | `4399e39` on 2026-05-16. RC-G2 documentation closure (physical segregation and deploy boundary records). |
-| **Current CTO Decision** | RC-FR1 FEATURE RECOVERY & DEPLOYMENT RECONSTRUCTION completed in analysis mode (no deployment, no runtime mutation). Remaining 49 runtime/admin/product paths were mapped by recoverability, authority impact, deployment state, gating, suppression, and rollback sensitivity. Final authorization: LIMITED_RECOVERY_ONLY. |
+| **Last Git Commit** | `1534ad0` on 2026-05-16. RC-FR2 bounded CMS/CCC recovery closure (`app/admin/ccc/page.js`, blog/resources wrappers, content inventory, CMS structure route). |
+| **Current CTO Decision** | RC-FR2 CONTROLLED FEATURE RECOVERY EXECUTION completed for FR-A and FR-B bounded surfaces. Admin/media polish and bounded CMS/CCC inventory surfaces were restored without resolver-chain restoration, SHOS widening, or unrestricted AI activation. Final recovery authorization: RECOVERY_SUCCESSFUL_WITH_LIMITATIONS. |
 
 ---
 ## Phase Status
@@ -35,6 +35,7 @@
 
 | Phase | Name | Priority | Status | Built % | Left % | Notes |
 |---|---|---|---|---:|---:|---|
+| RC-FR2 | Controlled Feature Recovery Execution | B | PARTIAL | 100% | 0% | RC-FR2 executed the first controlled recovery groups only. FR-A admin/media polish and FR-B bounded CMS/CCC inventory closure were committed as isolated recovery groups. FR-C and FR-D remain intentionally deferred to preserve rollback safety and authority boundaries. |
 | RC-FR1 | Feature Recovery & Deployment Reconstruction | B | PARTIAL | 100% | 0% | RC-FR1 reconstructed the true local recovery surface after RC-G2. Evidence confirmed local-only dependency closures for CMS resolver, prompt engine, and unified content inventory; tracked admin/runtime surfaces remain largely recoverable but several groups are rollout-sensitive due authority expansion, flag gating, suppression coupling, and rollback coupling. Final authorization: LIMITED_RECOVERY_ONLY. |
 | RC-G2 | Physical Git Segregation & Clean Deploy Baseline Execution | B | PARTIAL | 100% | 0% | RC-G2 executed physical segregation with strict authority boundaries. `docs/**` was committed as an isolated docs-only surface and generated artifacts (`next-build.log`, `scripts/audit/results/**`, `.gitignore`) were committed as an isolated non-runtime cleanup surface. Remaining dirty state is now runtime/admin/scripts only and remains intentionally deferred for review-safe runtime grouping. |
 | RC-G1 | Git Segregation & Deployment Baseline Restoration | B | PARTIAL | 100% | 0% | RC-G1 reconstructed deterministic deploy/rollback/authority boundaries without runtime mutation. Dirty surfaces were fully classified by operational category (`unknown_other=0`), atomic deployment groups were defined (auth pair, SHOS control set), and non-deployable/generated surfaces were isolated by policy. Final classification: REQUIRES_MANUAL_GIT_INTERVENTION because physical git state remains mixed and needs explicit staged segregation actions. |
@@ -80,6 +81,7 @@
 
 | Date | Type | Description | Status | Link |
 |---|---|---|---|---|
+| 2026-05-16 | CONTROLLED FEATURE RECOVERY | RC-FR2 executed the first bounded recovery groups after RC-FR1. FR-A admin/media polish and FR-B CMS/CCC inventory closure were restored as isolated commits (`da31455c`, `1534ad0`) without resolver-chain restoration, SHOS widening, or unrestricted AI activation. FR-C and FR-D remain deferred. | RECOVERY_SUCCESSFUL_WITH_LIMITATIONS | [RC-FR2-CONTROLLED-RECOVERY](audits/RC-FR2-CONTROLLED-RECOVERY.md) · [RC-FR2-FR-A-VALIDATION](tests/RC-FR2-FR-A-VALIDATION.md) · [RC-FR2-FR-B-VALIDATION](tests/RC-FR2-FR-B-VALIDATION.md) |
 | 2026-05-16 | FEATURE RECOVERY RECONSTRUCTION | RC-FR1 reconstructed the post-stabilization recovery topology across remaining runtime/admin/product surfaces. Classification covered deployed-vs-local divergence, partially wired dependencies, feature gates, suppression-sensitive paths, and authority/rollback coupling. Recovery groups were defined for admin UI, CMS/CCC inventory, prompt-engine chain, resolver chain, and observability/control surfaces. Final authorization: LIMITED_RECOVERY_ONLY. | LIMITED_RECOVERY_ONLY | [RC-FR1-FEATURE-RECOVERY](audits/RC-FR1-FEATURE-RECOVERY.md) · [RC-FR1-ADMIN-RESTORATION](tests/RC-FR1-ADMIN-RESTORATION.md) · [RC-FR1-DEPLOYMENT-RECONSTRUCTION](tests/RC-FR1-DEPLOYMENT-RECONSTRUCTION.md) |
 | 2026-05-16 | GIT SEGREGATION EXECUTION | RC-G2 physically executed git-surface segregation. Docs-only surface was committed in isolation (`710ca31`) and generated artifacts were removed in a separate non-runtime cleanup commit (`c6d35c0`). Dirty state reduced from 271 to 49 paths, with remaining surfaces restricted to runtime/admin/scripts local review lanes. No deployment, no runtime mutation, and no authority widening. | MOSTLY_RESTORED_WITH_LIMITATIONS | [RC-G2-PHYSICAL-SEGREGATION](audits/RC-G2-PHYSICAL-SEGREGATION.md) · [RC-G2-CLEAN-STAGING](tests/RC-G2-CLEAN-STAGING.md) · [RC-G2-DEPLOY-BOUNDARIES](tests/RC-G2-DEPLOY-BOUNDARIES.md) |
 | 2026-05-16 | GIT SEGREGATION | RC-G1 reconstructed authoritative git surface and deterministic deployment isolation model without deployment. Dirty state remained large and mixed (`total_dirty_count=271`), but all paths were classified (`unknown_other=0`). Deployment groups and authority boundaries were formalized: docs-only SAFE_DEPLOYABLE, auth and SHOS surfaces ATOMIC_ONLY, generated artifacts DO_NOT_DEPLOY, and coupled runtime helpers REVIEW_REQUIRED. Final git authorization: REQUIRES_MANUAL_GIT_INTERVENTION. | REQUIRES_MANUAL_GIT_INTERVENTION | [RC-G1-GIT-SURFACE-BASELINE](audits/RC-G1-GIT-SURFACE-BASELINE.md) · [RC-G1-GIT-SEGREGATION](audits/RC-G1-GIT-SEGREGATION.md) · [RC-G1-DEPLOYMENT-BASELINE](tests/RC-G1-DEPLOYMENT-BASELINE.md) · [RC-G1-ROLLBACK-CLARITY](tests/RC-G1-ROLLBACK-CLARITY.md) |
