@@ -2,6 +2,30 @@ import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabase';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
+function extractStoragePath(fileUrl) {
+    if (!fileUrl) {
+        return null;
+    }
+
+    try {
+        const url = new URL(fileUrl);
+        const pathMatch = url.pathname.match(/\/storage\/v1\/object\/public\/media\/(.+)/);
+        return pathMatch?.[1] || null;
+    } catch {
+        return null;
+    }
+}
+
+function deriveFolder(fileUrl) {
+    const storagePath = extractStoragePath(fileUrl);
+
+    if (!storagePath || !storagePath.includes('/')) {
+        return 'root';
+    }
+
+    return storagePath.split('/').slice(0, -1).join('/');
+}
+
 // GET: Fetch all media files
 export const GET = withAdminAuth(async (request, user) => {
     try {
@@ -14,10 +38,45 @@ export const GET = withAdminAuth(async (request, user) => {
 
         if (error) throw error;
 
-        return NextResponse.json({ media: data });
+        return NextResponse.json({
+            media: (data || []).map((item) => ({
+                ...item,
+                storage_path: extractStoragePath(item.file_url),
+                folder: deriveFolder(item.file_url),
+            })),
+        });
     } catch (error) {
         console.error('API /admin/media GET error:', error);
         return NextResponse.json({ error: 'Failed to fetch media' }, { status: 500 });
+    }
+});
+
+// PATCH: Update media metadata without changing the storage object
+export const PATCH = withAdminAuth(async (request, user) => {
+    try {
+        const supabase = getServiceSupabase();
+        const body = await request.json();
+        const id = String(body?.id || '').trim();
+
+        if (!id) {
+            return NextResponse.json({ error: 'Missing media ID' }, { status: 400 });
+        }
+
+        const altText = String(body?.alt_text || '').trim();
+
+        const { data, error } = await supabase
+            .from('media_files')
+            .update({ alt_text: altText || null })
+            .eq('id', id)
+            .select('*')
+            .single();
+
+        if (error) throw error;
+
+        return NextResponse.json({ success: true, media: data });
+    } catch (error) {
+        console.error('API /admin/media PATCH error:', error);
+        return NextResponse.json({ error: 'Failed to update media metadata' }, { status: 500 });
     }
 });
 

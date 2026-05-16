@@ -18,6 +18,16 @@ const STORAGE_BUCKET = 'media';
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_MIME_PREFIXES = ['image/'];
 
+function sanitizeFolderPath(value) {
+    return String(value || '')
+        .trim()
+        .replace(/\\/g, '/')
+        .split('/')
+        .map((segment) => segment.replace(/[^a-zA-Z0-9-_]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, ''))
+        .filter(Boolean)
+        .join('/');
+}
+
 async function ensureBucketExists(supabase) {
     const { data: buckets } = await supabase.storage.listBuckets();
     if (buckets && !buckets.find(b => b.name === STORAGE_BUCKET)) {
@@ -27,8 +37,8 @@ async function ensureBucketExists(supabase) {
 
 export const POST = withAdminAuth(async (request, user) => {
     const supabase = getServiceSupabase();
-    let webpName = null;
-    let thumbName = null;
+    let webpPath = null;
+    let thumbPath = null;
 
     try {
         // Auto-create storage bucket if it doesn't exist
@@ -36,6 +46,7 @@ export const POST = withAdminAuth(async (request, user) => {
 
         const formData = await request.formData();
         const file = formData.get('file');
+        const folderPath = sanitizeFolderPath(formData.get('folder'));
 
         if (!file) {
             return NextResponse.json({ success: false, error: 'No file provided.' }, { status: 400 });
@@ -64,8 +75,10 @@ export const POST = withAdminAuth(async (request, user) => {
         const timestamp = Date.now();
 
         // Output filenames (stored in Supabase Storage)
-        webpName = `${normalizedName}-${timestamp}.webp`;
-        thumbName = `${normalizedName}-${timestamp}-thumb.webp`;
+        const webpName = `${normalizedName}-${timestamp}.webp`;
+        const thumbName = `${normalizedName}-${timestamp}-thumb.webp`;
+        webpPath = folderPath ? `${folderPath}/${webpName}` : webpName;
+        thumbPath = folderPath ? `${folderPath}/${thumbName}` : thumbName;
 
         // 1. Process images in-memory (no filesystem write — Vercel production safe)
         const metadata = await sharp(buffer).metadata();
@@ -80,11 +93,11 @@ export const POST = withAdminAuth(async (request, user) => {
 
         // 2. Upload to Supabase Storage
         const [mainUpload, thumbUpload] = await Promise.all([
-            supabase.storage.from(STORAGE_BUCKET).upload(webpName, mainImageBuffer, {
+            supabase.storage.from(STORAGE_BUCKET).upload(webpPath, mainImageBuffer, {
                 contentType: 'image/webp',
                 upsert: false,
             }),
-            supabase.storage.from(STORAGE_BUCKET).upload(thumbName, thumbBuffer, {
+            supabase.storage.from(STORAGE_BUCKET).upload(thumbPath, thumbBuffer, {
                 contentType: 'image/webp',
                 upsert: false,
             }),
@@ -92,8 +105,8 @@ export const POST = withAdminAuth(async (request, user) => {
 
         if (mainUpload.error) {
             // Storage upload failed — nothing to clean up yet
-            webpName = null;
-            thumbName = null;
+            webpPath = null;
+            thumbPath = null;
             await logObservability(supabase, 'ERROR', `Storage upload failed: ${mainUpload.error.message}`, user?.id);
             return NextResponse.json(
                 { success: false, error: 'Storage upload failed. Ensure bucket "media" exists and is public in Supabase Dashboard.' },
@@ -102,10 +115,10 @@ export const POST = withAdminAuth(async (request, user) => {
         }
 
         // 3. Get public URLs
-        const { data: mainUrlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(webpName);
+        const { data: mainUrlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(webpPath);
         const { data: thumbUrlData } = thumbUpload.error
             ? { data: { publicUrl: null } }
-            : supabase.storage.from(STORAGE_BUCKET).getPublicUrl(thumbName);
+            : supabase.storage.from(STORAGE_BUCKET).getPublicUrl(thumbPath);
 
         const fileUrl = mainUrlData.publicUrl;
         const thumbUrl = thumbUrlData?.publicUrl || null;
@@ -132,11 +145,11 @@ export const POST = withAdminAuth(async (request, user) => {
         if (dbError) {
             // Rule 16 (Data Integrity): DB failed → compensating delete from Storage
             await Promise.allSettled([
-                supabase.storage.from(STORAGE_BUCKET).remove([webpName]),
-                thumbName ? supabase.storage.from(STORAGE_BUCKET).remove([thumbName]) : Promise.resolve(),
+                supabase.storage.from(STORAGE_BUCKET).remove([webpPath]),
+                thumbPath ? supabase.storage.from(STORAGE_BUCKET).remove([thumbPath]) : Promise.resolve(),
             ]);
-            webpName = null;
-            thumbName = null;
+            webpPath = null;
+            thumbPath = null;
             await logObservability(supabase, 'ERROR', `media_files DB insert failed (Storage files cleaned up): ${dbError.message}`, user?.id);
             return NextResponse.json(
                 { success: false, error: 'Database record creation failed. Upload has been cleaned up. Please try again.' },
@@ -145,7 +158,7 @@ export const POST = withAdminAuth(async (request, user) => {
         }
 
         // Success
-        await logObservability(supabase, 'INFO', `Image uploaded: ${originalName} → ${webpName} (${(buffer.length / 1024).toFixed(0)} KB)`, user?.id);
+        await logObservability(supabase, 'INFO', `Image uploaded: ${originalName} → ${webpPath} (${(buffer.length / 1024).toFixed(0)} KB)`, user?.id);
 
         return NextResponse.json({
             success: true,
@@ -157,7 +170,7 @@ export const POST = withAdminAuth(async (request, user) => {
         // Compensating cleanup if storage files were created before the crash
         try {
             const supabase = getServiceSupabase();
-            const toRemove = [webpName, thumbName].filter(Boolean);
+            const toRemove = [webpPath, thumbPath].filter(Boolean);
             if (toRemove.length) await supabase.storage.from(STORAGE_BUCKET).remove(toRemove);
         } catch (_) {}
 
