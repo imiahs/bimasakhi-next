@@ -101,3 +101,9 @@ docs/*
 !docs/tests/
 !docs/tests/**
 *.txt
+
+# CTO repo-cleanup rules
+scripts/audit/results/
+scripts/audit/*.mjs
+_*tmp**
+*.log
