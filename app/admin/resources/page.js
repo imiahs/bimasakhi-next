@@ -1,5 +1,5 @@
-import ResourcesContent from '@/features/admin/resources/ResourcesContent';
+import ContentInventoryContent from '@/features/admin/content/ContentInventoryContent';
 
 export default function ResourcesPage() {
-    return <ResourcesContent />;
+    return <ContentInventoryContent forcedType="resources" />;
 }
