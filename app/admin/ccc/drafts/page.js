@@ -265,7 +265,7 @@ export default function CCCDraftsList() {
                     <p className="admin-kicker">Content Lifecycle</p>
                     <h1 className="admin-heading-lg mt-2">Content Drafts</h1>
                     <p className="admin-copy mt-2 max-w-2xl text-sm">
-                        Review every draft state from one queue, including archived records, restore actions, and final destructive cleanup for archived items.
+                        Review every draft state from one queue, including archived records, restore actions, and soft-delete retention for archived items.
                     </p>
                 </div>
 
@@ -316,7 +316,7 @@ export default function CCCDraftsList() {
                             Restore Selected
                         </button>
                         <button type="button" disabled={selectedCount === 0 || bulkSubmitting} onClick={handleBulkDelete} className="admin-button-danger text-xs">
-                            Delete Archived
+                            Delete Archived (Hard)
                         </button>
                     </div>
                 </div>

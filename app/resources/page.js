@@ -55,6 +55,7 @@ export default async function ResourcesPage() {
     const { data: resources } = await supabase
         .from('resources')
         .select('*')
+        .eq('status', 'published')
         .order('created_at', { ascending: false });
 
     return (

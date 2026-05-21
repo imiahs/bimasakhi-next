@@ -6,6 +6,9 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 export const dynamic = 'force-dynamic';
 
 const PAGE_STATUSES = new Set(['draft', 'published', 'archived']);
+const CMS_UUID_FIELDS = new Set(['parent_id', 'topic_id', 'category_id']);
+const CMS_PAGE_FIELDS = ['parent_id', 'full_slug', 'page_type', 'topic_id', 'category_id', 'canonical_url', 'robots_setting'];
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function normalizeSlug(value) {
     return String(value || '')
@@ -15,6 +18,46 @@ function normalizeSlug(value) {
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .replace(/^[-/]+|[-/]+$/g, '');
+}
+
+function decoratePageStructure(page) {
+    if (!page) return page;
+
+    return {
+        ...page,
+        parent_id: page.parent_id || null,
+        full_slug: page.full_slug || page.slug || null,
+        page_type: page.page_type || (page.is_campaign_page ? 'campaign_page' : 'custom_page'),
+    };
+}
+
+function readCmsFieldUpdates(payload, allowedFields) {
+    const updates = {};
+
+    for (const field of allowedFields) {
+        if (!Object.prototype.hasOwnProperty.call(payload, field)) continue;
+
+        const value = payload[field];
+        if (value === undefined) continue;
+
+        if (CMS_UUID_FIELDS.has(field)) {
+            if (value === null || String(value).trim() === '') {
+                updates[field] = null;
+                continue;
+            }
+
+            const normalized = String(value).trim();
+            if (!UUID_PATTERN.test(normalized)) {
+                throw new Error(`${field} must be a UUID or empty.`);
+            }
+            updates[field] = normalized;
+            continue;
+        }
+
+        updates[field] = value === null ? null : String(value).trim() || null;
+    }
+
+    return updates;
 }
 
 export const GET = withAdminAuth(async (request, user, { params }) => {
@@ -37,7 +80,7 @@ export const GET = withAdminAuth(async (request, user, { params }) => {
 
         const { data: versions } = await supabase.from('page_versions').select('id, version_number, created_at').eq('page_id', id).order('version_number', { ascending: false });
 
-        return NextResponse.json({ page, blocks, versions: versions || [] });
+        return NextResponse.json({ page: decoratePageStructure(page), blocks, versions: versions || [] });
     } catch (err) {
         console.error("Error fetching page details:", err);
         return NextResponse.json({ error: "Failed to fetch page specifics." }, { status: 500 });
@@ -104,6 +147,8 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
             updates.status = nextStatus;
         }
 
+        Object.assign(updates, readCmsFieldUpdates(reqData, CMS_PAGE_FIELDS));
+
         if (Object.keys(updates).length === 0) {
             return NextResponse.json({ success: false, error: 'No updates supplied.' }, { status: 400 });
         }
@@ -119,7 +164,7 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
             throw error;
         }
 
-        return NextResponse.json({ success: true, page: data });
+        return NextResponse.json({ success: true, page: decoratePageStructure(data) });
     } catch (err) {
         console.error('Error patching page details:', err);
         return NextResponse.json({ success: false, error: 'Failed to update page.' }, { status: 500 });
@@ -202,6 +247,8 @@ export const PUT = withAdminAuth(async (request, user, { params }) => {
         if (Object.prototype.hasOwnProperty.call(reqData, 'title')) {
             metadataUpdates.title = title;
         }
+
+        Object.assign(metadataUpdates, readCmsFieldUpdates(reqData, CMS_PAGE_FIELDS));
 
         if (Object.keys(metadataUpdates).length > 0) {
             const { error: metadataError } = await supabase

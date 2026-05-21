@@ -208,7 +208,7 @@ export const POST = withAdminAuth(async (request, user) => {
         const body = await request.json();
         const { action } = body;
         const supabase = getServiceSupabase();
-        const adminId = request.headers.get('x-admin-user') || request.headers.get('x-admin-id') || 'unknown';
+        const adminId = user?.email || user?.id || request.headers.get('x-admin-id') || 'unknown';
 
         if (!action) {
             return NextResponse.json({ error: 'Missing action field' }, { status: 400 });

@@ -1,6 +1,5 @@
 export const ADMIN_PINNED_ROUTES = [
     { label: 'Dashboard', href: '/admin', icon: 'HQ', note: 'Mission control' },
-    { label: 'Dashboard View', href: '/admin/dashboard', icon: 'HQ', note: 'Legacy dashboard' },
     { label: 'Profile', href: '/admin/profile', icon: 'CR', note: 'Operator profile' },
 ];
 

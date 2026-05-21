@@ -263,29 +263,66 @@ export default function ShosControlCenter() {
     const dlqItems = snapshot?.dlq?.items || [];
     const queueItems = snapshot?.queue_failures?.items || [];
     const deliveryItems = snapshot?.delivery_failures?.items || [];
+    const eventItems = snapshot?.event_failures?.items || [];
     const alertItems = snapshot?.alerts?.items || [];
     const errorItems = snapshot?.errors?.items || [];
-    const consistencyRows = useMemo(() => {
+    const liveEscalations = snapshot?.escalations?.live || [];
+    const staleEscalations = snapshot?.escalations?.stale || [];
+    const acknowledgedEscalations = snapshot?.escalations?.acknowledged || [];
+    const historicalItems = snapshot?.historical_incidents?.items || [];
+    const historicalWarnings = snapshot?.historical_incidents?.warnings || [];
+    const stuckEvents = snapshot?.replay?.stuck_events || [];
+    const operationalHealth = snapshot?.consistency?.operational_health || metrics.overall_health || 'UNKNOWN';
+    const forensicHealth = snapshot?.consistency?.forensic_health || metrics.forensic_overall_health || operationalHealth;
+    const operationalSummary = snapshot?.health?.operational_summary || {};
+    const forensicSummary = snapshot?.health?.forensic_summary || {};
+    const authorityRows = useMemo(() => {
         if (!snapshot?.consistency) return [];
 
         return [
             {
-                label: 'DLQ Pending',
+                label: 'Operational DLQ',
                 value: snapshot.consistency.dlq_pending,
-                match: snapshot.consistency.matches_health_dlq_total,
+                state: snapshot.consistency.matches_health_dlq_total ? 'Aligned' : 'Mismatch',
+                note: `Active health count ${snapshot.health?.visibility?.dead_letters?.active_pending_count ?? 0}`,
+                toneClass: snapshot.consistency.matches_health_dlq_total
+                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
+                    : 'border-rose-500/40 bg-rose-500/10 text-rose-200',
             },
             {
-                label: 'Queue Failed',
-                value: snapshot.consistency.queue_failed,
-                match: true,
+                label: 'Forensic DLQ',
+                value: snapshot.health?.failures?.dlq_depth_total ?? 0,
+                state: 'Forensic',
+                note: `Historical ${snapshot.consistency.historical_dead_letters ?? 0}`,
+                toneClass: 'border-slate-700 bg-slate-900/70 text-slate-200',
             },
             {
-                label: 'Delivery Failed',
-                value: snapshot.consistency.delivery_failed,
-                match: true,
+                label: 'Live Escalations',
+                value: snapshot.consistency.live_unacknowledged_escalations ?? 0,
+                state: (snapshot.consistency.live_unacknowledged_escalations ?? 0) > 0 ? 'Live' : 'Clear',
+                note: 'Escalation-authoritative rows',
+                toneClass: (snapshot.consistency.live_unacknowledged_escalations ?? 0) > 0
+                    ? 'border-rose-500/40 bg-rose-500/10 text-rose-200'
+                    : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
+            },
+            {
+                label: 'Stale Escalations',
+                value: snapshot.consistency.stale_unacknowledged_escalations ?? 0,
+                state: (snapshot.consistency.stale_unacknowledged_escalations ?? 0) > 0 ? 'Stale' : 'Clear',
+                note: 'Visible but not live-authoritative',
+                toneClass: (snapshot.consistency.stale_unacknowledged_escalations ?? 0) > 0
+                    ? 'border-amber-500/40 bg-amber-500/10 text-amber-100'
+                    : 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
+            },
+            {
+                label: 'Acknowledged',
+                value: metrics.acknowledged_escalations_recent ?? 0,
+                state: 'Historical',
+                note: 'Recent acknowledged escalation records',
+                toneClass: 'border-slate-700 bg-slate-900/70 text-slate-200',
             },
         ];
-    }, [snapshot]);
+    }, [metrics.acknowledged_escalations_recent, snapshot]);
 
     if (loading && !snapshot) {
         return (
@@ -321,10 +358,11 @@ export default function ShosControlCenter() {
                                 System control without code intervention
                             </h1>
                             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 md:text-base">
-                                SHOS is the canonical operator surface for feature flags, DLQ recovery, queue remediation, delivery repair, alert actions, error control, and health consistency.
+                                SHOS is the canonical operator surface for feature flags, DLQ recovery, queue remediation, delivery repair, replay visibility, escalation authority, and bounded health interpretation.
                             </p>
                             <div className="mt-5 flex flex-wrap gap-2">
-                                <StatusPill label="Health" status={metrics.overall_health} />
+                                <StatusPill label="Operational" status={operationalHealth} />
+                                {forensicHealth !== operationalHealth ? <StatusPill label="Forensic" status={forensicHealth} /> : null}
                                 <StatusPill label="Control Source" status={snapshot?.control_plane?.source || 'shos'} />
                                 <StatusPill label="Last Sync" status={snapshot?.timestamp ? formatDate(snapshot.timestamp) : 'Unknown'} />
                             </div>
@@ -352,35 +390,181 @@ export default function ShosControlCenter() {
 
                 <FlashBanner flash={flash} />
 
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                     <MetricCard label="DLQ Pending" value={metrics.dlq_pending ?? 0} note="Actionable dead letters" accent="text-amber-300" />
+                    <MetricCard label="Historical DLQ" value={metrics.historical_dead_letters ?? 0} note="Forensic dead-letter residue" accent="text-slate-300" />
                     <MetricCard label="Queue Failed" value={metrics.queue_failed ?? 0} note="Failed queue rows" accent="text-rose-300" />
                     <MetricCard label="Delivery Failed" value={metrics.delivery_failed ?? 0} note="Failed external deliveries" accent="text-orange-300" />
+                    <MetricCard label="Replay Failures" value={metrics.event_failed ?? 0} note="Failed event-store replay items" accent="text-cyan-300" />
+                    <MetricCard label="Live Escalations" value={metrics.live_unacknowledged_escalations ?? 0} note="Still escalation-authoritative" accent="text-rose-300" />
+                    <MetricCard label="Stale Escalations" value={metrics.stale_unacknowledged_escalations ?? 0} note="Visible but not live-authoritative" accent="text-amber-200" />
                     <MetricCard label="Alerts Open" value={metrics.alerts_open ?? 0} note="Unresolved system alerts" accent="text-sky-300" />
                     <MetricCard label="Errors Open" value={metrics.errors_open ?? 0} note="Runtime + system errors" accent="text-fuchsia-300" />
-                    <MetricCard label="Delivery Success" value={formatPercent(metrics.delivery_success_rate ?? 0)} note="Canonical delivery rate" accent="text-emerald-300" />
                 </div>
 
                 <div className={`${sectionCardClass()} p-6`}>
                     <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                         <div>
-                            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Health consistency</div>
-                            <h2 className="mt-2 text-xl font-semibold text-slate-50">Single operator truth</h2>
+                            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Authority reconciliation</div>
+                            <h2 className="mt-2 text-xl font-semibold text-slate-50">Operational truth vs forensic visibility</h2>
                         </div>
-                        <div className="text-sm text-slate-400">The counts below come from one SHOS snapshot instead of disconnected panels.</div>
+                        <div className="text-sm text-slate-400">Live operator authority is explicit; historical residue stays visible without inheriting live degraded meaning.</div>
                     </div>
-                    <div className="mt-5 grid gap-3 md:grid-cols-3">
-                        {consistencyRows.map((row) => (
+                    <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+                        {authorityRows.map((row) => (
                             <div key={row.label} className="rounded-[20px] border border-slate-800/90 bg-slate-950/55 p-4">
                                 <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{row.label}</div>
                                 <div className="mt-3 flex items-end justify-between gap-3">
                                     <div className="text-3xl font-semibold text-slate-50">{row.value}</div>
-                                    <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] ${row.match ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200' : 'border-rose-500/40 bg-rose-500/10 text-rose-200'}`}>
-                                        {row.match ? 'Aligned' : 'Mismatch'}
+                                    <span className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] ${row.toneClass}`}>
+                                        {row.state}
                                     </span>
                                 </div>
+                                <div className="mt-2 text-sm text-slate-400">{row.note}</div>
                             </div>
                         ))}
+                    </div>
+                    <div className="mt-5 grid gap-4 xl:grid-cols-2">
+                        <div className="rounded-[20px] border border-slate-800/90 bg-slate-950/55 p-4">
+                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Live degraded authority</div>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {operationalSummary.hard_failures?.length ? operationalSummary.hard_failures.map((item) => (
+                                    <span key={item} className="rounded-full border border-rose-500/40 bg-rose-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-rose-200">
+                                        {titleize(item)}
+                                    </span>
+                                )) : <span className="text-sm text-slate-400">No live degraded-state reasons are currently classified.</span>}
+                            </div>
+                        </div>
+                        <div className="rounded-[20px] border border-slate-800/90 bg-slate-950/55 p-4">
+                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Forensic residue</div>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {forensicSummary.warnings?.length ? forensicSummary.warnings.map((item) => (
+                                    <span key={item} className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-200">
+                                        {titleize(item)}
+                                    </span>
+                                )) : <span className="text-sm text-slate-400">No preserved forensic residue is currently classified.</span>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid gap-6 xl:grid-cols-2">
+                    <div className={`${sectionCardClass()} p-6`}>
+                        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                            <div>
+                                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Escalation authority</div>
+                                <h2 className="mt-2 text-xl font-semibold text-slate-50">Live, stale, and acknowledged escalation lanes</h2>
+                            </div>
+                            <div className="text-sm text-slate-400">Escalations no longer inherit one implicit meaning.</div>
+                        </div>
+                        <div className="mt-5 space-y-4">
+                            {[...liveEscalations, ...staleEscalations, ...acknowledgedEscalations].length ? [...liveEscalations, ...staleEscalations, ...acknowledgedEscalations].map((item) => (
+                                <div key={`${item.incident_state}:${item.id}`} className="rounded-[20px] border border-slate-800/90 bg-slate-950/55 p-4">
+                                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                                        <div>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <div className="text-base font-semibold text-slate-50">{item.message}</div>
+                                                <StatusPill label="Severity" status={item.severity} />
+                                                <StatusPill label="State" status={item.incident_state} />
+                                                <StatusPill label="Authority" status={item.authority_class} />
+                                            </div>
+                                            <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-400">
+                                                <span>Created {formatDate(item.created_at)}</span>
+                                                <span>Retry count {item.retry_count}</span>
+                                                {item.next_escalation_at ? <span>Next escalation {formatDate(item.next_escalation_at)}</span> : null}
+                                                {item.acknowledged_at ? <span>Acknowledged {formatDate(item.acknowledged_at)}</span> : null}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )) : <div className="text-sm text-slate-400">No escalation records are currently visible.</div>}
+                        </div>
+                    </div>
+
+                    <div className={`${sectionCardClass()} p-6`}>
+                        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                            <div>
+                                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Replay authority</div>
+                                <h2 className="mt-2 text-xl font-semibold text-slate-50">Failed event replay and stuck-event visibility</h2>
+                            </div>
+                            <div className="text-sm text-slate-400">Replay artifacts remain operator-visible without being collapsed into generic health text.</div>
+                        </div>
+                        <div className="mt-5 space-y-4">
+                            {eventItems.length ? eventItems.map((item) => (
+                                <div key={item.id} className="rounded-[20px] border border-slate-800/90 bg-slate-950/55 p-4">
+                                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                                        <div>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <div className="text-base font-semibold text-slate-50">{titleize(item.event_name)}</div>
+                                                <StatusPill label="State" status={item.incident_state} />
+                                                <StatusPill label="Authority" status={item.authority_class} />
+                                            </div>
+                                            <div className="mt-2 text-sm text-slate-300">{item.last_error || 'Failed replay path without recorded error text.'}</div>
+                                            <div className="mt-3 flex flex-wrap gap-4 text-xs text-slate-400">
+                                                <span>Created {formatDate(item.created_at)}</span>
+                                                <span>Updated {formatDate(item.updated_at)}</span>
+                                                <span>Retries {item.retry_count}/{item.max_retries}</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            <ActionButton tone="success" label="Retry Replay" onClick={() => requestAction({ action: 'event_retry', id: item.id })} disabled={pendingAction === `event_retry:${item.id}`} />
+                                            <ActionButton tone="neutral" label="Mark Resolved" onClick={() => requestAction({ action: 'event_resolve', id: item.id })} disabled={pendingAction === `event_resolve:${item.id}`} />
+                                        </div>
+                                    </div>
+                                </div>
+                            )) : <div className="text-sm text-slate-400">No failed replay items are currently visible.</div>}
+                            {stuckEvents.length ? (
+                                <div className="rounded-[20px] border border-slate-800/90 bg-slate-950/55 p-4">
+                                    <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Stuck event visibility</div>
+                                    <div className="mt-3 space-y-3">
+                                        {stuckEvents.map((event) => (
+                                            <div key={event.id} className="rounded-2xl border border-slate-800/90 bg-slate-950/60 px-4 py-3">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <div className="text-sm font-semibold text-slate-50">{titleize(event.event_name)}</div>
+                                                    <StatusPill label="Authority" status={event.authority_class} />
+                                                </div>
+                                                <div className="mt-2 text-xs text-slate-400">Dispatched {formatDate(event.dispatched_at)}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : null}
+                        </div>
+                    </div>
+                </div>
+
+                <div className={`${sectionCardClass()} p-6`}>
+                    <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                        <div>
+                            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">Historical visibility</div>
+                            <h2 className="mt-2 text-xl font-semibold text-slate-50">Preserved forensic residue without live-authority leakage</h2>
+                        </div>
+                        <div className="text-sm text-slate-400">Historical artifacts remain audit-visible and intentionally separate from live operator backlog.</div>
+                    </div>
+                    <div className="mt-5 grid gap-4 xl:grid-cols-2">
+                        <div className="space-y-4">
+                            {historicalItems.length ? historicalItems.map((item) => (
+                                <div key={item.id} className="rounded-[20px] border border-slate-800/90 bg-slate-950/55 p-4">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <div className="text-base font-semibold text-slate-50">{item.label}</div>
+                                        <StatusPill label="State" status={item.incident_state} />
+                                        <StatusPill label="Authority" status={item.authority_class} />
+                                    </div>
+                                    <div className="mt-2 text-sm text-slate-300">{item.detail}</div>
+                                    <div className="mt-3 text-xs text-slate-400">Count {item.count}</div>
+                                </div>
+                            )) : <div className="text-sm text-slate-400">No preserved historical artifacts are currently classified.</div>}
+                        </div>
+                        <div className="rounded-[20px] border border-slate-800/90 bg-slate-950/55 p-4">
+                            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Forensic warning ledger</div>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                {historicalWarnings.length ? historicalWarnings.map((item) => (
+                                    <span key={item} className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-200">
+                                        {titleize(item)}
+                                    </span>
+                                )) : <span className="text-sm text-slate-400">No forensic warnings recorded in this snapshot.</span>}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

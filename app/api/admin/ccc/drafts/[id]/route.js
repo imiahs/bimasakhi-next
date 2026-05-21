@@ -5,6 +5,10 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
 
+const CMS_UUID_FIELDS = new Set(['parent_id', 'prompt_template_id']);
+const CMS_DRAFT_FIELDS = ['parent_id', 'full_slug', 'page_type', 'intent_type', 'keywords', 'tone', 'role', 'prompt_template_id'];
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 function normalizeSlug(value) {
     return String(value || '')
         .trim()
@@ -19,6 +23,63 @@ function isVersionHistoryUnavailable(error) {
     return error?.code === '42P01'
         || error?.code === 'PGRST205'
         || error?.message?.includes('content_version_history');
+}
+
+function buildDraftActionKey({ draftId, action, status, updatedAt }) {
+    return crypto
+        .createHash('sha256')
+        .update(JSON.stringify({
+            draftId,
+            action,
+            status: status || null,
+            updatedAt: updatedAt || null,
+        }))
+        .digest('hex');
+}
+
+function decorateDraftStructure(draft) {
+    if (!draft) return draft;
+
+    return {
+        ...draft,
+        parent_id: draft.parent_id || null,
+        full_slug: draft.full_slug || draft.slug || null,
+        page_type: draft.page_type || 'generated_draft',
+    };
+}
+
+function readCmsFieldUpdates(payload, allowedFields) {
+    const updates = {};
+
+    for (const field of allowedFields) {
+        if (!Object.prototype.hasOwnProperty.call(payload, field)) continue;
+
+        const value = payload[field];
+        if (value === undefined) continue;
+
+        if (CMS_UUID_FIELDS.has(field)) {
+            if (value === null || String(value).trim() === '') {
+                updates[field] = null;
+                continue;
+            }
+
+            const normalized = String(value).trim();
+            if (!UUID_PATTERN.test(normalized)) {
+                throw new Error(`${field} must be a UUID or empty.`);
+            }
+            updates[field] = normalized;
+            continue;
+        }
+
+        if (field === 'keywords') {
+            updates[field] = value === null || value === '' ? null : value;
+            continue;
+        }
+
+        updates[field] = value === null ? null : String(value).trim() || null;
+    }
+
+    return updates;
 }
 
 // GET /api/admin/ccc/drafts/[id] — Get single draft with full content
@@ -74,7 +135,7 @@ export const GET = withAdminAuth(async (request, user, { params }) => {
             selectedVersion = versionData;
         }
 
-        return NextResponse.json({ success: true, draft: data, versions: versions || [], selectedVersion });
+        return NextResponse.json({ success: true, draft: decorateDraftStructure(data), versions: versions || [], selectedVersion });
     } catch (err) {
         console.error('[CCC Draft] GET error:', err);
         return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
@@ -92,7 +153,7 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
         // Verify draft exists (fetch all content fields needed for publish)
         const { data: existing, error: fetchErr } = await supabase
             .from('content_drafts')
-            .select('id, page_index_id, status, slug, city_id, locality_id, hero_headline, meta_title, meta_description, cta_text, body_content, faq_data, word_count, featured_image_url, featured_image_alt, scheduled_publish_at')
+            .select('id, page_index_id, status, slug, city_id, locality_id, hero_headline, meta_title, meta_description, cta_text, body_content, faq_data, word_count, featured_image_url, featured_image_alt, scheduled_publish_at, updated_at')
             .eq('id', id)
             .single();
 
@@ -142,7 +203,12 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                 return NextResponse.json({ success: false, error: 'Draft has no slug — cannot publish without a URL' }, { status: 400 });
             }
 
-            const publishKey = `draft:${id}:approve`;
+            const publishKey = buildDraftActionKey({
+                draftId: id,
+                action: 'approve',
+                status: existing.status,
+                updatedAt: existing.updated_at,
+            });
             const { data: publishResult, error: publishErr } = await supabase.rpc('rule16_publish_draft', {
                 p_draft_id: id,
                 p_actor: user?.email || user?.id || 'admin',
@@ -163,10 +229,12 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                 return NextResponse.json({ success: false, error: `Cannot unpublish a draft with status '${existing.status}'` }, { status: 400 });
             }
 
-            const transitionKey = crypto
-                .createHash('sha256')
-                .update(JSON.stringify({ draftId: id, action: 'unpublish' }))
-                .digest('hex');
+            const transitionKey = buildDraftActionKey({
+                draftId: id,
+                action: 'unpublish',
+                status: existing.status,
+                updatedAt: existing.updated_at,
+            });
 
             const { error: draftErr } = await supabase.rpc('rule16_transition_draft_status', {
                 p_draft_id: id,
@@ -189,10 +257,12 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                 return NextResponse.json({ success: false, error: 'Draft is already archived' }, { status: 400 });
             }
 
-            const transitionKey = crypto
-                .createHash('sha256')
-                .update(JSON.stringify({ draftId: id, action: 'archive' }))
-                .digest('hex');
+            const transitionKey = buildDraftActionKey({
+                draftId: id,
+                action: 'archive',
+                status: existing.status,
+                updatedAt: existing.updated_at,
+            });
 
             const { error: draftErr } = await supabase.rpc('rule16_transition_draft_status', {
                 p_draft_id: id,
@@ -376,7 +446,7 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
             }
         }
 
-        const allowedFields = ['page_title', 'meta_title', 'meta_description', 'hero_headline', 'body_content', 'faq_data', 'cta_text', 'review_notes', 'status', 'image_prompts', 'featured_image_url', 'featured_image_alt'];
+        const allowedFields = ['page_title', 'meta_title', 'meta_description', 'hero_headline', 'body_content', 'faq_data', 'cta_text', 'review_notes', 'status', 'image_prompts', 'featured_image_url', 'featured_image_alt', ...CMS_DRAFT_FIELDS];
         const updates = {
             updated_at: now,
             __saved_by: user?.email || user?.id || 'admin',
@@ -388,6 +458,8 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                 updates[key] = fields[key];
             }
         }
+
+        Object.assign(updates, readCmsFieldUpdates(fields, CMS_DRAFT_FIELDS));
 
         const updateKey = crypto
             .createHash('sha256')
@@ -437,6 +509,7 @@ export const DELETE = withAdminAuth(async (request, user, { params }) => {
     try {
         const supabase = getServiceSupabase();
         const { id } = await params;
+        const now = new Date().toISOString();
 
         const { data: existing, error: fetchErr } = await supabase
             .from('content_drafts')
@@ -452,16 +525,23 @@ export const DELETE = withAdminAuth(async (request, user, { params }) => {
             return NextResponse.json({ success: false, error: 'Only archived drafts can be deleted.' }, { status: 400 });
         }
 
-        const { error: deleteError } = await supabase
+        const { data: updatedDraft, error: updateError } = await supabase
             .from('content_drafts')
-            .delete()
-            .eq('id', id);
+            .update({
+                status: 'archived',
+                updated_at: now,
+                reviewed_at: now,
+                reviewer: user?.email || user?.id || 'admin',
+            })
+            .eq('id', id)
+            .select('id, status, updated_at')
+            .single();
 
-        if (deleteError) {
-            return NextResponse.json({ success: false, error: deleteError.message }, { status: 500 });
+        if (updateError) {
+            return NextResponse.json({ success: false, error: updateError.message }, { status: 500 });
         }
 
-        return NextResponse.json({ success: true, deleted: true });
+        return NextResponse.json({ success: true, soft_deleted: true, draft: updatedDraft });
     } catch (err) {
         console.error('[CCC Draft] DELETE error:', err);
         return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });

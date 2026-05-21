@@ -152,6 +152,17 @@ const PageEditorContent = ({ pageId }) => {
                         {page.is_campaign_page && <span className="ml-2 inline-block rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-xs uppercase tracking-wider text-amber-300">Campaign</span>}
                     </h1>
                     <p className="mt-1 font-mono text-sm text-emerald-300">/pages/{page.slug}</p>
+                    <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-500">
+                        <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-1">
+                            parent_id: {page.parent_id || 'none'}
+                        </span>
+                        <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-1">
+                            full_slug: {page.full_slug || page.slug || '--'}
+                        </span>
+                        <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-1">
+                            page_type: {page.page_type || (page.is_campaign_page ? 'campaign_page' : 'custom_page')}
+                        </span>
+                    </div>
                 </div>
                 <div className="flex gap-4 items-center">
                     {versions.length > 0 && (

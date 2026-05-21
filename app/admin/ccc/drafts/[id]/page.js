@@ -200,7 +200,7 @@ export default function CCCDraftEditor() {
     };
 
     const handleDeleteArchived = async () => {
-        if (!window.confirm('Delete this archived draft permanently? This cannot be undone.')) {
+        if (!window.confirm('Apply soft delete on this archived draft and keep it in archived state?')) {
             return;
         }
 
@@ -260,6 +260,11 @@ export default function CCCDraftEditor() {
                     <div>
                         <h1 className="text-xl font-bold text-white truncate max-w-lg">{draft.hero_headline || draft.slug}</h1>
                         <p className="text-xs text-slate-500 font-mono mt-1">/{draft.slug}</p>
+                        <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-slate-500">
+                            <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-1">parent_id: {draft.parent_id || 'none'}</span>
+                            <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-1">full_slug: {draft.full_slug || draft.slug || '--'}</span>
+                            <span className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-1">page_type: {draft.page_type || 'generated_draft'}</span>
+                        </div>
                     </div>
                     <StatusBadge status={draft.status} size="md" />
                     {draft.scheduled_publish_at && (
@@ -426,6 +431,9 @@ export default function CCCDraftEditor() {
                         <InfoRow label="Quality" value={draft.quality_score != null ? `${draft.quality_score}/10` : '--'} />
                         <InfoRow label="Gen Time" value={draft.generation_time_ms != null ? `${(draft.generation_time_ms / 1000).toFixed(1)}s` : '--'} />
                         <InfoRow label="AI Model" value={draft.ai_model || 'Unknown'} />
+                        <InfoRow label="Parent ID" value={draft.parent_id || 'none'} />
+                        <InfoRow label="Full Slug" value={draft.full_slug || draft.slug || '--'} />
+                        <InfoRow label="Page Type" value={draft.page_type || 'generated_draft'} />
                         <InfoRow label="Created" value={draft.created_at ? new Date(draft.created_at).toLocaleString('en-IN') : '--'} />
                         {draft.reviewed_at && <InfoRow label="Reviewed" value={new Date(draft.reviewed_at).toLocaleString('en-IN')} />}
                         {draft.reviewer && <InfoRow label="Reviewer" value={draft.reviewer} />}

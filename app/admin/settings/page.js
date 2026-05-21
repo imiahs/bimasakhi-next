@@ -4,7 +4,7 @@ import { adminApi } from '@/lib/adminApi';
 
 const DEFAULT_CONFIG = {
     ai_enabled: false,
-    queue_paused: true,
+    queue_paused: false,
     batch_size: 5,
     crm_auto_routing: false,
     followup_enabled: false

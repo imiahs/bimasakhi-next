@@ -25,8 +25,23 @@ async function handler(req) {
         .select('sync_status, name, mobile, email, message, reason, source, pipeline, tag')
         .single();
 
-    if (updateErr || !checkData) {
-        // If it fails, we assume it's already completed or not found
+    if (updateErr) {
+        const errorMsg = updateErr.message || 'Contact load/update failed';
+        await markFailed(eventStoreId, errorMsg, {
+            contact_id: contactId,
+            stage: 'load_contact_for_sync',
+            correlation_id: correlationId,
+        });
+        return NextResponse.json({ error: errorMsg }, { status: 500 });
+    }
+
+    if (!checkData) {
+        await markCompleted(eventStoreId, {
+            skipped: true,
+            reason: 'contact_missing_or_already_completed',
+            contact_id: contactId,
+            correlation_id: correlationId,
+        });
         return NextResponse.json({ success: true, note: 'Already completed, missing or safely skipping duplicate' });
     }
 

@@ -8,6 +8,55 @@ function uniqueIds(ids) {
     return [...new Set((ids || []).filter(Boolean))];
 }
 
+const CMS_UUID_FIELDS = new Set(['parent_id', 'prompt_template_id']);
+const CMS_DRAFT_FIELDS = ['parent_id', 'full_slug', 'page_type', 'intent_type', 'keywords', 'tone', 'role', 'prompt_template_id'];
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function decorateDraftStructure(draft) {
+    if (!draft) return draft;
+
+    return {
+        ...draft,
+        parent_id: draft.parent_id || null,
+        full_slug: draft.full_slug || draft.slug || null,
+        page_type: draft.page_type || 'generated_draft',
+    };
+}
+
+function readCmsFieldUpdates(payload, allowedFields) {
+    const updates = {};
+
+    for (const field of allowedFields) {
+        if (!Object.prototype.hasOwnProperty.call(payload, field)) continue;
+
+        const value = payload[field];
+        if (value === undefined) continue;
+
+        if (CMS_UUID_FIELDS.has(field)) {
+            if (value === null || String(value).trim() === '') {
+                updates[field] = null;
+                continue;
+            }
+
+            const normalized = String(value).trim();
+            if (!UUID_PATTERN.test(normalized)) {
+                throw new Error(`${field} must be a UUID or empty.`);
+            }
+            updates[field] = normalized;
+            continue;
+        }
+
+        if (field === 'keywords') {
+            updates[field] = value === null || value === '' ? null : value;
+            continue;
+        }
+
+        updates[field] = value === null ? null : String(value).trim() || null;
+    }
+
+    return updates;
+}
+
 async function syncPageIndexStatus(supabase, pageIndexIds, status) {
     if (!Array.isArray(pageIndexIds) || pageIndexIds.length === 0) {
         return;
@@ -38,7 +87,7 @@ export const GET = withAdminAuth(async (request) => {
 
         let query = supabase
             .from('content_drafts')
-            .select('id, slug, page_title, hero_headline, meta_title, word_count, quality_score, status, review_notes, reviewer, reviewed_at, ai_model, city_id, locality_id, created_at, updated_at, published_at', { count: 'exact' })
+            .select('id, slug, page_title, hero_headline, meta_title, word_count, quality_score, status, review_notes, reviewer, reviewed_at, ai_model, city_id, locality_id, parent_id, full_slug, page_type, intent_type, keywords, tone, role, prompt_template_id, created_at, updated_at, published_at', { count: 'exact' })
             .order('created_at', { ascending: false })
             .range(offset, offset + limit - 1);
 
@@ -63,7 +112,7 @@ export const GET = withAdminAuth(async (request) => {
 
         return NextResponse.json({
             success: true,
-            drafts: data || [],
+            drafts: (data || []).map(decorateDraftStructure),
             total: count || 0,
             page,
             limit,
@@ -176,6 +225,8 @@ export const POST = withAdminAuth(async (request) => {
         }
 
         const slug = `new-page-${Date.now()}`;
+        const cmsUpdates = readCmsFieldUpdates(body, CMS_DRAFT_FIELDS);
+
         const { data, error } = await supabase
             .from('content_drafts')
             .insert({
@@ -188,6 +239,7 @@ export const POST = withAdminAuth(async (request) => {
                 status: 'draft',
                 word_count: 0,
                 ai_model: 'manual',
+                ...cmsUpdates,
             })
             .select('id, slug')
             .single();

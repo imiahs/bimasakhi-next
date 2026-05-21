@@ -5,6 +5,9 @@ import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 export const dynamic = 'force-dynamic';
 
 const PAGE_STATUSES = new Set(['draft', 'published', 'archived']);
+const CMS_UUID_FIELDS = new Set(['parent_id', 'topic_id', 'category_id']);
+const CMS_PAGE_FIELDS = ['parent_id', 'full_slug', 'page_type', 'topic_id', 'category_id', 'canonical_url', 'robots_setting'];
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function parsePositiveInt(value, fallback) {
     const parsed = Number.parseInt(value || '', 10);
@@ -23,6 +26,46 @@ function normalizeSlug(value) {
 
 function resolvePageSlug(title, slug) {
     return normalizeSlug(slug || title);
+}
+
+function decoratePageStructure(page) {
+    if (!page) return page;
+
+    return {
+        ...page,
+        parent_id: page.parent_id || null,
+        full_slug: page.full_slug || page.slug || null,
+        page_type: page.page_type || (page.is_campaign_page ? 'campaign_page' : 'custom_page'),
+    };
+}
+
+function readCmsFieldUpdates(payload, allowedFields) {
+    const updates = {};
+
+    for (const field of allowedFields) {
+        if (!Object.prototype.hasOwnProperty.call(payload, field)) continue;
+
+        const value = payload[field];
+        if (value === undefined) continue;
+
+        if (CMS_UUID_FIELDS.has(field)) {
+            if (value === null || String(value).trim() === '') {
+                updates[field] = null;
+                continue;
+            }
+
+            const normalized = String(value).trim();
+            if (!UUID_PATTERN.test(normalized)) {
+                throw new Error(`${field} must be a UUID or empty.`);
+            }
+            updates[field] = normalized;
+            continue;
+        }
+
+        updates[field] = value === null ? null : String(value).trim() || null;
+    }
+
+    return updates;
 }
 
 export const GET = withAdminAuth(async (request, user) => {
@@ -50,6 +93,14 @@ export const GET = withAdminAuth(async (request, user) => {
                 slug,
                 title,
                 meta_title,
+                meta_description,
+                parent_id,
+                full_slug,
+                page_type,
+                topic_id,
+                category_id,
+                canonical_url,
+                robots_setting,
                 status,
                 is_campaign_page,
                 created_at,
@@ -81,7 +132,7 @@ export const GET = withAdminAuth(async (request, user) => {
 
         return NextResponse.json({
             success: true,
-            pages: data || [],
+            pages: (data || []).map(decoratePageStructure),
             total: count || 0,
             page,
             limit,
@@ -147,16 +198,19 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ success: false, error: 'Slug already exists.' }, { status: 400 });
         }
 
+        const cmsUpdates = readCmsFieldUpdates(reqData, CMS_PAGE_FIELDS);
+
         const { data, error } = await supabase.from('custom_pages').insert({
             title,
             slug: resolvedSlug,
             is_campaign_page: !!is_campaign_page,
-            status: PAGE_STATUSES.has(status) ? status : 'draft'
+            status: PAGE_STATUSES.has(status) ? status : 'draft',
+            ...cmsUpdates,
         }).select().single();
 
         if (error) throw error;
 
-        return NextResponse.json({ success: true, page: data });
+        return NextResponse.json({ success: true, page: decoratePageStructure(data) });
     } catch (err) {
         console.error("Error creating page:", err);
         return NextResponse.json({ success: false, error: "Failed to create page." }, { status: 500 });

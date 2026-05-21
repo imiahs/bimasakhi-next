@@ -73,8 +73,23 @@ async function handler(req) {
     // Atomic Status Transition & Idempotency Check (Worker Optimization)
     const { data: checkData, error: updateErr } = await loadLeadForSync(supabase, leadId);
 
-    if (updateErr || !checkData) {
-        // If it fails, we assume it's already completed or not found
+    if (updateErr) {
+        const errorMsg = updateErr.message || 'Lead load/update failed';
+        await markFailed(eventStoreId, errorMsg, {
+            lead_id: leadId,
+            stage: 'load_lead_for_sync',
+            correlation_id: correlationId,
+        });
+        return NextResponse.json({ error: errorMsg }, { status: 500 });
+    }
+
+    if (!checkData) {
+        await markCompleted(eventStoreId, {
+            skipped: true,
+            reason: 'lead_missing_or_already_completed',
+            lead_id: leadId,
+            correlation_id: correlationId,
+        });
         return NextResponse.json({ success: true, note: 'Already completed, missing or safely skipping duplicate' });
     }
 

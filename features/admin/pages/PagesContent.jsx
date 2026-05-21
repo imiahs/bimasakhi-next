@@ -29,6 +29,9 @@ function emptyEditForm() {
         id: null,
         title: '',
         slug: '',
+        parent_id: null,
+        full_slug: '',
+        page_type: '',
         meta_title: '',
         meta_description: '',
         status: 'draft',
@@ -205,6 +208,9 @@ export default function PagesContent() {
             id: page.id,
             title: page.title || '',
             slug: page.slug || '',
+            parent_id: page.parent_id || null,
+            full_slug: page.full_slug || page.slug || '',
+            page_type: page.page_type || (page.is_campaign_page ? 'campaign_page' : 'custom_page'),
             meta_title: page.meta_title || '',
             meta_description: page.meta_description || '',
             status: page.status || 'draft',
@@ -498,6 +504,9 @@ export default function PagesContent() {
                                         <td className="px-5 py-4 align-top">
                                             <div className="space-y-2">
                                                 <span className="font-mono text-xs text-emerald-300">/pages/{page.slug}</span>
+                                                <span className="block font-mono text-[11px] text-slate-500">
+                                                    full_slug: {page.full_slug || page.slug || '--'}
+                                                </span>
                                                 <Link href={`/pages/${page.slug}`} target="_blank" className="block text-xs text-slate-500 hover:text-slate-200">
                                                     Open public preview
                                                 </Link>
@@ -511,6 +520,12 @@ export default function PagesContent() {
                                         <td className="px-5 py-4 align-top">
                                             <span className={`inline-flex rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${page.is_campaign_page ? 'border-amber-500/25 bg-amber-500/10 text-amber-300' : 'border-sky-500/25 bg-sky-500/10 text-sky-300'}`}>
                                                 {page.is_campaign_page ? 'Campaign' : 'Standard'}
+                                            </span>
+                                            <span className="mt-2 block text-[11px] text-slate-500">
+                                                page_type: {page.page_type || (page.is_campaign_page ? 'campaign_page' : 'custom_page')}
+                                            </span>
+                                            <span className="mt-1 block text-[11px] text-slate-500">
+                                                parent_id: {page.parent_id || 'none'}
                                             </span>
                                         </td>
                                         <td className="px-5 py-4 align-top text-xs text-slate-400">
@@ -729,6 +744,24 @@ export default function PagesContent() {
                                     className="admin-input mt-2 px-3 py-2 text-sm"
                                 />
                             </label>
+
+                            <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+                                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Structure Visibility</p>
+                                <div className="mt-3 grid gap-3 text-xs text-slate-400 md:grid-cols-3">
+                                    <div>
+                                        <span className="block text-slate-500">parent_id</span>
+                                        <span className="font-mono text-slate-300">{editForm.parent_id || 'none'}</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-slate-500">full_slug</span>
+                                        <span className="font-mono text-slate-300">{editForm.full_slug || editForm.slug || '--'}</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-slate-500">page_type</span>
+                                        <span className="font-mono text-slate-300">{editForm.page_type || 'custom_page'}</span>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div className="flex justify-end gap-3 pt-2">
                                 <button type="button" onClick={closeEditModal} className="admin-button-secondary">Cancel</button>

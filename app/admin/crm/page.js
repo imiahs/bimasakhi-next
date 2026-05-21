@@ -15,6 +15,7 @@ export default function CRMPage() {
     const [leads, setLeads] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedLeadId, setSelectedLeadId] = useState(null);
     const [convertingId, setConvertingId] = useState(null);
     const [conversionValue, setConversionValue] = useState(15000);
     const [actionLoading, setActionLoading] = useState(false);
@@ -28,7 +29,9 @@ export default function CRMPage() {
         try {
             setLoading(true);
             const response = await adminApi.getLeads();
-            setLeads(response.leads || []);
+            const nextLeads = response.leads || [];
+            setLeads(nextLeads);
+            setSelectedLeadId((current) => current || nextLeads[0]?.id || null);
             setError(null);
         } catch (err) {
             setError(err.message);
@@ -98,7 +101,45 @@ export default function CRMPage() {
         return { total, converted, zohoSynced, hot };
     }, [leads]);
 
-    const handleConvert = async (event) => {
+    useEffect(() => {
+        if (!filteredLeads.length) {
+            setSelectedLeadId(null);
+            return;
+        }
+
+        if (!filteredLeads.some((lead) => lead.id === selectedLeadId)) {
+            setSelectedLeadId(filteredLeads[0].id);
+        }
+    }, [filteredLeads, selectedLeadId]);
+
+    const selectedLead = useMemo(() => {
+        if (!selectedLeadId) {
+            return null;
+        }
+
+        return filteredLeads.find((lead) => lead.id === selectedLeadId) || null;
+    }, [filteredLeads, selectedLeadId]);
+
+    const showToast = useCallback((type, text) => {
+        setToast({ type, text });
+        setTimeout(() => setToast(null), 3000);
+    }, []);
+
+    const copyLeadField = useCallback(async (label, value) => {
+        if (!value) {
+            showToast('error', `${label} is not available for this lead.`);
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(String(value));
+            showToast('success', `${label} copied.`);
+        } catch (copyError) {
+            showToast('error', `Failed to copy ${label.toLowerCase()}.`);
+        }
+    }, [showToast]);
+
+    const handleConvert = useCallback(async (event) => {
         event.preventDefault();
         if (!convertingId) return;
 
@@ -106,16 +147,15 @@ export default function CRMPage() {
 
         try {
             await adminApi.markConverted(convertingId, conversionValue);
-            setToast({ type: 'success', text: 'Lead successfully marked as converted.' });
+            showToast('success', 'Lead successfully marked as converted.');
             setConvertingId(null);
             fetchLeads();
         } catch (err) {
-            setToast({ type: 'error', text: `Failed: ${err.message}` });
+            showToast('error', `Failed: ${err.message}`);
         } finally {
             setActionLoading(false);
-            setTimeout(() => setToast(null), 3000);
         }
-    };
+    }, [convertingId, conversionValue, fetchLeads, showToast]);
 
     if (loading) {
         return (
@@ -198,6 +238,84 @@ export default function CRMPage() {
                 </div>
             </section>
 
+            <section className="admin-panel rounded-2xl p-5">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                    <div>
+                        <p className="admin-kicker">Lead Workbench</p>
+                        <h2 className="mt-2 text-xl font-semibold text-white">
+                            {selectedLead ? (selectedLead.Last_Name || selectedLead.name || 'Selected lead') : 'Select a lead'}
+                        </h2>
+                        <p className="mt-2 text-sm text-slate-500">
+                            Click any row below to inspect the live lead record, sync state, and contact details without leaving the CRM table.
+                        </p>
+                    </div>
+
+                    {selectedLead ? (
+                        <div className="flex flex-wrap gap-2">
+                            <button
+                                type="button"
+                                onClick={() => copyLeadField('Mobile', selectedLead.Mobile || selectedLead.mobile)}
+                                className="admin-button-secondary text-xs"
+                            >
+                                Copy Mobile
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => copyLeadField('Email', selectedLead.email)}
+                                className="admin-button-secondary text-xs"
+                            >
+                                Copy Email
+                            </button>
+                            {!selectedLead.is_converted ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setConvertingId(selectedLead.id)}
+                                    className="admin-button-primary text-xs"
+                                >
+                                    Mark Converted
+                                </button>
+                            ) : null}
+                        </div>
+                    ) : null}
+                </div>
+
+                {selectedLead ? (
+                    <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">Contact</p>
+                            <p className="mt-3 text-base font-semibold text-white">{selectedLead.Mobile || selectedLead.mobile || 'N/A'}</p>
+                            <p className="mt-2 text-sm text-slate-400">{selectedLead.email || 'No email recorded'}</p>
+                        </div>
+                        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">Origin</p>
+                            <p className="mt-3 text-base font-semibold text-white">{selectedLead.Lead_Source || selectedLead.source || 'Website'}</p>
+                            <p className="mt-2 text-sm text-slate-400">{selectedLead.City || selectedLead.city || 'Unknown city'}</p>
+                        </div>
+                        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">Pipeline</p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                                <StatusBadge status={selectedLead.is_converted ? 'Converted' : (selectedLead.status || selectedLead.Lead_Status || 'new')} />
+                                <StatusBadge status={selectedLead.synced_to_zoho || selectedLead.zoho_lead_id ? 'Synced' : 'Local'} />
+                            </div>
+                            <p className="mt-2 text-sm text-slate-400">Created {new Date(selectedLead.created_at || selectedLead.Created_Time || Date.now()).toLocaleString()}</p>
+                        </div>
+                        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-4">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">Commercial</p>
+                            <p className="mt-3 text-base font-semibold text-white">Score {Number(selectedLead.lead_score || selectedLead.score || 0)}</p>
+                            <p className="mt-2 text-sm text-slate-400">
+                                {selectedLead.is_converted
+                                    ? `Converted${selectedLead.conversion_value ? ` for Rs ${Number(selectedLead.conversion_value).toLocaleString()}` : ''}`
+                                    : 'Not converted yet'}
+                            </p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="mt-5 rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.02] p-6 text-sm text-slate-500">
+                        No lead matches the current filter state.
+                    </div>
+                )}
+            </section>
+
             <section className="admin-panel overflow-hidden rounded-2xl">
                 {error ? (
                     <div className="px-6 py-10 text-center text-sm font-medium text-rose-400">
@@ -229,9 +347,14 @@ export default function CRMPage() {
                                     const score = Number(lead.lead_score || lead.score || 0);
                                     const zohoState = lead.synced_to_zoho || lead.zoho_lead_id ? 'Synced' : 'Local';
                                     const status = lead.is_converted ? 'Converted' : (lead.status || lead.Lead_Status || 'new');
+                                    const isSelected = selectedLead?.id === lead.id;
 
                                     return (
-                                        <tr key={lead.id} className={`transition hover:bg-white/[0.03] ${lead.is_converted ? 'opacity-70' : ''}`}>
+                                        <tr
+                                            key={lead.id}
+                                            className={`cursor-pointer transition hover:bg-white/[0.03] ${lead.is_converted ? 'opacity-70' : ''} ${isSelected ? 'bg-white/[0.04]' : ''}`}
+                                            onClick={() => setSelectedLeadId(lead.id)}
+                                        >
                                             <td className="px-5 py-4">
                                                 <div>
                                                     <p className="font-semibold text-slate-200">{name}</p>
@@ -265,7 +388,11 @@ export default function CRMPage() {
                                                     </span>
                                                 ) : (
                                                     <button
-                                                        onClick={() => setConvertingId(lead.id)}
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            setSelectedLeadId(lead.id);
+                                                            setConvertingId(lead.id);
+                                                        }}
                                                         className="admin-button-secondary px-3 py-2 text-xs"
                                                     >
                                                         Mark converted
