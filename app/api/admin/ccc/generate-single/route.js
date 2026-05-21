@@ -1,21 +1,72 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
+import { enqueuePageGeneration } from '@/lib/queue/publisher';
 
 export const dynamic = 'force-dynamic';
 
-function buildSinglePagePayload(slug) {
+function asPromptObject(value) {
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+}
+
+function normalizePromptKeywords(value) {
+    if (Array.isArray(value)) {
+        return value.map((entry) => String(entry || '').trim()).filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+        return value.split(',').map((entry) => entry.trim()).filter(Boolean);
+    }
+
+    return [];
+}
+
+function normalizePromptInputs(input = {}) {
+    const nested = asPromptObject(input.prompt_inputs);
+    const templateId = input.prompt_template_id || input.template_id || nested.prompt_template_id || nested.template_id || null;
+    const intent = input.intent || input.intent_type || nested.intent || nested.intent_type || input.content_level || 'local_service';
+    const location = input.location || nested.location || input.locality_name || input.city_name || input.city || 'your city';
+    const keyword = input.keyword || input.keyword_text || nested.keyword || '';
+    const keywords = normalizePromptKeywords(input.keywords ?? nested.keywords ?? keyword);
+
+    return {
+        role: input.role || nested.role || 'Senior LIC Development Officer and digital content strategist',
+        tone: input.tone || nested.tone || 'warm, conversational Hinglish',
+        keywords,
+        location,
+        intent,
+        prompt_template_id: templateId,
+        template_id: templateId,
+        audience: input.audience || nested.audience || 'women aged 25-45 from middle-class families looking for financial independence',
+    };
+}
+
+function buildSinglePagePayload(slug, promptInputs = {}) {
     const keywordText = slug.replace(/-/g, ' ').trim();
+    const normalizedPromptInputs = normalizePromptInputs({
+        ...promptInputs,
+        keyword: keywordText,
+        location: promptInputs.location || slug.replace(/-/g, ' '),
+        intent: promptInputs.intent || promptInputs.intent_type || 'locality_page',
+    });
 
     return {
         version: 1,
         source: 'ccc_single_generation',
+        prompt_inputs: normalizedPromptInputs,
         pages: [
             {
                 slug,
                 keyword_text: keywordText,
                 page_type: 'locality_page',
                 content_level: 'locality_page',
+                intent_type: normalizedPromptInputs.intent,
+                role: normalizedPromptInputs.role,
+                tone: normalizedPromptInputs.tone,
+                keywords: normalizedPromptInputs.keywords,
+                location: normalizedPromptInputs.location,
+                prompt_template_id: normalizedPromptInputs.prompt_template_id,
+                prompt_inputs: normalizedPromptInputs,
             },
         ],
     };
@@ -28,7 +79,8 @@ function buildSinglePagePayload(slug) {
  */
 export const POST = withAdminAuth(async (request, user) => {
     try {
-        const { slug } = await request.json();
+        const body = await request.json();
+        const { slug } = body;
 
         if (!slug || typeof slug !== 'string' || slug.trim().length < 3) {
             return NextResponse.json({ success: false, error: 'Valid slug is required (min 3 chars)' }, { status: 400 });
@@ -72,7 +124,15 @@ export const POST = withAdminAuth(async (request, user) => {
             }, { status: 409 });
         }
 
-        const payload = buildSinglePagePayload(cleanSlug);
+        const promptInputs = normalizePromptInputs({
+            role: body.role,
+            tone: body.tone,
+            keywords: body.keywords,
+            location: body.location,
+            intent: body.intent || body.intent_type,
+            prompt_template_id: body.prompt_template_id || body.template_id,
+        });
+        const payload = buildSinglePagePayload(cleanSlug, promptInputs);
 
         // Insert into generation_queue for pagegen worker
         const { data, error } = await supabase
@@ -88,6 +148,7 @@ export const POST = withAdminAuth(async (request, user) => {
                 metadata: {
                     source: 'ccc_single_generation',
                     triggered_by: user?.email || user?.id || 'admin',
+                    prompt_inputs: promptInputs,
                 },
             })
             .select('id')
@@ -98,10 +159,29 @@ export const POST = withAdminAuth(async (request, user) => {
             return NextResponse.json({ success: false, error: error.message }, { status: 500 });
         }
 
+        let dispatchResult;
+        try {
+            dispatchResult = await enqueuePageGeneration({
+                queueId: data.id,
+                source: 'ccc_single_generation',
+                requested_by: user?.email || user?.id || 'admin',
+            });
+        } catch (dispatchErr) {
+            console.error('[Generate Single] Queue dispatch error:', dispatchErr);
+            return NextResponse.json({
+                success: false,
+                error: `Generation queued but dispatch failed for "${cleanSlug}": ${dispatchErr.message}`,
+                queueId: data.id,
+            }, { status: 502 });
+        }
+
         return NextResponse.json({
             success: true,
-            message: `Page generation queued for "${cleanSlug}" (queue ID: ${data.id}). The pagegen worker will process it.`,
+            message: `Page generation queued and dispatched for "${cleanSlug}" (queue ID: ${data.id}).`,
             queueId: data.id,
+            dispatch: {
+                messageId: dispatchResult.messageId,
+            },
         });
     } catch (err) {
         console.error('[Generate Single] API error:', err);

@@ -1,5 +1,6 @@
 import BlogArticle from './BlogArticle';
 import { getServiceSupabase } from '@/utils/supabase';
+import { getRobotsMetadata, getSeoMetadata } from '@/utils/seo';
 import Script from 'next/script';
 
 // Revalidate cache every hour (ISR)
@@ -30,16 +31,22 @@ export async function generateMetadata({ params }) {
         };
     }
 
-    return {
-        title: `${post.meta_title || post.title} | Bima Sakhi`,
-        description: post.meta_description,
+    const routePath = `/blog/${post.slug}`;
+    const canonicalUrl = post.canonical_url || `https://bimasakhi.com${routePath}`;
+    const title = `${post.meta_title || post.title} | Bima Sakhi`;
+    const description = post.meta_description;
+
+    return getSeoMetadata(routePath, {
+        title,
+        description,
         alternates: {
-            canonical: `https://bimasakhi.com/blog/${post.slug}`,
+            canonical: canonicalUrl,
         },
+        robots: getRobotsMetadata(post.robots_setting),
         openGraph: {
             title: post.meta_title || post.title,
-            description: post.meta_description,
-            url: `https://bimasakhi.com/blog/${post.slug}`,
+            description,
+            url: canonicalUrl,
             images: [
                 {
                     url: '/images/home/hero-bg.jpg', // Default until featured image column added
@@ -55,10 +62,10 @@ export async function generateMetadata({ params }) {
         twitter: {
             card: 'summary_large_image',
             title: post.meta_title || post.title,
-            description: post.meta_description,
+            description,
             images: ['/images/home/hero-bg.jpg'],
         },
-    };
+    });
 }
 
 export default async function BlogPostPage({ params }) {

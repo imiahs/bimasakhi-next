@@ -1,9 +1,8 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
-import { getSupabaseClient, getServiceSupabase } from '@/utils/supabaseClientSingleton';
+import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
+import { getRobotsMetadata, getSeoMetadata } from '@/utils/seo';
 import * as Blocks from '@/components/blocks/PageBlocks';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
 import FloatingApply from '@/components/ui/FloatingApply';
 import FloatingWhatsApp from '@/components/ui/FloatingWhatsApp';
 import PageTracker from '@/components/ui/PageTracker';
@@ -45,10 +44,30 @@ export async function generateMetadata({ params, searchParams }) {
 
     if (!data) return { title: 'Page Not Found | Bima Sakhi' };
 
-    return {
-        title: data.page.meta_title || `${data.page.title} | Bima Sakhi`,
-        description: data.page.meta_description || 'Empowering women via insurance networks.',
-    };
+    const title = data.page.meta_title || `${data.page.title} | Bima Sakhi`;
+    const description = data.page.meta_description || 'Empowering women via insurance networks.';
+    const canonicalUrl = data.page.canonical_url || `https://bimasakhi.com/pages/${slug}`;
+
+    return getSeoMetadata(`/pages/${slug}`, {
+        title,
+        description,
+        alternates: {
+            canonical: canonicalUrl,
+        },
+        robots: getRobotsMetadata(data.page.robots_setting),
+        openGraph: {
+            title,
+            description,
+            url: canonicalUrl,
+            type: 'website',
+            siteName: 'Bima Sakhi',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+        },
+    });
 }
 
 export default async function DynamicCMSPage({ params, searchParams }) {
@@ -75,9 +94,8 @@ export default async function DynamicCMSPage({ params, searchParams }) {
     };
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow pt-24 bg-slate-50">
+        <>
+            <div className="min-h-screen bg-slate-50 pt-24">
                 {blocks.length > 0 ? (
                     renderBlocks()
                 ) : (
@@ -85,11 +103,10 @@ export default async function DynamicCMSPage({ params, searchParams }) {
                         Content is currently being assembled for this route.
                     </div>
                 )}
-            </main>
-            <Footer />
+            </div>
             <FloatingApply />
             <FloatingWhatsApp />
             <PageTracker pageId={data.page.id} />
-        </div>
+        </>
     );
 }

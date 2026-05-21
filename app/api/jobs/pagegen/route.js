@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
 import { generateAiContent } from '@/lib/ai/generateContent';
-import { getSystemPrompt, buildPagePrompt } from '@/lib/ai/promptTemplates';
+import { buildPagePrompt, getSystemPrompt } from '@/lib/ai/promptTemplates';
 import { generateImagePrompts } from '@/lib/ai/imagePrompts';
 import { getSystemConfig, logSystemAction } from '@/lib/systemConfig';
-import { isSystemEnabled } from '@/lib/featureFlags';
+import { getFeatureFlag, isSystemEnabled } from '@/lib/featureFlags';
 import { markCompleted, markFailed } from '@/lib/events/eventStore';
 import { dispatchPagegenOutbox } from '@/lib/events/dispatchPagegenOutbox';
 import crypto from 'crypto';
@@ -15,6 +15,7 @@ export const dynamic = 'force-dynamic';
 
 const CANONICAL_TASK_TYPE = 'pagegen';
 const LEGACY_TASK_TYPE = 'page_generation';
+const DEFAULT_PROMPT_AUDIENCE = 'women aged 25-45 from middle-class families looking for financial independence';
 const REQUIRED_AI_KEYS = [
     'hero_headline',
     'local_opportunity_description',
@@ -23,6 +24,145 @@ const REQUIRED_AI_KEYS = [
     'cta_text',
     'faq_data'
 ];
+
+function asPromptObject(value) {
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+}
+
+function normalizePromptKeywords(value) {
+    if (Array.isArray(value)) {
+        return value.map((entry) => String(entry || '').trim()).filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+        return value.split(',').map((entry) => entry.trim()).filter(Boolean);
+    }
+
+    return [];
+}
+
+function normalizePromptInputs(input = {}) {
+    const nested = asPromptObject(input.prompt_inputs);
+    const templateId = input.prompt_template_id || input.template_id || nested.prompt_template_id || nested.template_id || null;
+    const intent = input.intent || input.intent_type || nested.intent || nested.intent_type || input.content_level || 'local_service';
+    const location = input.location || nested.location || input.locality_name || input.city_name || input.city || 'your city';
+    const keyword = input.keyword || input.keyword_text || nested.keyword || '';
+    const keywords = normalizePromptKeywords(input.keywords ?? nested.keywords ?? keyword);
+
+    return {
+        role: input.role || nested.role || 'Senior LIC Development Officer and digital content strategist',
+        tone: input.tone || nested.tone || 'warm, conversational Hinglish',
+        keywords,
+        location,
+        intent,
+        prompt_template_id: templateId,
+        template_id: templateId,
+        audience: input.audience || nested.audience || DEFAULT_PROMPT_AUDIENCE,
+    };
+}
+
+function renderTemplate(template, values) {
+    return String(template || '').replace(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g, (_match, key) => {
+        const value = values[key];
+        if (Array.isArray(value)) return value.join(', ');
+        if (value === null || value === undefined || value === '') return '';
+        return String(value);
+    });
+}
+
+async function fetchPromptTemplate(supabase, { templateId, intent }) {
+    if (!supabase) return null;
+
+    if (templateId) {
+        const { data, error } = await supabase
+            .from('prompt_templates')
+            .select('*')
+            .eq('id', templateId)
+            .maybeSingle();
+
+        if (!error && data) return data;
+    }
+
+    const { data, error } = await supabase
+        .from('prompt_templates')
+        .select('*')
+        .eq('status', 'active')
+        .order('created_at', { ascending: true })
+        .limit(50);
+
+    if (error || !Array.isArray(data)) return null;
+
+    return data.find((row) => row.intent_type === intent && row.metadata?.default === true)
+        || data.find((row) => row.metadata?.default === true)
+        || data.find((row) => row.intent_type === intent)
+        || data[0]
+        || null;
+}
+
+function buildFallbackPagePrompt({ slug, keyword, cityName }) {
+    return {
+        systemPrompt: getSystemPrompt(),
+        userPrompt: buildPagePrompt({
+            city: cityName,
+            keyword,
+            slug,
+            audience: DEFAULT_PROMPT_AUDIENCE,
+        }),
+        source: 'fallback',
+        template: null,
+    };
+}
+
+async function resolvePagePrompt({ supabase, pageRequest, slug, keyword, cityName }) {
+    const inputs = normalizePromptInputs({
+        ...pageRequest,
+        keyword,
+        location: pageRequest?.location || cityName,
+    });
+    const fallback = {
+        ...buildFallbackPagePrompt({ slug, keyword, cityName }),
+        promptInputs: inputs,
+    };
+
+    try {
+        const enabled = await getFeatureFlag('ai_prompt_templates_enabled');
+        if (!enabled) {
+            return fallback;
+        }
+
+        const template = await fetchPromptTemplate(supabase, {
+            templateId: inputs.prompt_template_id,
+            intent: inputs.intent,
+        });
+
+        if (!template?.template_body) {
+            return fallback;
+        }
+
+        return {
+            systemPrompt: template.metadata?.system_prompt || getSystemPrompt(),
+            userPrompt: renderTemplate(template.template_body, {
+                ...inputs,
+                keyword,
+                slug,
+                city: cityName,
+                location: inputs.location || cityName,
+            }),
+            source: 'template',
+            template,
+            promptInputs: {
+                ...inputs,
+                role: inputs.role || template.role || null,
+                tone: inputs.tone || template.tone || null,
+                prompt_template_id: template.id,
+                template_id: template.id,
+            },
+        };
+    } catch (error) {
+        console.error('[PageGen] prompt resolution failed:', error.message);
+        return fallback;
+    }
+}
 
 
 
@@ -207,6 +347,43 @@ async function cleanupPartialPage(supabase, pageId) {
     await supabase.from('page_index').delete().eq('id', pageId);
 }
 
+async function persistPromptInputs(supabase, draftId, pageReq, promptResult) {
+    if (!draftId) return;
+
+    const promptInputs = promptResult?.promptInputs || {};
+    const updates = {
+        role: promptInputs.role || null,
+        tone: promptInputs.tone || null,
+        keywords: Array.isArray(promptInputs.keywords) ? promptInputs.keywords : [],
+        intent_type: promptInputs.intent || pageReq.intent_type || null,
+        prompt_template_id: promptInputs.prompt_template_id || null,
+        full_slug: pageReq.full_slug || pageReq.slug || null,
+        page_type: pageReq.page_type || 'locality_page',
+    };
+
+    const extendedUpdates = {
+        ...updates,
+        location: promptInputs.location || pageReq.location || pageReq.locality_name || pageReq.city_name || null,
+        prompt_inputs: promptInputs,
+    };
+
+    const { error } = await supabase
+        .from('content_drafts')
+        .update(extendedUpdates)
+        .eq('id', draftId);
+
+    if (!error) return;
+
+    const fallback = await supabase
+        .from('content_drafts')
+        .update(updates)
+        .eq('id', draftId);
+
+    if (fallback.error) {
+        console.warn('[PageGen] prompt input persistence warning:', fallback.error.message);
+    }
+}
+
 export async function executePagegenJob(body = {}) {
     const { queueId, _event_store_id: currentEventStoreId = null } = body;
 
@@ -251,6 +428,25 @@ export async function executePagegenJob(body = {}) {
     }
 
     const supabase = getServiceSupabase();
+
+    // RC-1B: Gate AI execution on ai_enabled flag — fires before any Gemini call
+    if (!config.ai_enabled) {
+        await logSystemAction('GUARD_BLOCKED', { guard: 'ai_enabled', route: '/api/jobs/pagegen', queue_id: queueId });
+        await supabase.from('generation_queue')
+            .update({ status: 'failed', completed_at: new Date().toISOString() })
+            .eq('id', queueId)
+            .neq('status', 'completed');
+        await markFailed(currentEventStoreId, 'AI generation disabled via ai_enabled flag.', {
+            queue_id: queueId,
+            retriable: false,
+            guard: 'ai_enabled',
+        });
+        return {
+            status: 200,
+            body: { success: false, blocked: true, reason: 'AI_DISABLED' },
+        };
+    }
+
     let queueJob = null;
     let jobRunId = null;
 
@@ -356,16 +552,16 @@ export async function executePagegenJob(body = {}) {
                 slug.replace(/lic-agent-in-/, '').replace(/-\d+$/, '').replace(/-/g, ' ') ||
                 'your city';
 
+            const promptResult = await resolvePagePrompt({
+                supabase,
+                pageRequest: pageReq,
+                slug,
+                keyword: keyword_text,
+                cityName,
+            });
+
             const aiStartTime = Date.now();
-            const responseText = await generateAiContent(
-                getSystemPrompt(),
-                buildPagePrompt({
-                    city: cityName,
-                    keyword: keyword_text,
-                    slug,
-                    audience: 'women aged 25-45 from middle-class families looking for financial independence'
-                })
-            );
+            const responseText = await generateAiContent(promptResult.systemPrompt, promptResult.userPrompt);
             const generationTimeMs = Date.now() - aiStartTime;
 
             if (!responseText) {
@@ -426,6 +622,7 @@ export async function executePagegenJob(body = {}) {
             if (persistResult.skipped_existing) {
                 await writeGenerationLog(supabase, queueJob.id, 'page_skipped', `Page already exists: ${slug}`);
             } else {
+                await persistPromptInputs(supabase, persistResult?.draft_id, pageReq, promptResult);
                 console.log(`[PAGEGEN SUCCESS] slug=${slug} draftId=${persistResult?.draft_id} words=${realWordCount} quality=${qualityScore} duration=${generationTimeMs}ms`);
                 if (persistResult.review_required) {
                     reviewCount++;

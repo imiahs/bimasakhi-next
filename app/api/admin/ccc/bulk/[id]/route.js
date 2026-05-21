@@ -13,8 +13,182 @@ import { checkSafeMode, isSystemEnabled } from '@/lib/featureFlags';
 import { getSystemConfig } from '@/lib/systemConfig';
 import { isValidUUID } from '@/lib/observability';
 import { dispatchPagegenOutbox } from '@/lib/events/dispatchPagegenOutbox';
+import { enqueuePageGeneration } from '@/lib/queue/publisher';
 
 export const dynamic = 'force-dynamic';
+
+function asPromptObject(value) {
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+}
+
+function normalizePromptKeywords(value) {
+    if (Array.isArray(value)) {
+        return value.map((entry) => String(entry || '').trim()).filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+        return value.split(',').map((entry) => entry.trim()).filter(Boolean);
+    }
+
+    return [];
+}
+
+function normalizePromptInputs(input = {}) {
+    const nested = asPromptObject(input.prompt_inputs);
+    const templateId = input.prompt_template_id || input.template_id || nested.prompt_template_id || nested.template_id || null;
+    const intent = input.intent || input.intent_type || nested.intent || nested.intent_type || input.content_level || 'local_service';
+    const location = input.location || nested.location || input.locality_name || input.city_name || input.city || 'your city';
+    const keyword = input.keyword || input.keyword_text || nested.keyword || '';
+    const keywords = normalizePromptKeywords(input.keywords ?? nested.keywords ?? keyword);
+
+    return {
+        role: input.role || nested.role || 'Senior LIC Development Officer and digital content strategist',
+        tone: input.tone || nested.tone || 'warm, conversational Hinglish',
+        keywords,
+        location,
+        intent,
+        prompt_template_id: templateId,
+        template_id: templateId,
+        audience: input.audience || nested.audience || 'women aged 25-45 from middle-class families looking for financial independence',
+    };
+}
+
+function deriveEffectiveStatus(job, queueRow) {
+    if (queueRow?.status === 'failed') {
+        return 'failed';
+    }
+
+    return job.status;
+}
+
+function normalizeJobRun(run) {
+    return {
+        ...run,
+        error_message: run?.error_message || run?.error || run?.failure_reason || null,
+    };
+}
+
+function normalizeDeadLetter(entry) {
+    return {
+        ...entry,
+        error_message: entry?.error || entry?.failure_reason || null,
+    };
+}
+
+function matchesEventStoreRow(row, jobId, queueId) {
+    const payload = row?.payload && typeof row.payload === 'object' ? row.payload : {};
+    const executionContext = row?.execution_context && typeof row.execution_context === 'object'
+        ? row.execution_context
+        : {};
+
+    return String(payload.bulk_job_id || '') === jobId
+        || String(payload.queueId || payload.queue_id || '') === queueId
+        || String(executionContext.job_id || '') === jobId
+        || String(executionContext.queue_id || '') === queueId;
+}
+
+function matchesObservabilityRow(row, jobId, queueId) {
+    const metadata = row?.metadata && typeof row.metadata === 'object' ? row.metadata : {};
+
+    return String(metadata.job_id || '') === jobId
+        || String(metadata.queue_id || '') === queueId;
+}
+
+async function fetchQueueRow(supabase, queueId) {
+    if (!queueId) {
+        return null;
+    }
+
+    const { data, error } = await supabase
+        .from('generation_queue')
+        .select('*')
+        .eq('id', queueId)
+        .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    return data || null;
+}
+
+async function fetchJobHistory(supabase, jobId, queueId) {
+    const recentDraftsPromise = supabase
+        .from('content_drafts')
+        .select('id, slug, page_title, status, quality_score, word_count, updated_at, published_at')
+        .eq('bulk_job_id', jobId)
+        .order('updated_at', { ascending: false })
+        .limit(10);
+
+    const queueLogsPromise = queueId
+        ? supabase
+            .from('generation_logs')
+            .select('*')
+            .eq('queue_id', queueId)
+            .order('created_at', { ascending: false })
+            .limit(20)
+        : Promise.resolve({ data: [], error: null });
+
+    const jobRunsPromise = queueId
+        ? supabase
+            .from('job_runs')
+            .select('*')
+            .contains('payload', { queue_id: queueId })
+            .order('started_at', { ascending: false })
+            .limit(20)
+        : Promise.resolve({ data: [], error: null });
+
+    const observabilityPromise = supabase
+        .from('observability_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(120);
+
+    const eventStorePromise = supabase
+        .from('event_store')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(120);
+
+    const [recentDraftsRes, queueLogsRes, jobRunsRes, observabilityRes, eventStoreRes] = await Promise.all([
+        recentDraftsPromise,
+        queueLogsPromise,
+        jobRunsPromise,
+        observabilityPromise,
+        eventStorePromise,
+    ]);
+
+    if (recentDraftsRes.error) throw recentDraftsRes.error;
+    if (queueLogsRes.error) throw queueLogsRes.error;
+    if (jobRunsRes.error) throw jobRunsRes.error;
+    if (observabilityRes.error) throw observabilityRes.error;
+    if (eventStoreRes.error) throw eventStoreRes.error;
+
+    const normalizedJobRuns = (jobRunsRes.data || []).map(normalizeJobRun);
+    const jobRunIds = normalizedJobRuns.map((run) => run.id).filter(Boolean);
+
+    let deadLetters = [];
+    if (jobRunIds.length > 0) {
+        const { data, error } = await supabase
+            .from('job_dead_letters')
+            .select('*')
+            .in('job_run_id', jobRunIds)
+            .order('failed_at', { ascending: false })
+            .limit(20);
+
+        if (error) throw error;
+        deadLetters = (data || []).map(normalizeDeadLetter);
+    }
+
+    return {
+        recent_drafts: recentDraftsRes.data || [],
+        generation_logs: queueLogsRes.data || [],
+        job_runs: normalizedJobRuns,
+        dead_letters: deadLetters,
+        observability_logs: (observabilityRes.data || []).filter((row) => matchesObservabilityRow(row, jobId, queueId)).slice(0, 20),
+        event_store: (eventStoreRes.data || []).filter((row) => matchesEventStoreRow(row, jobId, queueId)).slice(0, 20),
+    };
+}
 
 // GET — Single bulk job with progress
 export const GET = withAdminAuth(async (request, user, { params }) => {
@@ -35,6 +209,8 @@ export const GET = withAdminAuth(async (request, user, { params }) => {
             return NextResponse.json({ success: false, error: 'Job not found' }, { status: 404 });
         }
 
+        const queueRow = await fetchQueueRow(supabase, data.generation_queue_id);
+
         // Get related drafts stats
         const { data: draftStats } = await supabase
             .from('content_drafts')
@@ -48,7 +224,40 @@ export const GET = withAdminAuth(async (request, user, { params }) => {
             if (stats[d.status] !== undefined) stats[d.status]++;
         });
 
-        return NextResponse.json({ success: true, data: { ...data, draft_stats: stats } });
+        const history = await fetchJobHistory(supabase, id, data.generation_queue_id);
+        const failedRuns = history.job_runs.filter((run) => run.status === 'failed');
+        const lastFailure = history.dead_letters[0]?.error_message
+            || failedRuns[0]?.error_message
+            || history.generation_logs.find((entry) => ['dead_lettered', 'retry_scheduled'].includes(entry.event_type))?.message
+            || null;
+
+        const effectiveStatus = deriveEffectiveStatus(data, queueRow);
+
+        return NextResponse.json({
+            success: true,
+            data: {
+                ...data,
+                effective_status: effectiveStatus,
+                draft_stats: stats,
+                queue: queueRow,
+                targeting_summary: {
+                    city_count: Array.isArray(data.city_ids) ? data.city_ids.length : 0,
+                    locality_count: Array.isArray(data.locality_ids) ? data.locality_ids.length : 0,
+                    pincode_count: Array.isArray(data.pincode_list) ? data.pincode_list.length : 0,
+                    queued_pages: Array.isArray(queueRow?.payload?.pages) ? queueRow.payload.pages.length : 0,
+                },
+                failure_summary: {
+                    has_failure: effectiveStatus === 'failed' || history.dead_letters.length > 0 || failedRuns.length > 0,
+                    last_error: lastFailure,
+                    failed_runs: failedRuns.length,
+                    dead_letters: history.dead_letters.length,
+                    retry_count: queueRow?.retry_count || 0,
+                    can_retry: queueRow?.status === 'failed',
+                    can_clear: queueRow?.status === 'failed',
+                },
+                ...history,
+            },
+        });
     } catch (err) {
         return NextResponse.json({ success: false, error: err.message }, { status: 500 });
     }
@@ -74,6 +283,8 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
         if (fetchErr || !job) {
             return NextResponse.json({ success: false, error: 'Job not found' }, { status: 404 });
         }
+
+        const queueRow = await fetchQueueRow(supabase, job.generation_queue_id);
 
         switch (action) {
             case 'start': {
@@ -131,7 +342,7 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                     { job_id: id, queue_id: startResult.queue_id, source: 'bulk_start' }
                 );
 
-                await supabase.from('observability_logs').insert({
+                void supabase.from('observability_logs').insert({
                     level: 'INFO',
                     message: `Bulk job started: "${job.name}" — ${pages.length} pages queued`,
                     source: 'bulk_planner',
@@ -142,7 +353,7 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                         event_store_id: startResult.event_store_id,
                         dispatch_deferred: !dispatchResult.success,
                     },
-                }).catch(() => {});
+                }).then(() => {}).catch(() => {});
 
                 return NextResponse.json({
                     success: true,
@@ -167,6 +378,16 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                         updated_at: new Date().toISOString(),
                     })
                     .eq('id', id);
+
+                if (queueRow && !['completed', 'failed'].includes(queueRow.status)) {
+                    await supabase
+                        .from('generation_queue')
+                        .update({
+                            status: 'paused',
+                        })
+                        .eq('id', queueRow.id)
+                        .eq('status', queueRow.status);
+                }
 
                 return NextResponse.json({ success: true, message: 'Job paused' });
             }
@@ -206,7 +427,33 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                     })
                     .eq('id', id);
 
-                return NextResponse.json({ success: true, message: 'Job resumed' });
+                let dispatchDeferred = false;
+                if (queueRow?.status === 'paused') {
+                    await supabase
+                        .from('generation_queue')
+                        .update({
+                            status: 'pending',
+                            completed_at: null,
+                        })
+                        .eq('id', queueRow.id);
+
+                    try {
+                        const dispatch = await enqueuePageGeneration({
+                            queueId: queueRow.id,
+                            source: 'bulk_resume',
+                            requested_by: user?.email || 'admin',
+                        });
+                        dispatchDeferred = !dispatch?.messageId;
+                    } catch {
+                        dispatchDeferred = true;
+                    }
+                }
+
+                return NextResponse.json({
+                    success: true,
+                    message: dispatchDeferred ? 'Job resumed, immediate dispatch deferred' : 'Job resumed',
+                    dispatch_deferred: dispatchDeferred,
+                });
             }
 
             case 'cancel': {
@@ -214,16 +461,141 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
                     return NextResponse.json({ success: false, error: 'Job already finished' }, { status: 400 });
                 }
 
+                const now = new Date().toISOString();
+
                 await supabase
                     .from('bulk_generation_jobs')
                     .update({
                         status: 'cancelled',
-                        completed_at: new Date().toISOString(),
+                        completed_at: now,
+                        updated_at: now,
+                    })
+                    .eq('id', id);
+
+                if (queueRow && queueRow.status !== 'completed') {
+                    const totalItems = Math.max(queueRow.total_items || 0, queueRow.progress || 0);
+
+                    await supabase
+                        .from('generation_queue')
+                        .update({
+                            status: 'completed',
+                            progress: totalItems,
+                            total_items: totalItems,
+                            completed_at: now,
+                        })
+                        .eq('id', queueRow.id);
+
+                    void supabase.from('generation_logs').insert({
+                        queue_id: queueRow.id,
+                        event_type: 'cancelled',
+                        message: `Bulk job cancelled by ${user?.email || 'admin'}`,
+                    }).then(() => {}).catch(() => {});
+                }
+
+                return NextResponse.json({ success: true, message: 'Job cancelled and remaining queue work stopped' });
+            }
+
+            case 'retry_failed': {
+                if (!queueRow || queueRow.status !== 'failed') {
+                    return NextResponse.json({ success: false, error: 'No failed queue state found for this job' }, { status: 400 });
+                }
+
+                await supabase
+                    .from('generation_queue')
+                    .update({
+                        status: 'pending',
+                        retry_count: 0,
+                        completed_at: null,
+                    })
+                    .eq('id', queueRow.id);
+
+                await supabase
+                    .from('bulk_generation_jobs')
+                    .update({
+                        status: 'running',
+                        completed_at: null,
                         updated_at: new Date().toISOString(),
                     })
                     .eq('id', id);
 
-                return NextResponse.json({ success: true, message: 'Job cancelled' });
+                let dispatchDeferred = false;
+                let messageId = null;
+                try {
+                    const dispatch = await enqueuePageGeneration({
+                        queueId: queueRow.id,
+                        source: 'bulk_retry',
+                        requested_by: user?.email || 'admin',
+                    });
+                    messageId = dispatch?.messageId || null;
+                    dispatchDeferred = !messageId;
+                } catch {
+                    dispatchDeferred = true;
+                }
+
+                void supabase.from('observability_logs').insert({
+                    level: 'INFO',
+                    message: `Bulk job retry requested for "${job.name}"`,
+                    source: 'bulk_planner',
+                    metadata: {
+                        action: 'retry_failed',
+                        job_id: id,
+                        queue_id: queueRow.id,
+                        dispatch_deferred: dispatchDeferred,
+                        requested_by: user?.email || 'admin',
+                    },
+                }).then(() => {}).catch(() => {});
+
+                return NextResponse.json({
+                    success: true,
+                    message: dispatchDeferred
+                        ? 'Failed job reset to pending, immediate dispatch deferred'
+                        : 'Failed job reset and dispatched',
+                    queue_id: queueRow.id,
+                    message_id: messageId,
+                    dispatch_deferred: dispatchDeferred,
+                });
+            }
+
+            case 'clear_failed': {
+                if (!queueRow || queueRow.status !== 'failed') {
+                    return NextResponse.json({ success: false, error: 'No failed queue state found for this job' }, { status: 400 });
+                }
+
+                await supabase
+                    .from('bulk_generation_jobs')
+                    .update({
+                        generation_queue_id: null,
+                        status: 'failed',
+                        updated_at: new Date().toISOString(),
+                    })
+                    .eq('id', id);
+
+                const { error: clearError } = await supabase
+                    .from('generation_queue')
+                    .delete()
+                    .eq('id', queueRow.id);
+
+                if (clearError) {
+                    return NextResponse.json({ success: false, error: clearError.message }, { status: 500 });
+                }
+
+                void supabase.from('observability_logs').insert({
+                    level: 'INFO',
+                    message: `Bulk job failure artifacts cleared for "${job.name}"`,
+                    source: 'bulk_planner',
+                    metadata: {
+                        action: 'clear_failed',
+                        job_id: id,
+                        queue_id: queueRow.id,
+                        requested_by: user?.email || 'admin',
+                    },
+                }).then(() => {}).catch(() => {});
+
+                return NextResponse.json({
+                    success: true,
+                    message: 'Failed queue artifacts cleared for this job',
+                    cleared_queue_id: queueRow.id,
+                });
             }
 
             default:
@@ -245,6 +617,10 @@ async function buildPageList(supabase, job) {
         .eq('active', true)
         .order('locality_name');
 
+    if (job.locality_ids && job.locality_ids.length > 0) {
+        query = query.in('id', job.locality_ids);
+    }
+
     if (job.city_ids && job.city_ids.length > 0) {
         query = query.in('city_id', job.city_ids);
     }
@@ -261,13 +637,22 @@ async function buildPageList(supabase, job) {
 
     const { data: existingPages } = await supabase
         .from('page_index')
-        .select('slug')
-        .in('slug', slugs.slice(0, 1000)); // Supabase IN limit
+        .select('page_slug')
+        .in('page_slug', slugs.slice(0, 1000)); // Supabase IN limit
 
-    const existingSlugs = new Set((existingPages || []).map(p => p.slug));
+    const existingSlugs = new Set((existingPages || []).map((page) => page.page_slug));
 
     // Build pages list, excluding already-generated
     const pages = [];
+    const jobPromptInputs = normalizePromptInputs({
+        ...(job.prompt_inputs || {}),
+        role: job.prompt_role,
+        tone: job.prompt_tone,
+        keywords: job.prompt_keywords || job.keyword_variations || job.base_keyword,
+        location: job.prompt_location,
+        intent: job.prompt_intent || job.intent_type,
+        prompt_template_id: job.prompt_template_id,
+    });
     for (const loc of localities) {
         const citySlug = loc.cities?.slug || 'unknown';
         const pageSlug = `bima-sakhi-${citySlug}-${loc.slug}`;
@@ -287,6 +672,15 @@ async function buildPageList(supabase, job) {
             locality_id: loc.id,
             intent_type: job.intent_type,
             bulk_job_id: job.id,
+            role: jobPromptInputs.role,
+            tone: jobPromptInputs.tone,
+            keywords: jobPromptInputs.keywords,
+            location: jobPromptInputs.location || loc.locality_name || loc.cities?.city_name || '',
+            prompt_template_id: jobPromptInputs.prompt_template_id,
+            prompt_inputs: {
+                ...jobPromptInputs,
+                location: jobPromptInputs.location || loc.locality_name || loc.cities?.city_name || '',
+            },
         });
     }
 
