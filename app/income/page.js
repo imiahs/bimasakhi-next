@@ -13,7 +13,7 @@ export async function generateMetadata() {
             title: 'कमाई की सच्चाई – Commission vs Salary',
             description: 'यह जॉब नहीं, बिज़नेस है। जानिए कमीशन स्ट्रक्चर और परफॉरमेंस-आधारित स्टाइपेंड की सच्चाई।',
             url: 'https://bimasakhi.com/income',
-            images: [{ url: 'https://bimasakhi.com/images/home/hero-bg.jpg' }],
+            images: [{ url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp' }],
             siteName: 'Bima Sakhi',
             type: 'website',
         },
@@ -21,7 +21,7 @@ export async function generateMetadata() {
             card: 'summary_large_image',
             title: 'कमाई की सच्चाई – Commission vs Salary',
             description: 'यह जॉब नहीं, बिज़नेस है।',
-            images: ['https://bimasakhi.com/images/home/hero-bg.jpg'],
+            images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp'],
         },
     };
 

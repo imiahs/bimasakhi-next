@@ -25,7 +25,7 @@ const Gallery = () => {
                     {/* Image 1: Training */}
                     <div className="bg-gray-100 rounded-xl h-48 md:h-64 overflow-hidden relative group">
                         <img
-                            src="/hero-woman-professional.jpg"
+                            src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/successful-woman-lic-career-1778562617342.webp"
                             alt="Training"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             onError={(e) => { e.target.style.display = 'none'; }}

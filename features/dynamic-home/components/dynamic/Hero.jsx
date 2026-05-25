@@ -80,7 +80,7 @@ const Hero = ({
                 {/* IMAGE BLOCK */}
                 <div className="ads-hero-img">
                     <Image
-                        src="/Bima_Sakhi_Ai.png"
+                        src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-client-meeting-1778562840168.webp"
                         alt="Confident LIC Agent"
                         width={500}
                         height={600}

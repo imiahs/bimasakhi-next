@@ -68,7 +68,7 @@ const EmotionalSection = () => {
                 {/* RIGHT VISUAL */}
                 <div className="ads-emotional-visual">
                     <Image
-                        src="/images/home/mentor-profile.jpg"
+                        src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/My_profile-1777902830355.webp"
                         alt="Successful LIC Agent"
                         width={500}
                         height={500}

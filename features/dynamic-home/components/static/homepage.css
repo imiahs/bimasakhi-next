@@ -489,7 +489,7 @@
     background-color: #f0f2f5;
 
     /* Image Strategy: */
-    background-image: url('/images/home/about-intro.jpg');
+    background-image: url('https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-special-recruitment-drive-1778526485861.webp');
     background-size: cover;
     background-position: center;
 
@@ -963,7 +963,7 @@
     position: relative;
     border: 5px solid #fff;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    background-image: url('/images/home/mentor-profile.jpg');
+    background-image: url('https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/My_profile-1777902830355.webp');
     background-size: cover;
     background-position: center;
 }
@@ -1092,7 +1092,7 @@
     background: radial-gradient(circle at center, #f8f9fa 0%, #fff 70%);
     opacity: 0.5;
     z-index: 0;
-    background-image: url('/images/home/delhi-map-abstract.jpg');
+    background-image: url('https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/map/delhi-map-abstract-1779746543782.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

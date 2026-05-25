@@ -17,7 +17,7 @@ const Testimonials = () => {
                     name: "Raj Kumar",
                     role: "LIC Development Officer",
                     location: "Delhi NCR",
-                    image: "/images/home/mentor-profile.jpg",
+                    image: "https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/My_profile-1777902830355.webp",
                     rating: 5,
                     verified: true,
                     message:
@@ -27,7 +27,7 @@ const Testimonials = () => {
                     name: "Sunita Sharma",
                     role: "Bima Sakhi",
                     location: "Noida",
-                    image: "/images/home/mentor-profile.jpg",
+                    image: "https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-client-meeting-1778562840168.webp",
                     rating: 5,
                     verified: true,
                     message:
@@ -37,7 +37,7 @@ const Testimonials = () => {
                     name: "Pooja Verma",
                     role: "LIC Agent",
                     location: "Delhi",
-                    image: "/images/home/mentor-profile.jpg",
+                    image: "https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-housewife-work-from-home-1778562815184.webp",
                     rating: 4,
                     verified: true,
                     message:
@@ -52,7 +52,7 @@ const Testimonials = () => {
                     name: "राज कुमार",
                     role: "एलआईसी विकास अधिकारी",
                     location: "दिल्ली NCR",
-                    image: "/images/home/mentor-profile.jpg",
+                    image: "https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/My_profile-1777902830355.webp",
                     rating: 5,
                     verified: true,
                     message:
@@ -62,7 +62,7 @@ const Testimonials = () => {
                     name: "सुनीता शर्मा",
                     role: "बीमा सखी",
                     location: "नोएडा",
-                    image: "/images/home/mentor-profile.jpg",
+                    image: "https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-client-meeting-1778562840168.webp",
                     rating: 5,
                     verified: true,
                     message:
@@ -72,7 +72,7 @@ const Testimonials = () => {
                     name: "पूजा वर्मा",
                     role: "एलआईसी एजेंट",
                     location: "दिल्ली",
-                    image: "/images/home/mentor-profile.jpg",
+                    image: "https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-housewife-work-from-home-1778562815184.webp",
                     rating: 4,
                     verified: true,
                     message:

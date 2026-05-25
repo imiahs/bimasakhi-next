@@ -166,7 +166,7 @@ const HeroSection = () => {
                         <h2 className="hero-intro">{t.slide1.intro}</h2>
                         <h1 className="hero-title">{t.slide1.title}</h1>
                         <h3 className="hero-subtitle">{t.slide1.subtitle}</h3>
-                        <img src="/images/home/hero-bg.jpg" alt="Bima Sakhi Visual" className="hero-image" />
+                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp" alt="Bima Sakhi Visual" className="hero-image" />
                         <p className="hero-description">{t.slide1.desc}</p>
                         <ul className="hero-options">
                             {t.slide1.options.map((item, i) => <li key={i}>{item}</li>)}
@@ -179,7 +179,7 @@ const HeroSection = () => {
                         <h2 className="hero-intro">{t.slide2.intro}</h2>
                         <h1 className="hero-title">{t.slide2.title}</h1>
                         <h3 className="hero-subtitle">{t.slide2.subtitle}</h3>
-                        <img src="/Bima_Sakhi_Ai.png" alt="Empowerment Visual" className="hero-image" />
+                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-client-meeting-1778562840168.webp" alt="Empowerment Visual" className="hero-image" />
                         <p className="hero-description">{t.slide2.desc}</p>
                         <ul className="hero-options">
                             {t.slide2.options.map((item, i) => <li key={i}>{item}</li>)}
@@ -192,7 +192,7 @@ const HeroSection = () => {
                         <h2 className="hero-intro">{t.slide3.intro}</h2>
                         <h1 className="hero-title">{t.slide3.title}</h1>
                         <h3 className="hero-subtitle">{t.slide3.subtitle}</h3>
-                        <img src="/Bima_Sakhi_Amita.png" alt="Outreach Visual" className="hero-image" />
+                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/successful-woman-lic-career-1778562617342.webp" alt="Outreach Visual" className="hero-image" />
                         <p className="hero-description">{t.slide3.desc}</p>
                         <ul className="hero-options">
                             {t.slide3.options.map((item, i) => <li key={i}>{item}</li>)}
@@ -205,7 +205,7 @@ const HeroSection = () => {
                         <h2 className="hero-intro">{t.slide4.intro}</h2>
                         <h1 className="hero-title">{t.slide4.title}</h1>
                         <h3 className="hero-subtitle">{t.slide4.subtitle}</h3>
-                        <img src="/Bima_Sakhi_Avneet.png" alt="Digital Visual" className="hero-image" />
+                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/woman-supporting-family-lic-1778562506570.webp" alt="Digital Visual" className="hero-image" />
                         <p className="hero-description">{t.slide4.desc}</p>
                         <ul className="hero-options">
                             {t.slide4.options.map((item, i) => <li key={i}>{item}</li>)}

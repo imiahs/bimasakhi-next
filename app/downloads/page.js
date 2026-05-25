@@ -8,7 +8,7 @@ export const metadata = {
         title: 'LIC Agent Study Materials & Resources | Bima Sakhi',
         description: 'Free IC-38 exam preparation resources, study materials, and official links for LIC agent aspirants.',
         url: 'https://bimasakhi.com/downloads',
-        images: [{ url: 'https://bimasakhi.com/images/home/hero-bg.jpg' }],
+        images: [{ url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp' }],
         siteName: 'Bima Sakhi',
         type: 'website',
     },
@@ -16,7 +16,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'LIC Agent Study Materials & Resources | Bima Sakhi',
         description: 'Free IC-38 exam preparation resources and official links for LIC agent aspirants.',
-        images: ['https://bimasakhi.com/images/home/hero-bg.jpg'],
+        images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp'],
     },
 };
 

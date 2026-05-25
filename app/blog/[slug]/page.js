@@ -49,7 +49,7 @@ export async function generateMetadata({ params }) {
             url: canonicalUrl,
             images: [
                 {
-                    url: '/images/home/hero-bg.jpg', // Default until featured image column added
+                    url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp', // Default until featured image column added
                     width: 1200,
                     height: 630,
                     alt: post.title,
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }) {
             card: 'summary_large_image',
             title: post.meta_title || post.title,
             description,
-            images: ['/images/home/hero-bg.jpg'],
+            images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp'],
         },
     });
 }
@@ -99,7 +99,7 @@ export default async function BlogPostPage({ params }) {
         '@type': 'BlogPosting',
         headline: post.title,
         description: post.meta_description,
-        image: `https://bimasakhi.com/images/home/hero-bg.jpg`,
+        image: `https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp`,
         datePublished: post.created_at,
         author: {
             '@type': 'Person',
@@ -110,7 +110,7 @@ export default async function BlogPostPage({ params }) {
             name: 'Bima Sakhi',
             logo: {
                 '@type': 'ImageObject',
-                url: 'https://bimasakhi.com/images/home/logo.png',
+                url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/logo/logo-1779744837429.webp',
             },
         },
     };

@@ -17,7 +17,7 @@ export async function generateMetadata() {
       title: 'Bima Sakhi - LIC Agency Career for Women (Delhi NCR)',
       description: 'Opportunity for women to start an independent LIC agency in Delhi NCR. No fixed salary, full commission-based career.',
       url: 'https://bimasakhi.com/',
-      images: [{ url: 'https://bimasakhi.com/images/home/hero-bg.jpg' }],
+      images: [{ url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp' }],
       siteName: 'Bima Sakhi',
       type: 'website',
     },
@@ -25,7 +25,7 @@ export async function generateMetadata() {
       card: 'summary_large_image',
       title: 'Bima Sakhi - LIC Agency Career for Women (Delhi NCR)',
       description: 'Opportunity for women to start an independent LIC agency in Delhi NCR.',
-      images: ['https://bimasakhi.com/images/home/hero-bg.jpg'],
+      images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp'],
     },
   };
 

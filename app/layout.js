@@ -25,7 +25,7 @@ export const metadata = {
   description: 'Women career & financial independence opportunity.',
   robots: 'index, follow',
   verification: { google: '4KX_wRx-TtBLEkejOgiejPMeNp7n4rGlRLfFwMxLJ2c' },
-  icons: { icon: '/images/home/logo1.png' },
+  icons: { icon: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/logo/logo1-1779744851525.webp' },
   openGraph: {
     siteName: 'Bima Sakhi',
     type: 'website',

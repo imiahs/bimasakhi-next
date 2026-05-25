@@ -150,7 +150,7 @@ const AboutContent = () => {
                 <h2><span className="section-icon">👨‍💼</span> {c.mentorTitle}</h2>
                 <div className="mentor-grid">
                     <div className="mentor-photo">
-                        <img src="/images/home/mentor-profile.jpg" alt={c.mentorName} />
+                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/My_profile-1777902830355.webp" alt={c.mentorName} />
                     </div>
                     <div className="mentor-info">
                         <h3>{c.mentorName}</h3>

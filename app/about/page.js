@@ -8,7 +8,7 @@ export const metadata = {
         title: 'About Raj Kumar | Bima Sakhi Platform',
         description: 'Learn about Raj Kumar, Development Officer since 2013, and the mission behind Bima Sakhi.',
         url: 'https://bimasakhi.com/about',
-        images: [{ url: 'https://bimasakhi.com/images/home/hero-bg.jpg' }],
+        images: [{ url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp' }],
         siteName: 'Bima Sakhi',
         type: 'website',
     },
@@ -16,7 +16,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'About Raj Kumar | Bima Sakhi Platform',
         description: 'Learn about Raj Kumar, Development Officer since 2013.',
-        images: ['https://bimasakhi.com/images/home/hero-bg.jpg'],
+        images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp'],
     },
 };
 

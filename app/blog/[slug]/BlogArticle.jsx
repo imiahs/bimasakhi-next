@@ -75,7 +75,7 @@ const BlogArticle = ({ post, recentPosts = [] }) => {
                 {/* Left Column: Article Content */}
                 <main className="article-main">
                     <div className="article-image-container">
-                        <img src={'/images/home/hero-bg.jpg'} alt={post.title} />
+                        <img src={'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp'} alt={post.title} />
                     </div>
 
                     <TableOfContents contentRef={articleRef} />

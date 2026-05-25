@@ -8,7 +8,7 @@ export const metadata = {
         title: 'Contact Bima Sakhi | Raj Kumar (Since 2013)',
         description: 'Get structured guidance for LIC agency, IC-38 exam preparation, documentation support.',
         url: 'https://bimasakhi.com/contact',
-        images: [{ url: 'https://bimasakhi.com/images/home/hero-bg.jpg' }],
+        images: [{ url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp' }],
         siteName: 'Bima Sakhi',
         type: 'website',
     },
@@ -16,7 +16,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'Contact Bima Sakhi | Raj Kumar',
         description: 'Get structured guidance for LIC agency.',
-        images: ['https://bimasakhi.com/images/home/hero-bg.jpg'],
+        images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp'],
     },
 };
 

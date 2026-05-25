@@ -110,7 +110,7 @@ const Navbar = () => {
 
                 {/* Logo */}
                 <Link href="/" className="brand-logo" onClick={closeMenu}>
-                    <Image src="/images/home/logo.png" alt="Bima Sakhi Logo" width={200} height={50} priority style={{ width: 'auto', height: 'auto', maxHeight: '50px' }} />
+                    <Image src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/logo/logo-1779744837429.webp" alt="Bima Sakhi Logo" width={200} height={50} priority style={{ width: 'auto', height: 'auto', maxHeight: '50px' }} />
                     <div className="brand-text">
                         <span className="brand-name">Bima Sakhi</span>
                         <span className="brand-tagline">

@@ -13,7 +13,7 @@ export async function generateMetadata() {
             title: 'योग्यता चेक करें – Bima Sakhi (Delhi NCR)',
             description: '10वीं पास | 18-70 वर्ष | दिल्ली NCR। अपनी एलिजिबिलिटी चेक करें और अप्लाई करें।',
             url: 'https://bimasakhi.com/eligibility',
-            images: [{ url: 'https://bimasakhi.com/images/home/hero-bg.jpg' }],
+            images: [{ url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp' }],
             siteName: 'Bima Sakhi',
             type: 'website',
         },
@@ -21,7 +21,7 @@ export async function generateMetadata() {
             card: 'summary_large_image',
             title: 'योग्यता चेक करें – Bima Sakhi',
             description: '10वीं पास | 18-70 वर्ष | दिल्ली NCR।',
-            images: ['https://bimasakhi.com/images/home/hero-bg.jpg'],
+            images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp'],
         },
     };
 

@@ -8,7 +8,7 @@ export const metadata = {
         title: 'Bima Sakhi Delhi – Commission Based LIC Career for Women',
         description: 'Join Bima Sakhi LIC agency opportunity in Delhi, Noida & Ghaziabad.',
         url: 'https://bimasakhi.com/bima-sakhi-delhi',
-        images: [{ url: 'https://bimasakhi.com/images/home/community.jpg' }],
+        images: [{ url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/woman-supporting-family-lic-1778562506570.webp' }],
         siteName: 'Bima Sakhi',
         type: 'website',
     },
@@ -16,7 +16,7 @@ export const metadata = {
         card: 'summary_large_image',
         title: 'Bima Sakhi Delhi – LIC Career for Women',
         description: 'Join Bima Sakhi LIC agency opportunity in Delhi, Noida & Ghaziabad.',
-        images: ['https://bimasakhi.com/images/home/community.jpg'],
+        images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/woman-supporting-family-lic-1778562506570.webp'],
     },
 };
 

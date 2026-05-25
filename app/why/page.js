@@ -13,7 +13,7 @@ export async function generateMetadata() {
             title: 'Why Become Bima Sakhi? – LIC Career Benefits & Mahilaon Ke Liye Income Opportunity',
             description: 'Discover why becoming a Bima Sakhi LIC agent is a smart career move for women in Delhi NCR.',
             url: 'https://bimasakhi.com/why',
-            images: [{ url: 'https://bimasakhi.com/images/bima_sakhi_ai.png' }],
+            images: [{ url: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-client-meeting-1778562840168.webp' }],
             siteName: 'Bima Sakhi',
             type: 'website',
         },
@@ -21,7 +21,7 @@ export async function generateMetadata() {
             card: 'summary_large_image',
             title: 'Why Become Bima Sakhi? – LIC Career Benefits',
             description: 'Discover why becoming a Bima Sakhi LIC agent is a smart career move for women in Delhi NCR.',
-            images: ['https://bimasakhi.com/images/bima_sakhi_ai.png'],
+            images: ['https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-client-meeting-1778562840168.webp'],
         },
     };
 

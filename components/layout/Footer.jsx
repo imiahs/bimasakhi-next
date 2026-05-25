@@ -86,7 +86,7 @@ const Footer = () => {
                 <div>
                     <div className="flex items-center gap-3 mb-4">
                         <Image
-                            src="/images/home/logo1.png"
+                            src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/logo/logo1-1779744851525.webp"
                             alt="Bima Sakhi Logo"
                             width={40}
                             height={40}
