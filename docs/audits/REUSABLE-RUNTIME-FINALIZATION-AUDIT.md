@@ -1,14 +1,14 @@
 # REUSABLE RUNTIME FINALIZATION AUDIT
 
-Date: 2026-05-25
-Mode: ISOLATED REUSABLE-RUNTIME CLOSURE
-Scope: isolated reusable-runtime deployment, live validation, rollback validation, and commit-closure readiness
+Date: 2026-05-26
+Mode: POST-REUSABLE-RUNTIME CLOSURE
+Scope: isolated reusable-runtime deployment, git-backed production validation, rollback validation, and repository closure confirmation
 
 ---
 
 ## Objective
 
-Close the reusable runtime wave independently without touching catch-all authority or unrelated operational surfaces.
+Confirm that the reusable runtime wave is fully closed without touching catch-all authority or unrelated operational surfaces.
 
 ## Runtime Cluster
 
@@ -28,31 +28,33 @@ Close the reusable runtime wave independently without touching catch-all authori
 - catch-all files excluded from isolated worktree diff
 - isolated `npm run build`: PASS
 - isolated production deploy via Vercel CLI: PASS
-- aliased live target: `https://bimasakhi.com`
+- git-backed closure commit created: `af7d7c3`
+- closure commit pushed to `origin/main`: PASS
+- current live baseline on `https://bimasakhi.com`: `af7d7c3`
 
 Classification:
 
 - reusable runtime isolation: `ISOLATED`
 - catch-all isolation: `PRESERVED`
+- repository closure: `CLOSED`
 
 ## Live Validation Outcome
 
 Dedicated reusable target used for bounded live proof:
 
 - page id: `7f80537f-39d5-450d-bcae-4a50e0f51616`
-- stable public slug after cleanup: `/pages/live-reusable-activation-93648961`
+- stable public slug after final cleanup: `/pages/live-reusable-activation-93648961`
 
-Live results:
+Live results on the final git-backed baseline:
 
-- `/api/status`: `200`, `overall_health=HEALTHY`, `version=local`
+- `/api/status`: `200`, `overall_health=HEALTHY`, `version=af7d7c3`
 - public route returned `200` with original marker continuity
-- hidden runtime marker now present live: `data-runtime-authority="reusable_public_runtime"`
-- public route now exposes `data-render-mode="published_cache"`
-- preview route now exposes `data-render-mode="preview_no_store"`
-- public route keeps `data-preview-isolation="not_requested"`
-- preview route keeps `data-preview-isolation="active"`
+- hidden runtime marker present live: `data-runtime-authority="reusable_public_runtime"`
+- public route exposes `data-render-mode="published_cache"`
+- preview route exposes `data-render-mode="preview_no_store"`
 - slug invalidation proved route-owned save-time invalidation: original slug `404`, mutated slug `200`
 - content mutation proved replay continuity: mutation marker visible live on public and preview routes
+- final restored public slug remained `200` after cleanup
 
 Classification:
 
@@ -60,7 +62,7 @@ Classification:
 
 ## Rollback Outcome
 
-Rollback proof on this dedicated target used bounded save-restore mode because the target was originally created by direct data-lane activation and had no pre-existing `page_versions` snapshot available for version rollback.
+Rollback proof on this dedicated target used bounded save-restore mode. The final git-backed validation rerun also recovered prior temporary validation slugs before proving the current baseline, then restored the dedicated target back to its original stable slug.
 
 Rollback results:
 
@@ -79,22 +81,22 @@ Classification:
 | Dimension | Result | Classification |
 |---|---|---|
 | Isolated build continuity | PASS | SAFE |
-| Isolated deployment | PASS | LIVE_SAFE |
+| Git-backed production deploy | PASS | LIVE_SAFE |
 | Replay continuity | PASS | LIVE_SAFE |
 | Invalidation continuity | PASS | LIVE_SAFE |
 | Preview/public separation | PASS | LIVE_SAFE |
 | Rollback continuity | PASS | ROLLBACK_SAFE |
 | Catch-all isolation | PASS | PRESERVED |
-| Commit closure readiness | PASS | READY_TO_CLOSE |
+| Commit closure | PASS | CLOSED |
 
 ## Recommended Checkpoint
 
-- stable reusable-runtime checkpoint: `reusable-runtime-2026-05-25-live-safe`
-- stable rollback anchor: restored public slug `/pages/live-reusable-activation-93648961`
-- stable release tag candidate: `reusable-runtime-2026-05-25-live-safe`
+- stable reusable-runtime tag: `reusable-runtime-2026-05-26-af7d7c3-stable`
+- stable rollback anchor tag: `rollback-anchor-2026-05-21-dpl_3Y8fu2wsELvYb3XN3aXYxJ58jfdb`
+- stable operational checkpoint: `ops-baseline-2026-05-26-af7d7c3`
 
 ## Final Classification
 
-`RUNTIME_READY`
+`CLOSED`
 
-The reusable runtime wave is now independently deployed, live-validated, rollback-validated, and ready for isolated commit closure without touching catch-all authority.
+The reusable runtime wave is now independently deployed, live-validated, rollback-validated, pushed, and repository-closed without touching catch-all authority.
