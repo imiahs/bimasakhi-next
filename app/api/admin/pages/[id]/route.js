@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
+import { normalizeBlockPayloadsForSave, normalizeBlockRecords } from '@/lib/blocks/registry';
+import { invalidateReusablePageRuntime } from '@/lib/cms/reusablePageInvalidation';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -80,7 +82,7 @@ export const GET = withAdminAuth(async (request, user, { params }) => {
 
         const { data: versions } = await supabase.from('page_versions').select('id, version_number, created_at').eq('page_id', id).order('version_number', { ascending: false });
 
-        return NextResponse.json({ page: decoratePageStructure(page), blocks, versions: versions || [] });
+        return NextResponse.json({ page: decoratePageStructure(page), blocks: normalizeBlockRecords(blocks || []), versions: versions || [] });
     } catch (err) {
         console.error("Error fetching page details:", err);
         return NextResponse.json({ error: "Failed to fetch page specifics." }, { status: 500 });
@@ -92,6 +94,16 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
         const { id } = await params;
         const reqData = await request.json();
         const supabase = getServiceSupabase();
+
+        const { data: existingPage, error: existingPageError } = await supabase
+            .from('custom_pages')
+            .select('id, slug, status')
+            .eq('id', id)
+            .single();
+
+        if (existingPageError) {
+            throw existingPageError;
+        }
 
         const updates = {};
 
@@ -164,7 +176,16 @@ export const PATCH = withAdminAuth(async (request, user, { params }) => {
             throw error;
         }
 
-        return NextResponse.json({ success: true, page: decoratePageStructure(data) });
+        const invalidation = await invalidateReusablePageRuntime({
+            action: 'patch_page_metadata',
+            pageId: id,
+            previousSlug: existingPage.slug,
+            currentSlug: data.slug,
+            previousStatus: existingPage.status,
+            currentStatus: data.status,
+        });
+
+        return NextResponse.json({ success: true, page: decoratePageStructure(data), invalidation });
     } catch (err) {
         console.error('Error patching page details:', err);
         return NextResponse.json({ success: false, error: 'Failed to update page.' }, { status: 500 });
@@ -180,6 +201,14 @@ export const PUT = withAdminAuth(async (request, user, { params }) => {
         const supabaseUrl = process.env.SUPABASE_URL;
         const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         const supabase = getServiceSupabase();
+
+        const { data: existingPage, error: existingPageError } = await supabase
+            .from('custom_pages')
+            .select('id, slug, status')
+            .eq('id', id)
+            .single();
+
+        if (existingPageError) throw existingPageError;
 
         // If it's a rollback request, fetch the snapshot and bypass standard blocks payload
         let blocksToApply = blocks;
@@ -197,13 +226,20 @@ export const PUT = withAdminAuth(async (request, user, { params }) => {
             }
         }
 
+        let normalizedBlocks;
+        try {
+            normalizedBlocks = normalizeBlockPayloadsForSave(Array.isArray(blocksToApply) ? blocksToApply : []);
+        } catch (error) {
+            return NextResponse.json({ success: false, error: error.message || 'Invalid block payload.' }, { status: 400 });
+        }
+
         const rpcPayload = {
             title: finalTitle,
             meta_title: finalMetaTitle,
             meta_description: finalMetaDesc,
             status,
             is_campaign_page,
-            blocks: Array.isArray(blocksToApply) ? blocksToApply : [],
+            blocks: normalizedBlocks.map((block, index) => ({ ...block, block_order: index })),
         };
 
         const updateKey = crypto
@@ -259,7 +295,25 @@ export const PUT = withAdminAuth(async (request, user, { params }) => {
             if (metadataError) throw metadataError;
         }
 
-        return NextResponse.json({ success: true, message: is_rollback ? "Rollback applied successfully" : "Update saved successfully" });
+        const finalSlug = metadataUpdates.slug || existingPage.slug;
+        const finalStatus = typeof status === 'string' && PAGE_STATUSES.has(String(status).trim().toLowerCase())
+            ? String(status).trim().toLowerCase()
+            : existingPage.status;
+
+        const invalidation = await invalidateReusablePageRuntime({
+            action: is_rollback ? 'rollback_page_content' : 'save_page_content',
+            pageId: id,
+            previousSlug: existingPage.slug,
+            currentSlug: finalSlug,
+            previousStatus: existingPage.status,
+            currentStatus: finalStatus,
+        });
+
+        return NextResponse.json({
+            success: true,
+            message: is_rollback ? "Rollback applied successfully" : "Update saved successfully",
+            invalidation,
+        });
     } catch (err) {
         console.error("Error synchronizing page details:", err);
         return NextResponse.json({ error: "Failed to save page map." }, { status: 500 });
@@ -270,6 +324,16 @@ export const DELETE = withAdminAuth(async (request, user, { params }) => {
     try {
         const { id } = await params;
         const supabase = getServiceSupabase();
+
+        const { data: existingPage, error: existingPageError } = await supabase
+            .from('custom_pages')
+            .select('id, slug, status')
+            .eq('id', id)
+            .single();
+
+        if (existingPageError) {
+            throw existingPageError;
+        }
 
         const { data, error } = await supabase
             .from('custom_pages')
@@ -282,7 +346,16 @@ export const DELETE = withAdminAuth(async (request, user, { params }) => {
             throw error;
         }
 
-        return NextResponse.json({ success: true, page: data });
+        const invalidation = await invalidateReusablePageRuntime({
+            action: 'archive_page',
+            pageId: id,
+            previousSlug: existingPage.slug,
+            currentSlug: existingPage.slug,
+            previousStatus: existingPage.status,
+            currentStatus: data.status,
+        });
+
+        return NextResponse.json({ success: true, page: data, invalidation });
     } catch (err) {
         console.error('Error archiving page:', err);
         return NextResponse.json({ success: false, error: 'Failed to archive page.' }, { status: 500 });

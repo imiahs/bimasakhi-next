@@ -3,8 +3,26 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { getBlockDefinition, listBlockDefinitions, normalizeBlockData, normalizeBlockPayloadsForSave } from '@/lib/blocks/registry';
 
-const BLOCK_TYPES = ['HeroBlock', 'ContentBlock', 'BenefitsBlock', 'TestimonialBlock', 'CTABlock', 'FAQBlock', 'CalculatorBlock', 'DownloadBlock'];
+const BLOCK_TYPES = listBlockDefinitions();
+
+function normalizeEditorBlocks(blocks) {
+    return (blocks || []).map((block) => ({
+        ...block,
+        block_data: normalizeBlockData(block.block_type, block.block_data),
+    }));
+}
+
+function getFieldValue(blockData, field) {
+    const value = blockData?.[field.key];
+    if (field.type === 'json') {
+        if (typeof value === 'string') return value;
+        return JSON.stringify(value || [], null, 2);
+    }
+
+    return value || '';
+}
 
 const PageEditorContent = ({ pageId }) => {
     const router = useRouter();
@@ -25,7 +43,7 @@ const PageEditorContent = ({ pageId }) => {
                 const data = await res.json();
                 if (data.page) {
                     setPage(data.page);
-                    setBlocks(data.blocks || []);
+                    setBlocks(normalizeEditorBlocks(data.blocks || []));
                     setVersions(data.versions || []);
                 } else {
                     alert('Page not found');
@@ -43,9 +61,17 @@ const PageEditorContent = ({ pageId }) => {
     const handleSave = async (isRollback = false) => {
         setSaving(true);
         try {
+            let normalizedBlocks;
+            try {
+                normalizedBlocks = normalizeBlockPayloadsForSave(blocks.map((block, idx) => ({ ...block, block_order: idx })));
+            } catch (error) {
+                alert(error.message || 'Block JSON is invalid. Fix the highlighted block payload before saving.');
+                return;
+            }
+
             const payload = {
                 ...page,
-                blocks: blocks.map((b, idx) => ({ ...b, block_order: idx })),
+                blocks: normalizedBlocks,
                 is_rollback: isRollback,
                 rollback_version_id: isRollback ? selectedVersionId : null
             };
@@ -61,10 +87,10 @@ const PageEditorContent = ({ pageId }) => {
                 // Reload state to capture new versions if any
                 const reloadRes = await fetch(`/api/admin/pages/${pageId}`);
                 const reloadData = await reloadRes.json();
+                if (reloadData.page) setPage(reloadData.page);
+                if (reloadData.blocks) setBlocks(normalizeEditorBlocks(reloadData.blocks || []));
                 if (reloadData.versions) setVersions(reloadData.versions);
-                if (isRollback && reloadData.page) {
-                    setPage(reloadData.page);
-                    setBlocks(reloadData.blocks || []);
+                if (isRollback) {
                     setSelectedVersionId('');
                 }
             } else {
@@ -94,7 +120,7 @@ const PageEditorContent = ({ pageId }) => {
             });
             const data = await res.json();
             if (data.success && data.blocks) {
-                setBlocks(data.blocks);
+                setBlocks(normalizeEditorBlocks(data.blocks));
             } else {
                 alert('Generation failed: ' + data.error);
             }
@@ -106,7 +132,7 @@ const PageEditorContent = ({ pageId }) => {
     };
 
     const addBlock = (type) => {
-        const newBlock = { id: crypto.randomUUID(), block_type: type, block_data: {} };
+        const newBlock = { id: crypto.randomUUID(), block_type: type, block_data: normalizeBlockData(type, {}) };
         setBlocks([...blocks, newBlock]);
     };
 
@@ -132,6 +158,78 @@ const PageEditorContent = ({ pageId }) => {
         const newArr = [...blocks];
         newArr[index].block_data = { ...newArr[index].block_data, [key]: value };
         setBlocks(newArr);
+    };
+
+    const renderField = (block, index, field) => {
+        const commonClassName = `w-full rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-sm text-slate-100 ${field.type === 'json' ? 'font-mono' : ''}`;
+        const value = getFieldValue(block.block_data, field);
+
+        if (field.type === 'textarea' || field.type === 'json') {
+            return (
+                <div key={field.key}>
+                    <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">{field.label}</label>
+                    <textarea
+                        value={value}
+                        onChange={(event) => handleBlockDataChange(index, field.key, event.target.value)}
+                        className={commonClassName}
+                        rows={field.rows || 4}
+                        placeholder={field.placeholder || ''}
+                    />
+                </div>
+            );
+        }
+
+        if (field.type === 'select') {
+            return (
+                <div key={field.key}>
+                    <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">{field.label}</label>
+                    <select
+                        value={value}
+                        onChange={(event) => handleBlockDataChange(index, field.key, event.target.value)}
+                        className={commonClassName}
+                    >
+                        {(field.options || []).map((option) => (
+                            <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                    </select>
+                </div>
+            );
+        }
+
+        return (
+            <div key={field.key}>
+                <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">{field.label}</label>
+                <input
+                    type="text"
+                    value={value}
+                    onChange={(event) => handleBlockDataChange(index, field.key, event.target.value)}
+                    className={commonClassName}
+                    placeholder={field.placeholder || ''}
+                />
+            </div>
+        );
+    };
+
+    const renderBlockInputs = (block, index) => {
+        const definition = getBlockDefinition(block.block_type);
+
+        if (!definition) {
+            return (
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-200">
+                    No canonical registry contract is currently defined for this block type. Raw JSON remains visible below.
+                </div>
+            );
+        }
+
+        if (definition.editorMode === 'read-only') {
+            return (
+                <div className="rounded-xl border border-sky-500/20 bg-sky-500/10 p-4 text-sm text-sky-200">
+                    This block is intentionally read-only at the structured editor level. Runtime-owned behavior stays bounded while title/subtitle remain configurable.
+                </div>
+            );
+        }
+
+        return definition.fields.map((field) => renderField(block, index, field));
     };
 
     if (loading) return <div className="admin-panel rounded-2xl p-8 text-center text-slate-300">Loading Visual Editor...</div>;
@@ -199,11 +297,24 @@ const PageEditorContent = ({ pageId }) => {
                     ) : (
                         blocks.map((block, i) => (
                             <div key={block.id || i} className="admin-panel flex flex-col overflow-hidden rounded-2xl transition-all hover:border-emerald-500/30">
+                                {(() => {
+                                    const blockDefinition = getBlockDefinition(block.block_type);
+
+                                    return (
+                                        <>
                                 {/* Block Header Toolbar */}
                                 <div className="group flex items-center justify-between border-b border-white/[0.06] bg-white/[0.03] p-3">
                                     <div className="flex items-center gap-3">
                                         <span className="rounded bg-emerald-500/80 px-2 py-0.5 font-mono text-xs text-slate-950">{String(i + 1).padStart(2, '0')}</span>
-                                        <h4 className="font-bold tracking-wide text-white">{block.block_type}</h4>
+                                        <div>
+                                            <h4 className="font-bold tracking-wide text-white">{blockDefinition?.displayName || block.block_type}</h4>
+                                            {blockDefinition ? (
+                                                <div className="mt-1 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.2em] text-slate-500">
+                                                    <span>{blockDefinition.classification}</span>
+                                                    <span>{blockDefinition.durability}</span>
+                                                </div>
+                                            ) : null}
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
                                         <button onClick={() => moveBlock(i, 'up')} disabled={i === 0} className="rounded p-1 hover:bg-white/[0.08] disabled:opacity-30">⬆️</button>
@@ -215,71 +326,13 @@ const PageEditorContent = ({ pageId }) => {
 
                                 {/* Dynamic Block Input Forms */}
                                 <div className="p-5 flex flex-col gap-4">
-                                    {/* Dynamic Render based on block_type */}
-                                    {block.block_type === 'HeroBlock' && (
-                                        <>
-                                            <div>
-                                                <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">Headline</label>
-                                                <input type="text" value={block.block_data.headline || ''} onChange={e => handleBlockDataChange(i, 'headline', e.target.value)} className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-sm text-slate-100" placeholder="Hero large text" />
-                                            </div>
-                                            <div>
-                                                <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">Subheadline / Paragraph</label>
-                                                <textarea value={block.block_data.subheadline || ''} onChange={e => handleBlockDataChange(i, 'subheadline', e.target.value)} className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-sm text-slate-100" rows={2} placeholder="Hero descriptive text" />
-                                            </div>
-                                        </>
-                                    )}
+                                    <div className="flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.2em] text-slate-500">
+                                        {(blockDefinition?.surfaces || []).map((surface) => (
+                                            <span key={surface} className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-1">{surface}</span>
+                                        ))}
+                                    </div>
 
-                                    {block.block_type === 'ContentBlock' && (
-                                        <>
-                                            <div>
-                                                <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">RTE Content Payload (HTML)</label>
-                                                <textarea value={block.block_data.html || ''} onChange={e => handleBlockDataChange(i, 'html', e.target.value)} className="w-full rounded-lg border border-white/[0.08] bg-slate-950 p-2 text-sm font-mono text-slate-200" rows={5} placeholder="<p>Standard rich text structure</p>" />
-                                            </div>
-                                        </>
-                                    )}
-
-                                    {block.block_type === 'CTABlock' && (
-                                        <>
-                                            <div className="flex gap-4">
-                                                <div className="flex-1">
-                                                    <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">Button Label</label>
-                                                    <input type="text" value={block.block_data.label || ''} onChange={e => handleBlockDataChange(i, 'label', e.target.value)} className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-sm text-slate-100" placeholder="e.g. Ready to start your journey?" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">Target URL</label>
-                                                    <input type="text" value={block.block_data.href || ''} onChange={e => handleBlockDataChange(i, 'href', e.target.value)} className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-sm text-slate-100" placeholder="/apply" />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">Button Text</label>
-                                                <input type="text" value={block.block_data.buttonText || ''} onChange={e => handleBlockDataChange(i, 'buttonText', e.target.value)} className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-sm text-slate-100" placeholder="Apply Now" />
-                                            </div>
-                                        </>
-                                    )}
-
-                                    {block.block_type === 'TestimonialBlock' && (
-                                        <>
-                                            <div>
-                                                <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">Quote Text</label>
-                                                <textarea value={block.block_data.quote || ''} onChange={e => handleBlockDataChange(i, 'quote', e.target.value)} className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-sm text-slate-100" rows={2} placeholder="Testimonial text" />
-                                            </div>
-                                            <div>
-                                                <label className="mb-1 block text-xs font-semibold uppercase text-slate-500">Author</label>
-                                                <input type="text" value={block.block_data.author || ''} onChange={e => handleBlockDataChange(i, 'author', e.target.value)} className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] p-2 text-sm text-slate-100" placeholder="e.g., Priya Sharma" />
-                                            </div>
-                                        </>
-                                    )}
-
-                                    {/* Generic fallback for complex structural components like Calculator that might not need explicit forms, but rely on component logic directly */}
-                                    {['BenefitsBlock', 'FAQBlock', 'CalculatorBlock', 'DownloadBlock'].includes(block.block_type) && (
-                                        <div className="flex items-center gap-3 rounded-xl border border-sky-500/20 bg-sky-500/10 p-4 text-sm text-sky-200">
-                                            <span>⚡</span>
-                                            <div>
-                                                <div className="font-bold">Dynamic Macro Rendered Component</div>
-                                                <p className="mt-1 text-xs text-sky-100/80">This block automatically queries the database or renders structural JS tools. No manual overrides configured at this level.</p>
-                                            </div>
-                                        </div>
-                                    )}
+                                    {renderBlockInputs(block, i)}
 
                                     {/* Simple configuration dump map */}
                                     <details className="mt-2 group">
@@ -289,6 +342,9 @@ const PageEditorContent = ({ pageId }) => {
                                         </pre>
                                     </details>
                                 </div>
+                                        </>
+                                    );
+                                })()}
                             </div>
                         ))
                     )}
@@ -301,13 +357,16 @@ const PageEditorContent = ({ pageId }) => {
                     </h3>
 
                     <div className="flex flex-col gap-2">
-                        {BLOCK_TYPES.map(type => (
+                        {BLOCK_TYPES.map((definition) => (
                             <button
-                                key={type}
-                                onClick={() => addBlock(type)}
+                                key={definition.blockType}
+                                onClick={() => addBlock(definition.blockType)}
                                 className="group flex w-full items-center justify-between rounded-xl border border-white/[0.08] bg-white/[0.03] p-3 text-left text-sm font-medium text-slate-300 transition hover:border-emerald-500/30 hover:bg-emerald-500/10 hover:text-white"
                             >
-                                <span>{type}</span>
+                                <div>
+                                    <div>{definition.displayName}</div>
+                                    <div className="mt-1 text-[10px] uppercase tracking-[0.2em] text-slate-500">{definition.classification}</div>
+                                </div>
                                 <span className="text-emerald-300 opacity-0 transition group-hover:opacity-100">+ Add</span>
                             </button>
                         ))}

@@ -5,13 +5,21 @@ import Link from 'next/link';
 import { UserContext } from '@/context/UserContext';
 import { analytics } from '@/services/analytics';
 
-export default function SmartCTA({ defaultLabel = "Apply Now", defaultLink = "/apply" }) {
+export default function SmartCTA({ defaultLabel = "Apply Now", defaultLink = "/apply", className = 'btn btn-primary', eventLabel = 'smart_cta_default' }) {
     const { userState } = useContext(UserContext);
     const [ctaTarget, setCtaTarget] = useState({
         label: defaultLabel,
         link: defaultLink,
-        eventLabel: "smart_cta_default"
+        eventLabel
     });
+
+    useEffect(() => {
+        setCtaTarget({
+            label: defaultLabel,
+            link: defaultLink,
+            eventLabel
+        });
+    }, [defaultLabel, defaultLink, eventLabel]);
 
     useEffect(() => {
         const fetchRules = async () => {
@@ -64,7 +72,7 @@ export default function SmartCTA({ defaultLabel = "Apply Now", defaultLink = "/a
     };
 
     return (
-        <Link href={ctaTarget.link} onClick={handleCtaClick} className="btn btn-primary" style={{ display: 'inline-block', textAlign: 'center' }}>
+        <Link href={ctaTarget.link} onClick={handleCtaClick} className={className || 'btn btn-primary'} style={{ display: 'inline-block', textAlign: 'center' }}>
             {ctaTarget.label}
         </Link>
     );

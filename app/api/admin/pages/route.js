@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/utils/supabaseClientSingleton';
+import { invalidateReusablePageRuntime } from '@/lib/cms/reusablePageInvalidation';
 import { withAdminAuth } from '@/lib/auth/withAdminAuth';
 
 export const dynamic = 'force-dynamic';
@@ -168,18 +169,41 @@ export const POST = withAdminAuth(async (request, user) => {
             }
 
             const uniqueIds = [...new Set(ids.filter(Boolean))];
+
+            const { data: existingPages, error: existingPagesError } = await supabase
+                .from('custom_pages')
+                .select('id, slug, status')
+                .in('id', uniqueIds);
+
+            if (existingPagesError) throw existingPagesError;
+
             const { data, error } = await supabase
                 .from('custom_pages')
                 .update({ status, updated_at: new Date().toISOString() })
                 .in('id', uniqueIds)
-                .select('id');
+                .select('id, slug, status');
 
             if (error) throw error;
+
+            const invalidationResults = [];
+
+            for (const updatedPage of data || []) {
+                const previousPage = (existingPages || []).find((page) => page.id === updatedPage.id);
+                invalidationResults.push(await invalidateReusablePageRuntime({
+                    action: 'bulk_update_status',
+                    pageId: updatedPage.id,
+                    previousSlug: previousPage?.slug,
+                    currentSlug: updatedPage.slug,
+                    previousStatus: previousPage?.status,
+                    currentStatus: updatedPage.status,
+                }));
+            }
 
             return NextResponse.json({
                 success: true,
                 updated: data?.length || 0,
                 status,
+                invalidation: invalidationResults,
             });
         }
 
@@ -210,7 +234,16 @@ export const POST = withAdminAuth(async (request, user) => {
 
         if (error) throw error;
 
-        return NextResponse.json({ success: true, page: decoratePageStructure(data) });
+        const invalidation = await invalidateReusablePageRuntime({
+            action: 'create_page',
+            pageId: data.id,
+            previousSlug: null,
+            currentSlug: data.slug,
+            previousStatus: null,
+            currentStatus: data.status,
+        });
+
+        return NextResponse.json({ success: true, page: decoratePageStructure(data), invalidation });
     } catch (err) {
         console.error("Error creating page:", err);
         return NextResponse.json({ success: false, error: "Failed to create page." }, { status: 500 });
