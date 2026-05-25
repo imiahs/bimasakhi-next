@@ -419,6 +419,8 @@ function buildStaticSurface(definition, override) {
         updated_at: mergedDefinition.updated_at || null,
         runtime_owner_file: mergedDefinition.runtime_owner_file || null,
         visibility_scope: mergedDefinition.visibility_scope || 'public',
+        record_id: null,
+        linked_draft_id: null,
         override: override ? { ...override, page_path: override.route_path } : null,
     };
 }
@@ -529,6 +531,338 @@ function buildStaticRouteNote({ routePath, usesSeoHelper, metadataStrategy, hasH
 
 function uniqueLabels(labels) {
     return [...new Set((labels || []).filter(Boolean))];
+}
+
+function buildQueryEditorPath(basePath, queryName, queryValue) {
+    if (!basePath) {
+        return null;
+    }
+
+    if (queryValue === undefined || queryValue === null || queryValue === '') {
+        return basePath;
+    }
+
+    const separator = basePath.includes('?') ? '&' : '?';
+    return `${basePath}${separator}${queryName}=${encodeURIComponent(String(queryValue))}`;
+}
+
+function buildEditabilityDurability(surface, editabilityClassification) {
+    if (editabilityClassification === 'EDITABILITY_FRAGILE' || surface.authority_risk === 'AUTHORITY_FRAGILE') {
+        return 'EDITABILITY_FRAGILE';
+    }
+
+    return surface.durability_classification === 'DURABLE' ? 'DURABLE' : 'PARTIALLY_DURABLE';
+}
+
+function buildStructuredDurability(surface, structuredClassification) {
+    if (structuredClassification === 'OWNERSHIP_FRAGILE' || surface.authority_risk === 'AUTHORITY_FRAGILE') {
+        return 'OWNERSHIP_FRAGILE';
+    }
+
+    const sourceLabels = surface.authority_labels || [];
+    const helperFragmented = sourceLabels.includes('FRAGMENTED') || sourceLabels.includes('PARTIALLY_OPERATIONAL');
+
+    if (surface.durability_classification === 'DURABLE' && !helperFragmented && surface.runtime_owner_file) {
+        return 'DURABLE';
+    }
+
+    return 'PARTIALLY_DURABLE';
+}
+
+function buildStructuredRegistryDurability(surface, structuredClassification, structuredEditorPath) {
+    if (structuredClassification === 'OWNERSHIP_FRAGILE' || surface.visibility_scope === 'registry_only') {
+        return 'REGISTRY_FRAGILE';
+    }
+
+    const sourceLabels = surface.authority_labels || [];
+    const helperFragmented = sourceLabels.includes('FRAGMENTED') || sourceLabels.includes('PARTIALLY_OPERATIONAL');
+    const hasDeterministicRegistryOwner = Boolean(structuredEditorPath || surface.runtime_owner_file || surface.editor_path);
+
+    if (hasDeterministicRegistryOwner && !helperFragmented) {
+        return 'DURABLE';
+    }
+
+    return 'PARTIALLY_DURABLE';
+}
+
+function buildSnapshotVersionReadiness(surface, structuredClassification) {
+    if (structuredClassification === 'OWNERSHIP_FRAGILE') {
+        return 'VERSIONING_FRAGILE';
+    }
+
+    switch (surface.source_type) {
+        case 'custom_page':
+        case 'content_draft':
+            return 'SURVIVABLE';
+        case 'page_index':
+            return surface.linked_draft_id ? 'SURVIVABLE' : 'PARTIALLY_SURVIVABLE';
+        case 'blog_post':
+            return 'PARTIALLY_SURVIVABLE';
+        default:
+            return surface.runtime_owner_file ? 'SURVIVABLE' : 'PARTIALLY_SURVIVABLE';
+    }
+}
+
+function applyEditableAuthority(surface) {
+    const sourceType = surface.source_type;
+    const normalizedPath = normalizeRoutePath(surface.page_path || surface.path);
+    const sourceLabels = surface.authority_labels || [];
+
+    let supportsMetadataEdit = false;
+    let supportsContentEdit = false;
+    let supportsSeoEdit = Boolean(surface.supports_seo_override);
+    let metadataEditorPath = null;
+    let metadataEditorLabel = null;
+    let contentEditorPath = null;
+    let contentEditorLabel = null;
+    let seoEditorPath = supportsSeoEdit ? buildQueryEditorPath('/admin/seo', 'path', normalizedPath) : null;
+    let seoEditorLabel = supportsSeoEdit ? 'Open SEO override editor' : null;
+    let editabilityClassification = 'READ_ONLY_BY_DESIGN';
+
+    switch (sourceType) {
+        case 'custom_page': {
+            supportsMetadataEdit = true;
+            supportsContentEdit = true;
+            metadataEditorPath = buildQueryEditorPath('/admin/pages', 'edit', surface.record_id);
+            metadataEditorLabel = 'Open metadata editor';
+            contentEditorPath = surface.record_id ? `/admin/pages/${surface.record_id}` : null;
+            contentEditorLabel = 'Open block editor';
+            editabilityClassification = surface.shadow_path || !surface.runtime_live ? 'PARTIALLY_EDITABLE' : 'EDITABILITY_SAFE';
+            break;
+        }
+
+        case 'page_index': {
+            const hasLinkedDraft = Boolean(surface.linked_draft_id);
+
+            supportsMetadataEdit = hasLinkedDraft;
+            supportsContentEdit = hasLinkedDraft;
+            metadataEditorPath = hasLinkedDraft ? `/admin/ccc/drafts/${surface.linked_draft_id}` : null;
+            metadataEditorLabel = hasLinkedDraft ? 'Open draft metadata editor' : null;
+            contentEditorPath = hasLinkedDraft ? `/admin/ccc/drafts/${surface.linked_draft_id}` : null;
+            contentEditorLabel = hasLinkedDraft ? 'Open linked draft editor' : null;
+
+            if (surface.authority_risk === 'AUTHORITY_FRAGILE') {
+                editabilityClassification = 'EDITABILITY_FRAGILE';
+            } else if (hasLinkedDraft || supportsSeoEdit) {
+                editabilityClassification = 'PARTIALLY_EDITABLE';
+            }
+            break;
+        }
+
+        case 'content_draft': {
+            supportsMetadataEdit = true;
+            supportsContentEdit = true;
+            supportsSeoEdit = false;
+            seoEditorPath = null;
+            seoEditorLabel = null;
+            metadataEditorPath = surface.record_id ? `/admin/ccc/drafts/${surface.record_id}` : null;
+            metadataEditorLabel = 'Open draft metadata editor';
+            contentEditorPath = surface.record_id ? `/admin/ccc/drafts/${surface.record_id}` : null;
+            contentEditorLabel = 'Open draft editor';
+            editabilityClassification = 'PARTIALLY_EDITABLE';
+            break;
+        }
+
+        case 'blog_post': {
+            supportsMetadataEdit = true;
+            supportsContentEdit = true;
+            metadataEditorPath = buildQueryEditorPath('/admin/blog', 'edit', surface.record_id);
+            metadataEditorLabel = 'Open blog metadata editor';
+            contentEditorPath = buildQueryEditorPath('/admin/blog', 'edit', surface.record_id);
+            contentEditorLabel = 'Open blog editor';
+            editabilityClassification = surface.runtime_live ? 'EDITABILITY_SAFE' : 'PARTIALLY_EDITABLE';
+            break;
+        }
+
+        case 'override_only': {
+            supportsSeoEdit = false;
+            seoEditorPath = null;
+            seoEditorLabel = null;
+            editabilityClassification = 'EDITABILITY_FRAGILE';
+            break;
+        }
+
+        default: {
+            if (supportsSeoEdit) {
+                editabilityClassification = 'PARTIALLY_EDITABLE';
+            } else if (surface.authority_risk === 'AUTHORITY_FRAGILE') {
+                editabilityClassification = 'EDITABILITY_FRAGILE';
+            }
+            break;
+        }
+    }
+
+    const editableAuthorityLabels = uniqueLabels([
+        'REGISTRY_VISIBLE',
+        sourceLabels.includes('RUNTIME_AUTHORITATIVE') ? 'RUNTIME_AUTHORITATIVE' : null,
+        sourceLabels.includes('STATIC_RUNTIME') ? 'STATIC_RUNTIME' : null,
+        sourceLabels.includes('HYBRID_RUNTIME') ? 'HYBRID_RUNTIME' : null,
+        sourceLabels.includes('PARTIALLY_OPERATIONAL') ? 'PARTIALLY_OPERATIONAL' : null,
+        sourceLabels.includes('FRAGMENTED') ? 'HELPER_FRAGMENTED' : null,
+        supportsMetadataEdit ? 'METADATA_EDITABLE' : null,
+        supportsSeoEdit ? 'SEO_EDITABLE' : null,
+        supportsContentEdit ? 'CONTENT_EDITABLE' : null,
+        !supportsMetadataEdit && !supportsContentEdit && !supportsSeoEdit ? 'READ_ONLY_BY_DESIGN' : null,
+        'LAYOUT_PROTECTED',
+    ]);
+
+    return {
+        ...surface,
+        supports_metadata_edit: supportsMetadataEdit,
+        supports_content_edit: supportsContentEdit,
+        supports_seo_edit: supportsSeoEdit,
+        metadata_editor_path: metadataEditorPath,
+        metadata_editor_label: metadataEditorLabel,
+        content_editor_path: contentEditorPath,
+        content_editor_label: contentEditorLabel,
+        seo_editor_path: seoEditorPath,
+        seo_editor_label: seoEditorLabel,
+        related_editor_path: surface.editor_path || null,
+        related_editor_label: surface.editor_label || null,
+        editability_classification: editabilityClassification,
+        editability_durability: buildEditabilityDurability(surface, editabilityClassification),
+        layout_protected: true,
+        editable_authority_labels: editableAuthorityLabels,
+    };
+}
+
+function applyStructuredAuthority(surface) {
+    const sourceType = surface.source_type;
+    const sourceLabels = surface.authority_labels || [];
+    const helperFragmented = sourceLabels.includes('FRAGMENTED') || sourceLabels.includes('PARTIALLY_OPERATIONAL');
+
+    let supportsStructuredContent = false;
+    let supportsStructuredMetadata = false;
+    let supportsStructuredSeo = Boolean(surface.supports_seo_edit || surface.supports_seo_override);
+    let structuredEditorPath = null;
+    let structuredEditorLabel = null;
+    let structuredOwnerModel = 'FILE_ROUTE_RUNTIME';
+    let structuredStorageLane = surface.runtime_owner_file || 'runtime_file';
+    let structuredClassification = 'READ_ONLY_BY_DESIGN';
+
+    switch (sourceType) {
+        case 'custom_page': {
+            supportsStructuredContent = true;
+            supportsStructuredMetadata = true;
+            structuredEditorPath = surface.content_editor_path || surface.metadata_editor_path;
+            structuredEditorLabel = surface.content_editor_path ? 'Open structured block editor' : 'Open structured page editor';
+            structuredOwnerModel = 'BLOCK_COLLECTION';
+            structuredStorageLane = 'custom_pages + page_blocks + page_versions';
+            structuredClassification = surface.runtime_live && !surface.shadow_path ? 'STRUCTURED_SAFE' : 'PARTIALLY_STRUCTURED';
+            break;
+        }
+
+        case 'page_index': {
+            supportsStructuredContent = true;
+            supportsStructuredMetadata = true;
+            structuredEditorPath = surface.content_editor_path || surface.metadata_editor_path || surface.related_editor_path;
+            structuredEditorLabel = surface.content_editor_path ? 'Open structured draft owner' : surface.related_editor_label || null;
+            structuredOwnerModel = 'PUBLISHED_FIELD_SET';
+            structuredStorageLane = surface.linked_draft_id
+                ? 'page_index + location_content + content_drafts'
+                : 'page_index + location_content';
+
+            if (surface.authority_risk === 'AUTHORITY_FRAGILE' || !surface.linked_draft_id) {
+                structuredClassification = 'OWNERSHIP_FRAGILE';
+            } else {
+                structuredClassification = 'PARTIALLY_STRUCTURED';
+            }
+            break;
+        }
+
+        case 'content_draft': {
+            supportsStructuredContent = true;
+            supportsStructuredMetadata = true;
+            supportsStructuredSeo = false;
+            structuredEditorPath = surface.content_editor_path || surface.metadata_editor_path;
+            structuredEditorLabel = 'Open structured draft editor';
+            structuredOwnerModel = 'DRAFT_FIELD_SET';
+            structuredStorageLane = 'content_drafts + content_version_history';
+            structuredClassification = 'PARTIALLY_STRUCTURED';
+            break;
+        }
+
+        case 'blog_post': {
+            supportsStructuredContent = true;
+            supportsStructuredMetadata = true;
+            structuredEditorPath = surface.content_editor_path || surface.metadata_editor_path;
+            structuredEditorLabel = 'Open article field editor';
+            structuredOwnerModel = 'RICH_TEXT_RECORD';
+            structuredStorageLane = 'blog_posts';
+            structuredClassification = surface.runtime_live ? 'PARTIALLY_STRUCTURED' : 'READ_ONLY_BY_DESIGN';
+            break;
+        }
+
+        case 'override_only': {
+            supportsStructuredSeo = false;
+            structuredOwnerModel = 'OVERRIDE_ONLY';
+            structuredStorageLane = 'seo_overrides';
+            structuredClassification = 'OWNERSHIP_FRAGILE';
+            break;
+        }
+
+        default: {
+            const hasStructuredEditor = Boolean(
+                surface.metadata_editor_path
+                || surface.content_editor_path
+                || surface.seo_editor_path
+                || surface.related_editor_path
+                || surface.editor_path
+            );
+
+            supportsStructuredMetadata = surface.supports_metadata_edit
+                || ['seo_helper', 'dynamic_metadata', 'inline_static', 'layout_inherited', 'draft_only'].includes(surface.metadata_strategy);
+            structuredEditorPath = surface.metadata_editor_path || surface.seo_editor_path || surface.related_editor_path || surface.editor_path || null;
+            structuredEditorLabel = surface.metadata_editor_label || surface.seo_editor_label || surface.related_editor_label || surface.editor_label || null;
+            structuredOwnerModel = sourceLabels.includes('HYBRID_RUNTIME')
+                ? 'HYBRID_ROUTE_RUNTIME'
+                : sourceLabels.includes('STATIC_RUNTIME')
+                    ? 'FILE_ROUTE_RUNTIME'
+                    : 'HELPER_RUNTIME';
+            structuredStorageLane = surface.runtime_owner_file || (supportsStructuredSeo ? 'runtime_helper + seo_overrides' : 'runtime_file');
+
+            if (surface.authority_risk === 'AUTHORITY_FRAGILE') {
+                structuredClassification = 'OWNERSHIP_FRAGILE';
+            } else if (sourceLabels.includes('STATIC_RUNTIME') && !hasStructuredEditor && !surface.supports_metadata_edit && !surface.supports_content_edit && !surface.supports_seo_edit) {
+                structuredClassification = 'READ_ONLY_BY_DESIGN';
+            } else if (supportsStructuredContent || supportsStructuredMetadata || supportsStructuredSeo) {
+                structuredClassification = 'PARTIALLY_STRUCTURED';
+            } else {
+                structuredClassification = 'READ_ONLY_BY_DESIGN';
+            }
+            break;
+        }
+    }
+
+    const structuredAuthorityLabels = uniqueLabels([
+        surface.runtime_live && surface.runtime_owner_file ? 'RUNTIME_AUTHORITATIVE' : null,
+        supportsStructuredContent ? 'STRUCTURED_CONTENT' : null,
+        supportsStructuredMetadata ? 'METADATA_STRUCTURED' : null,
+        supportsStructuredSeo ? 'SEO_STRUCTURED' : null,
+        'REGISTRY_VISIBLE',
+        'LAYOUT_PROTECTED',
+        helperFragmented || (structuredClassification === 'PARTIALLY_STRUCTURED' && !surface.runtime_live) ? 'PARTIALLY_OPERATIONAL' : null,
+        helperFragmented ? 'HELPER_FRAGMENTED' : null,
+        sourceLabels.includes('STATIC_RUNTIME') ? 'STATIC_RUNTIME' : null,
+        sourceLabels.includes('HYBRID_RUNTIME') ? 'HYBRID_RUNTIME' : null,
+        structuredClassification === 'READ_ONLY_BY_DESIGN' ? 'READ_ONLY_BY_DESIGN' : null,
+    ]);
+
+    return {
+        ...surface,
+        supports_structured_content: supportsStructuredContent,
+        supports_structured_metadata: supportsStructuredMetadata,
+        supports_structured_seo: supportsStructuredSeo,
+        structured_editor_path: structuredEditorPath,
+        structured_editor_label: structuredEditorLabel,
+        structured_owner_model: structuredOwnerModel,
+        structured_storage_lane: structuredStorageLane,
+        structured_classification: structuredClassification,
+        structured_durability: buildStructuredDurability(surface, structuredClassification),
+        structured_registry_durability: buildStructuredRegistryDurability(surface, structuredClassification, structuredEditorPath),
+        snapshot_version_readiness: buildSnapshotVersionReadiness(surface, structuredClassification),
+        structured_authority_labels: structuredAuthorityLabels,
+    };
 }
 
 async function describeStaticRuntimeRoute(filePath) {
@@ -714,6 +1048,8 @@ export const GET = withAdminAuth(async (request, user) => {
                 shadow_path: hasShadowPath ? shadowPath : null,
                 runtime_owner_file: 'app/pages/[slug]/page.js',
                 visibility_scope: 'public',
+                record_id: page.id,
+                linked_draft_id: null,
                 override: override ? { ...override, page_path: override.route_path } : null,
             });
         }
@@ -768,6 +1104,8 @@ export const GET = withAdminAuth(async (request, user) => {
                 updated_at: page.updated_at || null,
                 runtime_owner_file: 'app/[...slug]/page.js',
                 visibility_scope: 'public',
+                record_id: page.id,
+                linked_draft_id: linkedDraft?.id || null,
                 override: override ? { ...override, page_path: override.route_path } : null,
             });
         }
@@ -813,6 +1151,8 @@ export const GET = withAdminAuth(async (request, user) => {
                 updated_at: post.updated_at || post.published_at || null,
                 runtime_owner_file: 'app/blog/[slug]/page.js',
                 visibility_scope: 'public',
+                record_id: post.id,
+                linked_draft_id: null,
                 override: override ? { ...override, page_path: override.route_path } : null,
             });
         }
@@ -863,6 +1203,8 @@ export const GET = withAdminAuth(async (request, user) => {
                 updated_at: draft.updated_at || draft.published_at || null,
                 runtime_owner_file: null,
                 visibility_scope: 'admin',
+                record_id: draft.id,
+                linked_draft_id: null,
                 override: override ? { ...override, page_path: override.route_path } : null,
             });
         }
@@ -903,11 +1245,13 @@ export const GET = withAdminAuth(async (request, user) => {
                 updated_at: override.updated_at || null,
                 runtime_owner_file: null,
                 visibility_scope: 'registry_only',
+                record_id: null,
+                linked_draft_id: null,
                 override: { ...override, page_path: override.route_path },
             });
         }
 
-        const sortedSurfaces = surfaces.sort(sortSurfaces);
+        const sortedSurfaces = surfaces.map(applyEditableAuthority).map(applyStructuredAuthority).sort(sortSurfaces);
 
         return NextResponse.json({
             overrides,
@@ -924,6 +1268,23 @@ export const GET = withAdminAuth(async (request, user) => {
                 hidden_runtime: sortedSurfaces.filter((surface) => surface.authority_labels.includes('HIDDEN_RUNTIME')).length,
                 bounded: sortedSurfaces.filter((surface) => surface.boundary_classification === 'BOUNDED').length,
                 durable: sortedSurfaces.filter((surface) => surface.durability_classification === 'DURABLE').length,
+                editability_safe: sortedSurfaces.filter((surface) => surface.editability_classification === 'EDITABILITY_SAFE').length,
+                partially_editable: sortedSurfaces.filter((surface) => surface.editability_classification === 'PARTIALLY_EDITABLE').length,
+                read_only_by_design: sortedSurfaces.filter((surface) => surface.editability_classification === 'READ_ONLY_BY_DESIGN').length,
+                editability_fragile: sortedSurfaces.filter((surface) => surface.editability_classification === 'EDITABILITY_FRAGILE').length,
+                metadata_editable: sortedSurfaces.filter((surface) => surface.supports_metadata_edit).length,
+                content_editable: sortedSurfaces.filter((surface) => surface.supports_content_edit).length,
+                seo_editable: sortedSurfaces.filter((surface) => surface.supports_seo_edit).length,
+                structured_safe: sortedSurfaces.filter((surface) => surface.structured_classification === 'STRUCTURED_SAFE').length,
+                partially_structured: sortedSurfaces.filter((surface) => surface.structured_classification === 'PARTIALLY_STRUCTURED').length,
+                structured_read_only: sortedSurfaces.filter((surface) => surface.structured_classification === 'READ_ONLY_BY_DESIGN').length,
+                ownership_fragile: sortedSurfaces.filter((surface) => surface.structured_classification === 'OWNERSHIP_FRAGILE').length,
+                structured_content: sortedSurfaces.filter((surface) => surface.supports_structured_content).length,
+                metadata_structured: sortedSurfaces.filter((surface) => surface.supports_structured_metadata).length,
+                seo_structured: sortedSurfaces.filter((surface) => surface.supports_structured_seo).length,
+                helper_fragmented: sortedSurfaces.filter((surface) => (surface.structured_authority_labels || []).includes('HELPER_FRAGMENTED')).length,
+                snapshot_survivable: sortedSurfaces.filter((surface) => surface.snapshot_version_readiness === 'SURVIVABLE').length,
+                snapshot_fragile: sortedSurfaces.filter((surface) => surface.snapshot_version_readiness === 'VERSIONING_FRAGILE').length,
             },
         });
     } catch (error) {

@@ -1,14 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import RichTextEditor from '../../../components/admin/RichTextEditor';
 import './Blog.css';
 
 const BlogContent = () => {
+    const searchParams = useSearchParams();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editorOpen, setEditorOpen] = useState(false);
     const [currentPost, setCurrentPost] = useState(null);
+    const [autoOpenedEditId, setAutoOpenedEditId] = useState(null);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -16,14 +19,32 @@ const BlogContent = () => {
         slug: '',
         meta_title: '',
         meta_description: '',
+        canonical_url: '',
+        robots_setting: '',
         content: '',
         status: 'draft',
         author: 'Admin'
     });
 
+    const requestedEditId = searchParams.get('edit');
+
     useEffect(() => {
         fetchPosts();
     }, []);
+
+    useEffect(() => {
+        if (!requestedEditId || loading || editorOpen || autoOpenedEditId === requestedEditId) {
+            return;
+        }
+
+        const matchedPost = posts.find((post) => post.id === requestedEditId);
+        if (!matchedPost) {
+            return;
+        }
+
+        handleEdit(matchedPost);
+        setAutoOpenedEditId(requestedEditId);
+    }, [autoOpenedEditId, editorOpen, loading, posts, requestedEditId]);
 
     const fetchPosts = async () => {
         try {
@@ -47,6 +68,8 @@ const BlogContent = () => {
             slug: '',
             meta_title: '',
             meta_description: '',
+            canonical_url: '',
+            robots_setting: '',
             content: '',
             status: 'draft',
             author: 'Admin'
@@ -56,7 +79,18 @@ const BlogContent = () => {
 
     const handleEdit = (post) => {
         setCurrentPost(post);
-        setFormData({ ...post });
+        setFormData({
+            title: '',
+            slug: '',
+            meta_title: '',
+            meta_description: '',
+            canonical_url: '',
+            robots_setting: '',
+            content: '',
+            status: 'draft',
+            author: 'Admin',
+            ...post,
+        });
         setEditorOpen(true);
     };
 
@@ -194,6 +228,30 @@ const BlogContent = () => {
                                 onChange={(e) => setFormData({ ...formData, meta_description: e.target.value })}
                                 rows="2"
                             />
+                        </div>
+
+                        <div className="form-group flex-row">
+                            <div className="form-col">
+                                <label>Canonical URL</label>
+                                <input
+                                    type="text"
+                                    value={formData.canonical_url || ''}
+                                    onChange={(e) => setFormData({ ...formData, canonical_url: e.target.value })}
+                                    placeholder="https://bimasakhi.com/blog/example"
+                                />
+                            </div>
+                            <div className="form-col">
+                                <label>Robots</label>
+                                <select
+                                    value={formData.robots_setting || ''}
+                                    onChange={(e) => setFormData({ ...formData, robots_setting: e.target.value })}
+                                >
+                                    <option value="">Runtime default</option>
+                                    <option value="index,follow">index,follow</option>
+                                    <option value="noindex,follow">noindex,follow</option>
+                                    <option value="noindex,nofollow">noindex,nofollow</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div className="form-group">

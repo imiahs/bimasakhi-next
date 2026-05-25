@@ -2,6 +2,7 @@
 
 import React, { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 const STATUS_OPTIONS = [
     { value: 'all', label: 'All Statuses' },
@@ -34,6 +35,8 @@ function emptyEditForm() {
         page_type: '',
         meta_title: '',
         meta_description: '',
+        canonical_url: '',
+        robots_setting: '',
         status: 'draft',
         is_campaign_page: false,
     };
@@ -62,6 +65,7 @@ function statusBadgeClass(status) {
 }
 
 export default function PagesContent() {
+    const searchParams = useSearchParams();
     const [pages, setPages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -80,6 +84,9 @@ export default function PagesContent() {
     const [submitting, setSubmitting] = useState(false);
     const [bulkSubmitting, setBulkSubmitting] = useState(false);
     const [rowActionId, setRowActionId] = useState(null);
+    const [autoOpenedEditId, setAutoOpenedEditId] = useState(null);
+
+    const requestedEditId = searchParams.get('edit');
 
     useEffect(() => {
         setCurrentPage(1);
@@ -213,11 +220,51 @@ export default function PagesContent() {
             page_type: page.page_type || (page.is_campaign_page ? 'campaign_page' : 'custom_page'),
             meta_title: page.meta_title || '',
             meta_description: page.meta_description || '',
+            canonical_url: page.canonical_url || '',
+            robots_setting: page.robots_setting || '',
             status: page.status || 'draft',
             is_campaign_page: !!page.is_campaign_page,
         });
         setIsEditing(true);
     };
+
+    useEffect(() => {
+        if (!requestedEditId || requestedEditId === autoOpenedEditId || isEditing) {
+            return;
+        }
+
+        let cancelled = false;
+
+        async function loadRequestedPage() {
+            try {
+                const response = await fetch(`/api/admin/pages/${requestedEditId}`, {
+                    credentials: 'include',
+                    cache: 'no-store',
+                });
+                const data = await response.json();
+
+                if (cancelled) {
+                    return;
+                }
+
+                if (response.ok && data.page) {
+                    openEditModal(data.page);
+                }
+
+                setAutoOpenedEditId(requestedEditId);
+            } catch {
+                if (!cancelled) {
+                    setAutoOpenedEditId(requestedEditId);
+                }
+            }
+        }
+
+        loadRequestedPage();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [autoOpenedEditId, isEditing, requestedEditId]);
 
     const handleCreate = async (event) => {
         event.preventDefault();
@@ -266,6 +313,8 @@ export default function PagesContent() {
                     slug: editForm.slug,
                     meta_title: editForm.meta_title,
                     meta_description: editForm.meta_description,
+                    canonical_url: editForm.canonical_url,
+                    robots_setting: editForm.robots_setting,
                     status: editForm.status,
                     is_campaign_page: editForm.is_campaign_page,
                 }),
@@ -744,6 +793,33 @@ export default function PagesContent() {
                                     className="admin-input mt-2 px-3 py-2 text-sm"
                                 />
                             </label>
+
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <label className="block">
+                                    <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Canonical URL</span>
+                                    <input
+                                        type="text"
+                                        value={editForm.canonical_url}
+                                        onChange={(event) => setEditForm((current) => ({ ...current, canonical_url: event.target.value }))}
+                                        placeholder="https://bimasakhi.com/pages/example"
+                                        className="admin-input mt-2 px-3 py-2 text-sm"
+                                    />
+                                </label>
+
+                                <label className="block">
+                                    <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Robots</span>
+                                    <select
+                                        value={editForm.robots_setting}
+                                        onChange={(event) => setEditForm((current) => ({ ...current, robots_setting: event.target.value }))}
+                                        className="admin-select mt-2 px-3 py-2 text-sm"
+                                    >
+                                        <option value="">Runtime default</option>
+                                        <option value="index,follow">index,follow</option>
+                                        <option value="noindex,follow">noindex,follow</option>
+                                        <option value="noindex,nofollow">noindex,nofollow</option>
+                                    </select>
+                                </label>
+                            </div>
 
                             <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
                                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Structure Visibility</p>

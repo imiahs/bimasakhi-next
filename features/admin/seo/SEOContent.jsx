@@ -1,13 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import './SEO.css';
 
 const FILTERS = [
     { id: 'all', label: 'All surfaces' },
+    { id: 'structured-safe', label: 'Structured safe' },
+    { id: 'partially-structured', label: 'Partially structured' },
+    { id: 'structured-content', label: 'Structured content' },
+    { id: 'metadata-structured', label: 'Metadata structured' },
+    { id: 'seo-structured', label: 'SEO structured' },
+    { id: 'helper-fragmented', label: 'Helper fragmented' },
+    { id: 'read-only', label: 'Read only' },
     { id: 'static-runtime', label: 'Static runtime' },
     { id: 'runtime-live', label: 'Runtime live' },
-    { id: 'override-capable', label: 'Override capable' },
     { id: 'hidden-runtime', label: 'Hidden runtime' },
     { id: 'fragile', label: 'Needs attention' },
 ];
@@ -18,13 +25,36 @@ function formatLabel(value) {
         .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function buildRouteActionLinks(route) {
+    const candidates = [
+        { href: route.structured_editor_path, label: route.structured_editor_label },
+        { href: route.metadata_editor_path, label: route.metadata_editor_label },
+        { href: route.content_editor_path, label: route.content_editor_label },
+        { href: route.seo_editor_path, label: route.seo_editor_label },
+        { href: route.related_editor_path, label: route.related_editor_label },
+    ].filter((link) => link.href && link.label);
+
+    const seen = new Set();
+
+    return candidates.filter((link) => {
+        const key = `${link.href}|${link.label}`;
+        if (seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
+    });
+}
+
 const SEOContent = () => {
+    const searchParams = useSearchParams();
     const [routes, setRoutes] = useState([]);
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchText, setSearchText] = useState('');
     const [filterMode, setFilterMode] = useState('all');
+    const [autoOpenedPath, setAutoOpenedPath] = useState(null);
 
     // Modal states
     const [isEditing, setIsEditing] = useState(false);
@@ -40,6 +70,7 @@ const SEOContent = () => {
     // AI States
     const [analyzing, setAnalyzing] = useState(false);
     const [aiSuggestions, setAiSuggestions] = useState(null);
+    const requestedPath = searchParams.get('path');
 
     useEffect(() => {
         fetchOverrides();
@@ -82,6 +113,31 @@ const SEOContent = () => {
         });
         setIsEditing(true);
     };
+
+    useEffect(() => {
+        if (!requestedPath) {
+            return;
+        }
+
+        const normalizedPath = requestedPath === '/' ? '/' : `/${String(requestedPath).replace(/^\/+/, '')}`;
+
+        if (loading || isEditing || autoOpenedPath === normalizedPath) {
+            return;
+        }
+
+        const matchedRoute = routes.find((route) => route.page_path === normalizedPath || route.path === normalizedPath);
+        if (!matchedRoute) {
+            return;
+        }
+
+        setSearchText(normalizedPath);
+
+        if (matchedRoute.supports_seo_override) {
+            handleEdit(matchedRoute);
+        }
+
+        setAutoOpenedPath(normalizedPath);
+    }, [autoOpenedPath, isEditing, loading, requestedPath, routes]);
 
     const handleSave = async (e) => {
         e.preventDefault();
@@ -151,12 +207,36 @@ const SEOContent = () => {
             return route.runtime_live;
         }
 
-        if (filterMode === 'static-runtime') {
-            return (route.authority_labels || []).includes('STATIC_RUNTIME');
+        if (filterMode === 'structured-safe') {
+            return route.structured_classification === 'STRUCTURED_SAFE';
         }
 
-        if (filterMode === 'override-capable') {
-            return route.supports_seo_override;
+        if (filterMode === 'partially-structured') {
+            return route.structured_classification === 'PARTIALLY_STRUCTURED';
+        }
+
+        if (filterMode === 'structured-content') {
+            return route.supports_structured_content;
+        }
+
+        if (filterMode === 'metadata-structured') {
+            return route.supports_structured_metadata;
+        }
+
+        if (filterMode === 'seo-structured') {
+            return route.supports_structured_seo;
+        }
+
+        if (filterMode === 'helper-fragmented') {
+            return (route.structured_authority_labels || []).includes('HELPER_FRAGMENTED');
+        }
+
+        if (filterMode === 'read-only') {
+            return route.structured_classification === 'READ_ONLY_BY_DESIGN';
+        }
+
+        if (filterMode === 'static-runtime') {
+            return (route.authority_labels || []).includes('STATIC_RUNTIME');
         }
 
         if (filterMode === 'hidden-runtime') {
@@ -164,7 +244,13 @@ const SEOContent = () => {
         }
 
         if (filterMode === 'fragile') {
-            return route.authority_risk === 'AUTHORITY_FRAGILE' || route.override_state === 'stored_only';
+            return route.structured_classification === 'OWNERSHIP_FRAGILE'
+                || route.structured_registry_durability === 'REGISTRY_FRAGILE'
+                || route.snapshot_version_readiness === 'VERSIONING_FRAGILE'
+                || route.authority_risk === 'AUTHORITY_FRAGILE'
+                || route.override_state === 'stored_only'
+                || route.editability_classification === 'EDITABILITY_FRAGILE'
+                || route.editability_durability === 'EDITABILITY_FRAGILE';
         }
 
         return true;
@@ -175,8 +261,8 @@ const SEOContent = () => {
             {!isEditing ? (
                 <>
                     <div className="admin-page-header">
-                        <h1>Canonical SEO Authority</h1>
-                        <p>Registry view of runtime, CRUD, index, metadata, and SEO authority. Overrides are only editable where the live runtime actually consumes them.</p>
+                        <h1>Canonical Structured Authority</h1>
+                        <p>Registry view of runtime-compatible structured ownership, metadata authority, SEO continuity, and bounded editor lanes. Structured visibility is emitted only where an existing tracked surface already owns that lane.</p>
                     </div>
 
                     {loading ? (
@@ -194,40 +280,44 @@ const SEOContent = () => {
                                         <strong>{summary.total_surfaces}</strong>
                                     </div>
                                     <div className="seo-summary-card">
+                                        <span className="seo-summary-label">Structured safe</span>
+                                        <strong>{summary.structured_safe}</strong>
+                                    </div>
+                                    <div className="seo-summary-card">
+                                        <span className="seo-summary-label">Partially structured</span>
+                                        <strong>{summary.partially_structured}</strong>
+                                    </div>
+                                    <div className="seo-summary-card">
+                                        <span className="seo-summary-label">Structured content</span>
+                                        <strong>{summary.structured_content}</strong>
+                                    </div>
+                                    <div className="seo-summary-card">
+                                        <span className="seo-summary-label">Metadata structured</span>
+                                        <strong>{summary.metadata_structured}</strong>
+                                    </div>
+                                    <div className="seo-summary-card">
+                                        <span className="seo-summary-label">SEO structured</span>
+                                        <strong>{summary.seo_structured}</strong>
+                                    </div>
+                                    <div className="seo-summary-card">
+                                        <span className="seo-summary-label">Read only</span>
+                                        <strong>{summary.structured_read_only}</strong>
+                                    </div>
+                                    <div className="seo-summary-card">
                                         <span className="seo-summary-label">Runtime live</span>
                                         <strong>{summary.runtime_live}</strong>
                                     </div>
                                     <div className="seo-summary-card">
-                                        <span className="seo-summary-label">Override capable</span>
-                                        <strong>{summary.override_capable}</strong>
-                                    </div>
-                                    <div className="seo-summary-card">
-                                        <span className="seo-summary-label">Static runtime</span>
-                                        <strong>{summary.static_runtime}</strong>
-                                    </div>
-                                    <div className="seo-summary-card">
-                                        <span className="seo-summary-label">Static wrapped</span>
-                                        <strong>{summary.static_wrapped}</strong>
-                                    </div>
-                                    <div className="seo-summary-card">
-                                        <span className="seo-summary-label">Active overrides</span>
-                                        <strong>{summary.override_active}</strong>
-                                    </div>
-                                    <div className="seo-summary-card">
-                                        <span className="seo-summary-label">Hidden runtime</span>
-                                        <strong>{summary.hidden_runtime}</strong>
-                                    </div>
-                                    <div className="seo-summary-card">
-                                        <span className="seo-summary-label">Bounded surfaces</span>
-                                        <strong>{summary.bounded}</strong>
-                                    </div>
-                                    <div className="seo-summary-card">
-                                        <span className="seo-summary-label">Durable surfaces</span>
-                                        <strong>{summary.durable}</strong>
+                                        <span className="seo-summary-label">Helper fragmented</span>
+                                        <strong>{summary.helper_fragmented}</strong>
                                     </div>
                                     <div className="seo-summary-card warning">
-                                        <span className="seo-summary-label">Authority fragile</span>
-                                        <strong>{summary.authority_fragile}</strong>
+                                        <span className="seo-summary-label">Ownership fragile</span>
+                                        <strong>{summary.ownership_fragile}</strong>
+                                    </div>
+                                    <div className="seo-summary-card">
+                                        <span className="seo-summary-label">Snapshot survivable</span>
+                                        <strong>{summary.snapshot_survivable}</strong>
                                     </div>
                                 </div>
                             ) : null}
@@ -255,7 +345,11 @@ const SEOContent = () => {
                             </div>
 
                             <div className="seo-routes-grid">
-                                {filteredRoutes.map((route) => (
+                                {filteredRoutes.map((route) => {
+                                    const actionLinks = buildRouteActionLinks(route);
+                                    const authorityLabels = route.structured_authority_labels || route.editable_authority_labels || route.authority_labels || [];
+
+                                    return (
                                     <div key={route.id} className="seo-route-card">
                                     <div className="seo-route-header">
                                         <div className="seo-route-heading">
@@ -270,15 +364,15 @@ const SEOContent = () => {
                                         <button
                                             className="btn-edit"
                                             onClick={() => handleEdit(route)}
-                                            disabled={!route.supports_seo_override}
-                                            title={route.supports_seo_override ? 'Edit runtime SEO override' : 'Runtime SEO override is not wired for this surface'}
+                                            disabled={!route.supports_seo_edit}
+                                            title={route.supports_seo_edit ? 'Edit runtime SEO override' : 'Runtime SEO override is not wired for this surface'}
                                         >
-                                            {route.supports_seo_override ? 'Edit Override' : 'Read Only'}
+                                            {route.supports_seo_edit ? 'Edit Override' : 'Read Only'}
                                         </button>
                                     </div>
 
                                     <div className="seo-authority-row">
-                                        {(route.authority_labels || []).map((label) => (
+                                        {authorityLabels.map((label) => (
                                             <span key={`${route.id}-${label}`} className="seo-authority-badge">{formatLabel(label)}</span>
                                         ))}
                                     </div>
@@ -290,11 +384,23 @@ const SEOContent = () => {
                                     </div>
 
                                     <div className="seo-route-details">
+                                        <span><strong>Structured:</strong> {formatLabel(route.structured_classification || 'read_only_by_design')}</span>
+                                        <span><strong>Structured durability:</strong> {formatLabel(route.structured_durability || 'partially_durable')}</span>
+                                        <span><strong>Registry durability:</strong> {formatLabel(route.structured_registry_durability || 'partially_durable')}</span>
+                                        <span><strong>Versioning:</strong> {formatLabel(route.snapshot_version_readiness || 'partially_survivable')}</span>
+                                        <span><strong>Owner model:</strong> {formatLabel(route.structured_owner_model || 'file_route_runtime')}</span>
+                                        <span><strong>Storage lane:</strong> {route.structured_storage_lane || 'runtime_file'}</span>
                                         <span><strong>Override state:</strong> {formatLabel(route.override_state || 'none')}</span>
                                         <span><strong>Runtime:</strong> {route.runtime_live ? 'Live' : 'Not live'}</span>
                                         <span><strong>Scope:</strong> {formatLabel(route.visibility_scope || 'public')}</span>
                                         <span><strong>Boundary:</strong> {formatLabel(route.boundary_classification || 'partially_bounded')}</span>
                                         <span><strong>Durability:</strong> {formatLabel(route.durability_classification || 'partially_durable')}</span>
+                                        <span><strong>Structured content:</strong> {route.supports_structured_content ? 'Owned' : 'No'}</span>
+                                        <span><strong>Metadata structure:</strong> {route.supports_structured_metadata ? 'Owned' : 'No'}</span>
+                                        <span><strong>SEO structure:</strong> {route.supports_structured_seo ? 'Owned' : 'No'}</span>
+                                        <span><strong>Metadata lane:</strong> {route.supports_metadata_edit ? 'Editable' : 'Read only'}</span>
+                                        <span><strong>Content lane:</strong> {route.supports_content_edit ? 'Editable' : 'Read only'}</span>
+                                        <span><strong>Layout:</strong> {route.layout_protected ? 'Protected' : 'Editable'}</span>
                                         <span><strong>Canonical:</strong> {route.canonical_url || 'Runtime default'}</span>
                                         <span><strong>Robots:</strong> {route.robots_setting || 'Runtime default'}</span>
                                         {route.runtime_owner_file ? <span><strong>Owner file:</strong> {route.runtime_owner_file}</span> : null}
@@ -304,12 +410,12 @@ const SEOContent = () => {
                                     {route.note ? <p className="seo-route-note">{route.note}</p> : null}
 
                                     <div className="seo-route-actions">
-                                        {route.editor_path ? (
-                                            <a className="seo-editor-link" href={route.editor_path}>{route.editor_label || 'Open admin surface'}</a>
-                                        ) : null}
+                                        {actionLinks.map((link) => (
+                                            <a key={`${route.id}-${link.href}-${link.label}`} className="seo-editor-link" href={link.href}>{link.label}</a>
+                                        ))}
                                     </div>
                                 </div>
-                                ))}
+                                );})}
                             </div>
                         </>
                     )}
