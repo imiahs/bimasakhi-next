@@ -40,7 +40,7 @@ const FloatingApplyContent = () => {
     return (
         <Link
             href={`/apply?source=${source}`}
-            className="floating-pill apply-pill attention-pulse"
+            className="floating-pill apply-pill"
             onClick={handleClick}
             aria-label="Apply for Bima Sakhi Opportunity"
         >
@@ -51,7 +51,7 @@ const FloatingApplyContent = () => {
 
 const FloatingApply = () => {
     return (
-        <Suspense fallback={<div className="floating-pill apply-pill attention-pulse">📝 Apply Now</div>}>
+        <Suspense fallback={<div className="floating-pill apply-pill">📝 Apply Now</div>}>
             <FloatingApplyContent />
         </Suspense>
     );

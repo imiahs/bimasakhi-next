@@ -10,36 +10,15 @@ const HeroSection = () => {
     const router = useRouter();
     const [activeIndex, setActiveIndex] = useState(0);
     const totalSlides = 4;
-    const [progress, setProgress] = useState(0);
-
-    // Auto-rotate every 10 seconds
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setActiveIndex((prev) => (prev + 1) % totalSlides);
-            setProgress(0);
-        }, 10000);
-
-        const progressInterval = setInterval(() => {
-            setProgress((prev) => (prev >= 100 ? 100 : prev + 2));
-        }, 100);
-
-        return () => {
-            clearInterval(interval);
-            clearInterval(progressInterval);
-        };
-    }, []);
 
     const goToSlide = (index) => {
         setActiveIndex(index);
-        setProgress(0);
     };
     const nextSlide = () => {
         setActiveIndex((prev) => (prev + 1) % totalSlides);
-        setProgress(0);
     };
     const prevSlide = () => {
         setActiveIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
-        setProgress(0);
     };
 
     const text = {
@@ -154,63 +133,38 @@ const HeroSection = () => {
     };
 
     const t = text[language] || text.en; // Fallback to English
+    const slides = [
+        { ...t.slide1, image: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp', alt: 'Bima Sakhi Visual', route: '/why' },
+        { ...t.slide2, image: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-client-meeting-1778562840168.webp', alt: 'Empowerment Visual', route: '/income' },
+        { ...t.slide3, image: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/successful-woman-lic-career-1778562617342.webp', alt: 'Outreach Visual', route: '/why' },
+        { ...t.slide4, image: 'https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/woman-supporting-family-lic-1778562506570.webp', alt: 'Digital Visual', route: '/apply' },
+    ];
+    const currentSlide = slides[activeIndex] || slides[0];
 
     return (
         <section className="hero">
             <div className="hero-bg"></div>
             <div className="hero-overlay">
                 <div className="hero-inner">
-
-                    {/* Slide 1 */}
-                    <div className={`hero-content ${activeIndex === 0 ? "active" : ""}`}>
-                        <h2 className="hero-intro">{t.slide1.intro}</h2>
-                        <h1 className="hero-title">{t.slide1.title}</h1>
-                        <h3 className="hero-subtitle">{t.slide1.subtitle}</h3>
-                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/hero/hero-bg-1779744603094.webp" alt="Bima Sakhi Visual" className="hero-image" />
-                        <p className="hero-description">{t.slide1.desc}</p>
+                    <div className="hero-content active">
+                        <h2 className="hero-intro">{currentSlide.intro}</h2>
+                        <h1 className="hero-title">{currentSlide.title}</h1>
+                        <h3 className="hero-subtitle">{currentSlide.subtitle}</h3>
+                        <img
+                            src={currentSlide.image}
+                            alt={currentSlide.alt}
+                            className="hero-image"
+                            width="960"
+                            height="720"
+                            loading="eager"
+                            fetchPriority="high"
+                            decoding="async"
+                        />
+                        <p className="hero-description">{currentSlide.desc}</p>
                         <ul className="hero-options">
-                            {t.slide1.options.map((item, i) => <li key={i}>{item}</li>)}
+                            {currentSlide.options.map((item, i) => <li key={i}>{item}</li>)}
                         </ul>
-                        <div className="hero-cta"><button onClick={() => router.push('/why')}>{t.slide1.cta}</button></div>
-                    </div>
-
-                    {/* Slide 2 - Stipend Highlight */}
-                    <div className={`hero-content ${activeIndex === 1 ? "active" : ""}`}>
-                        <h2 className="hero-intro">{t.slide2.intro}</h2>
-                        <h1 className="hero-title">{t.slide2.title}</h1>
-                        <h3 className="hero-subtitle">{t.slide2.subtitle}</h3>
-                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/lic-bima-sakhi-client-meeting-1778562840168.webp" alt="Empowerment Visual" className="hero-image" />
-                        <p className="hero-description">{t.slide2.desc}</p>
-                        <ul className="hero-options">
-                            {t.slide2.options.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
-                        <div className="hero-cta"><button onClick={() => router.push('/income')}>{t.slide2.cta}</button></div>
-                    </div>
-
-                    {/* Slide 3 */}
-                    <div className={`hero-content ${activeIndex === 2 ? "active" : ""}`}>
-                        <h2 className="hero-intro">{t.slide3.intro}</h2>
-                        <h1 className="hero-title">{t.slide3.title}</h1>
-                        <h3 className="hero-subtitle">{t.slide3.subtitle}</h3>
-                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/successful-woman-lic-career-1778562617342.webp" alt="Outreach Visual" className="hero-image" />
-                        <p className="hero-description">{t.slide3.desc}</p>
-                        <ul className="hero-options">
-                            {t.slide3.options.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
-                        <div className="hero-cta"><button onClick={() => router.push('/why')}>{t.slide3.cta}</button></div>
-                    </div>
-
-                    {/* Slide 4 */}
-                    <div className={`hero-content ${activeIndex === 3 ? "active" : ""}`}>
-                        <h2 className="hero-intro">{t.slide4.intro}</h2>
-                        <h1 className="hero-title">{t.slide4.title}</h1>
-                        <h3 className="hero-subtitle">{t.slide4.subtitle}</h3>
-                        <img src="https://litucwmzwhpqfgyahpcl.supabase.co/storage/v1/object/public/media/woman-supporting-family-lic-1778562506570.webp" alt="Digital Visual" className="hero-image" />
-                        <p className="hero-description">{t.slide4.desc}</p>
-                        <ul className="hero-options">
-                            {t.slide4.options.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
-                        <div className="hero-cta"><button onClick={() => router.push('/apply')}>{t.slide4.cta}</button></div>
+                        <div className="hero-cta"><button onClick={() => router.push(currentSlide.route)}>{currentSlide.cta}</button></div>
                     </div>
 
                     {/* Navigation Controls */}
@@ -226,14 +180,7 @@ const HeroSection = () => {
                                 key={index}
                                 className={`dot ${activeIndex === index ? "active" : ""}`}
                                 onClick={() => goToSlide(index)}
-                            >
-                                {activeIndex === index && (
-                                    <span
-                                        className="progress-bar"
-                                        style={{ width: `${progress}%` }}
-                                    ></span>
-                                )}
-                            </span>
+                            ></span>
                         ))}
                     </div>
 

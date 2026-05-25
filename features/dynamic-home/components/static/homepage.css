@@ -138,6 +138,7 @@
     /* Center alignment for grid items */
     place-items: center;
     padding-bottom: 4rem;
+    min-height: 760px;
 }
 
 /* ------------------------------
@@ -223,7 +224,7 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    animation: shine 3s linear infinite, fadeInTitle 1.2s ease-out forwards;
+    animation: fadeInTitle 0.8s ease-out forwards;
 }
 
 .hero-subtitle {
@@ -251,8 +252,10 @@
 .hero-image {
     display: block;
     margin: 1.5rem auto;
-    max-width: 100%;
+    width: min(92vw, 640px);
     height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -396,19 +399,12 @@
     left: 0;
     height: 3px;
     background: #FFD700;
-    transition: width 0.1s linear;
-    width: 0;
+    width: 100%;
 }
 
 /* ------------------------------
    ANIMATIONS
 ------------------------------ */
-@keyframes shine {
-    to {
-        background-position: 200% center;
-    }
-}
-
 @keyframes fadeInTitle {
     from {
         opacity: 0;
@@ -432,6 +428,7 @@
     .hero-inner {
         min-height: auto;
         padding-bottom: 4rem;
+        min-height: 680px;
     }
 
     .hero-title {
