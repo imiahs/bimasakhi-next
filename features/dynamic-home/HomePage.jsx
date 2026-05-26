@@ -4,6 +4,7 @@
 // Static fallback is the ULTIMATE safety net.
 
 import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import './components/static/homepage.css';
 
 // Section Imports (Static Fallback - Locked Order)
@@ -26,6 +27,7 @@ import { logger } from '@/utils/logger';
 
 const HomePage = () => {
     // ACTIVATION STRATEGY (Phase 5.5 - Stability Hardening)
+    const pathname = usePathname();
 
     // Config
     const MODE = process.env.NEXT_PUBLIC_DYNAMIC_HOME_MODE || 'off'; // off | preview | on
@@ -67,40 +69,12 @@ const HomePage = () => {
     const [sections, setSections] = useState([]);
     const [loading, setLoading] = useState(false);
     const [dynamicError, setDynamicError] = useState(false);
-    const [renderDeferredSections, setRenderDeferredSections] = useState(false);
 
     // Mounted Guard
     const isMounted = useRef(true);
     useEffect(() => {
         isMounted.current = true;
         return () => { isMounted.current = false; };
-    }, []);
-
-    // Defer non-critical static sections to idle to reduce initial main-thread pressure.
-    useEffect(() => {
-        let idleId;
-        let timeoutId;
-
-        const enableDeferredSections = () => {
-            if (isMounted.current) {
-                setRenderDeferredSections(true);
-            }
-        };
-
-        if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-            idleId = window.requestIdleCallback(enableDeferredSections, { timeout: 2000 });
-        } else {
-            timeoutId = setTimeout(enableDeferredSections, 1200);
-        }
-
-        return () => {
-            if (idleId && typeof window !== 'undefined' && 'cancelIdleCallback' in window) {
-                window.cancelIdleCallback(idleId);
-            }
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-        };
     }, []);
 
     // Fetch Effect (only runs if activation check passed)
@@ -156,18 +130,14 @@ const HomePage = () => {
             <HeroSection />
             <WhatIsBimaSakhi />
             <WhoItIsFor />
-            {renderDeferredSections ? (
-                <>
-                    <ProcessOverview />
-                    <TransparencySection />
-                    <SocialProofSection />
-                    <AuthoritySection />
-                    <BenefitsSection />
-                    <LocalTrustSection />
-                    <FAQSection />
-                    <FinalCTASection />
-                </>
-            ) : null}
+            <ProcessOverview />
+            <TransparencySection />
+            <SocialProofSection />
+            <AuthoritySection />
+            <BenefitsSection />
+            <LocalTrustSection />
+            <FAQSection />
+            <FinalCTASection />
         </div>
     );
 };
