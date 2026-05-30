@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import MetricCard from '@/components/admin/ui/MetricCard';
 import StatusBadge from '@/components/admin/ui/StatusBadge';
 import { adminApi } from '@/lib/adminApi';
